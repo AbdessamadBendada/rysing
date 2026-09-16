@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Rysing is a founder-led people-branding studio helping ambitious experts become visible, recognised and chosen." />
-  <title>Rysing — Personal Brand Studio</title>
+  <title>rysing — Branding Agency, Vienna</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif:ital@0;1&display=swap');
     :root { --paper:#f5f3f0; --ink:#10100f; --red:#f04222; --gutter:clamp(20px,3.2vw,54px); }
@@ -37,7 +36,7 @@
     .statement { min-height:88svh; padding:clamp(100px,13vw,190px) var(--gutter) clamp(60px,8vw,105px); background:var(--paper); display:flex; flex-direction:column; justify-content:space-between; }
     .section-label { margin:0; color:#7c766e; font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:12px; }
     .section-label:before { content:""; width:27px; height:1px; background:currentColor; }
-    .statement h2 { margin:clamp(80px,12vw,165px) 0; max-width:13ch; font-family:"Instrument Serif",Georgia,serif; font-size:clamp(50px,6.5vw,112px); font-weight:400; line-height:.9; letter-spacing:-.06em; }
+    .statement h2 { margin:clamp(80px,12vw,165px) 0; max-width:none; width:100%; font-family:"Instrument Serif",Georgia,serif; font-size:clamp(50px,6.5vw,112px); font-weight:400; line-height:.9; letter-spacing:-.06em; }
     .statement h2 em { color:var(--red); font-style:italic; font-weight:400; }
     .statement-bottom { border-top:1px solid var(--ink); padding-top:18px; display:flex; align-items:start; justify-content:space-between; gap:30px; }
     .statement-bottom p { max-width:47ch; margin:0; font-size:clamp(15px,1.35vw,21px); line-height:1.42; letter-spacing:-.018em; }
@@ -108,12 +107,19 @@
     .trust h2 em { color:var(--red); font-family:"Instrument Serif",Georgia,serif; font-weight:400; }
     .trust-intro { max-width:42ch; margin:clamp(26px,3vw,44px) 0 0 auto; color:#c7c1b9; font-size:clamp(15px,1.25vw,19px); line-height:1.48; }
     .trust-audiences { display:grid; grid-template-columns:repeat(4,1fr); margin-top:clamp(52px,6vw,88px); border-block:1px solid rgba(255,255,255,.24); }
+    .trust-head:has(.trust-logo-heading) { display:block; }
+    .trust h2.trust-logo-heading { max-width:none; width:100%; margin:0; color:#fff; font-family:"Instrument Sans","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:clamp(42px,5.6vw,88px); font-weight:700; line-height:.9; letter-spacing:-.065em; }
+    .trust-logo-wall { display:grid; grid-template-columns:repeat(4,1fr); margin-top:clamp(52px,6vw,88px); border-block:1px solid rgba(255,255,255,.24); }
+    .trust-logo-wall span { display:grid; min-height:clamp(110px,11vw,165px); place-items:center; padding:20px; border-right:1px solid rgba(255,255,255,.18); border-bottom:1px solid rgba(255,255,255,.18); color:#f5f3f0; font-family:"Instrument Serif",Georgia,serif; font-size:clamp(22px,2.2vw,36px); text-align:center; }
+    .trust-logo-wall span:nth-child(4n) { border-right:0; }
+    .trust-logo-wall span:nth-last-child(-n+4) { border-bottom:0; }
     .trust-audience { min-height:clamp(145px,14vw,210px); display:flex; flex-direction:column; justify-content:space-between; gap:25px; padding:clamp(19px,2vw,29px); border-right:1px solid rgba(255,255,255,.18); }
     .trust-audience:last-child { border-right:0; }
     .trust-audience b { color:#7f7b76; font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; }
     .trust-audience span { font-size:clamp(20px,2.2vw,34px); font-weight:600; line-height:1; letter-spacing:-.04em; }
     .trust-audience i { width:8px; height:8px; align-self:flex-end; border-radius:50%; background:var(--red); box-shadow:0 0 0 6px rgba(240,66,34,.12); }
     .trust-note { margin:22px 0 0 auto; max-width:52ch; color:#817d78; font:500 9px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; text-transform:uppercase; text-align:right; }
+    @media (max-width:720px) { .trust-logo-wall { grid-template-columns:1fr 1fr; } .trust-logo-wall span { min-height:110px; } .trust-logo-wall span:nth-child(4n) { border-right:1px solid rgba(255,255,255,.18); } .trust-logo-wall span:nth-child(2n) { border-right:0; } .trust-logo-wall span:nth-last-child(-n+4) { border-bottom:1px solid rgba(255,255,255,.18); } .trust-logo-wall span:nth-last-child(-n+2) { border-bottom:0; } }
     .proof { padding:clamp(96px,11vw,165px) var(--gutter); background:var(--paper); }
     .proof-head { display:grid; grid-template-columns:.72fr 2.28fr; gap:42px; align-items:start; margin-bottom:clamp(62px,8vw,118px); }
     .proof h2 { max-width:9ch; margin:0; font-size:clamp(54px,7.4vw,126px); font-weight:700; line-height:.83; letter-spacing:-.08em; text-transform:uppercase; }
@@ -159,7 +165,7 @@
     .spotlight-phase strong { margin-top:28px; font-size:clamp(21px,2vw,31px); line-height:1; letter-spacing:-.04em; }
     .fudge { padding:clamp(105px,14vw,205px) var(--gutter); background:var(--paper); }
     .fudge-grid { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr); gap:clamp(52px,8vw,128px); align-items:center; }
-    .fudge-copy h2 { max-width:8.2ch; margin:clamp(55px,7vw,104px) 0 0; font-size:clamp(58px,7.5vw,128px); font-weight:700; line-height:.82; letter-spacing:-.08em; text-transform:uppercase; }
+    .fudge-copy h2 { max-width:15ch; margin:clamp(55px,7vw,104px) 0 0; font-size:clamp(46px,6vw,100px); font-weight:700; line-height:.94; letter-spacing:-.035em; text-transform:uppercase; }
     .fudge-copy h2 em { color:var(--red); font-family:"Instrument Serif",Georgia,serif; font-weight:400; text-transform:none; }
     .fudge-intro { max-width:41ch; margin:clamp(32px,4vw,58px) 0 0; color:#777169; font-size:clamp(16px,1.35vw,20px); line-height:1.5; }
     .fudge-points { display:flex; flex-wrap:wrap; gap:9px; margin:30px 0 0; padding:0; list-style:none; }
@@ -189,7 +195,7 @@
     .final-cta-label { display:flex; align-items:center; gap:11px; }
     .final-cta-label:before { content:""; width:27px; height:1px; background:currentColor; }
     .final-cta-index { color:rgba(255,255,255,.7); }
-    .final-cta h2 { max-width:10ch; margin:clamp(90px,13vw,190px) 0; position:relative; z-index:2; font-size:clamp(66px,10vw,172px); font-weight:700; line-height:.8; letter-spacing:-.085em; text-transform:uppercase; }
+    .final-cta h2 { max-width:none; width:100%; margin:clamp(90px,10vw,150px) 0; position:relative; z-index:2; font-size:clamp(52px,6.5vw,110px); font-weight:700; line-height:.92; letter-spacing:-.035em; text-transform:uppercase; }
     .final-cta h2 em { color:var(--ink); font-family:"Instrument Serif",Georgia,serif; font-weight:400; text-transform:none; }
     .final-cta-bottom { display:flex; align-items:end; justify-content:space-between; gap:40px; position:relative; z-index:2; border-top:1px solid rgba(255,255,255,.72); padding-top:22px; }
     .final-cta-copy { max-width:39ch; margin:0; font-size:clamp(15px,1.35vw,20px); line-height:1.47; }
@@ -197,6 +203,8 @@
     .final-cta-email { padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,.78); font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; }
     .final-cta-button { width:clamp(126px,12vw,180px); aspect-ratio:1; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; padding:25px; text-align:center; font:600 10px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; transition:transform .35s cubic-bezier(.2,.75,.2,1),background .2s,color .2s; }
     .final-cta-button:hover,.final-cta-button:focus-visible { transform:translateY(-8px) scale(1.03); background:#fff; color:var(--ink); }
+    /* Eyebrows removed at the client's request. */
+    .section-label,.kicker,.final-cta-label,.spotlight-label,.proof-status { display:none !important; }
     .cta-star { position:absolute; z-index:1; top:18%; right:13%; width:7px; height:7px; border-radius:50%; background:#fff; box-shadow:0 0 10px 3px rgba(255,255,255,.82),0 0 48px 18px rgba(255,255,255,.28); animation:ctaRise 4.8s ease-in-out infinite alternate; }
     .cta-star:before,.cta-star:after { content:""; position:absolute; inset:50% auto auto 50%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.78),transparent); transform:translate(-50%,-50%); }
     .cta-star:before { width:56px; height:1px; }
@@ -229,6 +237,47 @@
     @media (max-width:720px) { .nav { height:68px; } .nav-links { display:none; } .conversation { font-size:9px; } .hero-copy h1 { font-size:clamp(25px,7vw,36px); } .scroll { display:none; } .statement { min-height:78svh; } .statement h2 { margin:80px 0; font-size:clamp(47px,13vw,75px); } .statement-bottom { display:block; } .statement-number { display:block; margin-top:22px; } .work-head { display:block; } .work-head p:last-child { margin-top:24px; } .work-list { height:auto; min-height:0; overflow-x:auto; scroll-snap-type:x mandatory; } .project { flex:0 0 84vw; min-height:62svh; scroll-snap-align:start; } .project:hover { flex:0 0 84vw; } .project-copy p,.project-copy a { opacity:1; transform:none; pointer-events:auto; } .project-number { top:20px; } .project-type { top:20px; } .project-copy h3 { font-size:clamp(43px,12vw,68px); } .system-head { display:block; } .system-head h2 { margin-top:36px; } .system-head > p:last-child { margin-top:25px; } .system-guide { display:block; } .system-guide span { margin-top:19px; } .system-toggle { grid-template-columns:59px 1fr 26px; gap:15px; } .system-toggle p { grid-column:2/4; } .system-detail { grid-template-columns:59px 1fr; gap:15px; } .system-outcome { grid-column:2; padding-top:27px; } .system-tags { grid-column:2; padding-top:0; padding-bottom:2px; } .trust-head { display:block; } .trust-message { margin-top:42px; } .trust h2 { font-size:clamp(49px,14.2vw,76px); } .trust-intro { margin-left:0; } .trust-audience { grid-template-columns:46px 1fr 8px; gap:14px; } .trust-note { text-align:left; margin-left:0; } .proof-head { display:block; } .proof h2 { margin-top:38px; font-size:clamp(56px,16vw,82px); } .proof-grid { grid-template-columns:1fr; } .proof-feature { min-height:570px; } .proof-stack { grid-template-rows:none; } .proof-card { min-height:330px; } .proof-note { display:block; } .proof-note span { display:block; } .proof-note span:last-child { margin-top:9px; text-align:left; } .spotlight { padding-inline:0; } .spotlight-shell { grid-template-columns:1fr; } .spotlight-copy { min-height:690px; } .spotlight-topline { align-items:flex-start; } .spotlight-program { max-width:13ch; line-height:1.4; text-align:center; } .spotlight h2 { font-size:clamp(62px,18vw,92px); } .spotlight-visual { min-height:590px; } .spotlight-days { top:55px; font-size:36vw; } .spotlight-path { grid-template-columns:1fr; } .spotlight-phase { min-height:128px; border-right:0; border-bottom:1px solid #cfc9c1; } .spotlight-phase:last-child { border-bottom:0; } .fudge-grid { grid-template-columns:1fr; } .fudge-copy h2 { font-size:clamp(60px,17vw,88px); } .fudge-art { min-height:560px; } .fudge-card { width:min(78%,370px); } .fudge-field { grid-template-columns:1fr; } .fudge-field button { padding-left:0; text-align:left; } .final-cta { min-height:88svh; } .final-cta h2 { margin:100px 0; font-size:clamp(67px,19vw,98px); } .final-cta-bottom { display:block; } .final-cta-actions { justify-content:space-between; margin-top:46px; } .final-cta-email { font-size:9px; } .final-cta-button { width:128px; } .cta-star { top:19%; right:15%; } .footer-grid { grid-template-columns:1fr 1fr; } .footer-intro { grid-column:1/-1; margin-bottom:34px; } .footer-meta { align-items:flex-start; } .footer-meta-links { display:block; } .footer-meta-links span { display:block; margin-top:7px; } .footer-wordmark { font-size:25vw; } }
     @media (max-width:720px) { .trust-audiences { grid-template-columns:1fr 1fr; } .trust-audience { min-height:142px; } .trust-audience:nth-child(2) { border-right:0; } .trust-audience:nth-child(-n+2) { border-bottom:1px solid rgba(255,255,255,.18); } .proof-feature { min-height:510px; } .proof-stack { grid-template-columns:1fr; } .proof-card:first-child { padding-right:0; border-right:0; border-bottom:1px solid #cfc9c1; } .proof-card:last-child { padding-left:0; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .hero-copy,.system-item[open] .system-detail:before,.system-item[open] .system-outcome,.system-item[open] .system-tags,.system-item[open] .system-tags span,.cta-star { animation:none; } .system-item:before,.system-toggle h3,.system-symbol:before,.system-symbol:after,.final-cta-button { transition:none; } }
+    /* Compact design language: one clear scale for headings, subheadings, and body copy. */
+    :root { --type-display:clamp(44px,6vw,92px); --type-subhead:clamp(23px,2.4vw,40px); --type-body:clamp(15px,1.25vw,18px); }
+    .hero-copy h1,
+    .statement h2,
+    .system-head h2,
+    .trust h2,
+    .proof h2,
+    .spotlight h2,
+    .fudge-copy h2,
+    .final-cta h2 { font-size:var(--type-display); line-height:.94; letter-spacing:-.055em; }
+    .hero-copy { width:min(680px,calc(100% - 40px)); }
+    .hero-copy h1 { max-width:27ch; font-size:clamp(26px,2.7vw,48px); line-height:1.06; letter-spacing:-.04em; }
+    .statement h2,.system-head h2,.proof h2,.spotlight h2,.fudge-copy h2,.final-cta h2 { max-width:24ch; }
+    .trust h2.trust-logo-heading { max-width:none; font-size:var(--type-display); font-weight:700; line-height:.94; letter-spacing:-.055em; }
+    .project-copy h3,.system-toggle h3,.spotlight-phase strong,.proof-card strong { font-size:var(--type-subhead); line-height:1; letter-spacing:-.045em; }
+    .statement-bottom p,.work-head p:last-child,.system-head > p:last-child,.system-guide p,.trust-intro,.fudge-intro,.final-cta-copy { font-size:var(--type-body); line-height:1.45; }
+    .statement,.system,.trust,.proof,.fudge { padding-block:clamp(76px,9vw,130px); }
+    .final-cta { min-height:82svh; }
+    .proof-head { grid-template-columns:1.35fr .85fr; align-items:end; }
+    .proof-lead h2 { max-width:none; margin:0; text-transform:none; }
+    .testimonial-intro { max-width:44ch; margin:24px 0 0; color:#777169; font-size:var(--type-body); line-height:1.45; }
+    .proof-side { display:flex; flex-direction:column; align-items:flex-start; gap:22px; }
+    .proof-side .rating { display:flex; flex-direction:column; gap:6px; }
+    .proof-side .stars { color:var(--red); letter-spacing:.2em; font-size:18px; }
+    .proof-side .rnum { color:#777169; font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .award-badge { display:grid; gap:6px; min-width:198px; padding:18px 20px; border:1px solid #cfc9c1; }
+    .award-badge span { color:#777169; font:500 9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; text-transform:uppercase; }
+    .award-badge strong { font-size:22px; line-height:1; text-transform:uppercase; }
+    .award-badge span:last-child { color:var(--red); }
+    .testimonial-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:clamp(58px,7vw,100px); border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); background:#cfc9c1; }
+    .testimonial-card { display:flex; flex-direction:column; min-height:315px; margin:0; padding:24px 24px 28px; background:var(--paper); }
+    .testimonial-stars { color:var(--red); letter-spacing:.18em; font-size:13px; }
+    .testimonial-card blockquote { margin:34px 0 30px; font-family:"Instrument Serif",Georgia,serif; font-size:clamp(23px,2vw,31px); line-height:1.08; letter-spacing:-.035em; }
+    .testimonial-card figcaption { display:flex; align-items:center; gap:12px; margin-top:auto; }
+    .testimonial-card figcaption > span:last-child { display:flex; flex-direction:column; gap:4px; }
+    .testimonial-card strong { font-size:13px; }
+    .testimonial-card small { color:#777169; font:500 9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .testimonial-avatar { display:grid; width:38px; height:38px; place-items:center; border-radius:50%; background:var(--ink); color:#fff; font:500 10px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .testimonial-foot { display:flex; align-items:center; justify-content:space-between; gap:25px; margin-top:24px; color:#777169; font:500 9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.08em; text-transform:uppercase; }
+    @media (max-width:840px) { .proof-head { display:block; } .proof-side { flex-direction:row; flex-wrap:wrap; margin-top:30px; } .testimonial-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:560px) { .testimonial-grid { grid-template-columns:1fr; } .testimonial-foot { display:block; } .testimonial-foot > span { display:block; margin-top:16px; } }
   </style>
 </head>
 <body>
@@ -243,173 +292,157 @@
         <a class="wordmark" href="#top" aria-label="Rysing home">RYSING<sup>®</sup></a>
         <div class="nav-right">
           <nav class="nav-links" aria-label="Primary navigation">
-            <a href="#work">Work</a><a href="#approach">Approach</a><a href="#contact">Contact</a>
+            <a href="#work">Work</a><a href="#system">Services</a><a href="#spotlight">Keynote</a><a href="#sunday-fudge">Sunday Fudge</a>
           </nav>
-          <a class="conversation" href="mailto:hello@rysing.studio">Start a conversation</a>
+          <a class="conversation" href="#contact">Apply to work with us</a>
         </div>
       </header>
       <div class="hero-copy" id="top">
-        <p class="kicker">Personal brand studio · Vienna / Global</p>
-        <h1>Rysing makes the world see the <em>expertise</em> already there.</h1>
+        <p class="kicker"></p>
+        <h1>Rise into visibility, authority &amp; scale with a differentiated brand, authentic content and predictable sales funnels.</h1>
       </div>
       <span class="scroll" aria-hidden="true">Scroll</span>
     </section>
     <section class="statement" id="approach">
       <p class="section-label">Who we work with</p>
-      <h2>Exceptional work should not be a <em>well-kept secret.</em></h2>
+      <h2>For courageous brands and ambitious founders who want to build a <em>legacy</em> and create a lasting impact</h2>
       <div class="statement-bottom">
-        <p>Rysing works with founders and experts whose reputation needs to reflect the quality, ambition and consequence of their work.</p>
+        <p></p>
         <span class="statement-number">01 / 06</span>
       </div>
     </section>
     <section class="work" id="work">
       <div class="work-head">
         <p class="section-label">Selected work</p>
-        <p>Distinct expressions of the same ambition: a reputation that is felt before it is explained.</p>
+        <p></p>
       </div>
       <div class="work-list">
         <article class="project">
           <img src="rysing-assets/anzhelika-office.webp" alt="Editorial founder portrait" loading="lazy" decoding="async" />
           <div class="project-shade"></div>
           <span class="project-number">01</span><span class="project-type">Founder positioning</span>
-          <div class="project-copy"><h3>Built to be recognised.</h3><p>A clear position and a presence designed to meet the level of the work.</p><a href="#contact">Discuss a project <span>↗</span></a></div>
+          <div class="project-copy"><h3>Project One</h3><p></p><a href="#contact"></a></div>
         </article>
         <article class="project">
           <img src="rysing-assets/anzhelika-chair.webp" alt="Founder seated in a studio" loading="lazy" decoding="async" />
           <div class="project-shade"></div>
           <span class="project-number">02</span><span class="project-type">Identity &amp; website</span>
-          <div class="project-copy"><h3>A presence with weight.</h3><p>An editorial identity and digital home that give a point of view somewhere to land.</p><a href="#contact">Discuss a project <span>↗</span></a></div>
+          <div class="project-copy"><h3>Project Two</h3><p></p><a href="#contact"></a></div>
         </article>
         <article class="project">
           <img src="rysing-assets/reel-03.jpg" alt="Speaker on stage" loading="lazy" decoding="async" />
           <div class="project-shade"></div>
           <span class="project-number">03</span><span class="project-type">Speaker platform</span>
-          <div class="project-copy"><h3>Authority on stage.</h3><p>Positioning and presence for ideas that deserve to carry beyond the room.</p><a href="#contact">Discuss a project <span>↗</span></a></div>
+          <div class="project-copy"><h3>Project Three</h3><p></p><a href="#contact"></a></div>
         </article>
       </div>
     </section>
     <section class="system" id="system">
       <div class="system-head">
-        <p class="section-label">The Rysing System</p>
-        <h2>One connected system for becoming the <em>clear choice.</em></h2>
-        <p>Each stage builds on the one before it, so your reputation feels coherent wherever people encounter you.</p>
+        <p class="section-label">Programs</p>
+        <h2>We can grow your brand on four levels</h2>
+        <p>We are based in Vienna, Austria and we operate across Europe.</p>
       </div>
       <div class="system-guide">
-        <p>From finding the position only you can own to turning recognition into demand, invitations and commercial opportunity.</p>
-        <span>Explore each stage</span>
+        <p></p>
+        <span></span>
       </div>
       <div class="system-list">
         <details class="system-item" open>
-          <summary class="system-toggle"><b>01</b><h3>Positioning</h3><p>Claim a distinct, valuable place in the market.</p><i class="system-symbol" aria-hidden="true"></i></summary>
+          <summary class="system-toggle"><b>01</b><h3>Brand Building</h3><p>For those who want to become the only choice in their industry</p><i class="system-symbol" aria-hidden="true"></i></summary>
           <div class="system-detail"><div class="system-outcome"><span>Stage outcome</span><p class="system-phrase">Be understood — and remembered.</p></div><div class="system-tags"><span>Brand strategy</span><span>Category position</span><span>Message architecture</span><span>Offer narrative</span></div></div>
         </details>
         <details class="system-item">
-          <summary class="system-toggle"><b>02</b><h3>Identity</h3><p>Make the quality of your work visible before you speak.</p><i class="system-symbol" aria-hidden="true"></i></summary>
+          <summary class="system-toggle"><b>02</b><h3>Design &amp; Websites</h3><p>For those who want a differentiated and scalable brand presence</p><i class="system-symbol" aria-hidden="true"></i></summary>
           <div class="system-detail"><div class="system-outcome"><span>Stage outcome</span><p class="system-phrase">Become unmistakably you.</p></div><div class="system-tags"><span>Visual identity</span><span>Website direction</span><span>Editorial art direction</span><span>Photography</span></div></div>
         </details>
         <details class="system-item">
-          <summary class="system-toggle"><b>03</b><h3>Visibility</h3><p>Carry your point of view into the rooms that matter.</p><i class="system-symbol" aria-hidden="true"></i></summary>
+          <summary class="system-toggle"><b>03</b><h3>LinkedIn &amp; Instagram Marketing</h3><p>For those who want to grow their influence on social media</p><i class="system-symbol" aria-hidden="true"></i></summary>
           <div class="system-detail"><div class="system-outcome"><span>Stage outcome</span><p class="system-phrase">Be seen in the right places.</p></div><div class="system-tags"><span>Thought leadership</span><span>Content systems</span><span>Speaker platform</span><span>Showreels</span></div></div>
         </details>
         <details class="system-item">
-          <summary class="system-toggle"><b>04</b><h3>Opportunity</h3><p>Convert recognition into demand, invitations and growth.</p><i class="system-symbol" aria-hidden="true"></i></summary>
+          <summary class="system-toggle"><b>04</b><h3>Lead Gen &amp; Sales</h3><p>For those ready to scale up and monetise their knowledge, programs, or services</p><i class="system-symbol" aria-hidden="true"></i></summary>
           <div class="system-detail"><div class="system-outcome"><span>Stage outcome</span><p class="system-phrase">Be chosen for what comes next.</p></div><div class="system-tags"><span>Audience journey</span><span>Offer ecosystem</span><span>Commercial narrative</span><span>Launch direction</span></div></div>
         </details>
       </div>
     </section>
     <section class="trust" id="recognition" aria-labelledby="recognition-title">
       <div class="trust-head">
-        <p class="section-label">Recognition</p>
-        <div class="trust-message">
-          <h2 id="recognition-title">Recognition is built, not <em>borrowed.</em></h2>
-          <p class="trust-intro">The aim is not attention for its own sake. It is a reputation that makes the value of your work easier to see, remember and choose.</p>
-        </div>
+        <h2 class="trust-logo-heading">Trusted by founders, speakers<br />and teams across Europe</h2>
       </div>
-      <div class="trust-audiences" aria-label="What recognition looks like">
-        <div class="trust-audience"><b>01</b><span>Known for something valuable</span><i aria-hidden="true"></i></div>
-        <div class="trust-audience"><b>02</b><span>Recognised on sight</span><i aria-hidden="true"></i></div>
-        <div class="trust-audience"><b>03</b><span>Heard in the right rooms</span><i aria-hidden="true"></i></div>
-        <div class="trust-audience"><b>04</b><span>Chosen for the right opportunities</span><i aria-hidden="true"></i></div>
+      <div class="trust-logo-wall" aria-label="Client logos">
+        <span>Northwind</span><span>Atlas&amp;Co</span><span>Keystone</span><span>Lumen</span>
+        <span>Brightside</span><span>Meridian</span><span>Vero</span><span>Aurora</span>
+        <span>Northwind</span><span>Atlas&amp;Co</span><span>Keystone</span><span>Lumen</span>
+        <span>Brightside</span><span>Meridian</span><span>Vero</span><span>Aurora</span>
       </div>
-      <p class="trust-note">Selected client names and recognition marks will appear here following approval.</p>
+      <p class="trust-note">↳ Placeholder client logos — send yours and I'll drop them in.</p>
     </section>
     <section class="proof" id="proof" aria-labelledby="proof-title">
       <div class="proof-head">
-        <p class="section-label">Testimonials &amp; proof</p>
-        <h2 id="proof-title">Proof, not <em>promises.</em></h2>
-      </div>
-      <div class="proof-grid">
-        <article class="proof-feature">
-          <p class="proof-status">Testimonial pending approval</p>
-          <blockquote>“Add the client’s strongest transformation story here — in their own words.”</blockquote>
-          <footer>
-            <cite>Client name · Role · Company<br />Publication permission pending</cite>
-            <span class="proof-mark" aria-hidden="true">”</span>
-          </footer>
-        </article>
-        <div class="proof-stack">
-          <article class="proof-card">
-            <p class="proof-card-label">Before → After</p>
-            <div>
-              <strong>A visible transformation.</strong>
-              <p>Add one verified change in positioning, perception or visibility here.</p>
-            </div>
-          </article>
-          <article class="proof-card">
-            <p class="proof-card-label">Evidence</p>
-            <div>
-              <strong>A result worth showing.</strong>
-              <p>Add a verified number, recognition, invitation or commercial outcome here.</p>
-            </div>
-          </article>
+        <div class="proof-lead">
+          <h2 id="proof-title">In their words</h2>
+          <p class="testimonial-intro">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction — here's what founders say after working with us.</p>
+        </div>
+        <div class="proof-side">
+          <div class="rating"><span class="stars">★★★★★</span><span class="rnum">4.9 / 5 · 49 reviews</span></div>
+          <div class="award-badge"><span>Certified 2025</span><strong>HIPE Award</strong><span>Outstanding service</span></div>
         </div>
       </div>
-      <div class="proof-note">
-        <span>Evidence standard · Verified before publication</span>
-        <span>Replace all placeholder content with approved client language, attribution and results.</span>
+      <div class="testimonial-grid">
+        <figure class="testimonial-card"><div class="testimonial-stars">★★★★★</div><blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote><figcaption><span class="testimonial-avatar">MH</span><span><strong>Marcus H.</strong><small>Founder, B2B SaaS</small></span></figcaption></figure>
+        <figure class="testimonial-card"><div class="testimonial-stars">★★★★★</div><blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote><figcaption><span class="testimonial-avatar">EV</span><span><strong>Elena V.</strong><small>Keynote speaker</small></span></figcaption></figure>
+        <figure class="testimonial-card"><div class="testimonial-stars">★★★★★</div><blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote><figcaption><span class="testimonial-avatar">TR</span><span><strong>Tobias R.</strong><small>Agency owner</small></span></figcaption></figure>
+        <figure class="testimonial-card"><div class="testimonial-stars">★★★★★</div><blockquote>“Finally a brand that actually sounds like me — and converts. Best investment I've made this year.”</blockquote><figcaption><span class="testimonial-avatar">SL</span><span><strong>Sophie L.</strong><small>Consultant</small></span></figcaption></figure>
+        <figure class="testimonial-card"><div class="testimonial-stars">★★★★★</div><blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote><figcaption><span class="testimonial-avatar">DK</span><span><strong>Daniel K.</strong><small>Co-founder, DTC brand</small></span></figcaption></figure>
+        <figure class="testimonial-card"><div class="testimonial-stars">★★★★★</div><blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote><figcaption><span class="testimonial-avatar">NS</span><span><strong>Nadia S.</strong><small>Executive coach</small></span></figcaption></figure>
+      </div>
+      <div class="testimonial-foot">
+        <a class="source-link" href="#proof">Read all 49 reviews <span aria-hidden="true">→</span></a>
+        <span>Placeholder quotes — swap in your real reviews.</span>
       </div>
     </section>
     <section class="spotlight" id="spotlight" aria-labelledby="spotlight-title">
       <div class="spotlight-shell">
         <div class="spotlight-copy">
           <div class="spotlight-topline">
-            <p class="spotlight-label">The Spotlight Framework</p>
-            <p class="spotlight-program">Powered through 95 Days</p>
+            <p class="spotlight-label">For keynote speakers</p>
+            <p class="spotlight-program"></p>
           </div>
-          <h2 id="spotlight-title">Step into the <em>spotlight.</em></h2>
-          <p class="spotlight-intro">A focused 95-day program that turns established expertise into a position, presence and visibility people can recognise — and choose.</p>
-          <a class="spotlight-cta" href="mailto:hello@rysing.studio?subject=Tell%20me%20about%2095%20Days">Explore the program <span aria-hidden="true">↗</span></a>
+          <h2 id="spotlight-title">We bring company founders into the spotlight</h2>
+          <p class="spotlight-intro">Build your speaker brand and rise into thought leadership.</p>
+          <a class="spotlight-cta" href="#contact">Learn more <span aria-hidden="true">→</span></a>
         </div>
         <div class="spotlight-visual">
-          <span class="spotlight-days" aria-hidden="true">95</span>
+          <span class="spotlight-days" aria-hidden="true"></span>
           <img src="rysing-assets/anzhelika-cutout.webp" alt="Anzhelika, founder of Rysing Studio" loading="lazy" decoding="async" />
-          <span class="spotlight-foundation">Founder-led · Studio-delivered</span>
+          <span class="spotlight-foundation"></span>
         </div>
         <div class="spotlight-path" aria-label="The three phases of the 95 Days program">
-          <div class="spotlight-phase"><span>Days 01—25 · Position</span><strong>Find the place only you can own.</strong></div>
-          <div class="spotlight-phase"><span>Days 26—60 · Build</span><strong>Create a presence with weight.</strong></div>
-          <div class="spotlight-phase"><span>Days 61—95 · Rise</span><strong>Become visible in the right rooms.</strong></div>
+          <div class="spotlight-phase"><span></span><strong></strong></div>
+          <div class="spotlight-phase"><span></span><strong></strong></div>
+          <div class="spotlight-phase"><span></span><strong></strong></div>
         </div>
       </div>
     </section>
     <section class="fudge" id="sunday-fudge" aria-labelledby="fudge-title">
       <div class="fudge-grid">
         <div class="fudge-copy">
-          <p class="section-label">Sunday Fudge</p>
-          <h2 id="fudge-title">Ideas worth <em>stealing.</em></h2>
-          <p class="fudge-intro">A Sunday note for founders and experts building a reputation people remember. Sharp perspective, useful prompts and the occasional uncomfortable truth.</p>
+          <p class="section-label">Newsletter — Sunday Fudge</p>
+          <h2 id="fudge-title">Get free access to my business and marketing mini-courses</h2>
+          <p class="fudge-intro">Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
           <ul class="fudge-points" aria-label="What Sunday Fudge includes">
             <li>Sharp perspective</li>
             <li>Useful prompts</li>
             <li>Sunday delivery</li>
           </ul>
           <form class="fudge-form" id="fudge-form">
-            <label class="section-label" for="fudge-email">Join the list</label>
+            <label class="section-label" for="fudge-email"></label>
             <div class="fudge-field">
-              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Your email address" required aria-describedby="fudge-status" />
-              <button type="submit">Get Sunday Fudge <span aria-hidden="true">↗</span></button>
+              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Email" required aria-describedby="fudge-status" />
+              <button type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
             </div>
-            <p class="fudge-form-note" id="fudge-status" role="status" aria-live="polite">Preview only · Mailing-list connection pending</p>
+            <p class="fudge-form-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
           </form>
         </div>
         <div class="fudge-art" aria-label="Sunday Fudge newsletter cover">
@@ -424,16 +457,16 @@
     </section>
     <section class="final-cta" id="contact" aria-labelledby="contact-title">
       <div class="final-cta-top">
-        <p class="final-cta-label">Your next chapter</p>
-        <p class="final-cta-index">06 / 06</p>
+        <p class="final-cta-label">Ready when you are</p>
+        <p class="final-cta-index"></p>
       </div>
       <span class="cta-star" aria-hidden="true"></span>
-      <h2 id="contact-title">Ready to become the <em>clear choice?</em></h2>
+      <h2 id="contact-title">Turn your business vision into a unique brand and scalable system</h2>
       <div class="final-cta-bottom">
-        <p class="final-cta-copy">If the quality of your reputation has not caught up with the quality of your work, this is where that changes.</p>
+        <p class="final-cta-copy"></p>
         <div class="final-cta-actions">
-          <a class="final-cta-email" href="mailto:hello@rysing.studio">hello@rysing.studio</a>
-          <a class="final-cta-button" href="mailto:hello@rysing.studio?subject=Start%20a%20conversation%20with%20Rysing">Start a conversation <span aria-hidden="true">↗</span></a>
+          <a class="final-cta-email" href="mailto:hello@rysing.agency"></a>
+          <a class="final-cta-button" href="mailto:hello@rysing.agency">Apply to work with us <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
@@ -442,39 +475,39 @@
     <div class="footer-grid">
       <div class="footer-intro">
         <a class="footer-logo" href="#top" aria-label="Rysing home">RYSING<sup>®</sup></a>
-        <p>A founder-led people-branding studio making exceptional expertise visible, recognised and chosen.</p>
+        <p>Brand, content and sales for founders who want to become the only choice in their industry.</p>
       </div>
       <nav class="footer-column" aria-label="Footer navigation">
-        <h2>Explore</h2>
+        <h2>Company</h2>
         <ul class="footer-links">
-          <li><a href="#work">Selected work</a></li>
-          <li><a href="#approach">Approach</a></li>
-          <li><a href="#system">The Rysing System</a></li>
-          <li><a href="#proof">Proof</a></li>
-          <li><a href="#spotlight">95 Days</a></li>
+          <li><a href="#system">Services</a></li>
+          <li><a href="#spotlight">Keynote speaking</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#sunday-fudge">Sunday Fudge</a></li>
+          <li><a href="#contact">Apply to work with us</a></li>
           <li><a href="#sunday-fudge">Sunday Fudge</a></li>
         </ul>
       </nav>
       <div class="footer-column">
         <h2>Contact</h2>
         <ul class="footer-links">
-          <li><a href="mailto:hello@rysing.studio">hello@rysing.studio</a></li>
-          <li><span>Vienna · Working globally</span></li>
+        <li><a href="mailto:hello@rysing.agency">hello@rysing.agency</a></li>
+        <li><a href="#">rysing.agency</a></li>
+        <li><span>Vienna, Austria</span></li>
         </ul>
       </div>
       <div class="footer-column">
-        <h2>Follow</h2>
-        <ul class="footer-links">
-          <li><span class="footer-pending">LinkedIn<small>Link pending</small></span></li>
-          <li><span class="footer-pending">Instagram<small>Link pending</small></span></li>
-        </ul>
+        <h2></h2>
+        <ul class="footer-links"></ul>
       </div>
     </div>
     <div class="footer-meta">
-      <span>© 2026 Rysing Studio</span>
+      <span>© 2026 rysing — Vienna, Austria. All rights reserved.</span>
       <div class="footer-meta-links">
-        <span>Privacy · Pending</span>
-        <span>Legal · Pending</span>
+        <span><a href="#">Imprint</a></span>
+        <span><a href="#">Privacy Policy</a></span>
+        <span><a href="#">Terms &amp; Conditions</a></span>
+        <span><a href="#">Cookie Policy</a></span>
       </div>
       <a href="#top">Back to top ↑</a>
     </div>
