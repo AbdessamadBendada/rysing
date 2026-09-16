@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>rysing: Branding Agency, Vienna</title>
+  <meta name="description" content="Rysing is a people-branding studio in Vienna. Brand, content and sales for founders who want to become the only choice in their industry." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif:ital@0;1&display=swap" />
+
+  <style>
+    /* ============================================================
+       RYSING V2
+       Copy is identical to rysing.html. Only the design system,
+       hierarchy, spacing and motion have been rebuilt.
+       The one exception is the clearly flagged PROPOSED FOUNDER
+       SECTION, which carries new copy for review.
+       ============================================================ */
+
+    /* --- 1. Tokens ------------------------------------------- */
+    :root {
+      --paper:#f5f3f0;
+      --paper-warm:#efebe6;
+      --ink:#10100f;
+      --ink-soft:#1b1a18;
+      --red:#f04222;
+      --line:#dcd6ce;
+      --line-dark:rgba(255,255,255,.16);
+      --muted:#6e6860;          /* 5.2:1 on paper, passes AA at small sizes */
+      --muted-dark:#a49e96;     /* 6.1:1 on ink */
+
+      /* One deliberate scale. Each tier has a job. */
+      --d-manifesto:clamp(40px,6.4vw,104px);   /* the two statement moments */
+      --d-moment:clamp(36px,5vw,78px);         /* spotlight + final CTA */
+      --d-section:clamp(31px,3.6vw,58px);      /* section headings */
+      --d-sub:clamp(21px,2vw,32px);            /* project + programme titles */
+      --d-quote:clamp(20px,1.75vw,27px);       /* testimonial quotes */
+      --body:clamp(15px,1.15vw,18px);
+      --body-sm:14px;
+      --label:11px;
+
+      --gutter:clamp(20px,3.2vw,54px);
+      --pad-section:clamp(88px,10vw,168px);
+      --ease:cubic-bezier(.2,.75,.2,1);
+    }
+
+    /* --- 2. Base --------------------------------------------- */
+    * { box-sizing:border-box; }
+    html { background:var(--ink); scroll-behavior:smooth; }
+    body {
+      margin:0; background:var(--paper); color:var(--ink);
+      font-family:"Instrument Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size:var(--body); line-height:1.5;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a { color:inherit; text-decoration:none; }
+    img,video { display:block; }
+    :focus-visible { outline:2px solid var(--red); outline-offset:4px; }
+
+    /* Editorial voice. Serif carries every headline. */
+    .display { font-family:"Instrument Serif",Georgia,"Times New Roman",serif; font-weight:400; }
+
+    /* Brand voice. Sans carries the wordmark and one newsletter moment. */
+    .wordmark-type { font-weight:700; letter-spacing:-.06em; text-transform:uppercase; }
+
+    /* Micro-labels: sans, generous tracking. Mono is reserved for numerals only. */
+    .label {
+      font-size:var(--label); font-weight:500;
+      letter-spacing:.2em; text-transform:uppercase;
+    }
+    .numeral {
+      font:500 var(--label) ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.12em; font-variant-numeric:tabular-nums;
+    }
+
+    .skip-link {
+      position:fixed; z-index:30; top:12px; left:12px; padding:13px 17px;
+      background:var(--ink); color:#fff; transform:translateY(-160%);
+      transition:transform .2s var(--ease);
+      font-size:var(--label); font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+    }
+    .skip-link:focus { transform:none; }
+
+    /* Eyebrows removed at the client's request. Copy retained in the markup. */
+    .section-label,.kicker { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+    /* --- 3. Reveal motion ------------------------------------- */
+    [data-reveal] { opacity:0; transform:translateY(20px); }
+    .revealed [data-reveal] { opacity:1; transform:none; transition:opacity .9s var(--ease),transform .9s var(--ease); }
+    .revealed [data-reveal="2"] { transition-delay:.1s; }
+    .revealed [data-reveal="3"] { transition-delay:.2s; }
+    .revealed [data-reveal="4"] { transition-delay:.3s; }
+    .no-js [data-reveal] { opacity:1; transform:none; }
+
+    /* --- 4. Hero ---------------------------------------------- */
+    .hero { height:100svh; min-height:620px; position:relative; overflow:hidden; background:#080808; color:#fff; }
+    .hero-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .hero-shade {
+      position:absolute; inset:0;
+      background:
+        linear-gradient(to top,rgba(0,0,0,.80),rgba(0,0,0,.30) 42%,rgba(0,0,0,.02) 72%),
+        linear-gradient(to bottom,rgba(0,0,0,.52),transparent 24%);
+    }
+    .nav {
+      position:absolute; z-index:3; inset:0 0 auto; height:86px;
+      padding:0 var(--gutter); display:flex; align-items:center; justify-content:space-between;
+    }
+    .wordmark { font-size:21px; line-height:1; }
+    .wordmark sup { margin-left:3px; color:var(--red); font-size:7px; vertical-align:top; letter-spacing:0; }
+    .nav-right { display:flex; align-items:center; gap:clamp(20px,3vw,46px); }
+    .nav-links { display:flex; gap:clamp(20px,3vw,46px); }
+    .nav-links a { color:rgba(255,255,255,.78); transition:color .25s; }
+    .nav-links a:hover { color:#fff; }
+    .conversation {
+      position:relative; padding-bottom:8px; color:#fff;
+      transition:color .25s;
+    }
+    .conversation:after {
+      content:""; position:absolute; left:0; bottom:0; width:100%; height:1px;
+      background:rgba(255,255,255,.55); transform-origin:left;
+      transition:transform .45s var(--ease),background .25s;
+    }
+    .conversation:hover { color:var(--red); }
+    .conversation:hover:after { background:var(--red); transform:scaleX(1.02); }
+
+    .hero-copy {
+      position:absolute; z-index:2; left:var(--gutter); bottom:clamp(48px,6.5vw,96px);
+      width:min(660px,calc(100% - (var(--gutter) * 2)));
+    }
+    /* Deliberately the quietest headline on the page: it is a long sentence
+       sitting over motion. The showreel is the hero, not the type. */
+    .hero-copy h1 {
+      margin:0; max-width:26ch;
+      font-size:clamp(24px,2.35vw,40px); font-weight:400; line-height:1.24; letter-spacing:-.02em;
+      color:rgba(255,255,255,.96);
+    }
+    .hero-rule { width:44px; height:1px; margin:0 0 26px; background:var(--red); transform-origin:left; animation:ruleIn 1.1s .3s var(--ease) both; }
+    .scroll {
+      position:absolute; z-index:2; right:var(--gutter); bottom:clamp(50px,6.5vw,98px);
+      display:flex; align-items:center; gap:14px; color:rgba(255,255,255,.7);
+    }
+    .scroll:before { content:""; width:46px; height:1px; background:rgba(255,255,255,.45); animation:scrollPulse 2.8s var(--ease) infinite; transform-origin:left; }
+
+    @keyframes ruleIn { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+    @keyframes scrollPulse { 0%,100% { transform:scaleX(.5); opacity:.5; } 50% { transform:scaleX(1); opacity:1; } }
+
+    /* --- 5. Statement (largest moment on the page) ------------- */
+    .statement {
+      min-height:84svh; padding:var(--pad-section) var(--gutter);
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .statement h2 {
+      margin:0; max-width:18ch;
+      font-size:var(--d-manifesto); line-height:.96; letter-spacing:-.035em;
+    }
+    .statement h2 em { font-style:italic; color:var(--red); }
+    .statement-bottom {
+      display:flex; justify-content:flex-end; align-items:center;
+      margin-top:clamp(56px,7vw,110px); padding-top:20px; border-top:1px solid var(--ink);
+    }
+    .statement-number { color:var(--muted); }
+
+    /* --- 6. Selected work -------------------------------------- */
+    .work { padding:var(--pad-section) var(--gutter); background:var(--ink); color:#fff; }
+    .work-list {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(14px,1.6vw,26px);
+    }
+    .project { position:relative; display:block; }
+    .project-frame {
+      position:relative; overflow:hidden; aspect-ratio:3/4; background:#000;
+    }
+    .project img {
+      width:100%; height:100%; object-fit:cover;
+      filter:saturate(.78) contrast(1.05);
+      transform:scale(1.04); transition:transform 1.1s var(--ease),filter .6s;
+    }
+    .project:hover img,.project:focus-within img { transform:scale(1); filter:saturate(.95) contrast(1.02); }
+    .project:nth-child(1) img { object-position:center 16%; }
+    .project:nth-child(2) img { object-position:center 20%; }
+    .project-frame:after {
+      content:""; position:absolute; inset:auto 0 0; height:1px; background:var(--red);
+      transform:scaleX(0); transform-origin:left; transition:transform .7s var(--ease);
+    }
+    .project:hover .project-frame:after,.project:focus-within .project-frame:after { transform:scaleX(1); }
+    .project-meta {
+      display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+      padding-top:18px;
+    }
+    .project-number,.project-type { color:var(--muted-dark); }
+    .project-type { font-size:var(--label); font-weight:500; letter-spacing:.18em; text-transform:uppercase; text-align:right; }
+    .project h3 {
+      margin:14px 0 0; font-size:var(--d-sub); line-height:1.02; letter-spacing:-.03em;
+    }
+
+    /* --- 7. Programmes ----------------------------------------- */
+    .system { padding:var(--pad-section) var(--gutter); }
+    .system-head {
+      display:grid; grid-template-columns:1.6fr 1fr; gap:clamp(36px,5vw,90px);
+      align-items:end; margin-bottom:clamp(56px,7vw,104px);
+    }
+    .system-head h2 { margin:0; max-width:13ch; font-size:var(--d-section); line-height:.98; letter-spacing:-.035em; }
+    .system-head > p:last-child { margin:0; max-width:28ch; color:var(--muted); }
+
+    .system-list { border-top:1px solid var(--ink); }
+    .system-item { position:relative; border-bottom:1px solid var(--line); }
+    .system-item:before {
+      content:""; position:absolute; z-index:2; top:-1px; left:0; width:0; height:1px;
+      background:var(--red); transition:width .7s var(--ease);
+    }
+    .system-item[open]:before { width:100%; }
+    .system-toggle {
+      width:100%; display:grid; grid-template-columns:76px 1.1fr 1.6fr 26px; gap:clamp(18px,2.4vw,34px);
+      align-items:center; padding:clamp(26px,2.8vw,38px) 0;
+      border:0; background:none; color:var(--ink); text-align:left; cursor:pointer; list-style:none;
+    }
+    .system-toggle::-webkit-details-marker { display:none; }
+    .system-toggle > b { color:#b8b1a8; font-size:clamp(22px,2vw,30px); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; transition:color .4s; }
+    .system-item[open] .system-toggle > b { color:var(--red); }
+    .system-toggle h3 {
+      margin:0; font-size:var(--d-sub); font-weight:400; line-height:1.04; letter-spacing:-.03em;
+      transition:transform .45s var(--ease);
+    }
+    .system-item[open] .system-toggle h3 { transform:translateX(6px); }
+    .system-toggle p { margin:0; max-width:46ch; color:var(--muted); font-size:var(--body-sm); line-height:1.5; }
+    .system-symbol { position:relative; width:22px; height:22px; justify-self:end; }
+    .system-symbol:before,.system-symbol:after {
+      content:""; position:absolute; top:50%; left:0; width:100%; height:1px;
+      background:var(--ink); transition:transform .35s var(--ease),background .3s;
+    }
+    .system-symbol:after { transform:rotate(90deg); }
+    .system-item[open] .system-symbol:before,.system-item[open] .system-symbol:after { background:var(--red); }
+    .system-item[open] .system-symbol:after { transform:rotate(0); }
+
+    /* The open tray is ink, not red. Red is saved for the two real moments. */
+    .system-detail {
+      display:grid; grid-template-columns:76px 1.1fr 1.6fr 26px; gap:clamp(18px,2.4vw,34px);
+      margin:0 calc(var(--gutter) * -1); padding:0 var(--gutter) clamp(34px,4vw,54px);
+      position:relative; overflow:hidden; color:#fff;
+    }
+    .system-detail:before {
+      content:""; position:absolute; z-index:0; inset:0; background:var(--ink-soft);
+      transform:scaleX(0); transform-origin:left;
+    }
+    .system-item[open] .system-detail:before { animation:trayReveal .6s var(--ease) both; }
+    .system-outcome,.system-tags { position:relative; z-index:1; }
+    .system-outcome { grid-column:2; padding-top:clamp(26px,3vw,38px); }
+    .system-outcome span { display:block; margin-bottom:12px; color:var(--muted-dark); font-size:var(--label); font-weight:500; letter-spacing:.2em; text-transform:uppercase; }
+    .system-phrase { margin:0; max-width:14ch; font-size:var(--d-sub); line-height:1.06; letter-spacing:-.03em; }
+    .system-tags {
+      grid-column:3; align-self:end; display:flex; flex-wrap:wrap; gap:8px;
+      padding-top:clamp(26px,3vw,38px);
+    }
+    .system-tags span {
+      padding:8px 14px; border:1px solid rgba(255,255,255,.28); border-radius:999px; color:rgba(255,255,255,.88);
+      font-size:var(--label); font-weight:500; letter-spacing:.08em;
+    }
+    .system-item[open] .system-outcome,.system-item[open] .system-tags { animation:trayContent .5s .2s var(--ease) both; }
+
+    @keyframes trayReveal { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+    @keyframes trayContent { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+
+    /* --- 8. Trust / logo wall ---------------------------------- */
+    .trust { padding:var(--pad-section) var(--gutter); background:var(--ink); color:#fff; }
+    .trust h2 { margin:0; max-width:18ch; font-size:var(--d-section); line-height:1; letter-spacing:-.035em; }
+    /* A logo wall should sit quietly beneath the statement, not compete with it. */
+    .trust-logo-wall {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      margin-top:clamp(48px,6vw,86px); border-top:1px solid var(--line-dark);
+    }
+    .trust-logo-wall span {
+      display:grid; place-items:center; min-height:clamp(92px,8.5vw,124px); padding:18px;
+      border-right:1px solid var(--line-dark); border-bottom:1px solid var(--line-dark);
+      color:rgba(245,243,240,.52); font-size:clamp(15px,1.35vw,20px); font-weight:500;
+      letter-spacing:.01em; text-align:center; transition:color .4s;
+    }
+    .trust-logo-wall span:hover { color:rgba(245,243,240,.92); }
+    .trust-logo-wall span:nth-child(4n) { border-right:0; }
+    .trust-logo-wall span:nth-last-child(-n+4) { border-bottom:0; }
+    .trust-note { margin:20px 0 0; color:#7d7871; font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase; line-height:1.6; }
+
+    /* --- 9. Proof ----------------------------------------------- */
+    .proof { padding:var(--pad-section) var(--gutter); }
+    .proof-head {
+      display:grid; grid-template-columns:1.5fr .9fr; gap:clamp(36px,5vw,80px);
+      align-items:end; margin-bottom:clamp(52px,6vw,88px);
+    }
+    .proof h2 { margin:0; max-width:11ch; font-size:var(--d-section); line-height:.98; letter-spacing:-.035em; }
+    .testimonial-intro { margin:22px 0 0; max-width:48ch; color:var(--muted); }
+    /* Typographic lockup instead of a bordered badge box. */
+    .proof-side { display:flex; flex-direction:column; gap:26px; align-items:flex-start; }
+    .proof-side .rating { display:flex; flex-direction:column; gap:8px; }
+    .stars { color:var(--red); font-size:12px; letter-spacing:.34em; }
+    .rnum { color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+    .award-badge { display:grid; gap:7px; padding-left:18px; border-left:1px solid var(--red); }
+    .award-badge span { color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+    .award-badge strong { font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-size:clamp(22px,1.9vw,29px); line-height:1; letter-spacing:-.02em; }
+    .award-badge span:last-child { color:var(--red); }
+
+    /* Editorial quote field, not review cards. Hairlines only, no boxes. */
+    .testimonial-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+      background:var(--line); border-top:1px solid var(--ink); border-bottom:1px solid var(--ink);
+    }
+    .testimonial-card {
+      display:flex; flex-direction:column; margin:0;
+      padding:clamp(30px,3.4vw,50px) clamp(24px,2.6vw,40px);
+      background:var(--paper); transition:background .5s;
+    }
+    .testimonial-card:hover { background:var(--paper-warm); }
+    .testimonial-card blockquote {
+      margin:0 0 auto;
+      font-family:"Instrument Serif",Georgia,serif; font-weight:400;
+      font-size:var(--d-quote); line-height:1.3; letter-spacing:-.02em;
+    }
+    .testimonial-card figcaption {
+      display:flex; align-items:baseline; gap:12px; margin-top:clamp(34px,4vw,56px);
+      padding-top:16px; border-top:1px solid var(--line);
+    }
+    .testimonial-avatar { color:var(--red); font:500 var(--label) ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; }
+    .testimonial-card figcaption > span:last-child { display:flex; flex-direction:column; gap:5px; }
+    .testimonial-card strong { font-size:var(--body-sm); font-weight:500; }
+    .testimonial-card small { color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase; }
+    .testimonial-stars { margin-bottom:24px; color:var(--red); font-size:11px; letter-spacing:.3em; }
+    .testimonial-foot {
+      display:flex; align-items:center; justify-content:space-between; gap:26px; margin-top:22px;
+      color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .source-link { position:relative; padding-bottom:5px; color:var(--ink); }
+    .source-link:after { content:""; position:absolute; left:0; bottom:0; width:100%; height:1px; background:var(--ink); transition:background .25s; }
+    .source-link:hover { color:var(--red); }
+    .source-link:hover:after { background:var(--red); }
+
+    /* --- 10. PROPOSED founder section --------------------------- */
+    /* Delete this <section> and its styles to remove it entirely. */
+    .proposed-flag {
+      display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+      margin:0 0 clamp(34px,4vw,56px); padding:12px 16px;
+      border:1px dashed var(--red); color:var(--red);
+      font-size:var(--label); font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+    }
+    .proposed-flag b { font-weight:700; }
+    .proposed-flag em { font-style:normal; color:var(--muted); letter-spacing:.1em; }
+    .founder { padding:var(--pad-section) var(--gutter); background:var(--paper-warm); }
+    .founder-grid { display:grid; grid-template-columns:.85fr 1.15fr; gap:clamp(40px,6vw,104px); align-items:center; }
+    .founder-portrait { position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink); }
+    .founder-portrait img { width:100%; height:100%; object-fit:cover; object-position:center 22%; filter:saturate(.82); }
+    .founder h2 { margin:0; max-width:17ch; font-size:var(--d-section); line-height:1; letter-spacing:-.035em; }
+    .founder-lede { margin:clamp(26px,3vw,40px) 0 0; max-width:50ch; color:var(--muted); }
+    .founder-quote {
+      margin:clamp(34px,4vw,56px) 0 0; padding-left:clamp(20px,2.2vw,32px);
+      border-left:1px solid var(--red); max-width:36ch;
+      font-family:"Instrument Serif",Georgia,serif; font-size:var(--d-sub); line-height:1.24; letter-spacing:-.025em;
+    }
+    .founder-facts { display:flex; flex-wrap:wrap; gap:10px; margin-top:clamp(32px,3.6vw,48px); padding:0; list-style:none; }
+    .founder-facts li {
+      padding:9px 14px; border:1px dashed #b9b2a9; border-radius:999px; color:var(--muted);
+      font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    }
+
+    /* --- 11. Spotlight (red moment 1 of 2) ---------------------- */
+    .spotlight { padding:clamp(36px,4.5vw,72px) var(--gutter); background:var(--ink); }
+    .spotlight-shell {
+      display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+      min-height:min(720px,78svh); overflow:hidden; background:var(--red); color:#fff;
+    }
+    .spotlight-copy { padding:clamp(34px,4.6vw,76px); display:flex; flex-direction:column; }
+    .spotlight h2 { margin:0; max-width:12ch; font-size:var(--d-moment); line-height:.98; letter-spacing:-.035em; }
+    .spotlight-intro { margin:clamp(26px,3vw,44px) 0 0; max-width:40ch; color:rgba(255,255,255,.9); }
+    .spotlight-cta {
+      position:relative; align-self:flex-start; display:inline-flex; align-items:center; gap:36px;
+      min-width:min(100%,250px); margin-top:auto; padding:clamp(40px,5vw,80px) 0 10px;
+      justify-content:space-between;
+      font-size:var(--label); font-weight:500; letter-spacing:.2em; text-transform:uppercase;
+      transition:color .3s;
+    }
+    .spotlight-cta:after { content:""; position:absolute; left:0; bottom:0; width:100%; height:1px; background:rgba(255,255,255,.8); transition:background .3s; }
+    .spotlight-cta:hover { color:var(--ink); }
+    .spotlight-cta:hover:after { background:var(--ink); }
+    .spotlight-visual { position:relative; overflow:hidden; background:var(--paper); display:flex; align-items:flex-end; justify-content:center; }
+    .spotlight-visual img { width:min(94%,680px); max-height:96%; object-fit:contain; object-position:center bottom; }
+
+    /* --- 12. Newsletter (ink, so the red CTA still lands) -------- */
+    .fudge { padding:var(--pad-section) var(--gutter); }
+    .fudge-grid { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr); gap:clamp(48px,7vw,116px); align-items:center; }
+    .fudge-copy h2 { margin:0; max-width:16ch; font-size:var(--d-section); line-height:1; letter-spacing:-.035em; }
+    .fudge-intro { margin:clamp(26px,3vw,42px) 0 0; max-width:44ch; color:var(--muted); }
+    .fudge-points { display:flex; flex-wrap:wrap; gap:9px; margin:clamp(26px,3vw,38px) 0 0; padding:0; list-style:none; }
+    .fudge-points li {
+      padding:9px 14px; border:1px solid var(--line); border-radius:999px;
+      font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .fudge-form { max-width:620px; margin-top:clamp(42px,5vw,72px); }
+    .fudge-field { display:grid; grid-template-columns:1fr auto; border-bottom:1px solid var(--ink); transition:border-color .3s; }
+    .fudge-field:focus-within { border-color:var(--red); }
+    .fudge-field input {
+      min-width:0; padding:18px 12px 13px 0; border:0; outline:0; background:transparent; color:var(--ink);
+      font:400 clamp(17px,1.4vw,21px) "Instrument Sans","Helvetica Neue",sans-serif;
+    }
+    .fudge-field input::placeholder { color:#9b958d; }
+    .fudge-field button {
+      padding:16px 0 11px 28px; border:0; background:transparent; color:var(--ink); cursor:pointer;
+      font-size:var(--label); font-weight:500; letter-spacing:.18em; text-transform:uppercase; transition:color .25s;
+    }
+    .fudge-field button:hover,.fudge-field button:focus-visible { color:var(--red); }
+    .fudge-form-note { min-height:1.6em; margin:14px 0 0; color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase; }
+    .fudge-art {
+      min-height:clamp(520px,50vw,720px); padding:clamp(34px,4.5vw,68px);
+      background:var(--ink); display:grid; place-items:center;
+    }
+    .fudge-card {
+      width:min(76%,380px); aspect-ratio:.72; padding:clamp(26px,3.2vw,44px);
+      transform:rotate(-2.5deg); background:#f7f4ee; color:var(--ink);
+      box-shadow:0 34px 70px rgba(0,0,0,.42);
+      display:flex; flex-direction:column;
+      transition:transform .8s var(--ease);
+    }
+    .fudge-art:hover .fudge-card { transform:rotate(-1deg) translateY(-6px); }
+    .fudge-card-top { display:flex; justify-content:space-between; gap:18px; color:var(--muted); font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+    .fudge-card strong {
+      display:block; margin:auto 0;
+      font-size:clamp(38px,4.6vw,70px); font-weight:700; line-height:.86; letter-spacing:-.05em; text-transform:uppercase;
+    }
+    .fudge-card strong em { color:var(--red); font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-style:normal; text-transform:none; letter-spacing:-.03em; }
+    .fudge-card-bottom {
+      display:flex; justify-content:space-between; align-items:end; gap:20px;
+      padding-top:15px; border-top:1px solid var(--ink);
+      color:var(--muted); font-size:10px; font-weight:500; line-height:1.5; letter-spacing:.12em; text-transform:uppercase;
+    }
+    .fudge-card-bottom i { width:22px; height:22px; border-radius:50%; background:var(--red); flex:none; }
+
+    /* --- 13. Final CTA (red moment 2 of 2) ---------------------- */
+    .final-cta {
+      min-height:80svh; padding:clamp(40px,5vw,76px) var(--gutter);
+      position:relative; overflow:hidden; background:var(--red); color:#fff;
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    /* Replaces the rejected sparkle: one slow, silent light. */
+    .final-cta:before {
+      content:""; position:absolute; z-index:0; top:-20%; right:-5%;
+      width:min(60vw,760px); aspect-ratio:1; border-radius:50%;
+      background:radial-gradient(circle,rgba(255,255,255,.22),transparent 62%);
+      animation:lightDrift 14s ease-in-out infinite alternate;
+    }
+    .final-cta h2 {
+      position:relative; z-index:2; margin:0; max-width:15ch;
+      font-size:var(--d-moment); line-height:.98; letter-spacing:-.035em;
+    }
+    .final-cta-bottom {
+      position:relative; z-index:2; display:flex; align-items:end; justify-content:flex-end;
+      gap:40px; margin-top:clamp(56px,7vw,110px); padding-top:24px; border-top:1px solid rgba(255,255,255,.62);
+    }
+    .final-cta-button {
+      width:clamp(132px,12vw,184px); aspect-ratio:1; border-radius:50%;
+      background:var(--ink); color:#fff; display:grid; place-items:center; padding:24px; text-align:center;
+      font-size:var(--label); font-weight:500; line-height:1.5; letter-spacing:.16em; text-transform:uppercase;
+      transition:transform .55s var(--ease),background .3s,color .3s;
+    }
+    .final-cta-button:hover,.final-cta-button:focus-visible { transform:translateY(-9px); background:#fff; color:var(--ink); }
+    @keyframes lightDrift { from { transform:translateY(0) scale(1); opacity:.8; } to { transform:translateY(46px) scale(1.1); opacity:1; } }
+
+    /* --- 14. Footer --------------------------------------------- */
+    .site-footer { padding:clamp(72px,9vw,132px) var(--gutter) 0; overflow:hidden; background:var(--ink); color:#fff; }
+    .footer-grid { display:grid; grid-template-columns:1.6fr .8fr .8fr; gap:clamp(38px,5vw,84px); padding-bottom:clamp(80px,10vw,150px); }
+    .footer-logo { display:inline-flex; align-items:flex-start; font-size:21px; line-height:1; }
+    .footer-logo sup { margin-left:4px; color:var(--red); font-size:7px; letter-spacing:0; }
+    .footer-intro p { margin:26px 0 0; max-width:34ch; color:var(--muted-dark); font-size:var(--body-sm); line-height:1.6; }
+    .footer-column h2 { margin:0 0 26px; color:#7d7871; font-size:var(--label); font-weight:500; letter-spacing:.2em; text-transform:uppercase; }
+    .footer-links { margin:0; padding:0; list-style:none; }
+    .footer-links li + li { margin-top:14px; }
+    .footer-links a,.footer-links span { color:#d4cfc8; font-size:var(--body-sm); }
+    .footer-links a { transition:color .25s; }
+    .footer-links a:hover,.footer-links a:focus-visible { color:var(--red); }
+    .footer-meta {
+      display:flex; align-items:center; justify-content:space-between; gap:30px;
+      padding:20px 0; border-top:1px solid var(--line-dark);
+      color:#7d7871; font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .footer-meta-links { display:flex; gap:26px; }
+    .footer-meta a { color:var(--muted-dark); transition:color .25s; }
+    .footer-meta a:hover { color:#fff; }
+    .footer-wordmark {
+      display:block; margin:clamp(52px,7vw,104px) 0 -.09em; color:var(--red);
+      font-size:clamp(100px,22.6vw,420px); line-height:.68; letter-spacing:-.075em; white-space:nowrap;
+    }
+    .footer-wordmark sup { display:inline-block; margin-left:.12em; font-size:.035em; letter-spacing:0; vertical-align:top; transform:translateY(.35em); }
+
+    /* --- 15. Responsive ----------------------------------------- */
+    @media (max-width:1040px) {
+      .system-head,.proof-head,.founder-grid { grid-template-columns:1fr; }
+      .founder-portrait { max-width:460px; }
+      .testimonial-grid { grid-template-columns:repeat(2,1fr); }
+      .footer-grid { grid-template-columns:1.4fr 1fr; }
+      .footer-intro { grid-column:1/-1; margin-bottom:30px; }
+    }
+    @media (max-width:820px) {
+      .work-list { grid-template-columns:1fr; gap:clamp(30px,5vw,48px); }
+      .project-frame { aspect-ratio:4/3; }
+      .spotlight-shell { grid-template-columns:1fr; }
+      .spotlight-copy { min-height:auto; padding-block:clamp(48px,8vw,80px); }
+      .spotlight-visual { min-height:480px; }
+      .fudge-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:720px) {
+      .nav { height:70px; }
+      .nav-links { display:none; }
+      .scroll { display:none; }
+      .statement { min-height:74svh; }
+      .system-toggle { grid-template-columns:44px 1fr 22px; gap:14px; }
+      .system-toggle p { grid-column:2/4; margin-top:12px; }
+      .system-detail { grid-template-columns:44px 1fr; gap:14px; }
+      .system-outcome { grid-column:2; }
+      .system-tags { grid-column:2; padding-top:22px; }
+      .trust-logo-wall { grid-template-columns:1fr 1fr; }
+      .trust-logo-wall span:nth-child(4n) { border-right:1px solid var(--line-dark); }
+      .trust-logo-wall span:nth-child(2n) { border-right:0; }
+      .trust-logo-wall span:nth-last-child(-n+4) { border-bottom:1px solid var(--line-dark); }
+      .trust-logo-wall span:nth-last-child(-n+2) { border-bottom:0; }
+      .testimonial-grid { grid-template-columns:1fr; }
+      .testimonial-foot { display:block; }
+      .testimonial-foot > span { display:block; margin-top:16px; }
+      .fudge-field { grid-template-columns:1fr; }
+      .fudge-field button { padding-left:0; text-align:left; }
+      .final-cta-bottom { justify-content:flex-start; }
+      .footer-grid { grid-template-columns:1fr 1fr; }
+      .footer-meta { flex-direction:column; align-items:flex-start; gap:14px; }
+      .footer-meta-links { flex-wrap:wrap; gap:16px; }
+      .footer-wordmark { font-size:25vw; }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      *,*:before,*:after { animation:none !important; transition:none !important; }
+      [data-reveal] { opacity:1 !important; transform:none !important; }
+    }
+  </style>
+</head>
+<body class="no-js">
+  <a class="skip-link" href="#approach">Skip to content</a>
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="rysing-assets/reel-05.jpg" aria-label="Rysing showreel">
+        <source src="rysing-assets/rysing-showreel-web.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-shade"></div>
+
+      <header class="nav">
+        <a class="wordmark wordmark-type" href="#top" aria-label="Rysing home">RYSING<sup>®</sup></a>
+        <div class="nav-right">
+          <nav class="nav-links label" aria-label="Primary navigation">
+            <a href="#work">Work</a><a href="#system">Services</a><a href="#spotlight">Keynote</a><a href="#sunday-fudge">Sunday Fudge</a>
+          </nav>
+          <a class="conversation label" href="#contact">Apply to work with us</a>
+        </div>
+      </header>
+
+      <div class="hero-copy">
+        <p class="kicker"></p>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <h1>Rise into visibility, authority &amp; scale with a differentiated brand, authentic content and predictable sales funnels.</h1>
+      </div>
+      <span class="scroll label" aria-hidden="true">Scroll</span>
+    </section>
+
+    <!-- ===== Statement ===== -->
+    <section class="statement" id="approach">
+      <p class="section-label">Who we work with</p>
+      <h2 class="display" data-reveal>For courageous brands and ambitious founders who want to build a <em>legacy</em> and create a lasting impact</h2>
+      <div class="statement-bottom" data-reveal="2">
+        <span class="statement-number numeral">01 / 06</span>
+      </div>
+    </section>
+
+    <!-- ===== Selected work ===== -->
+    <section class="work" id="work">
+      <p class="section-label">Selected work</p>
+      <div class="work-list">
+        <article class="project" data-reveal>
+          <div class="project-frame">
+            <img src="rysing-assets/anzhelika-office.webp" alt="Editorial founder portrait" loading="lazy" decoding="async" />
+          </div>
+          <div class="project-meta">
+            <span class="project-number numeral">01</span>
+            <span class="project-type">Founder positioning</span>
+          </div>
+          <h3 class="display">Project One</h3>
+        </article>
+        <article class="project" data-reveal="2">
+          <div class="project-frame">
+            <img src="rysing-assets/anzhelika-chair.webp" alt="Founder seated in a studio" loading="lazy" decoding="async" />
+          </div>
+          <div class="project-meta">
+            <span class="project-number numeral">02</span>
+            <span class="project-type">Identity &amp; website</span>
+          </div>
+          <h3 class="display">Project Two</h3>
+        </article>
+        <article class="project" data-reveal="3">
+          <div class="project-frame">
+            <img src="rysing-assets/reel-03.jpg" alt="Speaker on stage" loading="lazy" decoding="async" />
+          </div>
+          <div class="project-meta">
+            <span class="project-number numeral">03</span>
+            <span class="project-type">Speaker platform</span>
+          </div>
+          <h3 class="display">Project Three</h3>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== Programmes ===== -->
+    <section class="system" id="system">
+      <div class="system-head">
+        <p class="section-label">Programs</p>
+        <h2 class="display" data-reveal>We can grow your brand on four levels</h2>
+        <p data-reveal="2">We are based in Vienna, Austria and we operate across Europe.</p>
+      </div>
+      <div class="system-list" data-reveal="3">
+        <details class="system-item" open>
+          <summary class="system-toggle">
+            <b class="numeral">01</b>
+            <h3 class="display">Brand Building</h3>
+            <p>For those who want to become the only choice in their industry</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </summary>
+          <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Be understood, and remembered.</p></div>
+            <div class="system-tags"><span>Brand strategy</span><span>Category position</span><span>Message architecture</span><span>Offer narrative</span></div>
+          </div>
+        </details>
+        <details class="system-item">
+          <summary class="system-toggle">
+            <b class="numeral">02</b>
+            <h3 class="display">Design &amp; Websites</h3>
+            <p>For those who want a differentiated and scalable brand presence</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </summary>
+          <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Become unmistakably you.</p></div>
+            <div class="system-tags"><span>Visual identity</span><span>Website direction</span><span>Editorial art direction</span><span>Photography</span></div>
+          </div>
+        </details>
+        <details class="system-item">
+          <summary class="system-toggle">
+            <b class="numeral">03</b>
+            <h3 class="display">LinkedIn &amp; Instagram Marketing</h3>
+            <p>For those who want to grow their influence on social media</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </summary>
+          <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Be seen in the right places.</p></div>
+            <div class="system-tags"><span>Thought leadership</span><span>Content systems</span><span>Speaker platform</span><span>Showreels</span></div>
+          </div>
+        </details>
+        <details class="system-item">
+          <summary class="system-toggle">
+            <b class="numeral">04</b>
+            <h3 class="display">Lead Gen &amp; Sales</h3>
+            <p>For those ready to scale up and monetise their knowledge, programs, or services</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </summary>
+          <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Be chosen for what comes next.</p></div>
+            <div class="system-tags"><span>Audience journey</span><span>Offer ecosystem</span><span>Commercial narrative</span><span>Launch direction</span></div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ===== Trust ===== -->
+    <section class="trust" id="recognition" aria-labelledby="recognition-title">
+      <h2 class="display" id="recognition-title" data-reveal>Trusted by founders, speakers<br />and teams across Europe</h2>
+      <div class="trust-logo-wall" aria-label="Client logos" data-reveal="2">
+        <span>Northwind</span><span>Atlas&amp;Co</span><span>Keystone</span><span>Lumen</span>
+        <span>Brightside</span><span>Meridian</span><span>Vero</span><span>Aurora</span>
+        <span>Northwind</span><span>Atlas&amp;Co</span><span>Keystone</span><span>Lumen</span>
+        <span>Brightside</span><span>Meridian</span><span>Vero</span><span>Aurora</span>
+      </div>
+      <p class="trust-note">↳ Placeholder client logos. Send yours and I'll drop them in.</p>
+    </section>
+
+    <!-- ===== Proof ===== -->
+    <section class="proof" id="proof" aria-labelledby="proof-title">
+      <div class="proof-head">
+        <div class="proof-lead">
+          <h2 class="display" id="proof-title" data-reveal>In their words</h2>
+          <p class="testimonial-intro" data-reveal="2">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+        </div>
+        <div class="proof-side" data-reveal="3">
+          <div class="rating"><span class="stars" aria-hidden="true">★★★★★</span><span class="rnum">4.9 / 5 · 49 reviews</span></div>
+          <div class="award-badge"><span>Certified 2025</span><strong>HIPE Award</strong><span>Outstanding service</span></div>
+        </div>
+      </div>
+      <div class="testimonial-grid" data-reveal="4">
+        <figure class="testimonial-card">
+          <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">MH</span><span><strong>Marcus H.</strong><small>Founder, B2B SaaS</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">EV</span><span><strong>Elena V.</strong><small>Keynote speaker</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">TR</span><span><strong>Tobias R.</strong><small>Agency owner</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">SL</span><span><strong>Sophie L.</strong><small>Consultant</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">DK</span><span><strong>Daniel K.</strong><small>Co-founder, DTC brand</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">NS</span><span><strong>Nadia S.</strong><small>Executive coach</small></span></figcaption>
+        </figure>
+      </div>
+      <div class="testimonial-foot">
+        <a class="source-link" href="#proof">Read all 49 reviews <span aria-hidden="true">→</span></a>
+        <span>Placeholder quotes. Swap in your real reviews.</span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROPOSED NEW SECTION: FOUNDER
+         All copy below is NEW and written for your review.
+         Nothing here existed in rysing.html.
+         To remove: delete this whole <section> block.
+         ============================================================ -->
+    <section class="founder" id="founder" aria-labelledby="founder-title">
+      <p class="proposed-flag">
+        <b>Proposed new section</b>
+        <em>New copy for review. Not from the original page. Delete this block to remove.</em>
+      </p>
+      <div class="founder-grid">
+        <div class="founder-portrait" data-reveal>
+          <img src="rysing-assets/anzhelika-portrait.png" alt="Anzhelika, founder of Rysing" loading="lazy" decoding="async" />
+        </div>
+        <div>
+          <p class="section-label">Founder</p>
+          <h2 class="display" id="founder-title" data-reveal="2">The studio exists because the best people are rarely the loudest ones.</h2>
+          <p class="founder-lede" data-reveal="3">Rysing is led by Anzhelika and delivered by a small multidisciplinary studio in Vienna. Strategy, identity, content and sales are held by one team and one point of view, so nothing gets lost between a brand deck and the work that actually reaches your audience.</p>
+          <p class="founder-quote" data-reveal="3">“You don't need to become someone else. You need the world to finally see who you already are.”</p>
+          <ul class="founder-facts" data-reveal="4">
+            <li>[ Years in practice ]</li>
+            <li>[ Founders advised ]</li>
+            <li>[ Markets served ]</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- ===== END PROPOSED SECTION ===== -->
+
+    <!-- ===== Spotlight ===== -->
+    <section class="spotlight" id="spotlight" aria-labelledby="spotlight-title">
+      <div class="spotlight-shell">
+        <div class="spotlight-copy">
+          <p class="section-label">For keynote speakers</p>
+          <h2 class="display" id="spotlight-title" data-reveal>We bring company founders into the spotlight</h2>
+          <p class="spotlight-intro" data-reveal="2">Build your speaker brand and rise into thought leadership.</p>
+          <a class="spotlight-cta" href="#contact">Learn more <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="spotlight-visual">
+          <img src="rysing-assets/anzhelika-cutout.webp" alt="Anzhelika, founder of Rysing Studio" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Newsletter ===== -->
+    <section class="fudge" id="sunday-fudge" aria-labelledby="fudge-title">
+      <div class="fudge-grid">
+        <div class="fudge-copy">
+          <p class="section-label">Newsletter: Sunday Fudge</p>
+          <h2 class="display" id="fudge-title" data-reveal>Get free access to my business and marketing mini-courses</h2>
+          <p class="fudge-intro" data-reveal="2">Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
+          <ul class="fudge-points" aria-label="What Sunday Fudge includes" data-reveal="3">
+            <li>Sharp perspective</li>
+            <li>Useful prompts</li>
+            <li>Sunday delivery</li>
+          </ul>
+          <form class="fudge-form" id="fudge-form" data-reveal="4">
+            <div class="fudge-field">
+              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Email" required aria-label="Email" aria-describedby="fudge-status" />
+              <button type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="fudge-form-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
+          </form>
+        </div>
+        <div class="fudge-art" aria-label="Sunday Fudge newsletter cover">
+          <article class="fudge-card">
+            <div class="fudge-card-top"><span>Sunday edition</span><span>Rysing Studio</span></div>
+            <strong>Fudge<br />for<br /><em>founders.</em></strong>
+            <div class="fudge-card-bottom"><span>People branding.<br />Without the fluff.</span><i aria-hidden="true"></i></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Final CTA ===== -->
+    <section class="final-cta" id="contact" aria-labelledby="contact-title">
+      <p class="section-label">Ready when you are</p>
+      <h2 class="display" id="contact-title" data-reveal>Turn your business vision into a unique brand and scalable system</h2>
+      <div class="final-cta-bottom" data-reveal="2">
+        <a class="final-cta-button" href="mailto:hello@rysing.agency">Apply to work with us <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer" id="studio">
+    <div class="footer-grid">
+      <div class="footer-intro">
+        <a class="footer-logo wordmark-type" href="#top" aria-label="Rysing home">RYSING<sup>®</sup></a>
+        <p>Brand, content and sales for founders who want to become the only choice in their industry.</p>
+      </div>
+      <nav class="footer-column" aria-label="Footer navigation">
+        <h2>Company</h2>
+        <ul class="footer-links">
+          <li><a href="#system">Services</a></li>
+          <li><a href="#spotlight">Keynote speaking</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#sunday-fudge">Sunday Fudge</a></li>
+          <li><a href="#contact">Apply to work with us</a></li>
+        </ul>
+      </nav>
+      <div class="footer-column">
+        <h2>Contact</h2>
+        <ul class="footer-links">
+          <li><a href="mailto:hello@rysing.agency">hello@rysing.agency</a></li>
+          <li><a href="#">rysing.agency</a></li>
+          <li><span>Vienna, Austria</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 rysing, Vienna, Austria. All rights reserved.</span>
+      <div class="footer-meta-links">
+        <span><a href="#">Imprint</a></span>
+        <span><a href="#">Privacy Policy</a></span>
+        <span><a href="#">Terms &amp; Conditions</a></span>
+        <span><a href="#">Cookie Policy</a></span>
+      </div>
+      <a href="#top">Back to top ↑</a>
+    </div>
+    <a class="footer-wordmark wordmark-type" href="#top" aria-label="Rysing, back to top">RYSING<sup>®</sup></a>
+  </footer>
+
+  <script>
+    document.body.classList.remove('no-js');
+
+    /* One programme open at a time. */
+    const systemItems = document.querySelectorAll('.system-item');
+    systemItems.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (!item.open) return;
+        systemItems.forEach((other) => { if (other !== item) other.open = false; });
+      });
+    });
+
+    /* Newsletter form remains a visual prototype until a platform is connected. */
+    const fudgeForm = document.querySelector('#fudge-form');
+    const fudgeStatus = document.querySelector('#fudge-status');
+    if (fudgeForm && fudgeStatus) {
+      fudgeForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        fudgeStatus.textContent = 'Thanks. Signup will be enabled when the mailing platform is connected.';
+      });
+    }
+
+    /* Scroll reveals. Degrades to fully visible content without JS or with reduced motion. */
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealTargets = document.querySelectorAll('section');
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      revealTargets.forEach((section) => section.classList.add('revealed'));
+    } else {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+      revealTargets.forEach((section) => observer.observe(section));
+    }
+  </script>
+</body>
+</html>
