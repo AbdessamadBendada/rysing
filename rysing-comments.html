@@ -441,6 +441,14 @@
     }
     .final-cta .btn-primary { background:var(--ink); border-color:var(--ink); color:var(--paper); }
     .final-cta .btn-primary:hover { background:#2a2926; border-color:#2a2926; }
+    /* Slightly larger micro-copy on red panels for stronger contrast and reading comfort. */
+    .system-item.is-open .system-toggle p,
+    .system-item.is-open .system-outcome span,
+    .system-item.is-open .system-tags span,
+    .founder-lede,
+    .founder-stat span,
+    .founder .btn-secondary,
+    .final-cta .btn-primary { font-size:clamp(12px,1vw,16px); }
     @keyframes lightDrift { from { transform:translateY(0) scale(1); opacity:.8; } to { transform:translateY(46px) scale(1.1); opacity:1; } }
 
     /* --- 14. Footer --------------------------------------------- */
