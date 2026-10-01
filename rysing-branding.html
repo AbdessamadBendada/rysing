@@ -275,12 +275,18 @@
     .project h3 { margin:0; max-width:24ch; font-size:clamp(22px,1.75vw,32px); line-height:1; letter-spacing:-.04em; overflow:visible; }
     .project-link { margin-top:18px; color:#fff; }
     /* The → stays in the markup so the copy is untouched; it is swapped visually. */
+    .btn-primary span[aria-hidden],
+    .btn-secondary span[aria-hidden],
     .btn-tertiary span[aria-hidden] { font-size:0; display:inline-flex; align-items:center; }
+    .btn-primary span[aria-hidden]::after,
+    .btn-secondary span[aria-hidden]::after,
     .btn-tertiary span[aria-hidden]::after {
       content:""; width:11px; height:11px; background:currentColor;
       -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
       transition:transform .35s var(--ease);
     }
+    .btn-primary:hover span[aria-hidden]::after,
+    .btn-secondary:hover span[aria-hidden]::after,
     .btn-tertiary:hover span[aria-hidden]::after { transform:rotate(90deg) scale(1.25); }
 
     /* --- 7. Programmes ----------------------------------------- */
@@ -645,6 +651,35 @@
       /* Without JS nothing ever gains .revealed, so the imagery would stay blurred
          for good. Matches the existing .no-js fallback for [data-reveal]. */
       .no-js .work,.no-js .studio-roster,.no-js .founder { --focus:0px; }
+    }
+
+
+    /* --- 13d. Watermark on solid colour panels ------------------- */
+    /* The flat brand panels had no texture at all. One oversized mark, cropped
+       off a corner, reads as a debossed stamp rather than a pattern. It takes
+       currentColor, so it lands black on the red panels and white on the blue
+       one without a per-section override. Corners alternate down the page for
+       the same reason the orbs' diagonal does. */
+    .founder,
+    .spotlight { position:relative; overflow:hidden; }
+    .founder > *,
+    .spotlight > * { position:relative; z-index:1; }
+    .founder::after,
+    .spotlight::after,
+    .final-cta::after {
+      content:""; position:absolute; z-index:0; pointer-events:none;
+      width:min(62vw,640px); aspect-ratio:1; background:currentColor; opacity:.07;
+      -webkit-mask:var(--mark) center/contain no-repeat;
+              mask:var(--mark) center/contain no-repeat;
+    }
+    .founder::after { top:-24%; left:-11%; }
+    .spotlight::after { bottom:-34%; left:-8%; opacity:.09; }
+    /* The CTA's existing light already occupies the top right. */
+    .final-cta::after { bottom:-26%; left:-7%; }
+    @media (max-width:760px) {
+      .founder::after { top:-14%; left:-30%; width:86vw; }
+      .spotlight::after { bottom:-16%; left:-28%; width:84vw; }
+      .final-cta::after { bottom:-14%; left:-26%; width:84vw; }
     }
 
     /* --- 14. Footer --------------------------------------------- */
