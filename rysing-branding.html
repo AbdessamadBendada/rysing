@@ -584,19 +584,20 @@
        host section's overflow:hidden does the cropping.
        `screen` dissolves each asset's black surround into the ink it sits on. */
     .orb {
-      position:absolute; z-index:0; aspect-ratio:1; pointer-events:none;
+      position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
       background-repeat:no-repeat; background-position:center; background-size:contain;
       filter:blur(24px);
     }
     .orb-on-ink { mix-blend-mode:screen; }
     .orb-red { background-image:url("rysing-assets/pattern-red.webp"); }
     .orb-blue { background-image:url("rysing-assets/pattern-blue.webp"); }
-    /* Any orb host: content rides above the light. Deliberately does NOT set
-       `position` — .menu-overlay is fixed, and a blanket position:relative here
-       would win on source order and drop it out of the viewport. Hosts that are
-       static in flow declare their own containing block below. */
+    /* Any orb host: content rides above the light. The host isolates a stacking
+       context and the orbs sit at z-index:-1, which paints them above the host's
+       own background but below its content — so nothing needs to be said about
+       the children at all. An earlier version set position:relative on every
+       child, which at (0,2,0) silently beat .overlay-close's position:absolute
+       and knocked the close button out of its corner. Never style children here. */
     .orb-host { isolation:isolate; overflow:hidden; }
-    .orb-host > :not(.orb) { position:relative; z-index:1; }
     .studio-roster.orb-host { position:relative; }
 
     /* A slow pendulum, not a loop — `alternate` keeps it from ever snapping back.
