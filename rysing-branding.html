@@ -262,7 +262,8 @@
     .project:hover,.project:focus-within { flex-grow:2.3; }
     .project img {
       position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-      filter:saturate(.7) contrast(1.04);
+      filter:saturate(.7) contrast(1.04) blur(var(--focus,0px));
+      transition:filter 1.2s var(--ease);
     }
     .work-list:first-of-type .project:nth-child(1) img { object-position:center 16%; }
     .work-list:first-of-type .project:nth-child(2) img { object-position:center 20%; }
@@ -436,7 +437,7 @@
     .founder { padding:var(--pad-section) var(--gutter); background:var(--red); color:var(--ink); }
     .founder-grid { display:grid; grid-template-columns:.85fr 1.15fr; gap:clamp(40px,6vw,104px); align-items:center; }
     .founder-portrait { position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink); }
-    .founder-portrait img { width:100%; height:100%; object-fit:cover; object-position:center 22%; filter:saturate(.82); }
+    .founder-portrait img { width:100%; height:100%; object-fit:cover; object-position:center 22%; filter:saturate(.82) blur(var(--focus,0px)); transition:filter 1.2s var(--ease); }
     .founder h2 { margin:0; max-width:30ch; font-size:var(--d-section); line-height:1; letter-spacing:-.035em; }
     .founder-lede { margin:clamp(26px,3vw,40px) 0 0; max-width:62ch; color:var(--ink); }
     .founder-lede + .founder-lede { margin-top:20px; }
@@ -460,9 +461,9 @@
     .roster-gallery { display:grid; grid-template-columns:1.18fr repeat(3,minmax(0,1fr)); gap:clamp(5px,.65vw,10px); }
     .roster-person { position:relative; min-width:0; height:clamp(400px,42vw,620px); margin:0; overflow:hidden; background:#292724; outline-offset:4px; }
     .roster-person:focus-visible { outline:2px solid var(--red); }
-    .roster-person img { width:100%; height:100%; object-fit:cover; object-position:center 27%; filter:saturate(.72); transition:transform .65s var(--ease),filter .65s var(--ease); }
+    .roster-person img { width:100%; height:100%; object-fit:cover; object-position:center 27%; filter:saturate(.72) blur(var(--focus,0px)); transition:transform .65s var(--ease),filter 1.2s var(--ease); }
     .roster-person:first-child img { object-position:center 24%; }
-    .roster-person:hover img,.roster-person:focus-visible img { transform:scale(1.045); filter:saturate(1); }
+    .roster-person:hover img,.roster-person:focus-visible img { transform:scale(1.045); filter:saturate(1) blur(var(--focus,0px)); }
     .roster-person::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.8) 100%); }
     .roster-person::before { content:""; position:absolute; z-index:2; top:0; left:0; width:100%; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .45s var(--ease); }
     .roster-person:hover::before,.roster-person:focus-visible::before { transform:scaleX(1); }
@@ -628,6 +629,24 @@
       .roster-orb-blue { bottom:-46vw; right:-48vw; width:108vw; opacity:.3; }
     }
 
+
+    /* --- 13c. Blur to focus ------------------------------------- */
+    /* The identity reads orb → diamond → star: unfocused resolving into defined.
+       Imagery lands the same way, sharpening once its section reveals.
+       Driven by a custom property so the blur composes into each image's existing
+       saturate()/contrast() chain instead of replacing it, and so the revealed
+       state never has to out-specify the hover rules. The property flips instantly;
+       the transition on `filter` interpolates the resulting computed value.
+       One-shot on reveal rather than tied to scroll position — continuously
+       rescaling a blur would thrash the compositor on every frame. */
+    @media (prefers-reduced-motion:no-preference) {
+      .work,.studio-roster,.founder { --focus:16px; }
+      .work.revealed,.studio-roster.revealed,.founder.revealed { --focus:0px; }
+      /* Without JS nothing ever gains .revealed, so the imagery would stay blurred
+         for good. Matches the existing .no-js fallback for [data-reveal]. */
+      .no-js .work,.no-js .studio-roster,.no-js .founder { --focus:0px; }
+    }
+
     /* --- 14. Footer --------------------------------------------- */
     .site-footer { position:relative; isolation:isolate; padding:clamp(72px,9vw,132px) var(--gutter) 0; overflow:hidden; background:var(--ink); color:#fff; }
 
@@ -789,9 +808,9 @@
         </div>
         <!-- TODO(link): final social profile URLs not supplied -->
         <div class="social-links" aria-label="Social media">
-          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.5-3.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg></a>
-          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v7h4v-7h3.2l.8-4h-4V9c0-.7.3-1 1-1Z"/></svg></a>
-          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM2 9h4v13H2V9Zm7 0h4v1.8c1-1.4 2.4-2.2 4.2-2.2 4 0 4.8 2.6 4.8 6V22h-4v-6.6c0-1.6 0-3.6-2.2-3.6S13 13.5 13 15.3V22H9V9Z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 212.04 212.04" aria-hidden="true"><path d="M151.79,51.06c-5.65,0-10.23,4.58-10.23,10.23s4.58,10.23,10.23,10.23,10.23-4.58,10.23-10.23-4.58-10.23-10.23-10.23ZM106.31,64.18c-23.69,0-42.97,19.27-42.97,42.96s19.27,42.96,42.97,42.96,42.96-19.27,42.96-42.96-19.27-42.96-42.96-42.96ZM106.31,134.66c-15.18,0-27.52-12.35-27.52-27.52s12.35-27.52,27.52-27.52,27.52,12.35,27.52,27.52-12.35,27.52-27.52,27.52ZM193.01,71.43c0-28.94-23.46-52.4-52.41-52.4h-69.17c-28.94,0-52.41,23.46-52.41,52.4v69.17c0,28.94,23.46,52.4,52.41,52.4h69.17c28.94,0,52.41-23.46,52.41-52.4v-69.17ZM176.59,140.6c0,19.88-16.11,35.99-35.99,35.99h-69.17c-19.88,0-35.99-16.11-35.99-35.99v-69.17c0-19.88,16.11-35.99,35.99-35.99h69.17c19.88,0,35.99,16.11,35.99,35.99v69.17Z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 212.04 212.04" aria-hidden="true"><path d="M84.35,106.67v80.64c0,1.16.94,2.1,2.1,2.1h29.95c1.16,0,2.1-.94,2.1-2.1v-81.95h21.71c1.09,0,2-.84,2.09-1.92l2.09-24.69c.1-1.23-.86-2.28-2.09-2.28h-23.8v-17.52c0-4.11,3.33-7.43,7.43-7.43h16.73c1.16,0,2.1-.94,2.1-2.1v-24.69c0-1.16-.94-2.1-2.1-2.1h-28.27c-16.59,0-30.04,13.45-30.04,30.04v23.81h-14.97c-1.16,0-2.1.94-2.1,2.1v24.69c0,1.16.94,2.1,2.1,2.1h14.97v1.31Z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 212.04 212.04" aria-hidden="true"><path d="M105.95,189.99c-22.33,0-44.66,0-66.99,0-1.25,0-2.45-.07-3.65-.53-.92-.36-1.96-.16-2.95-.47-2.92-.92-5.2-2.66-7.07-5.01-1.22-1.53-2.19-3.24-2.42-5.18-.22-1.85-.85-3.6-.85-5.51.03-44.85.03-89.69.02-134.54,0-1.16.13-2.26.5-3.37.33-1.01.23-2.13.58-3.2,1.06-3.25,3.1-5.69,5.9-7.54,1.74-1.15,3.59-2.01,5.76-1.91,3.95-1.3,8.02-.63,12.03-.64,42.09-.06,84.18-.03,126.27-.04,1.25,0,2.45.07,3.65.53.92.36,1.96.16,2.95.47,2.92.92,5.2,2.66,7.07,5.01,1.22,1.53,2.19,3.24,2.42,5.18.22,1.85.85,3.6.85,5.51-.03,44.85-.03,89.69-.02,134.54,0,1.16-.13,2.26-.5,3.37-.33,1.01-.23,2.13-.58,3.2-1.06,3.25-3.1,5.69-5.9,7.54-1.74,1.15-3.59,2.01-5.76,1.91-3.95,1.3-8.02.62-12.03.63-19.76.08-39.52.04-59.27.04ZM114.39,93.91c0-2.1.01-3.96,0-5.83-.02-2.68-1.82-4.51-4.47-4.51-6.43-.02-12.86-.02-19.29,0-2.41,0-4.26,1.73-4.49,4.13-.05.55-.03,1.1-.03,1.65,0,25.54,0,51.09,0,76.63,0,.46-.02.92.02,1.38.06.74.24,1.43.62,2.09,1.1,1.9,2.85,2.48,4.9,2.48,5.79,0,11.58.02,17.37,0,3.59-.01,5.39-1.85,5.39-5.43,0-13.37.02-26.74-.02-40.11,0-2.41.47-4.7,1.02-7.01.47-1.97,1.2-3.81,2.15-5.61,1.63-3.1,3.89-5.38,7.31-6.43,1.32-.4,2.64-.64,4.02-.57,1.49.08,2.95-.09,4.47.2,4.62.89,7.29,3.89,8.82,8,1.26,3.39,1.76,7,1.77,10.63.02,13.92.03,27.84-.01,41.76,0,1.78.77,2.94,2.19,3.83.6.38,1.26.53,1.95.64.36.05.73.09,1.1.09,6.06,0,12.13.01,18.19,0,2.05,0,3.81-.64,4.85-2.55.57-1.04.55-2.21.55-3.35,0-12.08.02-24.16,0-36.25,0-3.53-.08-7.06-.25-10.59-.07-1.46.03-2.94-.16-4.38-.23-1.75-.44-3.51-.84-5.25-.59-2.58-.97-5.19-1.92-7.7-.97-2.58-2.06-5.06-3.55-7.39-4.69-7.34-11.68-10.84-20.01-12.03-3.04-.43-6.13-.32-9.2-.16-1.64.09-3.31.14-4.89.52-2.56.61-5.11,1.26-7.51,2.46-2.49,1.25-4.72,2.81-6.72,4.72-1.19,1.14-2.17,2.45-3.31,3.94ZM74.32,127.71c0-12.63,0-25.27,0-37.9,0-.73-.02-1.46-.16-2.19-.48-2.58-2.16-4.04-4.76-4.05-6.2-.01-12.4-.02-18.61,0-2.85,0-4.71,1.88-4.71,4.75,0,26.19,0,52.37,0,78.56,0,2.58,1.33,4.23,3.83,4.83.4.1.81.19,1.22.19,6.02.01,12.04.06,18.05-.03,2.1-.03,3.81-.99,4.7-3.04.43-.99.43-2.04.43-3.09,0-12.68,0-25.36,0-38.04ZM78.28,58.51c.13-9.91-8.06-18.32-18.2-18.28-4.8.02-9.03,1.7-12.53,5.12-4.09,4-6,8.9-5.6,14.49.52,7.34,7.14,17.86,20.46,16.55,7.94-.78,15.83-7.94,15.87-17.88Z" fill="currentColor"/></svg></a>
           <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.7 3.3-3.2 16c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20 2.9c.9-.3 1.9.2 1.7.4Z"/></svg></a>
         </div>
       </div>
