@@ -731,12 +731,14 @@
               mask:var(--mark) center/contain no-repeat;
     }
     .founder::after { top:-24%; left:-11%; }
-    .spotlight::after { bottom:-34%; left:-8%; opacity:.09; }
+    /* This section is short and image-led, so the shared 62vw size cropped down
+       to an unreadable lump. A smaller, mostly-visible star reads as the mark. */
+    .spotlight::after { width:min(34vw,320px); bottom:-11%; left:-3%; opacity:.1; }
     /* The CTA's existing light already occupies the top right. */
     .final-cta::after { bottom:-26%; left:-7%; }
     @media (max-width:760px) {
       .founder::after { top:-14%; left:-30%; width:86vw; }
-      .spotlight::after { bottom:-16%; left:-28%; width:84vw; }
+      .spotlight::after { width:62vw; bottom:-9%; left:-12%; }
       .final-cta::after { bottom:-14%; left:-26%; width:84vw; }
     }
 
