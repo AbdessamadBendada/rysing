@@ -119,42 +119,60 @@
 
 
     /* --- 2c. Preloader ------------------------------------------ */
-    /* The identity's own idea as an entrance: the logo rises into place while
-       resolving from blur to focus. Deliberately pure CSS with
-       animation-fill-mode:forwards — a JS-driven overlay that fails to
-       initialise would trap the whole page behind a black screen, whereas this
-       always finishes and removes itself. Total runtime 1.75s.
-       Sits below the grain layer so the entrance carries the same texture. */
+    /* The lockup already reads left to right as blurred orb, diamond, star, then
+       wordmark — the identity's whole blur-to-focus thesis laid out in order. A
+       left-to-right clip wipe therefore reveals that sequence for free, with no
+       geometry to reconstruct, while the whole mark simultaneously resolves out
+       of blur. The curtain then lifts upward rather than fading: the brand is
+       called rysing, so the exit should rise.
+       Pure CSS with animation-fill-mode:forwards — a JS-driven overlay that
+       fails to initialise would trap the page behind a black screen, whereas
+       this always completes and removes itself. Total runtime 1.85s. */
     .preloader {
-      position:fixed; z-index:100; inset:0; display:grid; place-items:center;
-      background:var(--ink);
-      animation:preloadOut .5s var(--ease) 1.25s forwards;
+      position:fixed; z-index:100; inset:0; overflow:hidden;
+      display:grid; place-items:center; background:var(--ink);
+      animation:preloadLift .6s cubic-bezier(.7,0,.2,1) 1.25s forwards;
+    }
+    /* Brand light bleeding in from opposing corners, as on the identity's banner. */
+    .preloader::before,
+    .preloader::after {
+      content:""; position:absolute; z-index:0; aspect-ratio:1; pointer-events:none;
+      background-repeat:no-repeat; background-position:center; background-size:contain;
+      mix-blend-mode:screen; filter:blur(26px);
+      animation:preloadBleed 1.1s var(--ease) both;
+    }
+    .preloader::before {
+      --o:.5; left:-44vw; bottom:-48vw; width:92vw;
+      background-image:url("rysing-assets/pattern-blue.webp");
+    }
+    .preloader::after {
+      --o:.42; right:-42vw; top:-46vw; width:86vw;
+      background-image:url("rysing-assets/pattern-red.webp");
+      animation-delay:.12s;
     }
     .preloader img {
-      width:min(44vw,420px); height:auto;
-      animation:preloadRise .95s var(--ease) both;
+      position:relative; z-index:1; width:min(46vw,440px); height:auto;
+      animation:preloadReveal .9s var(--ease) .15s both;
     }
-    /* A single breath of brand light behind the mark. */
-    .preloader::before {
-      content:""; position:absolute; z-index:-1; width:min(90vw,900px); aspect-ratio:1;
-      background:radial-gradient(circle,rgba(240,66,34,.5),transparent 62%);
-      filter:blur(30px); animation:preloadGlow 1.3s var(--ease) both;
+    @keyframes preloadBleed {
+      from { opacity:0; transform:translateY(70px) scale(.72); }
+      to   { opacity:var(--o,.5); transform:none; }
     }
-    @keyframes preloadRise {
-      from { opacity:0; transform:translateY(44px); filter:blur(22px); }
-      to   { opacity:1; transform:none; filter:blur(0); }
+    /* clip-path drives the sweep; blur and lift run alongside it. */
+    @keyframes preloadReveal {
+      from { clip-path:inset(0 100% 0 0); filter:blur(16px); transform:translateY(26px); opacity:.6; }
+      60%  { filter:blur(4px); }
+      to   { clip-path:inset(0 0 0 0); filter:blur(0); transform:none; opacity:1; }
     }
-    @keyframes preloadGlow {
-      from { opacity:0; transform:translateY(60px) scale(.7); }
-      to   { opacity:.5; transform:none; }
-    }
-    @keyframes preloadOut {
-      to { opacity:0; visibility:hidden; }
+    @keyframes preloadLift {
+      to { transform:translateY(-100%); visibility:hidden; }
     }
     @media (prefers-reduced-motion:reduce) {
-      .preloader { animation:preloadOut .3s linear .25s forwards; }
-      .preloader img,.preloader::before { animation:none; }
+      .preloader { animation:preloadFade .3s linear .25s forwards; }
+      .preloader img,.preloader::before,.preloader::after { animation:none; }
+      .preloader::before,.preloader::after { opacity:var(--o,.5); }
     }
+    @keyframes preloadFade { to { opacity:0; visibility:hidden; } }
 
     /* --- 2b. Brand mark as interface furniture ------------------- */
     /* The submark is three shapes — blurred orb, diamond, star. Only the star
