@@ -117,6 +117,45 @@
     .wordmark-type img { width:auto; height:1em; }
 
 
+
+    /* --- 2c. Preloader ------------------------------------------ */
+    /* The identity's own idea as an entrance: the logo rises into place while
+       resolving from blur to focus. Deliberately pure CSS with
+       animation-fill-mode:forwards — a JS-driven overlay that fails to
+       initialise would trap the whole page behind a black screen, whereas this
+       always finishes and removes itself. Total runtime 1.75s.
+       Sits below the grain layer so the entrance carries the same texture. */
+    .preloader {
+      position:fixed; z-index:100; inset:0; display:grid; place-items:center;
+      background:var(--ink);
+      animation:preloadOut .5s var(--ease) 1.25s forwards;
+    }
+    .preloader img {
+      width:min(44vw,420px); height:auto;
+      animation:preloadRise .95s var(--ease) both;
+    }
+    /* A single breath of brand light behind the mark. */
+    .preloader::before {
+      content:""; position:absolute; z-index:-1; width:min(90vw,900px); aspect-ratio:1;
+      background:radial-gradient(circle,rgba(240,66,34,.5),transparent 62%);
+      filter:blur(30px); animation:preloadGlow 1.3s var(--ease) both;
+    }
+    @keyframes preloadRise {
+      from { opacity:0; transform:translateY(44px); filter:blur(22px); }
+      to   { opacity:1; transform:none; filter:blur(0); }
+    }
+    @keyframes preloadGlow {
+      from { opacity:0; transform:translateY(60px) scale(.7); }
+      to   { opacity:.5; transform:none; }
+    }
+    @keyframes preloadOut {
+      to { opacity:0; visibility:hidden; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .preloader { animation:preloadOut .3s linear .25s forwards; }
+      .preloader img,.preloader::before { animation:none; }
+    }
+
     /* --- 2b. Brand mark as interface furniture ------------------- */
     /* The submark is three shapes — blurred orb, diamond, star. Only the star
        survives at UI sizes; the orb turns to mush below ~40px, so the full
@@ -802,6 +841,7 @@
   </style>
 </head>
 <body class="no-js">
+  <div class="preloader" aria-hidden="true"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="" width="1377" height="292" /></div>
   <a class="skip-link" href="#approach">Skip to content</a>
   <main id="top">
 
