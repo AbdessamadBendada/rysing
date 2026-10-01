@@ -66,8 +66,8 @@
       --body-sm:14px;
       --label:11px;
 
-      --gutter:clamp(20px,3.2vw,54px);
-      --pad-section:clamp(88px,10vw,168px);
+      --gutter:clamp(22px,4.2vw,80px);
+      --pad-section:clamp(112px,13vw,224px);
       --ease:cubic-bezier(.2,.75,.2,1);
     }
 
@@ -77,7 +77,7 @@
     body {
       margin:0; background:var(--paper); color:var(--ink);
       font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
-      font-size:var(--body); line-height:1.55;
+      font-size:var(--body); line-height:1.62;
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
     a { color:inherit; text-decoration:none; }
@@ -88,7 +88,7 @@
        noise plate is 4.3 MB and does not tile. */
     body::after {
       content:""; position:fixed; inset:0; z-index:9999; pointer-events:none;
-      opacity:.1; mix-blend-mode:overlay;
+      opacity:.055; mix-blend-mode:overlay;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       background-size:180px 180px;
     }
@@ -310,11 +310,11 @@
     }
 
     /* --- 6. Selected work -------------------------------------- */
-    .work { padding:clamp(88px,11vw,160px) var(--gutter) 36px; background:var(--ink); color:#fff; }
-    .work-list { height:min(70svh,770px); min-height:540px; display:flex; border-block:1px solid rgba(255,255,255,.32); overflow:visible; }
-    .work-list + .work-list { margin-top:clamp(22px,3vw,38px); }
+    .work { padding:clamp(112px,13vw,210px) var(--gutter) clamp(48px,6vw,80px); background:var(--ink); color:#fff; }
+    .work-list { height:min(66svh,720px); min-height:520px; display:flex; gap:clamp(10px,1.1vw,18px); overflow:visible; }
+    .work-list + .work-list { margin-top:clamp(10px,1.1vw,18px); }
     /* flex-grow transitions far more reliably than the flex shorthand. */
-    .project { flex:1 1 0; min-width:0; position:relative; border-right:1px solid rgba(255,255,255,.32); display:flex; align-items:flex-end; transition:flex-grow .65s cubic-bezier(.2,.7,.2,1); }
+    .project { flex:1 1 0; min-width:0; position:relative; overflow:hidden; display:flex; align-items:flex-end; transition:flex-grow .65s cubic-bezier(.2,.7,.2,1); }
     .project:last-child { border-right:0; }
     .project:hover,.project:focus-within { flex-grow:2.3; }
     .project img {
@@ -366,7 +366,7 @@
     .system-item.is-open + .system-item { border-top:1px solid transparent; }
     .system-toggle {
       width:100%; display:grid; grid-template-columns:76px 1.1fr 1.6fr 26px; gap:clamp(18px,2.4vw,34px);
-      align-items:center; padding:clamp(26px,2.8vw,38px) 0;
+      align-items:center; padding:clamp(34px,3.8vw,54px) 0;
       border:0; background:none; color:var(--ink); text-align:left; cursor:pointer; font:inherit;
     }
     .system-toggle > b { display:inline-flex; align-items:center; gap:clamp(12px,1.3vw,20px); color:#837c74; font-size:clamp(34px,3.2vw,52px); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; transition:color .4s; }
@@ -441,7 +441,7 @@
        Greyscale unifies thirteen logos drawn in thirteen different palettes. */
     /* The source files are 1080x1080 canvases with built-in padding around the mark,
        so the box has to run large for the logo itself to read at a normal size. */
-    .logo-track span { display:grid; place-items:center; width:clamp(190px,17vw,280px); min-height:190px; padding:0 clamp(10px,1.2vw,20px); }
+    .logo-track span { display:grid; place-items:center; width:clamp(220px,20vw,340px); min-height:210px; padding:0 clamp(18px,2vw,34px); }
     .logo-track img {
       width:auto; max-width:100%; max-height:clamp(130px,13vw,180px); object-fit:contain;
       filter:grayscale(1); opacity:.62; transition:filter .4s var(--ease),opacity .4s var(--ease);
