@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Rysing is a private reputation and personal brand advisory for established founders, leaders and public figures." />
+  <title>Rysing — Private Reputation Advisory</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif:ital@0;1&display=swap');
+
+    :root {
+      --ivory:#f2efe8;
+      --ivory-deep:#e8e3da;
+      --ink:#0c0d0d;
+      --ink-soft:#171817;
+      --red:#c93624;
+      --red-dark:#8f241a;
+      --muted:#746f67;
+      --line:#cbc5bb;
+      --gutter:clamp(22px,4.2vw,72px);
+      --serif:"Instrument Serif",Georgia,serif;
+      --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; background:var(--ink); }
+    body { margin:0; background:var(--ivory); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; }
+    body::selection { background:var(--red); color:#fff; }
+    a { color:inherit; text-decoration:none; }
+    button,input,select,textarea { font:inherit; }
+    img,video { display:block; max-width:100%; }
+    :focus-visible { outline:2px solid currentColor; outline-offset:5px; }
+
+    .skip-link { position:fixed; z-index:99; top:12px; left:12px; padding:11px 14px; background:#fff; color:var(--ink); transform:translateY(-160%); transition:transform .2s; font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
+    .skip-link:focus { transform:none; }
+    .eyebrow { margin:0; display:flex; align-items:center; gap:12px; font-size:10px; font-weight:600; letter-spacing:.16em; line-height:1.3; text-transform:uppercase; }
+    .eyebrow::before { content:""; width:26px; height:1px; flex:none; background:currentColor; }
+    .text-link { display:inline-flex; align-items:center; justify-content:space-between; gap:42px; padding:0 0 9px; border-bottom:1px solid currentColor; font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; transition:color .2s,border-color .2s; }
+    .text-link:hover { color:var(--red); border-color:var(--red); }
+
+    .hero { min-height:100svh; position:relative; display:grid; grid-template-columns:minmax(0,1.04fr) minmax(430px,.96fr); overflow:hidden; background:var(--ivory); }
+    .nav { position:absolute; z-index:5; top:0; left:0; right:0; height:90px; padding:0 var(--gutter); display:grid; grid-template-columns:1fr auto 1fr; align-items:center; border-bottom:1px solid rgba(12,13,13,.17); }
+    .wordmark { justify-self:start; font-size:22px; font-weight:700; line-height:1; letter-spacing:-.085em; }
+    .wordmark sup { margin-left:4px; color:var(--red); font-size:7px; vertical-align:top; }
+    .nav-note { justify-self:center; color:#656159; font-size:9px; font-weight:600; letter-spacing:.15em; text-transform:uppercase; }
+    .nav-cta { justify-self:end; display:flex; align-items:center; gap:11px; padding-bottom:8px; border-bottom:1px solid var(--ink); font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .nav-cta::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--red); }
+    .hero-copy { min-width:0; padding:clamp(150px,19vh,215px) var(--gutter) clamp(50px,7vh,82px); position:relative; z-index:2; display:flex; flex-direction:column; justify-content:space-between; }
+    .hero-copy-top { max-width:760px; }
+    .hero-copy .eyebrow { color:var(--red-dark); }
+    .hero h1 { max-width:9.1ch; margin:clamp(46px,7vh,84px) 0 0; font-family:var(--serif); font-size:clamp(64px,8.2vw,142px); font-weight:400; line-height:.82; letter-spacing:-.067em; }
+    .hero h1 em { color:var(--red); font-weight:400; }
+    .hero-bottom { display:flex; align-items:flex-end; justify-content:space-between; gap:38px; margin-top:70px; }
+    .hero-intro { max-width:42ch; margin:0; font-size:clamp(15px,1.25vw,19px); line-height:1.5; letter-spacing:-.015em; }
+    .hero-index { color:#8c877f; font-size:9px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; white-space:nowrap; }
+    .hero-media { min-width:0; position:relative; overflow:hidden; background:#111; }
+    .hero-media video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.55) contrast(1.06); }
+    .hero-media::after { content:""; position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.5),transparent 50%),linear-gradient(to right,rgba(0,0,0,.15),transparent 45%); }
+    .hero-media-note { position:absolute; z-index:2; left:32px; right:32px; bottom:31px; display:flex; justify-content:space-between; gap:20px; padding-top:15px; border-top:1px solid rgba(255,255,255,.45); color:#fff; font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .hero-seal { position:absolute; z-index:3; top:50%; left:0; width:112px; aspect-ratio:1; display:grid; place-items:center; transform:translate(-50%,-50%); border-radius:50%; background:var(--red); color:#fff; text-align:center; font-size:9px; font-weight:600; line-height:1.45; letter-spacing:.11em; text-transform:uppercase; }
+
+    .mandate { padding:clamp(120px,15vw,230px) var(--gutter); background:var(--ink); color:#fff; }
+    .mandate-grid { display:grid; grid-template-columns:.72fr 2.28fr; gap:clamp(36px,7vw,120px); }
+    .mandate .eyebrow { color:#9a958d; align-self:start; }
+    .mandate h2 { max-width:13ch; margin:0; font-family:var(--serif); font-size:clamp(50px,6.7vw,112px); font-weight:400; line-height:.91; letter-spacing:-.058em; }
+    .mandate h2 em { color:var(--red); font-weight:400; }
+    .mandate-bottom { grid-column:2; display:grid; grid-template-columns:1fr 1fr; gap:clamp(34px,6vw,96px); margin-top:clamp(70px,9vw,140px); padding-top:24px; border-top:1px solid rgba(255,255,255,.28); }
+    .mandate-bottom p { margin:0; color:#c3beb6; font-size:clamp(15px,1.3vw,20px); line-height:1.52; }
+    .mandate-bottom p:first-child { color:#fff; }
+
+    .clients { padding:clamp(110px,13vw,195px) var(--gutter); background:var(--ivory); }
+    .clients-head { display:grid; grid-template-columns:.72fr 1.45fr .83fr; gap:clamp(30px,5vw,84px); align-items:end; margin-bottom:clamp(70px,9vw,132px); }
+    .clients .eyebrow { color:var(--muted); align-self:start; }
+    .clients h2 { max-width:10ch; margin:0; font-family:var(--serif); font-size:clamp(49px,6vw,98px); font-weight:400; line-height:.9; letter-spacing:-.06em; }
+    .clients-head > p:last-child { max-width:31ch; margin:0; color:var(--muted); font-size:16px; line-height:1.5; }
+    .client-profiles { border-top:1px solid var(--ink); }
+    .client-profile { display:grid; grid-template-columns:70px 1fr 1fr; gap:clamp(24px,5vw,82px); align-items:start; padding:clamp(34px,4vw,60px) 0; border-bottom:1px solid var(--line); }
+    .client-profile > span { color:#9c968d; font-size:11px; letter-spacing:.12em; }
+    .client-profile h3 { margin:0; font-size:clamp(24px,2.5vw,40px); font-weight:500; line-height:1; letter-spacing:-.045em; }
+    .client-profile p { max-width:48ch; margin:0; color:var(--muted); font-size:15px; line-height:1.55; }
+
+    .work { padding:clamp(100px,12vw,180px) var(--gutter); background:var(--ivory-deep); }
+    .work-head { display:flex; align-items:flex-end; justify-content:space-between; gap:50px; margin-bottom:clamp(52px,7vw,100px); }
+    .work-head h2 { max-width:9ch; margin:30px 0 0; font-family:var(--serif); font-size:clamp(52px,6.5vw,106px); font-weight:400; line-height:.88; letter-spacing:-.06em; }
+    .work-note { max-width:38ch; margin:0; color:var(--muted); font-size:14px; line-height:1.55; }
+    .work-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:clamp(18px,2vw,32px); }
+    .case { min-width:0; }
+    .case:nth-child(3) { grid-column:1/-1; display:grid; grid-template-columns:.8fr 1.2fr; align-items:stretch; margin-top:clamp(35px,5vw,74px); }
+    .case-media { min-height:clamp(520px,57vw,820px); position:relative; overflow:hidden; background:#bbb; }
+    .case:nth-child(2) .case-media { min-height:clamp(440px,46vw,675px); margin-top:clamp(80px,11vw,170px); }
+    .case:nth-child(3) .case-media { min-height:520px; }
+    .case-media img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; filter:saturate(.66) contrast(1.04); transition:transform 1s cubic-bezier(.2,.7,.2,1),filter .5s; }
+    .case:hover .case-media img { transform:scale(1.025); filter:saturate(.85) contrast(1.04); }
+    .case:nth-child(1) img { object-position:center 18%; }
+    .case:nth-child(2) img { object-position:center 15%; }
+    .case:nth-child(3) img { object-position:center; }
+    .case-caption { padding:22px 0 0; display:grid; grid-template-columns:1fr auto; gap:25px; border-top:1px solid var(--ink); }
+    .case:nth-child(3) .case-caption { padding:clamp(36px,5vw,78px); display:flex; flex-direction:column; justify-content:space-between; border:0; background:var(--ink); color:#fff; }
+    .case-label { margin:0 0 16px; color:var(--red-dark); font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .case:nth-child(3) .case-label { color:#c75a4a; }
+    .case h3 { max-width:15ch; margin:0; font-family:var(--serif); font-size:clamp(30px,3vw,49px); font-weight:400; line-height:.96; letter-spacing:-.045em; }
+    .case p:last-child { max-width:38ch; margin:18px 0 0; color:var(--muted); font-size:14px; line-height:1.5; }
+    .case:nth-child(3) p:last-child { color:#aaa59d; }
+    .case-number { color:#918b82; font-size:10px; letter-spacing:.12em; }
+
+    .principle { min-height:88svh; padding:clamp(80px,9vw,135px) var(--gutter); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; background:var(--red); color:#fff; }
+    .principle-top,.principle-bottom { display:flex; align-items:center; justify-content:space-between; gap:32px; position:relative; z-index:2; }
+    .principle h2 { max-width:11ch; margin:clamp(85px,12vw,175px) 0; position:relative; z-index:2; font-family:var(--serif); font-size:clamp(66px,9vw,150px); font-weight:400; line-height:.82; letter-spacing:-.068em; }
+    .principle h2 em { color:var(--ink); font-weight:400; }
+    .principle-bottom { padding-top:22px; border-top:1px solid rgba(255,255,255,.55); }
+    .principle-bottom p { max-width:45ch; margin:0; font-size:clamp(15px,1.3vw,20px); line-height:1.5; }
+    .principle-mark { position:absolute; right:-.08em; bottom:-.2em; color:rgba(255,255,255,.08); font-family:var(--serif); font-size:min(56vw,780px); line-height:1; }
+
+    .method { padding:clamp(115px,14vw,210px) var(--gutter); background:var(--ivory); }
+    .method-head { display:grid; grid-template-columns:.75fr 1.55fr .7fr; gap:clamp(30px,5vw,80px); align-items:end; margin-bottom:clamp(75px,10vw,145px); }
+    .method .eyebrow { color:var(--muted); align-self:start; }
+    .method h2 { max-width:10ch; margin:0; font-family:var(--serif); font-size:clamp(50px,6vw,98px); font-weight:400; line-height:.9; letter-spacing:-.058em; }
+    .method-head > p:last-child { max-width:29ch; margin:0; color:var(--muted); font-size:15px; line-height:1.52; }
+    .method-list { border-top:1px solid var(--ink); }
+    .method-item { display:grid; grid-template-columns:76px 1fr 1.05fr; gap:clamp(25px,5vw,84px); align-items:start; padding:clamp(36px,4.5vw,68px) 0; border-bottom:1px solid var(--line); }
+    .method-number { color:var(--red-dark); font-size:10px; font-weight:600; letter-spacing:.12em; }
+    .method-item h3 { margin:0; font-family:var(--serif); font-size:clamp(37px,4vw,64px); font-weight:400; line-height:.9; letter-spacing:-.052em; }
+    .method-copy p { max-width:45ch; margin:0; color:var(--muted); font-size:15px; line-height:1.55; }
+    .method-result { display:block; margin-top:24px; color:var(--ink); font-size:10px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+
+    .discretion { padding:clamp(110px,13vw,195px) var(--gutter); background:var(--ink); color:#fff; }
+    .discretion-head { display:grid; grid-template-columns:.72fr 2.28fr; gap:clamp(36px,7vw,120px); }
+    .discretion .eyebrow { color:#969189; }
+    .discretion h2 { max-width:14ch; margin:0; font-family:var(--serif); font-size:clamp(52px,6.4vw,105px); font-weight:400; line-height:.9; letter-spacing:-.057em; }
+    .discretion h2 em { color:var(--red); font-weight:400; }
+    .assurances { display:grid; grid-template-columns:repeat(3,1fr); margin-top:clamp(85px,11vw,160px); border-block:1px solid rgba(255,255,255,.28); }
+    .assurance { min-height:280px; padding:clamp(28px,3vw,46px); border-right:1px solid rgba(255,255,255,.2); display:flex; flex-direction:column; justify-content:space-between; }
+    .assurance:last-child { border-right:0; }
+    .assurance span { color:#827e78; font-size:10px; letter-spacing:.13em; }
+    .assurance h3 { max-width:12ch; margin:60px 0 0; font-size:clamp(23px,2.4vw,36px); font-weight:500; line-height:1; letter-spacing:-.04em; }
+    .assurance p { max-width:32ch; margin:18px 0 0; color:#aaa59e; font-size:13px; line-height:1.55; }
+    .discretion-note { max-width:60ch; margin:24px 0 0 auto; color:#77736e; font-size:9px; line-height:1.6; letter-spacing:.11em; text-align:right; text-transform:uppercase; }
+
+    .founder { display:grid; grid-template-columns:.92fr 1.08fr; min-height:850px; background:var(--ivory); }
+    .founder-visual { position:relative; overflow:hidden; background:#d3cdc3; }
+    .founder-visual img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 17%; filter:saturate(.72); }
+    .founder-visual::after { content:""; position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.35),transparent 48%); }
+    .founder-caption { position:absolute; z-index:2; left:clamp(24px,4vw,60px); right:clamp(24px,4vw,60px); bottom:34px; display:flex; justify-content:space-between; gap:20px; padding-top:15px; border-top:1px solid rgba(255,255,255,.5); color:#fff; font-size:9px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+    .founder-copy { padding:clamp(80px,10vw,155px) var(--gutter); display:flex; flex-direction:column; justify-content:space-between; }
+    .founder-copy .eyebrow { color:var(--muted); }
+    .founder h2 { max-width:10ch; margin:clamp(65px,9vw,130px) 0 0; font-family:var(--serif); font-size:clamp(54px,6.4vw,106px); font-weight:400; line-height:.88; letter-spacing:-.06em; }
+    .founder h2 em { color:var(--red); font-weight:400; }
+    .founder-body { max-width:52ch; margin-top:70px; padding-top:24px; border-top:1px solid var(--ink); }
+    .founder-body p { margin:0; font-size:clamp(16px,1.3vw,20px); line-height:1.52; }
+    .founder-body p + p { margin-top:22px; color:var(--muted); font-size:14px; }
+
+    .engagement { padding:clamp(110px,13vw,195px) var(--gutter); background:var(--ivory-deep); }
+    .engagement-shell { display:grid; grid-template-columns:1.25fr .75fr; min-height:760px; border:1px solid var(--ink); }
+    .engagement-main { padding:clamp(36px,5vw,78px); display:flex; flex-direction:column; }
+    .engagement-kicker { display:flex; justify-content:space-between; gap:30px; color:var(--muted); font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .engagement h2 { max-width:7ch; margin:clamp(90px,11vw,165px) 0 0; font-family:var(--serif); font-size:clamp(72px,9vw,150px); font-weight:400; line-height:.78; letter-spacing:-.07em; }
+    .engagement h2 em { color:var(--red); font-weight:400; }
+    .engagement-main > p { max-width:43ch; margin:clamp(45px,6vw,82px) 0 0; color:var(--muted); font-size:clamp(16px,1.35vw,20px); line-height:1.52; }
+    .engagement-main .text-link { align-self:flex-start; margin-top:auto; }
+    .engagement-side { display:grid; grid-template-rows:repeat(3,1fr); border-left:1px solid var(--ink); }
+    .phase { padding:clamp(28px,3vw,46px); display:flex; flex-direction:column; justify-content:space-between; border-bottom:1px solid var(--ink); }
+    .phase:last-child { border-bottom:0; background:var(--red); color:#fff; }
+    .phase span { font-size:9px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+    .phase h3 { max-width:11ch; margin:50px 0 0; font-family:var(--serif); font-size:clamp(31px,3vw,48px); font-weight:400; line-height:.94; letter-spacing:-.045em; }
+
+    .enquiry { padding:clamp(115px,14vw,210px) var(--gutter); background:var(--red-dark); color:#fff; }
+    .enquiry-head { display:grid; grid-template-columns:.72fr 1.45fr .83fr; gap:clamp(30px,5vw,84px); align-items:start; }
+    .enquiry .eyebrow { color:#d9aaa3; }
+    .enquiry h2 { max-width:9ch; margin:0; font-family:var(--serif); font-size:clamp(55px,6.8vw,112px); font-weight:400; line-height:.87; letter-spacing:-.063em; }
+    .enquiry-head > p:last-child { max-width:31ch; margin:0; color:#ddb8b2; font-size:15px; line-height:1.55; }
+    .enquiry-layout { display:grid; grid-template-columns:.72fr 2.28fr; gap:clamp(36px,7vw,120px); margin-top:clamp(75px,10vw,145px); }
+    .fit-list { margin:0; padding:0; list-style:none; border-top:1px solid rgba(255,255,255,.4); }
+    .fit-list li { padding:18px 0; border-bottom:1px solid rgba(255,255,255,.22); color:#edcbc6; font-size:12px; line-height:1.45; }
+    .fit-list b { display:block; margin-bottom:6px; color:#fff; font-size:9px; letter-spacing:.13em; text-transform:uppercase; }
+    .private-form { display:grid; grid-template-columns:1fr 1fr; gap:30px clamp(28px,5vw,76px); }
+    .field { display:flex; flex-direction:column; gap:11px; }
+    .field-wide { grid-column:1/-1; }
+    .field label { color:#edcbc6; font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .field input,.field select,.field textarea { width:100%; padding:13px 0; border:0; border-bottom:1px solid rgba(255,255,255,.55); border-radius:0; outline:0; background:transparent; color:#fff; font-size:16px; }
+    .field textarea { min-height:115px; resize:vertical; }
+    .field select { appearance:none; background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%); background-position:calc(100% - 8px) 55%,100% 55%; background-size:7px 7px,7px 7px; background-repeat:no-repeat; }
+    .field select option { color:var(--ink); }
+    .field input::placeholder,.field textarea::placeholder { color:#c78f87; }
+    .field input:focus,.field select:focus,.field textarea:focus { border-color:#fff; }
+    .form-bottom { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:35px; margin-top:18px; }
+    .form-note { max-width:47ch; margin:0; color:#d5a49d; font-size:10px; line-height:1.55; }
+    .submit { width:170px; aspect-ratio:1; flex:none; border:0; border-radius:50%; background:var(--ink); color:#fff; cursor:pointer; font-size:10px; font-weight:600; line-height:1.4; letter-spacing:.13em; text-transform:uppercase; transition:transform .35s cubic-bezier(.2,.75,.2,1),background .2s,color .2s; }
+    .submit:hover { transform:translateY(-6px); background:#fff; color:var(--ink); }
+    .form-status { grid-column:1/-1; min-height:1.5em; margin:0; color:#f4d3ce; font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+
+    .footer { padding:clamp(80px,10vw,150px) var(--gutter) 0; overflow:hidden; background:var(--ink); color:#fff; }
+    .footer-top { display:grid; grid-template-columns:1.5fr .75fr .75fr; gap:clamp(40px,7vw,110px); padding-bottom:clamp(85px,11vw,160px); }
+    .footer-statement { max-width:25ch; margin:30px 0 0; color:#aaa59e; font-family:var(--serif); font-size:clamp(24px,2.7vw,42px); line-height:1; letter-spacing:-.035em; }
+    .footer-column h2 { margin:0 0 25px; color:#77736e; font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .footer-column a,.footer-column span { display:block; margin-top:12px; color:#d1ccc5; font-size:13px; }
+    .footer-column a:hover { color:var(--red); }
+    .footer-meta { display:flex; justify-content:space-between; gap:28px; padding:18px 0; border-top:1px solid rgba(255,255,255,.23); color:#77736e; font-size:8px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; }
+    .footer-wordmark { display:block; margin:clamp(65px,9vw,135px) 0 -.07em; color:var(--red); font-size:clamp(100px,22.7vw,430px); font-weight:700; line-height:.64; letter-spacing:-.095em; white-space:nowrap; }
+
+    [data-reveal] { opacity:0; transform:translateY(22px); transition:opacity .85s ease,transform .85s cubic-bezier(.2,.72,.2,1); }
+    [data-reveal].is-visible { opacity:1; transform:none; }
+
+    @media (max-width:1050px) {
+      .hero { grid-template-columns:1fr .8fr; }
+      .hero h1 { font-size:clamp(64px,9.4vw,105px); }
+      .clients-head,.method-head,.enquiry-head { grid-template-columns:.6fr 1.4fr; }
+      .clients-head > p:last-child,.method-head > p:last-child,.enquiry-head > p:last-child { grid-column:2; }
+      .founder { grid-template-columns:1fr 1fr; }
+    }
+
+    @media (max-width:760px) {
+      .nav { height:72px; grid-template-columns:1fr auto; }
+      .nav-note { display:none; }
+      .hero { display:block; min-height:0; }
+      .hero-copy { min-height:83svh; padding-top:130px; }
+      .hero h1 { font-size:clamp(61px,18vw,92px); }
+      .hero-bottom { align-items:flex-start; }
+      .hero-index { display:none; }
+      .hero-media { height:70svh; }
+      .hero-seal { top:0; left:auto; right:22px; width:88px; transform:translateY(-50%); }
+      .mandate-grid,.discretion-head { display:block; }
+      .mandate h2,.discretion h2 { margin-top:48px; }
+      .mandate-bottom { grid-column:auto; grid-template-columns:1fr; margin-top:75px; }
+      .clients-head,.method-head,.enquiry-head { display:block; }
+      .clients h2,.method h2,.enquiry h2 { margin-top:44px; }
+      .clients-head > p:last-child,.method-head > p:last-child,.enquiry-head > p:last-child { margin-top:28px; }
+      .client-profile { grid-template-columns:45px 1fr; }
+      .client-profile p { grid-column:2; }
+      .work-head { display:block; }
+      .work-note { margin-top:28px; }
+      .work-grid { grid-template-columns:1fr; }
+      .case:nth-child(2) .case-media { margin-top:50px; }
+      .case:nth-child(3) { grid-column:auto; grid-template-columns:1fr; margin-top:50px; }
+      .case:nth-child(3) .case-caption { min-height:420px; }
+      .principle h2 { font-size:clamp(67px,19vw,98px); }
+      .principle-bottom { display:block; }
+      .principle-bottom .text-link { margin-top:32px; }
+      .method-item { grid-template-columns:45px 1fr; }
+      .method-copy { grid-column:2; }
+      .assurances { grid-template-columns:1fr; }
+      .assurance { min-height:235px; border-right:0; border-bottom:1px solid rgba(255,255,255,.2); }
+      .assurance:last-child { border-bottom:0; }
+      .discretion-note { text-align:left; margin-left:0; }
+      .founder { grid-template-columns:1fr; }
+      .founder-visual { min-height:75svh; }
+      .founder-copy { min-height:720px; }
+      .engagement-shell { grid-template-columns:1fr; }
+      .engagement-main { min-height:710px; }
+      .engagement-side { border-left:0; border-top:1px solid var(--ink); }
+      .phase { min-height:220px; }
+      .enquiry-layout { grid-template-columns:1fr; }
+      .fit-list { display:grid; grid-template-columns:1fr 1fr; }
+      .fit-list li:nth-child(odd) { padding-right:20px; }
+      .fit-list li:nth-child(even) { padding-left:20px; border-left:1px solid rgba(255,255,255,.22); }
+      .private-form { grid-template-columns:1fr; }
+      .field-wide,.form-bottom,.form-status { grid-column:auto; }
+      .form-bottom { align-items:flex-start; flex-direction:column; }
+      .footer-top { grid-template-columns:1fr 1fr; }
+      .footer-brand { grid-column:1/-1; margin-bottom:30px; }
+      .footer-meta { align-items:flex-start; flex-direction:column; }
+      .footer-wordmark { font-size:25vw; }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      [data-reveal] { opacity:1; transform:none; transition:none; }
+      .case-media img,.submit { transition:none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hero" id="top">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="wordmark" href="#top" aria-label="Rysing home">RYSING<sup>®</sup></a>
+      <span class="nav-note">Private reputation advisory</span>
+      <a class="nav-cta" href="#enquire">Request a consultation</a>
+    </nav>
+
+    <div class="hero-copy">
+      <div class="hero-copy-top">
+        <p class="eyebrow">Vienna · Working globally</p>
+        <h1>For reputations that must carry <em>weight.</em></h1>
+      </div>
+      <div class="hero-bottom">
+        <p class="hero-intro">Rysing advises established founders, leaders and public figures whose reputation must reflect the calibre—and consequence—of their work.</p>
+        <span class="hero-index">Selective · Founder-led · Private</span>
+      </div>
+    </div>
+
+    <div class="hero-media" aria-label="Rysing studio showreel">
+      <video autoplay muted loop playsinline poster="rysing-assets/reel-03.jpg">
+        <source src="rysing-assets/rysing-showreel-web.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-media-note"><span>Position · Presence · Influence</span><span>Est. Vienna</span></div>
+      <span class="hero-seal">Private<br />advisory<br />01</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="mandate">
+      <div class="mandate-grid" data-reveal>
+        <p class="eyebrow">The mandate</p>
+        <h2>Your reputation enters the room <em>before you do.</em></h2>
+        <div class="mandate-bottom">
+          <p>At a certain level, visibility is not the objective. Precision is. The right position, expressed with authority, can change who listens, who remembers and who opens the next door.</p>
+          <p>Rysing aligns the way exceptional people are understood with the true value of what they have built—and where they intend to go next.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="clients" id="clients">
+      <div class="clients-head" data-reveal>
+        <p class="eyebrow">Who this is for</p>
+        <h2>Built for defining moments.</h2>
+        <p>Rysing is most valuable when the work is established, the stakes are real and the next chapter requires a different level of presence.</p>
+      </div>
+      <div class="client-profiles">
+        <article class="client-profile" data-reveal>
+          <span>01</span><h3>Established founders</h3><p>Preparing for expansion, investment, succession or a more visible leadership role—and needing a reputation capable of carrying that ambition.</p>
+        </article>
+        <article class="client-profile" data-reveal>
+          <span>02</span><h3>Recognised experts</h3><p>Ready to own a category, sharpen an important point of view and become the name associated with work of lasting value.</p>
+        </article>
+        <article class="client-profile" data-reveal>
+          <span>03</span><h3>Influential leaders</h3><p>Entering a public chapter where trust, clarity and the quality of every signal matter more than simply being seen.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="work" id="work">
+      <div class="work-head" data-reveal>
+        <div><p class="eyebrow">Selected transformations</p><h2>The work behind the reputation.</h2></div>
+        <p class="work-note">Every engagement begins with a defining transition: a new market, a larger stage or a reputation that must finally match the work behind it.</p>
+      </div>
+      <div class="work-grid">
+        <article class="case" data-reveal>
+          <div class="case-media"><img src="rysing-assets/reel-02.jpg" alt="Refined destination interior" loading="lazy" decoding="async" /></div>
+          <div class="case-caption"><div><p class="case-label">Engagement profile · Global expansion</p><h3>From accomplished founder to visible industry authority.</h3><p>Positioning, narrative and an executive presence built for a more consequential stage.</p></div><span class="case-number">01</span></div>
+        </article>
+        <article class="case" data-reveal>
+          <div class="case-media"><img src="rysing-assets/anzhelika-chair.webp" alt="Founder seated in a refined studio" loading="lazy" decoding="async" /></div>
+          <div class="case-caption"><div><p class="case-label">Engagement profile · Category ownership</p><h3>From respected expert to the clear name in the room.</h3><p>A distinctive position and identity designed to make expertise unmistakable.</p></div><span class="case-number">02</span></div>
+        </article>
+        <article class="case" data-reveal>
+          <div class="case-media"><img src="rysing-assets/reel-03.jpg" alt="Speaker presenting on an international stage" loading="lazy" decoding="async" /></div>
+          <div class="case-caption"><div><p class="case-label">Engagement profile · Public leadership</p><h3>A platform equal to the ideas.</h3><p>Strategic narrative, speaker positioning and a public presence prepared for rooms where perception carries commercial weight.</p></div><span class="case-number">03</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="principle">
+      <div class="principle-top" data-reveal><p class="eyebrow">The Rysing principle</p><span class="hero-index">Recognition over reach</span></div>
+      <h2 data-reveal>Not more exposure. <em>More consequence.</em></h2>
+      <div class="principle-bottom" data-reveal><p>The aim is not to be everywhere. It is to be understood, trusted and remembered by the people who matter to what comes next.</p><a class="text-link" href="#method">Our approach <span>↓</span></a></div>
+      <span class="principle-mark" aria-hidden="true">R</span>
+    </section>
+
+    <section class="method" id="method">
+      <div class="method-head" data-reveal>
+        <p class="eyebrow">The Rysing System</p>
+        <h2>One private system. Four decisive shifts.</h2>
+        <p>Strategy and expression are developed as one connected body of work, personally directed from beginning to end.</p>
+      </div>
+      <div class="method-list">
+        <article class="method-item" data-reveal><span class="method-number">01</span><h3>Position</h3><div class="method-copy"><p>Distil the value, perspective and territory that only this person can credibly own.</p><span class="method-result">Result · A position with authority</span></div></article>
+        <article class="method-item" data-reveal><span class="method-number">02</span><h3>Expression</h3><div class="method-copy"><p>Translate that position into a distinctive identity, narrative and digital presence with weight.</p><span class="method-result">Result · Recognition before explanation</span></div></article>
+        <article class="method-item" data-reveal><span class="method-number">03</span><h3>Influence</h3><div class="method-copy"><p>Shape the ideas, platforms and appearances that place the right perspective in the right rooms.</p><span class="method-result">Result · Relevance among the right people</span></div></article>
+        <article class="method-item" data-reveal><span class="method-number">04</span><h3>Opportunity</h3><div class="method-copy"><p>Turn a stronger reputation into strategic demand, invitations and opportunities aligned with the next chapter.</p><span class="method-result">Result · A reputation that moves things</span></div></article>
+      </div>
+    </section>
+
+    <section class="discretion" id="standards">
+      <div class="discretion-head" data-reveal>
+        <p class="eyebrow">The standard</p>
+        <h2>Highly personal. Deliberately limited. <em>Discreet by design.</em></h2>
+      </div>
+      <div class="assurances">
+        <article class="assurance" data-reveal><span>01 / Intimacy</span><div><h3>A small number of engagements.</h3><p>Depth, attention and direct access take priority over volume.</p></div></article>
+        <article class="assurance" data-reveal><span>02 / Direction</span><div><h3>Founder-led throughout.</h3><p>Every engagement is personally shaped and strategically directed by Anzhelika.</p></div></article>
+        <article class="assurance" data-reveal><span>03 / Discretion</span><div><h3>Public only when useful.</h3><p>The work can be visible. The relationship and sensitive context do not need to be.</p></div></article>
+      </div>
+      <p class="discretion-note">Client references and private work may be shared during a confidential consultation where appropriate.</p>
+    </section>
+
+    <section class="founder" id="founder">
+      <div class="founder-visual">
+        <img src="rysing-assets/anzhelika-office.webp" alt="Anzhelika, founder and strategic director of Rysing" loading="lazy" decoding="async" />
+        <div class="founder-caption"><span>Anzhelika</span><span>Founder · Strategic Director</span></div>
+      </div>
+      <div class="founder-copy" data-reveal>
+        <div><p class="eyebrow">Your strategic partner</p><h2>Judgment cannot be <em>delegated.</em></h2></div>
+        <div class="founder-body">
+          <p>Rysing is led by Anzhelika at the intersection of positioning, identity and influence. Her role is to see the full value of a person’s work, identify what the market has failed to understand and direct every element until the two are aligned.</p>
+          <p>A specialist studio supports the execution. The thinking, relationship and final standard remain founder-led.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="engagement" id="engagement">
+      <div class="engagement-shell" data-reveal>
+        <div class="engagement-main">
+          <div class="engagement-kicker"><span>The signature engagement</span><span>Private · Bespoke · 95 days</span></div>
+          <h2>The <em>95-Day</em> Private Engagement.</h2>
+          <p>An intensive transformation for an established person at a defining moment. Built around their ambitions, reputation and environment—not a template.</p>
+          <a class="text-link" href="#enquire">Discuss your next chapter <span>↗</span></a>
+        </div>
+        <div class="engagement-side">
+          <article class="phase"><span>Days 01—25 · Position</span><h3>Define the territory only you can own.</h3></article>
+          <article class="phase"><span>Days 26—60 · Express</span><h3>Build a presence with unmistakable weight.</h3></article>
+          <article class="phase"><span>Days 61—95 · Influence</span><h3>Enter the right rooms as the clear choice.</h3></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="enquiry" id="enquire">
+      <div class="enquiry-head" data-reveal>
+        <p class="eyebrow">Private enquiry</p>
+        <h2>Begin with a confidential conversation.</h2>
+        <p>Rysing works with a limited number of clients. Every enquiry is reviewed personally for ambition, timing and mutual fit.</p>
+      </div>
+      <div class="enquiry-layout">
+        <ul class="fit-list" aria-label="Engagement details" data-reveal>
+          <li><b>Engagement</b>Private, bespoke advisory</li>
+          <li><b>Location</b>Vienna · Global</li>
+          <li><b>Availability</b>Selective openings</li>
+          <li><b>Response</b>Personally reviewed</li>
+        </ul>
+        <form class="private-form" id="private-form" data-reveal>
+          <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" autocomplete="name" placeholder="Your full name" required /></div>
+          <div class="field"><label for="email">Private email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@company.com" required /></div>
+          <div class="field"><label for="role">Role or organisation</label><input id="role" name="role" type="text" autocomplete="organization-title" placeholder="Founder, CEO, investor…" required /></div>
+          <div class="field"><label for="timing">Preferred timing</label><select id="timing" name="timing" required><option value="" selected disabled>Select a timeframe</option><option>Within 1–2 months</option><option>Within 3–6 months</option><option>Later this year</option><option>Exploring for now</option></select></div>
+          <div class="field field-wide"><label for="chapter">What is changing—and why now?</label><textarea id="chapter" name="chapter" placeholder="A short, confidential introduction to the next chapter you are preparing for." required></textarea></div>
+          <div class="field field-wide"><label for="referral">How did you hear about Rysing?</label><input id="referral" name="referral" type="text" placeholder="A referral, event, publication or introduction" /></div>
+          <div class="form-bottom"><p class="form-note">Your information is used only to consider this enquiry. Submission does not guarantee availability or acceptance.</p><button class="submit" type="submit">Request a private consultation ↗</button></div>
+          <p class="form-status" id="form-status" role="status" aria-live="polite">Concept form · Secure form connection required before launch</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand"><a class="wordmark" href="#top" aria-label="Rysing home">RYSING<sup>®</sup></a><p class="footer-statement">Private reputation advisory for people shaping what comes next.</p></div>
+      <div class="footer-column"><h2>Explore</h2><a href="#clients">Who it is for</a><a href="#work">Transformations</a><a href="#method">The Rysing System</a><a href="#founder">Founder</a></div>
+      <div class="footer-column"><h2>Private contact</h2><a href="mailto:hello@rysing.studio">hello@rysing.studio</a><span>Vienna · Working globally</span><a href="#enquire">Request a consultation</a></div>
+    </div>
+    <div class="footer-meta"><span>© 2026 Rysing Studio</span><span>Confidentiality · Privacy · Legal</span><a href="#top">Back to top ↑</a></div>
+    <a class="footer-wordmark" href="#top" aria-label="Rysing — back to top">RYSING</a>
+  </footer>
+
+  <script>
+    const revealElements = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.12 });
+      revealElements.forEach((element) => revealObserver.observe(element));
+    } else {
+      revealElements.forEach((element) => element.classList.add('is-visible'));
+    }
+
+    const privateForm = document.querySelector('#private-form');
+    const formStatus = document.querySelector('#form-status');
+    privateForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formStatus.textContent = 'Thank you. This concept form will be connected securely before launch.';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.DS_Store
+
+# Designer source files and camera originals: ~219 MB, delivered outside git.
+# Everything the site actually loads is derived from these and lives in
+# rysing-assets/ (optimised webp/woff2), so the repo stays light.
+/rysing brand assets/
+/Rysing-showreel-original.mov
+/Rysing Studio — People Branding for Ambitious Experts.png
