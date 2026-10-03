@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>rysing: Branding Agency, Vienna</title>
+  <meta name="description" content="Rysing is a people-branding studio in Vienna. Brand, content and sales for founders who want to become the only choice in their industry." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="rysing-assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rysing-assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="rysing-assets/favicon-180.png" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
+
+  <style>
+    /* Rysing brand build. Identity fonts self-hosted; no third-party font CDN.
+       LICENSING: Kinfolk is display-only here and its web licence is NOT yet
+       cleared — resolve before production. Aileron is public domain (Sora
+       Sagano), cleared for commercial use. Qualy (logo face) is never loaded:
+       the wordmark ships as vector artwork. */
+    @font-face {
+      font-family:"Kinfolk"; src:url("rysing-assets/Kinfolk-Regular.woff2") format("woff2");
+      font-weight:400; font-style:normal; font-display:swap;
+    }
+    @font-face {
+      font-family:"Aileron"; src:url("rysing-assets/Aileron-Light.woff2") format("woff2");
+      font-weight:300; font-style:normal; font-display:swap;
+    }
+    @font-face {
+      font-family:"Aileron"; src:url("rysing-assets/Aileron-Regular.woff2") format("woff2");
+      font-weight:400; font-style:normal; font-display:swap;
+    }
+    @font-face {
+      font-family:"Aileron"; src:url("rysing-assets/Aileron-SemiBold.woff2") format("woff2");
+      font-weight:600; font-style:normal; font-display:swap;
+    }
+    @font-face {
+      font-family:"Aileron"; src:url("rysing-assets/Aileron-Bold.woff2") format("woff2");
+      font-weight:700; font-style:normal; font-display:swap;
+    }
+
+    /* --- 1. Tokens ------------------------------------------- */
+    :root {
+      /* Brand palette. The guide's neutrals are cold, not warm: F9F9F9 / 000000. */
+      --paper:#f9f9f9;        /* now a text colour, not a ground */
+      --paper-warm:#efefef;
+      --ink:#141414;
+      --ink-soft:#1b1b1b;
+      --red:#f04222;            /* brand red, unchanged */
+      --blue:#3524d5;           /* brand indigo (was #0044ff) */
+      --line:rgba(249,249,249,.14);
+      --line-dark:rgba(255,255,255,.16);
+      --muted:#9a9a9a;          /* 6.4:1 on #141414, passes AA at small sizes */
+      --muted-dark:#9a9a9a;     /* 6.4:1 on ink */
+
+      /* One deliberate scale. Each tier has a job. */
+      --d-manifesto:clamp(38px,4.7vw,80px);
+      --d-moment:clamp(30px,3.8vw,60px);         /* spotlight + final CTA */
+      --d-section:clamp(26px,2.9vw,45px);      /* section headings */
+      --d-hero:clamp(24px,2.6vw,43px);
+      --d-sub:clamp(18px,1.65vw,27px);            /* project + programme titles */
+      --d-quote:clamp(18px,1.5vw,24px);       /* testimonial quotes */
+      --body:clamp(15px,1.15vw,18px);
+      --body-sm:14px;
+      --label:11px;
+
+      --gutter:clamp(22px,4.2vw,80px);
+      --pad-section:clamp(112px,13vw,224px);
+      --ease:cubic-bezier(.2,.75,.2,1);
+    }
+
+    /* --- 2. Base --------------------------------------------- */
+    * { box-sizing:border-box; }
+    html { background:var(--ink); scroll-behavior:smooth; }
+    body {
+      margin:0; background:var(--ink); color:var(--paper);
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size:var(--body); line-height:1.62;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a { color:inherit; text-decoration:none; }
+    img,video { display:block; }
+
+    /* Film grain. Every branded surface in the guide carries it; without it the
+       soft gradients read as flat CSS. Generated rather than loaded — the supplied
+       noise plate is 4.3 MB and does not tile. */
+    body::after {
+      content:""; position:fixed; inset:0; z-index:9999; pointer-events:none;
+      opacity:.055; mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+    :focus-visible { outline:2px solid var(--red); outline-offset:4px; }
+
+    /* Brand display voice. Kinfolk is a caps-only high-contrast serif — the face
+       used across the identity's own templates. It has no italic, so emphasis is
+       carried by colour alone; synthesised obliques wreck a didone. */
+    .display,
+    h1,h2,h3 {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      text-transform:uppercase; letter-spacing:.012em; line-height:1.04;
+    }
+    /* Emphasis switches register rather than weight: the geometric sans against the
+       didone is the identity's own pairing. Sized down because Aileron's cap height
+       runs taller than Kinfolk's at a matched font-size. */
+    .display em {
+      font-style:normal; color:var(--red);
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:600; font-size:.88em; letter-spacing:.005em;
+    }
+
+    /* The signature of the new direction: the grotesque and the didone alternate
+       inside a single sentence rather than one being reserved for emphasis.
+       .alt flips a run back to the sans inside an otherwise Kinfolk headline. */
+    .display .alt,
+    h1 .alt,h2 .alt,h3 .alt {
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:600; letter-spacing:-.018em;
+    }
+    /* Selection-style highlight, as the mockup does on "spotlight". */
+    .display mark {
+      background:var(--blue); color:var(--paper);
+      padding:0 .12em .04em; border-radius:2px;
+    }
+
+    /* The wordmark is artwork, not type. Kept as a class so the logo image can
+       inherit the sizing the layout already assigns to it. */
+    .wordmark-type { display:inline-block; line-height:0; }
+    .wordmark-type img { width:auto; height:1em; }
+
+
+
+    @media (min-width:1101px) { .nav .menu-toggle { display:none; } }
+
+    /* --- 2c. Preloader ------------------------------------------ */
+    /* The lockup already reads left to right as blurred orb, diamond, star, then
+       wordmark — the identity's whole blur-to-focus thesis laid out in order. A
+       left-to-right clip wipe therefore reveals that sequence for free, with no
+       geometry to reconstruct, while the whole mark simultaneously resolves out
+       of blur. The curtain then lifts upward rather than fading: the brand is
+       called rysing, so the exit should rise.
+       Pure CSS with animation-fill-mode:forwards — a JS-driven overlay that
+       fails to initialise would trap the page behind a black screen, whereas
+       this always completes and removes itself. Total runtime 1.85s. */
+    .preloader {
+      position:fixed; z-index:100; inset:0; overflow:hidden;
+      display:grid; place-items:center; background:var(--ink);
+      animation:preloadLift .6s cubic-bezier(.7,0,.2,1) 1.25s forwards;
+    }
+    /* Brand light bleeding in from opposing corners, as on the identity's banner. */
+    .preloader::before,
+    .preloader::after {
+      content:""; position:absolute; z-index:0; aspect-ratio:1; pointer-events:none;
+      background-repeat:no-repeat; background-position:center; background-size:contain;
+      mix-blend-mode:screen; filter:blur(26px);
+      animation:preloadBleed 1.1s var(--ease) both;
+    }
+    .preloader::before {
+      --o:.5; left:-44vw; bottom:-48vw; width:92vw;
+      background-image:url("rysing-assets/pattern-blue.webp");
+    }
+    .preloader::after {
+      --o:.42; right:-42vw; top:-46vw; width:86vw;
+      background-image:url("rysing-assets/pattern-red.webp");
+      animation-delay:.12s;
+    }
+    .preloader img {
+      position:relative; z-index:1; width:min(46vw,440px); height:auto;
+      animation:preloadReveal .9s var(--ease) .15s both;
+    }
+    @keyframes preloadBleed {
+      from { opacity:0; transform:translateY(70px) scale(.72); }
+      to   { opacity:var(--o,.5); transform:none; }
+    }
+    /* clip-path drives the sweep; blur and lift run alongside it. */
+    @keyframes preloadReveal {
+      from { clip-path:inset(0 100% 0 0); filter:blur(16px); transform:translateY(26px); opacity:.6; }
+      60%  { filter:blur(4px); }
+      to   { clip-path:inset(0 0 0 0); filter:blur(0); transform:none; opacity:1; }
+    }
+    @keyframes preloadLift {
+      to { transform:translateY(-100%); visibility:hidden; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .preloader { animation:preloadFade .3s linear .25s forwards; }
+      .preloader img,.preloader::before,.preloader::after { animation:none; }
+      .preloader::before,.preloader::after { opacity:var(--o,.5); }
+    }
+    @keyframes preloadFade { to { opacity:0; visibility:hidden; } }
+
+    /* --- 2b. Brand mark as interface furniture ------------------- */
+    /* The submark is three shapes — blurred orb, diamond, star. Only the star
+       survives at UI sizes; the orb turns to mush below ~40px, so the full
+       three-part lockup stays reserved for the logo and the closing wordmark.
+       Masked rather than inlined so one definition inherits currentColor and can
+       be used from ::before/::after, where an <svg> cannot. */
+    :root { --mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 269.87 273.69'%3E%3Cpath d='M262.42,136.55c-12.82-.17-25.39-1.76-37.88-4.67l-20.93-5.54-13.69-5c-13.95-5.97-25.03-14.22-33.04-27.25-5.44-8.83-9.03-18.37-11.98-28.3l-5.16-20.33c-1.87-8.29-3.28-16.58-3.96-25v-.36c-.1-1.23-.19-2.45-.27-3.68-.07-1.32-.12-2.64-.15-3.97l-.24-10.68V.33s-.01-.05-.04-.09V0s-.08.01-.15.08c-.07-.06-.13-.11-.13-.08v.23s-.06.07-.06.09v1.46s-.23,10.68-.23,10.68c-.03,1.33-.08,2.65-.15,3.97-.08,1.23-.17,2.45-.27,3.68v.36c-.68,8.41-2.09,16.7-3.96,25l-5.16,20.33c-2.96,9.93-6.55,19.47-11.98,28.3-8.02,13.02-19.09,21.27-33.04,27.25l-13.69,5-20.93,5.54c-12.49,2.91-25.07,4.5-37.88,4.67l-7.45.25c.53.22,1.11.32,1.62.33l5.98.13c12.33.26,24.47,1.65,36.53,4.4l20.86,5.41,13.65,4.84c14.67,6.08,26.28,14.51,34.61,28.21,5.62,9.24,9.23,19.23,12.23,29.61l4.5,17.88c2.54,11.12,4.08,22.23,4.52,33.63l.23,10.21v1.66c0,.06.02.19.04.28,0,.13.03.33.07.3l.09-.09.09.09s.06-.17.07-.3c.03-.09.04-.22.04-.28v-1.66l.23-10.21c.44-11.4,1.99-22.51,4.52-33.63l4.5-17.88c3-10.37,6.61-20.37,12.23-29.61,8.32-13.7,19.93-22.14,34.61-28.21l13.65-4.84,20.86-5.41c12.05-2.75,24.19-4.15,36.53-4.4l5.98-.13c.51-.01,1.09-.11,1.62-.33l-7.45-.25Z'/%3E%3C/svg%3E"); }
+    .mark-dot::before,
+    .mark-dot::after {
+      content:""; flex:none; display:inline-block; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat;
+              mask:var(--mark) center/contain no-repeat;
+    }
+
+    /* Micro-labels: sans, generous tracking. Mono is reserved for numerals only. */
+    .label {
+      font-size:var(--label); font-weight:500;
+      letter-spacing:.2em; text-transform:uppercase;
+    }
+    .numeral {
+      font:500 var(--label) ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.12em; font-variant-numeric:tabular-nums;
+    }
+
+    .skip-link {
+      position:fixed; z-index:30; top:12px; left:12px; padding:13px 17px;
+      background:var(--ink); color:#fff; transform:translateY(-160%);
+      transition:transform .2s var(--ease);
+      font-size:var(--label); font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+    }
+    .skip-link:focus { transform:none; }
+
+    .section-label { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+    .btn-primary,.btn-secondary,.btn-tertiary {
+      min-height:44px; display:inline-flex; align-items:center; justify-content:center; gap:14px;
+      font-size:var(--label); font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      transition:color .3s,background .3s,border-color .3s,transform .3s var(--ease);
+    }
+    .btn-primary { padding:12px 22px; border:1px solid var(--red); border-radius:999px; background:var(--red); color:#fff; }
+    .btn-primary:hover { background:#cf2f16; border-color:#cf2f16; }
+    .btn-secondary { padding:11px 22px; border:1px solid currentColor; border-radius:999px; background:transparent; color:inherit; }
+    .btn-secondary:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .btn-tertiary { position:relative; padding:10px 0; justify-content:flex-start; }
+    .btn-tertiary:after { content:""; position:absolute; inset:auto 0 4px; height:1px; background:currentColor; transform-origin:left; transition:transform .3s var(--ease); }
+    .btn-tertiary:hover:after { transform:scaleX(.72); }
+    .btn-primary:focus-visible,.btn-secondary:focus-visible,.btn-tertiary:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+
+    /* --- 3. Reveal motion ------------------------------------- */
+    [data-reveal] { opacity:0; transform:translateY(20px); }
+    /* flex-grow must be listed here too: this rule outranks .project and would otherwise
+       drop the panel-widening transition as soon as the section reveals. */
+    .revealed [data-reveal] { opacity:1; transform:none; transition:opacity .9s var(--ease),transform .9s var(--ease),flex-grow .65s cubic-bezier(.2,.7,.2,1); }
+    .revealed [data-reveal="2"] { transition-delay:.1s; }
+    .revealed [data-reveal="3"] { transition-delay:.2s; }
+    .revealed [data-reveal="4"] { transition-delay:.3s; }
+    .no-js [data-reveal] { opacity:1; transform:none; }
+
+    /* --- 4. Hero ---------------------------------------------- */
+    .hero { height:100svh; min-height:620px; position:relative; overflow:hidden; isolation:isolate; background:var(--ink); color:var(--paper); }
+    /* The new direction runs the light far larger and hotter than the section
+       orbs: red filling the right third, blue cutting up from the lower left,
+       meeting in a dark trough where the headline sits. */
+    .hero-light { position:absolute; z-index:0; inset:0; pointer-events:none; }
+    .hero-light::before,
+    .hero-light::after {
+      content:""; position:absolute; aspect-ratio:1; border-radius:50%;
+      mix-blend-mode:screen; filter:blur(40px);
+    }
+    .hero-light::before {
+      width:min(74vw,1000px); top:-32vh; right:-22vw;
+      background:radial-gradient(circle at 48% 48%,rgba(240,66,34,.62),rgba(240,66,34,.16) 42%,transparent 64%);
+      animation:heroDriftA 26s var(--ease) infinite alternate;
+    }
+    .hero-light::after {
+      width:min(66vw,880px); bottom:-40vh; left:-26vw;
+      background:radial-gradient(circle at 52% 46%,rgba(53,36,213,.6),rgba(53,36,213,.16) 42%,transparent 64%);
+      animation:heroDriftB 33s var(--ease) -9s infinite alternate;
+    }
+    @keyframes heroDriftA { to { transform:translate3d(-3%,4%,0) scale(1.09); } }
+    @keyframes heroDriftB { to { transform:translate3d(4%,-3%,0) scale(1.08); } }
+    @media (prefers-reduced-motion:reduce) {
+      .hero-light::before,.hero-light::after { animation:none; }
+    }
+    .hero-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.55) contrast(1.05); }
+    .hero-shade {
+      position:absolute; inset:0;
+      /* The new direction's hero is a black ground. The showreel stays, but it is
+         pushed right down to a texture so the coloured light reads as light
+         rather than blowing out against bright footage under a screen blend. */
+      background:
+        linear-gradient(to top,rgba(10,10,10,.92),rgba(10,10,10,.68) 42%,rgba(10,10,10,.55) 72%),
+        linear-gradient(to bottom,rgba(10,10,10,.8),rgba(10,10,10,.5) 24%),
+        rgba(10,10,10,.42);
+    }
+    .nav {
+      position:absolute; z-index:3; inset:0 0 auto; height:86px;
+      padding:0 var(--gutter); display:flex; align-items:center; justify-content:space-between;
+    }
+    .wordmark { font-size:27px; line-height:1; }
+    .wordmark sup { margin-left:3px; color:var(--red); font-size:7px; vertical-align:top; letter-spacing:0; }
+    /* Inline primary nav, per the new direction. The overlay and its toggle stay
+       as the small-screen path, so the six labels exist in both places. */
+    .nav-links { display:flex; align-items:center; gap:clamp(18px,2.3vw,38px); }
+    .nav-links a {
+      position:relative; padding:4px 0; color:var(--paper);
+      font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+      opacity:.72; transition:opacity .25s;
+    }
+    .nav-links a:hover,.nav-links a:focus-visible { opacity:1; }
+    .nav-links a[aria-current]{ opacity:1; }
+    .nav-links a[aria-current]::after {
+      content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px; background:currentColor;
+    }
+    @media (max-width:1100px) { .nav-links { display:none; } }
+
+    .nav-right { display:flex; align-items:center; gap:14px; }
+    .menu-toggle { width:44px; height:44px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.5); border-radius:50%; background:transparent; color:#fff; cursor:pointer; }
+    .menu-toggle-lines,.menu-toggle-lines:before,.menu-toggle-lines:after { width:18px; height:1px; background:currentColor; display:block; transition:transform .35s var(--ease); }
+    .menu-toggle-lines { position:relative; }
+    .menu-toggle-lines:before,.menu-toggle-lines:after { content:""; position:absolute; left:0; }
+    .menu-toggle-lines:before { top:-5px; } .menu-toggle-lines:after { top:5px; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-lines { background:transparent; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-lines:before { top:0; transform:rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-lines:after { top:0; transform:rotate(-45deg); }
+
+    .hero-copy {
+      position:absolute; z-index:2; left:var(--gutter); bottom:clamp(48px,6.5vw,96px);
+      width:min(660px,calc(100% - (var(--gutter) * 2)));
+    }
+    .hero-copy .kicker { margin:0 0 20px; color:#fff; }
+    .hero-copy h1 {
+      margin:0; max-width:40ch;
+      font-size:var(--d-hero); font-weight:400; line-height:1.06; letter-spacing:-.03em;
+      color:rgba(255,255,255,.96);
+    }
+    .hero-rule { display:flex; align-items:center; gap:10px; width:44px; height:1px; margin:0 0 26px; background:var(--red); transform-origin:left; animation:ruleIn 1.1s .3s var(--ease) both; }
+    .hero-rule::after { content:""; flex:none; width:11px; height:11px; margin-left:44px; background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat; }
+    @keyframes ruleIn { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+
+    .menu-overlay { position:fixed; z-index:20; inset:0; width:100vw; min-height:100svh; padding:110px var(--gutter) 42px; background:var(--ink); color:#fff; transform:translateX(100%); visibility:hidden; transition:transform .6s var(--ease),visibility 0s .6s; display:flex; flex-direction:column; justify-content:space-between; }
+    .menu-overlay.is-open { transform:none; visibility:visible; transition-delay:0s; }
+    .overlay-close { position:absolute; top:22px; right:var(--gutter); width:46px; height:46px; display:grid; place-items:center; padding:0; border:1px solid rgba(255,255,255,.5); border-radius:50%; background:transparent; color:#fff; cursor:pointer; transition:background .25s,border-color .25s; }
+    .overlay-close:hover { background:var(--red); border-color:var(--red); }
+    .overlay-close svg { width:20px; height:20px; }
+    .overlay-nav { display:flex; flex-direction:column; align-items:flex-end; }
+    .overlay-nav a { font-size:clamp(42px,6vw,86px); line-height:1; letter-spacing:-.035em; }
+    .overlay-nav a + a { margin-top:10px; }
+    .overlay-nav a { display:inline-flex; align-items:center; gap:.3em; }
+    .overlay-nav a::before {
+      content:""; flex:none; width:.26em; height:.26em; background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      opacity:0; transform:scale(.4); transition:opacity .3s,transform .3s var(--ease);
+    }
+    .overlay-nav a:hover::before,.overlay-nav a:focus-visible::before { opacity:1; transform:none; }
+    .overlay-bottom { display:flex; justify-content:space-between; align-items:end; gap:40px; }
+    .award-lockups { display:flex; }
+    .award-lockup { display:grid; grid-template-columns:44px auto; gap:12px; align-items:center; min-width:170px; padding:0 20px; border-left:1px solid var(--line-dark); }
+    .award-lockup:first-child { padding-left:0; border-left:0; }
+    .award-lockup img { width:44px; height:44px; border:1px solid rgba(255,255,255,.3); object-fit:contain; }
+    .award-lockup span { display:block; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+    .award-lockup span + span { margin-top:5px; color:var(--muted-dark); }
+    .social-links { display:flex; gap:10px; }
+    .social-links a { width:44px; height:44px; display:grid; place-items:center; border:1px solid var(--line-dark); border-radius:50%; }
+    .social-links svg { width:18px; height:18px; fill:currentColor; }
+
+    /* --- 5. Statement (largest moment on the page) ------------- */
+    .statement {
+      min-height:84svh; padding:var(--pad-section) var(--gutter);
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    /* 99 characters over 3 lines needs ~33 per line. */
+    .statement h2 {
+      margin:0; max-width:34ch;
+      font-size:var(--d-manifesto); line-height:.9; letter-spacing:-.06em;
+    }
+
+    /* --- 6. Selected work -------------------------------------- */
+    .work { padding:clamp(112px,13vw,210px) var(--gutter) clamp(48px,6vw,80px); background:var(--ink); color:#fff; }
+    .work-list { height:min(66svh,720px); min-height:520px; display:flex; gap:clamp(10px,1.1vw,18px); overflow:visible; }
+    .work-list + .work-list { margin-top:clamp(10px,1.1vw,18px); }
+    /* flex-grow transitions far more reliably than the flex shorthand. */
+    .project { flex:1 1 0; min-width:0; position:relative; overflow:hidden; display:flex; align-items:flex-end; transition:flex-grow .65s cubic-bezier(.2,.7,.2,1); }
+    .project:last-child { border-right:0; }
+    .project:hover,.project:focus-within { flex-grow:2.3; }
+    .project img {
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      filter:saturate(.7) contrast(1.04) blur(var(--focus,0px));
+      transition:filter 1.2s var(--ease);
+    }
+    .work-list:first-of-type .project:nth-child(1) img { object-position:center 16%; }
+    .work-list:first-of-type .project:nth-child(2) img { object-position:center 20%; }
+    .project-shade { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.86),rgba(0,0,0,.08) 70%),linear-gradient(to right,rgba(0,0,0,.2),transparent 65%); }
+    .project-number { position:absolute; z-index:1; top:24px; left:22px; color:rgba(255,255,255,.78); }
+    .project-type { position:absolute; z-index:1; top:24px; right:22px; max-width:55%; color:rgba(255,255,255,.78); font-size:var(--label); font-weight:500; letter-spacing:.13em; text-transform:uppercase; text-align:right; }
+    .project-copy { position:relative; z-index:1; width:100%; padding:28px 22px; overflow:visible; }
+    /* Sized so the two long titles hold ~2 lines in a resting panel (~400px at 1440px). */
+    .project h3 { margin:0; max-width:24ch; font-size:clamp(22px,1.75vw,32px); line-height:1; letter-spacing:-.04em; overflow:visible; }
+    .project-link { margin-top:18px; color:#fff; }
+    /* The → stays in the markup so the copy is untouched; it is swapped visually. */
+    .btn-primary span[aria-hidden],
+    .btn-secondary span[aria-hidden],
+    .btn-tertiary span[aria-hidden] { font-size:0; display:inline-flex; align-items:center; }
+    .btn-primary span[aria-hidden]::after,
+    .btn-secondary span[aria-hidden]::after,
+    .btn-tertiary span[aria-hidden]::after {
+      content:""; width:11px; height:11px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      transition:transform .35s var(--ease);
+    }
+    .btn-primary:hover span[aria-hidden]::after,
+    .btn-secondary:hover span[aria-hidden]::after,
+    .btn-tertiary:hover span[aria-hidden]::after { transform:rotate(90deg) scale(1.25); }
+
+    /* --- 7. Programmes ----------------------------------------- */
+    .system { padding:var(--pad-section) var(--gutter); }
+    .system-head { margin-bottom:clamp(56px,7vw,104px); }
+    .system-head h2 { margin:0; max-width:30ch; font-size:var(--d-section); line-height:.98; letter-spacing:-.035em; }
+    .system-head > p:last-child { margin:24px 0 0; max-width:58ch; color:#3c3935; font-size:var(--body); }
+
+    /* Items bleed to the viewport edges while their content stays on the gutter,
+       so an open row is a full-width band of brand red. */
+    /* Hairlines at 20% ink, not red. Hidden on an open row so the red band stays clean. */
+    .system-list { border-top:0; }
+    .system-item {
+      position:relative; overflow:hidden; border-bottom:1px solid var(--line);
+      margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter);
+      transition:background .25s var(--ease),border-color .25s var(--ease);
+    }
+    .system-item:first-child { border-top:1px solid var(--line); }
+    .system-item.is-open { background:rgba(249,249,249,.035); color:var(--paper); }
+    .system-item.is-open + .system-item { border-top:1px solid transparent; }
+    .system-toggle {
+      width:100%; display:grid; grid-template-columns:clamp(110px,13vw,220px) 1.2fr 1.5fr 44px; gap:clamp(18px,2.4vw,40px);
+      align-items:center; padding:clamp(26px,3vw,40px) 0;
+      border:0; background:none; color:var(--paper); text-align:left; cursor:pointer; font:inherit;
+    }
+    .system-toggle > b {
+      display:block; margin:-.22em 0; color:var(--paper);
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:clamp(76px,8.4vw,142px); line-height:.78; letter-spacing:.01em;
+      font-variant-numeric:tabular-nums; opacity:.92; transition:opacity .4s;
+    }
+
+
+    .system-item.is-open .system-toggle,.system-item.is-open .system-toggle > b { color:var(--paper); }
+    .system-toggle h3 {
+      margin:0; font-size:var(--d-sub); font-weight:400; line-height:1.04; letter-spacing:-.03em;
+    }
+    .system-toggle p { margin:0; max-width:46ch; color:var(--muted); font-size:var(--body-sm); line-height:1.5; }
+    .system-symbol {
+      position:relative; width:44px; height:44px; justify-self:end;
+      display:grid; place-items:center; border:1px solid rgba(249,249,249,.3); border-radius:50%;
+      transition:border-color .3s,background .3s;
+    }
+    .system-item:hover .system-symbol { border-color:var(--paper); }
+    .system-symbol:before,.system-symbol:after {
+      content:""; position:absolute; top:50%; left:50%; width:15px; height:1px; margin-left:-7.5px;
+      background:currentColor; transition:transform .35s var(--ease);
+    }
+    .system-symbol:after { transform:rotate(90deg); }
+    .system-item.is-open .system-symbol:before,.system-item.is-open .system-symbol:after { background:var(--ink); }
+    .system-item.is-open .system-symbol:after { transform:rotate(0); }
+
+    /* No negative margin: the detail must share the summary's edges, or the open row
+       renders as two offset red blocks. The red now comes from .system-item.is-open alone. */
+    /* Native grid-row animation: no JS height measurement, no reflow jank. */
+    /* minmax(0,…) is required: a bare 0fr means minmax(auto,0fr), whose auto minimum
+       keeps the track at min-content height and leaks the closed panel. */
+    .system-panel { display:grid; grid-template-rows:minmax(0,0fr); transition:grid-template-rows .4s var(--ease); }
+    .system-item.is-open .system-panel { grid-template-rows:minmax(0,1fr); }
+    .no-js .system-panel { grid-template-rows:minmax(0,1fr); }
+    /* Must carry no padding: box-sizing:border-box stops an element shrinking below its
+       own padding, which would keep a closed panel ~40px tall. Spacing sits on the children. */
+    .system-detail {
+      overflow:hidden; min-height:0; padding:0;
+      display:grid; grid-template-columns:76px 1.1fr 1.6fr 26px; gap:clamp(18px,2.4vw,34px);
+      position:relative; color:var(--paper);
+    }
+    .system-outcome,.system-tags { position:relative; z-index:1; }
+    .system-outcome { grid-column:2; padding-top:clamp(12px,1.4vw,20px); padding-bottom:clamp(34px,4vw,54px); }
+    .system-outcome span { display:block; margin-bottom:12px; color:var(--muted); font-size:var(--label); font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+    .system-phrase { margin:0; max-width:14ch; font-size:var(--d-sub); line-height:1.06; letter-spacing:-.03em; }
+    .system-tags {
+      grid-column:3; align-self:end; display:flex; flex-wrap:wrap; gap:8px;
+      padding-top:clamp(12px,1.4vw,20px); padding-bottom:clamp(34px,4vw,54px);
+    }
+    .system-tags span::before,
+    .fudge-points li::before {
+      content:""; flex:none; width:8px; height:8px; margin-right:7px;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    /* Service pills live on the open panel's red ground, so the mark inherits ink
+       there; the Sunday Fudge pills sit on paper and can take the red. */
+    .system-tags span::before { background:currentColor; }
+    .fudge-points li::before { background:var(--red); }
+    .system-tags span {
+      display:inline-flex; align-items:center;
+      padding:8px 14px; border:1px solid rgba(249,249,249,.28); border-radius:999px; color:var(--paper);
+      font-size:var(--label); font-weight:500; letter-spacing:.08em;
+    }
+    .system-item.is-open .system-outcome,.system-item.is-open .system-tags { animation:trayContent .3s .06s var(--ease) both; }
+
+    @keyframes trayContent { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+
+    /* --- 8. Client logo carousel -------------------------------- */
+    .trust { padding:clamp(58px,7vw,100px) 0; overflow:hidden; background:var(--ink); color:var(--paper); }
+    /* Sized to hold one line on desktop; wraps only on narrow viewports. */
+    .trust h2 { margin:0 var(--gutter) 36px; max-width:56ch; font-size:clamp(24px,2.6vw,42px); line-height:1.05; letter-spacing:-.035em; }
+    .logo-marquee { display:flex; width:max-content; }
+    .logo-track { display:flex; flex:none; animation:logoScroll 28s linear infinite; }
+    .logo-marquee:hover .logo-track { animation-play-state:paused; }
+    /* No cell borders: a bordered grid of logos reads like a spreadsheet.
+       Greyscale unifies thirteen logos drawn in thirteen different palettes. */
+    /* The source files are 1080x1080 canvases with built-in padding around the mark,
+       so the box has to run large for the logo itself to read at a normal size. */
+    .logo-track span { display:grid; place-items:center; width:clamp(220px,20vw,340px); min-height:210px; padding:0 clamp(18px,2vw,34px); }
+    .logo-track img {
+      width:auto; max-width:100%; max-height:clamp(130px,13vw,180px); object-fit:contain;
+      filter:grayscale(1); opacity:.62; transition:filter .4s var(--ease),opacity .4s var(--ease);
+    }
+    .logo-track span:hover img { filter:none; opacity:1; }
+    @keyframes logoScroll { to { transform:translateX(-100%); } }
+
+    /* --- 9. Proof ----------------------------------------------- */
+    .proof { padding:var(--pad-section) var(--gutter); }
+    .proof-head {
+      display:grid; grid-template-columns:1.5fr .9fr; gap:clamp(36px,5vw,80px);
+      align-items:end; margin-bottom:clamp(52px,6vw,88px);
+    }
+    .proof h2 { margin:0; max-width:11ch; font-size:var(--d-section); line-height:.98; letter-spacing:-.035em; }
+    .testimonial-intro { margin:22px 0 0; max-width:48ch; color:var(--muted); }
+    /* Typographic lockup instead of a bordered badge box. */
+    .proof-side { display:flex; flex-direction:column; gap:26px; align-items:flex-start; }
+    .proof-side .rating { display:flex; flex-direction:column; gap:8px; }
+    .stars { color:var(--red); font-size:12px; letter-spacing:.34em; }
+    .rnum { color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+    .award-badge { display:grid; gap:7px; padding-left:18px; border-left:1px solid var(--red); }
+    .award-badge span { color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+    .award-badge strong { font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400; font-size:clamp(22px,1.9vw,29px); line-height:1; letter-spacing:.015em; }
+    .award-badge span:last-child { color:var(--red); }
+
+    /* Editorial quote field, not review cards. Hairlines only, no boxes. */
+    .testimonial-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+      background:var(--line); border-top:1px solid var(--ink); border-bottom:1px solid var(--ink);
+    }
+    .testimonial-card {
+      display:flex; flex-direction:column; margin:0;
+      padding:clamp(30px,3.4vw,50px) clamp(24px,2.6vw,40px);
+      background:transparent; transition:background .5s;
+    }
+    .testimonial-card:hover { background:rgba(249,249,249,.035); }
+    .testimonial-card blockquote {
+      margin:0 0 auto; padding-left:clamp(16px,1.6vw,24px);
+      border-left:2px solid var(--red);
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:var(--d-quote); line-height:1.3; letter-spacing:.015em;
+    }
+    .testimonial-card figcaption {
+      display:flex; align-items:baseline; gap:12px; margin-top:clamp(34px,4vw,56px);
+      padding-top:16px; border-top:1px solid var(--line);
+    }
+    .testimonial-avatar { color:var(--red); font:500 var(--label) ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; }
+    .testimonial-card figcaption > span:last-child { display:flex; flex-direction:column; gap:5px; }
+    .testimonial-card strong { font-size:var(--body-sm); font-weight:500; }
+    .testimonial-card small { color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase; }
+    .testimonial-stars { margin-bottom:24px; color:var(--red); font-size:11px; letter-spacing:.3em; }
+    .testimonial-foot {
+      display:flex; align-items:center; justify-content:space-between; gap:26px; margin-top:22px;
+      color:var(--muted); font-size:var(--label); font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .founder { padding:var(--pad-section) var(--gutter); background:var(--ink); color:var(--paper); }
+    .founder-grid { display:grid; grid-template-columns:.85fr 1.15fr; gap:clamp(40px,6vw,104px); align-items:center; }
+    .founder-portrait { position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--ink); }
+    .founder-portrait img { width:100%; height:100%; object-fit:cover; object-position:center 22%; filter:saturate(.82) blur(var(--focus,0px)); transition:filter 1.2s var(--ease); }
+    .founder h2 { margin:0; max-width:30ch; font-size:var(--d-section); line-height:1; letter-spacing:-.035em; }
+    .founder-lede { margin:clamp(26px,3vw,40px) 0 0; max-width:62ch; color:var(--muted); }
+    .founder-lede + .founder-lede { margin-top:20px; }
+    .founder-quote {
+      margin:clamp(34px,4vw,56px) 0 0; padding-left:clamp(20px,2.2vw,32px);
+      border-left:2px solid var(--red); max-width:42ch;
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-size:var(--d-sub); line-height:1.24; letter-spacing:.015em;
+    }
+    .founder-stats { display:grid; grid-template-columns:repeat(4,1fr); margin-top:clamp(30px,3.5vw,48px); padding:clamp(22px,2.5vw,34px); background:transparent; }
+    .founder-stat { padding:6px clamp(10px,1.3vw,20px); }
+    .founder-stat:first-child { padding-left:0; }
+    .founder-stat strong { display:block; font:600 clamp(33px,3vw,50px)/1 "Kinfolk",Didot,"Bodoni 72",Georgia,serif; }
+    .founder-stat span { display:block; margin-top:8px; font-size:var(--body-sm); }
+    .founder .btn-secondary { margin-top:30px; }
+
+    /* Alternate About direction: a portrait-led editorial contact sheet. */
+    .studio-roster { padding:clamp(88px,9vw,144px) var(--gutter) clamp(90px,9vw,144px); background:var(--ink); color:var(--paper); }
+    .studio-roster h2 { max-width:18ch; margin:0; font-size:clamp(48px,6.2vw,92px); line-height:.92; letter-spacing:-.045em; }
+    .studio-roster h2 em { color:var(--red); }
+    .studio-roster-intro { max-width:62ch; margin:clamp(24px,3vw,42px) 0 clamp(40px,4.5vw,68px); color:var(--muted-dark); font-size:clamp(17px,1.35vw,21px); line-height:1.5; }
+    .roster-gallery { display:grid; grid-template-columns:1.18fr repeat(3,minmax(0,1fr)); gap:clamp(5px,.65vw,10px); }
+    .roster-person { position:relative; min-width:0; height:clamp(400px,42vw,620px); margin:0; overflow:hidden; background:#292724; outline-offset:4px; }
+    .roster-person:focus-visible { outline:2px solid var(--red); }
+    .roster-person img { width:100%; height:100%; object-fit:cover; object-position:center 27%; filter:saturate(.72) blur(var(--focus,0px)); transition:transform .65s var(--ease),filter 1.2s var(--ease); }
+    .roster-person:first-child img { object-position:center 24%; }
+    .roster-person:hover img,.roster-person:focus-visible img { transform:scale(1.045); filter:saturate(1) blur(var(--focus,0px)); }
+    .roster-person::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.8) 100%); }
+    .roster-person::before { content:""; position:absolute; z-index:2; top:0; left:0; width:100%; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .45s var(--ease); }
+    .roster-person:hover::before,.roster-person:focus-visible::before { transform:scaleX(1); }
+    .roster-caption { position:absolute; z-index:3; right:clamp(16px,2vw,30px); bottom:clamp(18px,2.2vw,34px); left:clamp(16px,2vw,30px); }
+    .roster-caption h3 { margin:0; font-size:clamp(31px,2.9vw,48px); line-height:.96; letter-spacing:-.035em; }
+    .roster-caption p { max-height:0; margin:0; overflow:hidden; opacity:0; transform:translateY(10px); font-size:clamp(13px,1vw,16px); line-height:1.35; transition:max-height .35s ease,margin .35s ease,opacity .3s ease,transform .35s ease; }
+    .roster-person:hover .roster-caption p,.roster-person:focus-visible .roster-caption p { max-height:90px; margin-top:11px; opacity:1; transform:none; }
+    .roster-placeholder { display:grid; place-items:center; width:100%; height:100%; background:linear-gradient(135deg,#423e39,#242321); color:rgba(255,255,255,.22); font:400 clamp(130px,20vw,300px)/1 "Kinfolk",Didot,"Bodoni 72",Georgia,serif; }
+
+    /* --- 11. Spotlight ------------------------------------------ */
+    .spotlight { padding:clamp(36px,4.5vw,72px) var(--gutter); background:var(--ink); color:var(--paper); }
+    .spotlight-shell {
+      display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+      min-height:min(720px,78svh); overflow:hidden; color:var(--paper);
+      /* The reference keeps this card on the black ground and spends the blue on
+         the highlighted word instead, so the flat panel would swallow it. */
+      background:var(--ink-soft); border:1px solid var(--line);
+    }
+    .spotlight-copy { padding:clamp(34px,4.6vw,76px); display:flex; flex-direction:column; justify-content:center; }
+    .spotlight h2 { margin:0; max-width:15ch; font-size:var(--d-moment); line-height:.94; letter-spacing:-.04em; }
+    .spotlight-intro { margin:clamp(26px,3vw,38px) 0 0; max-width:40ch; color:#fff; font-size:clamp(18px,1.5vw,23px); }
+    .spotlight .btn-secondary { align-self:flex-start; margin-top:clamp(28px,3vw,42px); }
+    /* Photo fills the panel. The old contain/bottom lockup left a large dead paper field above it. */
+    .spotlight-visual { position:relative; overflow:hidden; background:var(--ink-soft); }
+    .spotlight-visual img { width:100%; height:100%; object-fit:cover; object-position:38% 35%; }
+
+    /* --- 12. Newsletter (ink, so the red CTA still lands) -------- */
+    .fudge { padding:clamp(105px,14vw,205px) var(--gutter); background:var(--ink); }
+    .fudge-grid { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr); gap:clamp(52px,8vw,128px); align-items:center; }
+    /* rysing.html set this uppercase at weight 700 in the sans. Kinfolk carries every
+       headline here and is caps-only by design, so the all-caps setting is native. */
+    .fudge-copy h2 { max-width:15ch; margin:clamp(55px,7vw,104px) 0 0; font-size:clamp(40px,5vw,82px); line-height:1.02; letter-spacing:.012em; }
+    .fudge-intro { max-width:41ch; margin:clamp(32px,4vw,58px) 0 0; color:#777169; font-size:clamp(16px,1.35vw,20px); line-height:1.5; }
+    .fudge-points li { display:inline-flex; align-items:center; }
+    .fudge-points { display:flex; flex-wrap:wrap; gap:9px; margin:30px 0 0; padding:0; list-style:none; }
+    .fudge-points li {
+      padding:9px 12px; border:1px solid rgba(249,249,249,.28); border-radius:999px; color:var(--paper);
+      font:500 9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.08em; text-transform:uppercase;
+    }
+    .fudge-form { max-width:650px; margin-top:clamp(50px,6vw,88px); }
+    .fudge-field { display:grid; grid-template-columns:1fr auto; border-bottom:1px solid rgba(249,249,249,.3); }
+    .fudge-field:focus-within { border-color:var(--red); }
+    .fudge-field input {
+      min-width:0; padding:19px 12px 13px 0; border:0; outline:0; background:transparent; color:var(--paper);
+      font:500 clamp(17px,1.5vw,22px) "Aileron","Helvetica Neue",sans-serif;
+    }
+    .fudge-field input::placeholder { color:#9b958d; }
+    .fudge-field button { margin:6px 0 6px 20px; cursor:pointer; }
+    .fudge-form-note { min-height:1.5em; margin:12px 0 0; color:#8a847c; font:500 8px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .fudge-art {
+      min-height:clamp(560px,56vw,790px); padding:clamp(35px,5vw,72px); position:relative; overflow:hidden;
+      background:var(--red); display:grid; place-items:center;
+    }
+    .fudge-orbit { position:absolute; width:min(76%,560px); aspect-ratio:1; border:1px solid rgba(255,255,255,.35); border-radius:50%; }
+    .fudge-orbit:before,.fudge-orbit:after { content:""; position:absolute; border-radius:50%; background:var(--ink); }
+    .fudge-orbit:before { width:12px; height:12px; top:8%; left:18%; }
+    .fudge-orbit:after { width:7px; height:7px; right:5%; bottom:31%; }
+    .fudge-card {
+      width:min(74%,390px); aspect-ratio:.72; padding:clamp(26px,3.5vw,48px); position:relative; z-index:1;
+      transform:rotate(-5deg); background:#f7f4ee; color:var(--ink); box-shadow:18px 24px 55px rgba(25,12,8,.24); display:flex; flex-direction:column;
+    }
+    .fudge-art:hover .fudge-card { transform:rotate(-1deg) translateY(-6px); }
+    .fudge-card-top { display:flex; justify-content:space-between; gap:18px; color:var(--muted); font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+    .fudge-card strong {
+      display:block; margin:auto 0;
+      font-size:clamp(38px,4.6vw,70px); font-weight:700; line-height:.92; letter-spacing:-.01em; text-transform:uppercase;
+    }
+    /* Kinfolk sets all-caps and runs far wider than the italic this card was
+       originally sized for, so the emphasis is scaled down to stay inside it. */
+    .fudge-card strong em { display:inline-block; color:var(--red); font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400; font-style:normal; font-size:.6em; text-transform:none; letter-spacing:.012em; }
+    .fudge-card-bottom {
+      display:flex; justify-content:space-between; align-items:end; gap:20px;
+      padding-top:14px; border-top:1px solid var(--line);
+      font:500 8px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; text-transform:uppercase;
+    }
+    .fudge-card-bottom i { width:22px; height:22px; border-radius:50%; background:var(--red); flex:none; }
+
+    /* --- 13. Final CTA (red moment 2 of 2) ---------------------- */
+    .final-cta {
+      min-height:80svh; padding:clamp(40px,5vw,76px) var(--gutter);
+      position:relative; overflow:hidden; background:var(--ink); color:var(--paper);
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    /* Replaces the rejected sparkle: one slow, silent light. */
+    .final-cta:before {
+      content:""; position:absolute; z-index:0; top:-26%; right:-10%;
+      width:min(66vw,860px); aspect-ratio:1; border-radius:50%;
+      mix-blend-mode:screen; filter:blur(30px);
+      background:radial-gradient(circle,rgba(240,66,34,.55),rgba(240,66,34,.14) 44%,transparent 66%);
+      animation:lightDrift 14s ease-in-out infinite alternate;
+    }
+    /* Second light, cool, from the opposite corner — the banner composition. */
+    .final-cta .cta-light {
+      position:absolute; z-index:0; bottom:-34%; left:-12%;
+      width:min(58vw,760px); aspect-ratio:1; border-radius:50%; pointer-events:none;
+      mix-blend-mode:screen; filter:blur(34px);
+      background:radial-gradient(circle,rgba(53,36,213,.6),rgba(53,36,213,.14) 44%,transparent 66%);
+    }
+    .final-cta h2 {
+      position:relative; z-index:2; margin:0; max-width:24ch;
+      font-size:var(--d-moment); line-height:.98; letter-spacing:-.035em;
+    }
+    .final-cta-bottom {
+      position:relative; z-index:2; display:flex; align-items:end; justify-content:flex-end;
+      gap:40px; margin-top:clamp(56px,7vw,110px);
+    }
+    .final-cta .btn-primary { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .final-cta .btn-primary:hover { background:var(--red); border-color:var(--red); color:var(--paper); }
+    /* Slightly larger micro-copy on red panels for stronger contrast and reading comfort. */
+    .system-item.is-open .system-toggle p,
+    .system-item.is-open .system-outcome span,
+    .system-item.is-open .system-tags span,
+    .founder-lede,
+    .founder-stat span,
+    .founder .btn-secondary,
+    .final-cta .btn-primary { font-size:clamp(12px,1vw,16px); }
+    @keyframes lightDrift { from { transform:translateY(0) scale(1); opacity:.8; } to { transform:translateY(46px) scale(1.1); opacity:1; } }
+
+    /* --- 13b. Brand pattern orbs -------------------------------- */
+    /* Out-of-focus light bleeding in from off-canvas, per the identity. Each orb
+       sits mostly outside its section so only the feathered falloff reaches the
+       content; the extra blur erases the asset's own circular crop edge, and the
+       host section's overflow:hidden does the cropping.
+       `screen` dissolves each asset's black surround into the ink it sits on. */
+    .orb {
+      position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+      background-repeat:no-repeat; background-position:center; background-size:contain;
+      filter:blur(24px);
+    }
+    .orb-on-ink { mix-blend-mode:screen; }
+    .orb-red { background-image:url("rysing-assets/pattern-red.webp"); }
+    .orb-blue { background-image:url("rysing-assets/pattern-blue.webp"); }
+    /* Any orb host: content rides above the light. The host isolates a stacking
+       context and the orbs sit at z-index:-1, which paints them above the host's
+       own background but below its content — so nothing needs to be said about
+       the children at all. An earlier version set position:relative on every
+       child, which at (0,2,0) silently beat .overlay-close's position:absolute
+       and knocked the close button out of its corner. Never style children here. */
+    .orb-host { isolation:isolate; overflow:hidden; }
+    .studio-roster.orb-host { position:relative; }
+
+    /* A slow pendulum, not a loop — `alternate` keeps it from ever snapping back.
+       Amplitude stays under 5% because these elements are up to 1000px wide, so a
+       few percent is already a 40px drift. Two tracks running at different periods
+       stop paired orbs from moving in lockstep. */
+    @keyframes orbDriftA {
+      from { transform:translate3d(0,0,0) scale(1); }
+      to   { transform:translate3d(3.5%,-4%,0) scale(1.07); }
+    }
+    @keyframes orbDriftB {
+      from { transform:translate3d(0,0,0) scale(1.05); }
+      to   { transform:translate3d(-4%,3%,0) scale(1); }
+    }
+    @media (prefers-reduced-motion:no-preference) {
+      .orb { animation:orbDriftA 38s var(--ease) infinite alternate; }
+      .orb-drift-b { animation-name:orbDriftB; animation-duration:47s; animation-delay:-11s; }
+    }
+
+    /* Placements. The diagonal alternates down the page — blue-left/red-right in the
+       statement, flipped in the roster, flipped back in the footer — so the light
+       reads as moving through a space rather than as repeated wallpaper. */
+    /* The overlay nav is right-aligned and runs full height, so both orbs stay on
+       the empty left side rather than crossing the links. */
+    .menu-orb-red { top:-36vw; left:-32vw; width:66vw; opacity:.3; }
+    .menu-orb-blue { bottom:-40vw; left:-30vw; width:70vw; opacity:.38; }
+
+
+    .roster-orb-red { top:-32vw; left:-33vw; width:60vw; opacity:.34; }
+    .roster-orb-blue { bottom:-28vw; right:-26vw; width:62vw; opacity:.52; }
+
+    @media (max-width:760px) {
+      .menu-orb-red { top:-42vw; left:-46vw; width:100vw; opacity:.26; }
+      .menu-orb-blue { bottom:-48vw; left:-44vw; width:105vw; opacity:.32; }
+      .roster-orb-red { top:-44vw; left:-50vw; width:104vw; opacity:.26; }
+      .roster-orb-blue { bottom:-46vw; right:-48vw; width:108vw; opacity:.3; }
+    }
+
+
+    /* --- 13c. Blur to focus ------------------------------------- */
+    /* The identity reads orb → diamond → star: unfocused resolving into defined.
+       Imagery lands the same way, sharpening once its section reveals.
+       Driven by a custom property so the blur composes into each image's existing
+       saturate()/contrast() chain instead of replacing it, and so the revealed
+       state never has to out-specify the hover rules. The property flips instantly;
+       the transition on `filter` interpolates the resulting computed value.
+       One-shot on reveal rather than tied to scroll position — continuously
+       rescaling a blur would thrash the compositor on every frame. */
+    @media (prefers-reduced-motion:no-preference) {
+      .work,.studio-roster,.founder { --focus:16px; }
+      .work.revealed,.studio-roster.revealed,.founder.revealed { --focus:0px; }
+      /* Without JS nothing ever gains .revealed, so the imagery would stay blurred
+         for good. Matches the existing .no-js fallback for [data-reveal]. */
+      .no-js .work,.no-js .studio-roster,.no-js .founder { --focus:0px; }
+    }
+
+
+    /* --- 13d. Watermark on solid colour panels ------------------- */
+    /* The flat brand panels had no texture at all. One oversized mark, cropped
+       off a corner, reads as a debossed stamp rather than a pattern. It takes
+       currentColor, so it lands black on the red panels and white on the blue
+       one without a per-section override. Corners alternate down the page for
+       the same reason the orbs' diagonal does. */
+    .founder,
+    .spotlight { position:relative; overflow:hidden; }
+    .founder > *,
+    .spotlight > * { position:relative; z-index:1; }
+    .founder::after,
+    .spotlight::after,
+    .final-cta::after {
+      content:""; position:absolute; z-index:0; pointer-events:none;
+      width:min(62vw,640px); aspect-ratio:1; background:currentColor; opacity:.07;
+      -webkit-mask:var(--mark) center/contain no-repeat;
+              mask:var(--mark) center/contain no-repeat;
+    }
+    .founder::after { top:-24%; left:-11%; }
+    /* This section is short and image-led, so the shared 62vw size cropped down
+       to an unreadable lump. A smaller, mostly-visible star reads as the mark. */
+    .spotlight::after { width:min(34vw,320px); bottom:-11%; left:-3%; opacity:.1; }
+    /* The CTA's existing light already occupies the top right. */
+    .final-cta::after { bottom:-26%; left:-7%; }
+    @media (max-width:760px) {
+      .founder::after { top:-14%; left:-30%; width:86vw; }
+      .spotlight::after { width:62vw; bottom:-9%; left:-12%; }
+      .final-cta::after { bottom:-14%; left:-26%; width:84vw; }
+    }
+
+
+    /* --- New direction: component overrides ---------------------- */
+
+    /* Client wall: the mark separates the names, as in the reference. */
+    .logo-track span { position:relative; }
+    .logo-track span::after {
+      content:""; position:absolute; right:-6px; top:50%; width:13px; height:13px;
+      margin-top:-6.5px; background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    .logo-track img { filter:grayscale(1) brightness(0) invert(1); opacity:.62; }
+    .logo-track span:hover img { filter:grayscale(1) brightness(0) invert(1); opacity:1; }
+
+    /* Testimonials become full-width rows: attribution left, quote centre,
+       action right — the reference drops the boxed-card treatment entirely.
+       Cells are placed explicitly; the original rule is a 3-up card grid with a
+       hairline background showing through 1px gaps, which has to be undone. */
+    .testimonial-grid {
+      display:block; gap:0; background:none; border-top:0; border-bottom:0;
+    }
+    .testimonial-card {
+      display:grid; grid-template-columns:minmax(170px,1fr) 2.5fr 20px;
+      column-gap:clamp(24px,3.4vw,64px); row-gap:6px; align-items:start;
+      margin:0; padding:clamp(24px,2.9vw,38px) 0;
+      border-top:1px solid var(--line); background:transparent;
+    }
+    .testimonial-card:first-child { border-top:0; }
+    .testimonial-stars { grid-column:1; grid-row:1; margin:0; color:var(--red); font-size:11px; letter-spacing:.22em; }
+    .testimonial-card figcaption { grid-column:1; grid-row:2; display:block; margin:0; padding:0; border:0; }
+    .testimonial-card blockquote { grid-column:2; grid-row:1 / span 2; }
+    .testimonial-avatar { display:none; }
+    .testimonial-card figcaption strong {
+      display:block; font-family:"Kinfolk",Didot,Georgia,serif; font-weight:400;
+      font-size:clamp(18px,1.45vw,24px); text-transform:uppercase; letter-spacing:.05em;
+    }
+    .testimonial-card figcaption small { display:block; margin-top:5px; color:var(--muted); font-size:10px; letter-spacing:.16em; text-transform:uppercase; }
+    .testimonial-card blockquote {
+      margin:0; padding:0; border:0;
+      font-family:"Aileron","Helvetica Neue",sans-serif; font-weight:400;
+      font-size:clamp(15px,1.25vw,19px); line-height:1.5; letter-spacing:0; text-transform:none;
+    }
+    @media (max-width:760px) {
+      .testimonial-card { grid-template-columns:1fr; }
+      .testimonial-card blockquote { grid-column:1; grid-row:3; margin-top:12px; }
+      .testimonial-card::after { display:none; }
+    }
+
+    /* The reference ends each row with a circular action; with no case-study
+       pages to link to yet, the row ends on the brand mark instead. */
+    .testimonial-card::after {
+      content:""; grid-column:3; align-self:center; width:17px; height:17px;
+      background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      opacity:.75;
+    }
+
+    /* Selected work: staggered heights and vertical offsets rather than a
+       uniform band, so the grid reads as a composition. */
+    .work-list { height:auto; min-height:0; align-items:start; }
+    /* The reference lifts the caption out of the photograph onto the black
+       ground, which both matches it and stops titles fighting busy imagery. */
+    .project { flex:1 1 0; height:auto; display:flex; flex-direction:column; align-items:stretch; overflow:visible; }
+    .project .project-media,
+    .project > img { position:relative; inset:auto; width:100%; height:clamp(300px,32vw,440px); object-fit:cover; }
+    /* Captions moved off the image, but the number and category still sit on it,
+       so a short scrim keeps them legible over pale photography. */
+    .project-shade {
+      top:0; bottom:auto; height:150px;
+      background:linear-gradient(to bottom,rgba(10,10,10,.6),transparent);
+    }
+    .project-number,.project-type { z-index:2; }
+    .project-copy { position:relative; padding:18px 0 0; }
+    .project-copy h3 { font-size:clamp(16px,1.25vw,20px); line-height:1.24; letter-spacing:.02em; }
+    .project-link { margin-top:14px; }
+    .work-list .project:nth-child(2) { margin-top:clamp(34px,5vw,86px); }
+    .work-list .project:nth-child(2) > img { height:clamp(280px,29vw,400px); }
+    .work-list .project:nth-child(3) { margin-top:clamp(10px,1.6vw,26px); }
+    .work-list .project:nth-child(3) > img { height:clamp(320px,34vw,470px); }
+    .work-list:nth-of-type(2) .project:nth-child(1) { margin-top:clamp(20px,3vw,48px); }
+    .work-list:nth-of-type(2) .project:nth-child(2) { margin-top:0; }
+    .work-list:nth-of-type(2) .project:nth-child(3) { margin-top:clamp(40px,6vw,100px); }
+    .project:hover,.project:focus-within { flex-grow:1.35; }
+    @media (max-width:860px) {
+      .work-list .project,
+      .work-list .project:nth-child(2),
+      .work-list .project:nth-child(3) { margin-top:0; }
+      .work-list .project > img { height:clamp(240px,52vw,340px); }
+    }
+
+    /* --- 14. Footer --------------------------------------------- */
+    .site-footer { position:relative; isolation:isolate; padding:clamp(72px,9vw,132px) var(--gutter) 0; overflow:hidden; background:var(--ink); color:#fff; }
+
+    .footer-orb-red {
+      top:clamp(-520px,-30vw,-240px); right:clamp(-460px,-26vw,-210px);
+      width:clamp(460px,52vw,920px); opacity:.5;
+    }
+    .footer-orb-blue {
+      top:clamp(-300px,-12vw,-110px); left:clamp(-620px,-35vw,-290px);
+      width:clamp(560px,64vw,1120px); opacity:.6;
+    }
+    /* On narrow viewports the vw sizing drags each orb's core on-screen, which
+       washes out the intro copy. Hold them off-canvas and drop the intensity. */
+    @media (max-width:760px) {
+      .footer-orb-red { top:-170px; right:-200px; width:350px; opacity:.4; }
+      .footer-orb-blue { top:-70px; left:-240px; width:390px; opacity:.42; }
+    }
+
+    .footer-grid { display:grid; grid-template-columns:1.6fr .8fr .8fr; gap:clamp(38px,5vw,84px); padding-bottom:clamp(80px,10vw,150px); }
+    .footer-logo { display:inline-flex; align-items:flex-start; font-size:27px; line-height:1; }
+    .footer-logo sup { margin-left:4px; color:var(--red); font-size:7px; letter-spacing:0; }
+    .footer-intro p { margin:26px 0 0; max-width:34ch; color:var(--muted-dark); font-size:var(--body-sm); line-height:1.6; }
+    /* Footer column headings are labels, not headlines: keep them sans, not serif. */
+    .footer-column h2 { margin:0 0 26px; color:#7d7871; font-family:inherit; font-size:var(--label); font-weight:500; letter-spacing:.2em; text-transform:uppercase; }
+    .footer-links { margin:0; padding:0; list-style:none; }
+    .footer-links li + li { margin-top:14px; }
+    .footer-links a,.footer-links span { color:#d4cfc8; font-size:var(--body-sm); }
+    .footer-links a { transition:color .25s; }
+    .footer-links a:hover,.footer-links a:focus-visible { color:var(--red); }
+    .footer-meta {
+      display:flex; align-items:center; justify-content:space-between; gap:30px;
+      padding:20px 0; border-top:1px solid var(--line-dark);
+      color:#7d7871; font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .footer-meta-links { display:flex; gap:26px; }
+    .footer-meta a { color:var(--muted-dark); transition:color .25s; }
+    .footer-meta a:hover { color:#fff; }
+    /* The closing wordmark runs full-bleed as artwork, the way the identity's own
+       banner sets it — sized by width rather than by a font-size clamp. */
+    .footer-wordmark {
+      display:block; margin:clamp(52px,7vw,104px) 0 0;
+    }
+    .footer-wordmark img { width:100%; height:auto; }
+
+    /* --- 15. Responsive ----------------------------------------- */
+    @media (max-width:1040px) {
+      .proof-head,.founder-grid { grid-template-columns:1fr; }
+      .founder-portrait { max-width:460px; }
+      .roster-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .roster-person { height:clamp(360px,54vw,530px); }
+      .testimonial-grid { grid-template-columns:repeat(2,1fr); }
+      .footer-grid { grid-template-columns:1.4fr 1fr; }
+      .footer-intro { grid-column:1/-1; margin-bottom:30px; }
+      .award-lockups { display:grid; grid-template-columns:1fr 1fr; gap:20px 0; }
+      .award-lockup:nth-child(3) { padding-left:0; border-left:0; }
+    }
+    @media (max-width:840px) {
+      .work-list { height:auto; min-height:0; flex-direction:column; border-block:0; gap:20px; }
+      .work-list + .work-list { margin-top:20px; }
+      .project,.project:hover,.project:focus-within { flex:none; min-height:68svh; border:1px solid rgba(255,255,255,.32); }
+      .project h3 { max-width:22ch; font-size:clamp(34px,7.5vw,58px); }
+      .spotlight-shell { grid-template-columns:1fr; }
+      .spotlight-copy { min-height:auto; padding-block:clamp(48px,8vw,80px); }
+      .spotlight-visual { min-height:480px; }
+      .fudge-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:720px) {
+      .nav { height:70px; }
+      .nav .btn-primary { padding-inline:14px; font-size:9px; }
+      .statement { min-height:74svh; }
+      .system-toggle { grid-template-columns:44px 1fr 22px; gap:14px; }
+      .system-toggle p { grid-column:2/4; margin-top:12px; }
+      .system-detail { grid-template-columns:44px 1fr; gap:14px; }
+      .system-outcome { grid-column:2; }
+      .system-tags { grid-column:2; padding-top:22px; }
+      .testimonial-grid { grid-template-columns:1fr; }
+      .fudge-field { grid-template-columns:1fr; }
+      .fudge-field button { margin:8px 0; justify-self:start; }
+      .final-cta-bottom { justify-content:flex-start; }
+      .footer-grid { grid-template-columns:1fr 1fr; }
+      .footer-meta { flex-direction:column; align-items:flex-start; gap:14px; }
+      .footer-meta-links { flex-wrap:wrap; gap:16px; }
+      .footer-wordmark { font-size:25vw; }
+      .overlay-bottom { align-items:flex-start; flex-direction:column; }
+      .award-lockup { min-width:150px; }
+    }
+    @media (max-width:560px) {
+      .studio-roster h2 { max-width:11ch; font-size:clamp(46px,12vw,68px); }
+      .roster-gallery { gap:6px; }
+      .roster-person { height:auto; aspect-ratio:3/4; }
+      .roster-caption { right:12px; bottom:14px; left:12px; }
+      .roster-caption h3 { font-size:clamp(25px,7vw,34px); }
+      .roster-caption p { max-height:none; margin-top:7px; opacity:1; transform:none; font-size:12px; }
+      .roster-placeholder { font-size:clamp(96px,28vw,160px); }
+      .hero-copy { bottom:44px; }
+      .nav-right { gap:8px; }
+      .nav .btn-primary { max-width:145px; text-align:center; line-height:1.15; }
+      .overlay-nav a { font-size:clamp(38px,13vw,58px); }
+      .menu-overlay { padding-top:82px; overflow-y:auto; }
+      .award-lockups { display:grid; grid-template-columns:1fr 1fr; width:100%; gap:18px 0; }
+      .award-lockup { min-width:0; padding:0 10px; }
+      .award-lockup:nth-child(odd) { padding-left:0; border-left:0; }
+      /* Four across is unreadable on a phone: fall back to 2x2 here only. */
+      .founder-stats { grid-template-columns:1fr 1fr; }
+      .founder-stat:nth-child(odd) { padding-left:0; }
+      .founder-stat:nth-child(n+3) { margin-top:16px; padding-top:20px; }
+      .overlay-bottom { width:100%; gap:22px; }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      *,*:before,*:after { animation:none !important; transition:none !important; }
+      [data-reveal] { opacity:1 !important; transform:none !important; }
+      .menu-overlay { transition:none; }
+      .logo-track { animation:none; }
+    }
+  </style>
+</head>
+<body class="no-js">
+  <div class="preloader" aria-hidden="true"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="" width="1377" height="292" /></div>
+  <a class="skip-link" href="#approach">Skip to content</a>
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="rysing-assets/reel-05.jpg" aria-label="Rysing showreel">
+        <source src="rysing-assets/rysing-showreel-web.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-shade"></div>
+      <div class="hero-light" aria-hidden="true"></div>
+
+      <header class="nav">
+        <a class="wordmark wordmark-type" href="#top" aria-label="Rysing home"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" /><sup>®</sup></a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#top" aria-current="page">Home</a><a href="#founder">About</a><a href="#system">Services</a><a href="#work">Portfolio</a><a href="/blog">Blog</a><a href="#contact">Contact</a>
+        </nav>
+        <div class="nav-right">
+          <a class="btn-primary" href="#contact">Apply to work with us <span aria-hidden="true">&rarr;</span></a>
+          <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" aria-label="Open menu"><span class="menu-toggle-lines" aria-hidden="true"></span></button>
+        </div>
+      </header>
+
+      <div class="hero-copy">
+        <p class="kicker label">Branding &amp; visibility studio for courageous brands</p>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <h1 class="display"><span class="alt">Rise into</span> visibility, authority <span class="alt">and</span> <em>impact</em> <span class="alt">with a clear strategy,</span> differentiated brand <span class="alt">and thought leadership content</span></h1>
+      </div>
+    </section>
+
+    <aside class="menu-overlay orb-host" id="menu-overlay" aria-hidden="true">
+      <span class="orb orb-on-ink orb-red menu-orb-red" aria-hidden="true"></span>
+      <span class="orb orb-on-ink orb-blue menu-orb-blue orb-drift-b" aria-hidden="true"></span>
+      <button class="overlay-close" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+      <nav class="overlay-nav display" aria-label="Overlay navigation">
+        <a href="#top">Home</a><a href="#founder">About</a><a href="#system">Services</a><a href="#work">Portfolio</a><a href="/blog">Blog</a><a href="#contact">Contact</a>
+      </nav>
+      <div class="overlay-bottom">
+        <!-- TODO(asset): real award logo files pending from client Drive -->
+        <div class="award-lockups" aria-label="Awards">
+          <div class="award-lockup"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-final-src="trust-01.svg" alt="" /><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+          <div class="award-lockup"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-final-src="trust-02.svg" alt="" /><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+          <div class="award-lockup"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-final-src="trust-03.svg" alt="" /><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+          <div class="award-lockup"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-final-src="trust-04.svg" alt="" /><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        </div>
+        <!-- TODO(link): final social profile URLs not supplied -->
+        <div class="social-links" aria-label="Social media">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 212.04 212.04" aria-hidden="true"><path d="M151.79,51.06c-5.65,0-10.23,4.58-10.23,10.23s4.58,10.23,10.23,10.23,10.23-4.58,10.23-10.23-4.58-10.23-10.23-10.23ZM106.31,64.18c-23.69,0-42.97,19.27-42.97,42.96s19.27,42.96,42.97,42.96,42.96-19.27,42.96-42.96-19.27-42.96-42.96-42.96ZM106.31,134.66c-15.18,0-27.52-12.35-27.52-27.52s12.35-27.52,27.52-27.52,27.52,12.35,27.52,27.52-12.35,27.52-27.52,27.52ZM193.01,71.43c0-28.94-23.46-52.4-52.41-52.4h-69.17c-28.94,0-52.41,23.46-52.41,52.4v69.17c0,28.94,23.46,52.4,52.41,52.4h69.17c28.94,0,52.41-23.46,52.41-52.4v-69.17ZM176.59,140.6c0,19.88-16.11,35.99-35.99,35.99h-69.17c-19.88,0-35.99-16.11-35.99-35.99v-69.17c0-19.88,16.11-35.99,35.99-35.99h69.17c19.88,0,35.99,16.11,35.99,35.99v69.17Z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 212.04 212.04" aria-hidden="true"><path d="M84.35,106.67v80.64c0,1.16.94,2.1,2.1,2.1h29.95c1.16,0,2.1-.94,2.1-2.1v-81.95h21.71c1.09,0,2-.84,2.09-1.92l2.09-24.69c.1-1.23-.86-2.28-2.09-2.28h-23.8v-17.52c0-4.11,3.33-7.43,7.43-7.43h16.73c1.16,0,2.1-.94,2.1-2.1v-24.69c0-1.16-.94-2.1-2.1-2.1h-28.27c-16.59,0-30.04,13.45-30.04,30.04v23.81h-14.97c-1.16,0-2.1.94-2.1,2.1v24.69c0,1.16.94,2.1,2.1,2.1h14.97v1.31Z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 212.04 212.04" aria-hidden="true"><path d="M105.95,189.99c-22.33,0-44.66,0-66.99,0-1.25,0-2.45-.07-3.65-.53-.92-.36-1.96-.16-2.95-.47-2.92-.92-5.2-2.66-7.07-5.01-1.22-1.53-2.19-3.24-2.42-5.18-.22-1.85-.85-3.6-.85-5.51.03-44.85.03-89.69.02-134.54,0-1.16.13-2.26.5-3.37.33-1.01.23-2.13.58-3.2,1.06-3.25,3.1-5.69,5.9-7.54,1.74-1.15,3.59-2.01,5.76-1.91,3.95-1.3,8.02-.63,12.03-.64,42.09-.06,84.18-.03,126.27-.04,1.25,0,2.45.07,3.65.53.92.36,1.96.16,2.95.47,2.92.92,5.2,2.66,7.07,5.01,1.22,1.53,2.19,3.24,2.42,5.18.22,1.85.85,3.6.85,5.51-.03,44.85-.03,89.69-.02,134.54,0,1.16-.13,2.26-.5,3.37-.33,1.01-.23,2.13-.58,3.2-1.06,3.25-3.1,5.69-5.9,7.54-1.74,1.15-3.59,2.01-5.76,1.91-3.95,1.3-8.02.62-12.03.63-19.76.08-39.52.04-59.27.04ZM114.39,93.91c0-2.1.01-3.96,0-5.83-.02-2.68-1.82-4.51-4.47-4.51-6.43-.02-12.86-.02-19.29,0-2.41,0-4.26,1.73-4.49,4.13-.05.55-.03,1.1-.03,1.65,0,25.54,0,51.09,0,76.63,0,.46-.02.92.02,1.38.06.74.24,1.43.62,2.09,1.1,1.9,2.85,2.48,4.9,2.48,5.79,0,11.58.02,17.37,0,3.59-.01,5.39-1.85,5.39-5.43,0-13.37.02-26.74-.02-40.11,0-2.41.47-4.7,1.02-7.01.47-1.97,1.2-3.81,2.15-5.61,1.63-3.1,3.89-5.38,7.31-6.43,1.32-.4,2.64-.64,4.02-.57,1.49.08,2.95-.09,4.47.2,4.62.89,7.29,3.89,8.82,8,1.26,3.39,1.76,7,1.77,10.63.02,13.92.03,27.84-.01,41.76,0,1.78.77,2.94,2.19,3.83.6.38,1.26.53,1.95.64.36.05.73.09,1.1.09,6.06,0,12.13.01,18.19,0,2.05,0,3.81-.64,4.85-2.55.57-1.04.55-2.21.55-3.35,0-12.08.02-24.16,0-36.25,0-3.53-.08-7.06-.25-10.59-.07-1.46.03-2.94-.16-4.38-.23-1.75-.44-3.51-.84-5.25-.59-2.58-.97-5.19-1.92-7.7-.97-2.58-2.06-5.06-3.55-7.39-4.69-7.34-11.68-10.84-20.01-12.03-3.04-.43-6.13-.32-9.2-.16-1.64.09-3.31.14-4.89.52-2.56.61-5.11,1.26-7.51,2.46-2.49,1.25-4.72,2.81-6.72,4.72-1.19,1.14-2.17,2.45-3.31,3.94ZM74.32,127.71c0-12.63,0-25.27,0-37.9,0-.73-.02-1.46-.16-2.19-.48-2.58-2.16-4.04-4.76-4.05-6.2-.01-12.4-.02-18.61,0-2.85,0-4.71,1.88-4.71,4.75,0,26.19,0,52.37,0,78.56,0,2.58,1.33,4.23,3.83,4.83.4.1.81.19,1.22.19,6.02.01,12.04.06,18.05-.03,2.1-.03,3.81-.99,4.7-3.04.43-.99.43-2.04.43-3.09,0-12.68,0-25.36,0-38.04ZM78.28,58.51c.13-9.91-8.06-18.32-18.2-18.28-4.8.02-9.03,1.7-12.53,5.12-4.09,4-6,8.9-5.6,14.49.52,7.34,7.14,17.86,20.46,16.55,7.94-.78,15.83-7.94,15.87-17.88Z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.7 3.3-3.2 16c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20 2.9c.9-.3 1.9.2 1.7.4Z"/></svg></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== Statement ===== -->
+    <section class="statement" id="approach">
+      <p class="section-label">Who we work with</p>
+      <h2 class="display" data-reveal>For courageous brands and ambitious founders who want to build a <em>legacy</em> and create a lasting <em>impact</em></h2>
+    </section>
+
+    <!-- ===== Selected work ===== -->
+    <section class="work" id="work">
+      <p class="section-label">Selected work</p>
+      <div class="work-list">
+        <article class="project" data-reveal>
+          <img src="rysing-assets/project-01-bommer.webp" alt="Gerd Bommer speaking as an investor and personal brand" loading="lazy" decoding="async" />
+          <div class="project-shade"></div><span class="project-number numeral">01</span><span class="project-type">Founder positioning</span>
+          <div class="project-copy"><h3 class="display">Speaker and Investor Persona Brand — Gerd Bommer</h3><!-- TODO(link): case study page does not exist yet --><a class="project-link btn-tertiary" href="#">Learn more <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="project" data-reveal="2">
+          <img src="rysing-assets/project-02-alex.webp" alt="Luxury design studio work for world-class hotels" loading="lazy" decoding="async" />
+          <div class="project-shade"></div><span class="project-number numeral">02</span><span class="project-type">Identity &amp; website</span>
+          <div class="project-copy"><h3 class="display">Luxury design studio for the finest hotels in the world</h3><!-- TODO(link): case study page does not exist yet --><a class="project-link btn-tertiary" href="#">Learn more <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="project" data-reveal="3">
+          <img src="rysing-assets/project-03-doppler.webp" alt="Clemens Doppler speaking as a business coach" loading="lazy" decoding="async" />
+          <div class="project-shade"></div><span class="project-number numeral">03</span><span class="project-type">Speaker platform</span>
+          <div class="project-copy"><h3 class="display">Speaker and Business Coach</h3><!-- TODO(link): case study page does not exist yet; temporary client-site target --><a class="project-link btn-tertiary" href="https://clemensdoppler.com/">Learn more <span aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
+      <div class="work-list">
+        <article class="project" data-reveal>
+          <img src="rysing-assets/project-04-futurfai.webp" alt="AI and law consultancy brand team" loading="lazy" decoding="async" />
+          <div class="project-shade"></div><span class="project-number numeral">04</span><span class="project-type">Consultancy brand</span>
+          <div class="project-copy"><h3 class="display">AI and Law Consultancy Brand</h3><!-- TODO(link): case study page does not exist yet; temporary client-site target --><a class="project-link btn-tertiary" href="https://futurfai.com/">Learn more <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="project" data-reveal="2">
+          <img src="rysing-assets/project-05-djongow.webp" alt="Jennifer Djongow as a wealth manager and expert brand" loading="lazy" decoding="async" />
+          <div class="project-shade"></div><span class="project-number numeral">05</span><span class="project-type">Expert brand</span>
+          <div class="project-copy"><h3 class="display">Wealth Manager Expert Brand</h3><!-- TODO(link): case study page does not exist yet; temporary client-site target --><a class="project-link btn-tertiary" href="https://jenniferdjongow.com/">Learn more <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="project" data-reveal="3">
+          <img src="rysing-assets/project-06-knowle.webp" alt="Julian Knowle as an elite tennis coach and speaker" loading="lazy" decoding="async" />
+          <div class="project-shade"></div><span class="project-number numeral">06</span><span class="project-type">Coach and speaker brand</span>
+          <div class="project-copy"><h3 class="display">Elite Tennis Coach and Speaker Brand</h3><!-- TODO(link): case study page does not exist yet; temporary client-site target --><a class="project-link btn-tertiary" href="https://julianknowle.com/">Learn more <span aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== Programmes ===== -->
+    <section class="system" id="system">
+      <div class="system-head">
+        <p class="section-label">Programs</p>
+        <h2 class="display" data-reveal><span class="alt">We can grow</span> your brand <span class="alt">on</span> four levels</h2>
+        <p data-reveal="2">We are based in Vienna, Austria and we operate across Europe.</p>
+      </div>
+            <div class="system-list" data-reveal="3">
+        <div class="system-item is-open">
+          <button class="system-toggle" type="button" id="prog-01-btn" aria-expanded="true" aria-controls="prog-01">
+            <b class="numeral">01</b>
+            <h3 class="display">Brand Building</h3>
+            <p>For those who want to become the only choice in their industry</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </button>
+          <div class="system-panel" id="prog-01" role="region" aria-labelledby="prog-01-btn">
+            <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Be understood, and remembered.</p></div>
+            <div class="system-tags"><span>Brand strategy</span><span>Category position</span><span>Message architecture</span><span>Offer narrative</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="system-item">
+          <button class="system-toggle" type="button" id="prog-02-btn" aria-expanded="false" aria-controls="prog-02">
+            <b class="numeral">02</b>
+            <h3 class="display">Design &amp; Websites</h3>
+            <p>For those who want a differentiated and scalable brand presence</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </button>
+          <div class="system-panel" id="prog-02" role="region" aria-labelledby="prog-02-btn">
+            <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Become unmistakably you.</p></div>
+            <div class="system-tags"><span>Brand design</span><span>Website design</span><span>Website development</span><span>SEO &amp; GEO</span><span>Videography</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="system-item">
+          <button class="system-toggle" type="button" id="prog-03-btn" aria-expanded="false" aria-controls="prog-03">
+            <b class="numeral">03</b>
+            <h3 class="display">LinkedIn &amp; Instagram Marketing</h3>
+            <p>For those who want to grow their influence on social media</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </button>
+          <div class="system-panel" id="prog-03" role="region" aria-labelledby="prog-03-btn">
+            <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Be seen in the right places.</p></div>
+            <div class="system-tags"><span>Content strategy</span><span>Content automations</span><span>Content creation</span><span>Social media management</span><span>Content shooting</span><span>Content editing</span><span>Reels and shorts</span><span>Performance analysis</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="system-item">
+          <button class="system-toggle" type="button" id="prog-04-btn" aria-expanded="false" aria-controls="prog-04">
+            <b class="numeral">04</b>
+            <h3 class="display">Lead Gen &amp; Sales</h3>
+            <p>For those ready to make a big, lasting impact.</p>
+            <i class="system-symbol" aria-hidden="true"></i>
+          </button>
+          <div class="system-panel" id="prog-04" role="region" aria-labelledby="prog-04-btn">
+            <div class="system-detail">
+            <div class="system-outcome"><span>Stage outcome</span><p class="system-phrase display">Be chosen for what comes next.</p></div>
+            <div class="system-tags"><span>Podcast</span><span>Videocast</span><span>YouTube channel</span><span>Long form content</span><span>Production</span><span>Post-production</span><span>Keynote writing</span></div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Client logos ===== -->
+    <section class="trust" id="recognition" aria-labelledby="recognition-title">
+      <h2 class="display" id="recognition-title" data-reveal><span class="alt">Trusted by</span> founders, speakers <span class="alt">and teams across</span> Europe</h2>
+      <div class="logo-marquee" aria-label="Client logos" data-reveal="2">
+        <div class="logo-track"><span><img src="rysing-assets/logo-clemensdoppler.webp" alt="Clemens Doppler" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-gerdbommer.webp" alt="Gerd Bommer" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-jenniferdjongow.webp" alt="Jennifer Djongow" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-julianknowle.webp" alt="Julian Knowle" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-futurfai.webp" alt="FuturfAI" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-u4success.webp" alt="U4Success" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-wise-up.webp" alt="Wise Up" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-digitalworld.webp" alt="Digital World" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-digitfinance.webp" alt="Digit Finance" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-volkshilfe.webp" alt="Volkshilfe" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-mam.webp" alt="MAM" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-dsp.webp" alt="DSP" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-rb.webp" alt="RB" loading="lazy" decoding="async" /></span></div>
+        <div class="logo-track" aria-hidden="true"><span><img src="rysing-assets/logo-clemensdoppler.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-gerdbommer.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-jenniferdjongow.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-julianknowle.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-futurfai.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-u4success.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-wise-up.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-digitalworld.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-digitfinance.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-volkshilfe.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-mam.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-dsp.webp" alt="" loading="lazy" decoding="async" /></span><span><img src="rysing-assets/logo-rb.webp" alt="" loading="lazy" decoding="async" /></span></div>
+      </div>
+    </section>
+
+    <!-- ===== About ===== -->
+    <section class="founder" id="founder" aria-labelledby="founder-title">
+      <div class="founder-grid">
+        <div class="founder-portrait" data-reveal>
+          <img src="rysing-assets/anzhelika-portrait.png" alt="Anzhelika, founder of Rysing" loading="lazy" decoding="async" />
+        </div>
+        <div>
+          <p class="section-label">Founder</p>
+          <h2 class="display" id="founder-title" data-reveal="2"><span class="alt">The studio exists to give</span> voices <span class="alt">to people who want to make a</span> real impact.</h2>
+          <p class="founder-lede" data-reveal="3">A courageous brand refuses to conform. It belongs to someone who would rather be disliked than ignored. Who says the thing their industry is not ready to hear, and says it anyway. Who left the safe path, took the unpopular position, built what nobody asked for and who is building something meant to outlast them.</p>
+          <p class="founder-lede" data-reveal="3">Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+          <p class="founder-quote" data-reveal="3">Led by Anzhelika and delivered by an interdisciplinary team, Rysing Studio translates a founder's courage and ambition into a differentiated, visible brand.</p>
+          <!-- TODO(link): About page target has not been supplied -->
+          <a class="btn-secondary" href="#">Learn more</a>
+          <div class="founder-stats" data-reveal="4">
+            <div class="founder-stat"><strong>35+</strong><span>personal brands built</span></div>
+            <div class="founder-stat"><strong>350+</strong><span>students taught</span></div>
+            <div class="founder-stat"><strong>3000+</strong><span>content pieces published</span></div>
+            <div class="founder-stat"><strong>50k+</strong><span>followers and subscribers over all platforms</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== About alternative: portrait contact sheet ===== -->
+    <section class="studio-roster orb-host" aria-labelledby="studio-roster-title">
+      <span class="orb orb-on-ink orb-red roster-orb-red" aria-hidden="true"></span>
+      <span class="orb orb-on-ink orb-blue roster-orb-blue orb-drift-b" aria-hidden="true"></span>
+      <h2 class="display" id="studio-roster-title" data-reveal><span class="alt">Behind the</span> <em>work.</em></h2>
+      <p class="studio-roster-intro" data-reveal="2">Brand strategy, design, web and content come together in one close team. No account managers or handoffs to people you've never met. You speak directly with the people doing the work.</p>
+      <div class="roster-gallery" data-reveal="2">
+        <figure class="roster-person" tabindex="0">
+          <img src="rysing-assets/anzhelika-chair.webp" alt="Anzhelika seated in the studio" loading="lazy" decoding="async" />
+          <figcaption class="roster-caption"><h3 class="display">Anzhelika</h3><p>Founder · The mind behind it all</p></figcaption>
+        </figure>
+        <figure class="roster-person" tabindex="0">
+          <img src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" />
+          <figcaption class="roster-caption"><h3 class="display">Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
+        </figure>
+        <figure class="roster-person" tabindex="0">
+          <img src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" />
+          <figcaption class="roster-caption"><h3 class="display">Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
+        </figure>
+        <figure class="roster-person" tabindex="0">
+          <span class="roster-placeholder" aria-hidden="true">K</span>
+          <figcaption class="roster-caption"><h3 class="display">Kristina</h3><p>Discipline to be confirmed</p></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== Proof ===== -->
+    <section class="proof" id="proof" aria-labelledby="proof-title">
+      <div class="proof-head">
+        <div class="proof-lead">
+          <h2 class="display" id="proof-title" data-reveal><span class="alt">In their</span> words</h2>
+          <p class="testimonial-intro" data-reveal="2">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+        </div>
+        <div class="proof-side" data-reveal="3">
+          <div class="rating"><span class="stars" aria-hidden="true">★★★★★</span><span class="rnum">4.9 / 5 · 49 reviews</span></div>
+          <div class="award-badge"><span>Certified 2025</span><strong>HIPE Award</strong><span>Outstanding service</span></div>
+        </div>
+      </div>
+      <div class="testimonial-grid" data-reveal="4">
+        <figure class="testimonial-card">
+          <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">MH</span><span><strong>Marcus H.</strong><small>Founder, B2B SaaS</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">EV</span><span><strong>Elena V.</strong><small>Keynote speaker</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">TR</span><span><strong>Tobias R.</strong><small>Agency owner</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">SL</span><span><strong>Sophie L.</strong><small>Consultant</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">DK</span><span><strong>Daniel K.</strong><small>Co-founder, DTC brand</small></span></figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
+          <div class="testimonial-stars" aria-hidden="true">★★★★★</div>
+          <figcaption><span class="testimonial-avatar" aria-hidden="true">NS</span><span><strong>Nadia S.</strong><small>Executive coach</small></span></figcaption>
+        </figure>
+      </div>
+      <div class="testimonial-foot">
+        <a class="btn-tertiary" href="#proof">Read all 49 reviews <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+
+
+    <!-- ===== Spotlight ===== -->
+    <section class="spotlight" id="spotlight" aria-labelledby="spotlight-title">
+      <div class="spotlight-shell">
+        <div class="spotlight-copy">
+          <p class="section-label">For keynote speakers</p>
+          <h2 class="display" id="spotlight-title" data-reveal><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
+          <p class="spotlight-intro" data-reveal="2">Build your speaker brand and rise into thought leadership.</p>
+          <a class="btn-secondary" href="rysing2.html">Learn more <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="spotlight-visual">
+          <img src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Speaker on stage, mid-gesture, wearing a headset microphone" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Newsletter ===== -->
+    <section class="fudge" id="sunday-fudge" aria-labelledby="fudge-title">
+      <div class="fudge-grid">
+        <div class="fudge-copy">
+          <p class="section-label">Newsletter — Sunday Fudge</p>
+          <h2 class="display" id="fudge-title" data-reveal><span class="alt">Get free access to my</span> business and marketing <span class="alt">mini-courses</span></h2>
+          <p class="fudge-intro" data-reveal="2">Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
+          <ul class="fudge-points" aria-label="What Sunday Fudge includes" data-reveal="3">
+            <li>Sharp perspective</li>
+            <li>Useful prompts</li>
+            <li>Sunday delivery</li>
+          </ul>
+          <form class="fudge-form" id="fudge-form" data-reveal="4">
+            <div class="fudge-field">
+              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Email" required aria-label="Email" aria-describedby="fudge-status" />
+              <button class="btn-primary" type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="fudge-form-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
+          </form>
+        </div>
+        <div class="fudge-art" aria-label="Sunday Fudge newsletter cover">
+          <span class="fudge-orbit" aria-hidden="true"></span>
+          <article class="fudge-card">
+            <div class="fudge-card-top"><span>Sunday edition</span><span>Rysing Studio</span></div>
+            <strong>Fudge<br />for<br /><em>founders.</em></strong>
+            <div class="fudge-card-bottom"><span>People branding.<br />Without the fluff.</span><i aria-hidden="true"></i></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Final CTA ===== -->
+    <section class="final-cta" id="contact" aria-labelledby="contact-title">
+      <span class="cta-light" aria-hidden="true"></span>
+      <p class="section-label">Ready when you are</p>
+      <h2 class="display" id="contact-title" data-reveal><span class="alt">Turn your</span> vision <span class="alt">into a</span> courageous brand <span class="alt">and thought leader reputation.</span></h2>
+      <div class="final-cta-bottom" data-reveal="2">
+        <a class="btn-primary" href="mailto:hello@rysing.agency">Apply to work with us <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer orb-host" id="studio">
+    <span class="orb orb-on-ink orb-red footer-orb-red" aria-hidden="true"></span>
+    <span class="orb orb-on-ink orb-blue footer-orb-blue orb-drift-b" aria-hidden="true"></span>
+    <div class="footer-grid">
+      <div class="footer-intro">
+        <a class="footer-logo wordmark-type" href="#top" aria-label="Rysing home"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" /><sup>®</sup></a>
+        <p>Brand, content and sales for founders who want to become the only choice in their industry.</p>
+      </div>
+      <nav class="footer-column" aria-label="Footer navigation">
+        <h2>Company</h2>
+        <ul class="footer-links">
+          <li><a href="#system">Services</a></li>
+          <li><a href="#spotlight">Keynote speaking</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#sunday-fudge">Sunday Fudge</a></li>
+          <li><a href="#contact">Apply to work with us</a></li>
+        </ul>
+      </nav>
+      <div class="footer-column">
+        <h2>Contact</h2>
+        <ul class="footer-links">
+          <li><a href="mailto:hello@rysing.agency">hello@rysing.agency</a></li>
+          <li><a href="#">rysing.agency</a></li>
+          <li><span>Vienna, Austria</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <span>© 2026 rysing, Vienna, Austria. All rights reserved.</span>
+      <div class="footer-meta-links">
+        <!-- TODO(link): legal pages do not exist yet -->
+        <span><a href="#">Imprint</a></span>
+        <span><a href="#">Privacy Policy</a></span>
+        <span><a href="#">Terms &amp; Conditions</a></span>
+        <span><a href="#">Cookie Policy</a></span>
+      </div>
+      <a href="#top">Back to top ↑</a>
+    </div>
+    <a class="footer-wordmark wordmark-type" href="#top" aria-label="Rysing, back to top"><img src="rysing-assets/rysing-logo-light.svg" alt="Rysing" /></a>
+  </footer>
+
+  <script>
+    document.body.classList.remove('no-js');
+
+    /* Accessible full-screen navigation. */
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuOverlay = document.querySelector('#menu-overlay');
+    const overlayClose = menuOverlay.querySelector('.overlay-close');
+    const menuFocusable = () => [...menuOverlay.querySelectorAll('a[href],button:not([disabled])')];
+    const closeMenu = () => {
+      menuOverlay.classList.remove('is-open');
+      menuOverlay.setAttribute('aria-hidden', 'true');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open menu');
+      document.body.style.overflow = '';
+      menuToggle.focus();
+    };
+    const openMenu = () => {
+      menuOverlay.classList.add('is-open');
+      menuOverlay.setAttribute('aria-hidden', 'false');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Close menu');
+      document.body.style.overflow = 'hidden';
+      menuFocusable()[0]?.focus();
+    };
+    menuToggle.addEventListener('click', () => menuOverlay.classList.contains('is-open') ? closeMenu() : openMenu());
+    overlayClose.addEventListener('click', closeMenu);
+    menuOverlay.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', (event) => {
+      if (!menuOverlay.classList.contains('is-open')) return;
+      if (event.key === 'Escape') { closeMenu(); return; }
+      if (event.key !== 'Tab') return;
+      const focusable = menuFocusable();
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+
+    /* One programme open at a time. The panel height is animated by CSS
+       (grid-template-rows 0fr -> 1fr), so this only flips state. */
+    const systemItems = [...document.querySelectorAll('.system-item')];
+    systemItems.forEach((item) => {
+      const button = item.querySelector('.system-toggle');
+      button.addEventListener('click', () => {
+        const willOpen = !item.classList.contains('is-open');
+        systemItems.forEach((other) => {
+          const open = other === item && willOpen;
+          other.classList.toggle('is-open', open);
+          other.querySelector('.system-toggle').setAttribute('aria-expanded', String(open));
+        });
+      });
+    });
+
+    /* Newsletter form remains a visual prototype until a platform is connected. */
+    const fudgeForm = document.querySelector('#fudge-form');
+    const fudgeStatus = document.querySelector('#fudge-status');
+    if (fudgeForm && fudgeStatus) {
+      fudgeForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        fudgeStatus.textContent = 'Thanks. Signup will be enabled when the mailing platform is connected.';
+      });
+    }
+
+    /* Scroll reveals. Degrades to fully visible content without JS or with reduced motion. */
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealTargets = document.querySelectorAll('section');
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      revealTargets.forEach((section) => section.classList.add('revealed'));
+    } else {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+      revealTargets.forEach((section) => observer.observe(section));
+    }
+  </script>
+</body>
+</html>
