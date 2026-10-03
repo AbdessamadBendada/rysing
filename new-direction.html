@@ -67,7 +67,7 @@
       --label:11px;
 
       --gutter:clamp(22px,4.2vw,80px);
-      --pad-section:clamp(112px,13vw,224px);
+      --pad-section:clamp(76px,7.5vw,132px);
       --ease:cubic-bezier(.2,.75,.2,1);
     }
 
@@ -107,8 +107,8 @@
        runs taller than Kinfolk's at a matched font-size. */
     .display em {
       font-style:normal; color:var(--red);
-      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
-      font-weight:600; font-size:.88em; letter-spacing:.005em;
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      letter-spacing:.012em;
     }
 
     /* The signature of the new direction: the grotesque and the didone alternate
@@ -359,7 +359,7 @@
 
     /* --- 5. Statement (largest moment on the page) ------------- */
     .statement {
-      min-height:84svh; padding:var(--pad-section) var(--gutter);
+      min-height:0; padding:clamp(90px,10vw,170px) var(--gutter);
       display:flex; flex-direction:column; justify-content:center;
     }
     /* 99 characters over 3 lines needs ~33 per line. */
@@ -369,7 +369,7 @@
     }
 
     /* --- 6. Selected work -------------------------------------- */
-    .work { padding:clamp(112px,13vw,210px) var(--gutter) clamp(48px,6vw,80px); background:var(--ink); color:#fff; }
+    .work { padding:clamp(76px,7.5vw,132px) var(--gutter) clamp(40px,4.5vw,64px); background:var(--ink); color:var(--paper); }
     .work-list { height:min(66svh,720px); min-height:520px; display:flex; gap:clamp(10px,1.1vw,18px); overflow:visible; }
     .work-list + .work-list { margin-top:clamp(10px,1.1vw,18px); }
     /* flex-grow transitions far more reliably than the flex shorthand. */
@@ -507,9 +507,9 @@
        Greyscale unifies thirteen logos drawn in thirteen different palettes. */
     /* The source files are 1080x1080 canvases with built-in padding around the mark,
        so the box has to run large for the logo itself to read at a normal size. */
-    .logo-track span { display:grid; place-items:center; width:clamp(220px,20vw,340px); min-height:210px; padding:0 clamp(18px,2vw,34px); }
+    .logo-track span { display:grid; place-items:center; width:clamp(220px,20vw,340px); min-height:150px; padding:clamp(16px,2vw,28px) clamp(18px,2vw,34px); }
     .logo-track img {
-      width:auto; max-width:100%; max-height:clamp(130px,13vw,180px); object-fit:contain;
+      width:auto; max-width:100%; max-height:clamp(64px,6vw,86px); object-fit:contain;
       filter:grayscale(1); opacity:.62; transition:filter .4s var(--ease),opacity .4s var(--ease);
     }
     .logo-track span:hover img { filter:none; opacity:1; }
