@@ -163,6 +163,33 @@ historical prototype exploration, not the active `rysing-comments.html` build.
 
 ## Decision Log
 
+### 2026-10-03 — New dark editorial direction approved for parallel build
+
+- Approved `new-direction-2.html` as a new parallel concept; it does not replace
+  or modify `rysing-comments.html`, `new-direction.html`, or any earlier concept.
+- Adopted the structure and visual pacing of the supplied `Main.dc.html`
+  blueprint while rebuilding it as standalone semantic HTML, CSS, and JavaScript.
+- Removed the showreel from the hero. The new hero is a full-height typographic
+  composition with restrained red and blue light, brand texture, and mixed
+  serif/sans display treatment.
+- Approved a standalone sticky showreel transition. The Rysing aperture expands
+  on scroll while the video itself plays normally; reduced-motion and no-JavaScript
+  users receive a static rectangular video instead.
+- Extended the new direction through the full homepage using the existing copy,
+  real project imagery, client marks, founder/team photography, and local Rysing
+  logo, pattern, colour, and font assets.
+- Adopted a primarily black editorial canvas with `#f04222` red and `#0044ff`
+  blue reserved for decisive branded moments. The final CTA remains full red.
+- Adopted the locally supplied Kinfolk/Aileron pairing for this concept to match
+  the new brand direction. Kinfolk web licensing must be confirmed before this
+  concept can be treated as production-ready.
+- Reordered the narrative for this parallel concept: typographic hero, standalone
+  showreel, figures, four-level system, selected work, manifesto, founder, team,
+  recognition, testimonials, Spotlight, Sunday Fudge, final CTA, and footer.
+- Retained visible pending-verification treatments and `TODO` markers for metrics,
+  testimonials, awards, temporary links, Kristina's discipline, and the newsletter
+  backend instead of presenting unresolved material as production-approved.
+
 ### 2026-08-19 — Initial direction consolidated
 
 - Adopted founder-led editorial authority plus a rising-star narrative.
