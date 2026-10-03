@@ -203,18 +203,28 @@
        soft red light drifting behind them. The figures carry the section; the
        labels stay small and quiet underneath. */
     .stats {
-      position:relative; isolation:isolate; overflow:hidden;
+      /* No overflow:hidden — clipping a soft glow leaves a hard edge at the
+         section boundary. The page is one continuous black, so the light is
+         allowed to bleed past the section the way the reference's does. */
+      position:relative; isolation:isolate;
       padding:clamp(96px,13vh,180px) var(--gutter) clamp(150px,20vh,260px);
     }
     .stats-light { position:absolute; z-index:-1; inset:0; pointer-events:none; }
     .stats-light span {
-      position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(22px);
-      /* Tighter stops than the hero's: the reference reads these as defined
-         circles behind the figures, not as an ambient wash. */
-      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.8) 0 34%,rgba(240,66,34,.22) 58%,transparent 76%);
+      position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(70px);
+      /* Large, soft and low-contrast: this is ambient light behind the whole row.
+         An earlier pass used tight stops and it read as two solid red discs
+         parked behind individual figures. */
+      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.3),rgba(240,66,34,.1) 40%,rgba(240,66,34,.03) 64%,transparent 78%);
     }
-    .stats-light span:nth-child(1) { width:min(26vw,330px); top:24%; left:14%; animation:driftA 30s var(--ease) infinite alternate; }
-    .stats-light span:nth-child(2) { width:min(21vw,260px); bottom:8%; right:4%; animation:driftB 38s var(--ease) -13s infinite alternate; }
+    .stats-light span:nth-child(1) {
+      width:min(50vw,660px); top:-22%; left:4%;
+      animation:driftA 34s var(--ease) infinite alternate;
+    }
+    .stats-light span:nth-child(2) {
+      width:min(40vw,540px); bottom:-24%; right:2%;
+      animation:driftB 44s var(--ease) -15s infinite alternate;
+    }
 
     .stats-grid {
       display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(24px,4vw,70px);
