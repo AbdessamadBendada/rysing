@@ -1,0 +1,1580 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>rysing: Branding Agency, Vienna</title>
+  <meta name="description" content="Rysing is a people-branding studio in Vienna. Brand, content and sales for founders who want to become the only choice in their industry." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="rysing-assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rysing-assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="rysing-assets/favicon-180.png" />
+  <meta name="theme-color" content="#141414" />
+
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
+
+  <style>
+    /* Rysing — new direction. Built from the design reference, not from the
+       earlier builds. Copy is lifted verbatim from rysing-comments.html.
+
+       LICENSING: Kinfolk's web licence is NOT yet cleared — resolve before
+       production. Aileron is public domain (Sora Sagano). Qualy, the logo face,
+       is never loaded: the wordmark ships as artwork. */
+
+    @font-face { font-family:"Kinfolk"; src:url("rysing-assets/Kinfolk-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Light.woff2") format("woff2"); font-weight:300; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-SemiBold.woff2") format("woff2"); font-weight:600; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+
+    /* --- Tokens ------------------------------------------------- */
+    :root {
+      --ink:#141414;
+      --ink-deep:#0d0d0d;
+      --paper:#f9f9f9;
+      --red:#f04222;
+      --blue:#3524d5;
+      --muted:#9a9a9a;
+      --line:rgba(249,249,249,.14);
+
+      --gutter:clamp(22px,4vw,74px);
+      --ease:cubic-bezier(.2,.75,.2,1);
+
+      /* One grade across every photograph on the page. The supplied images come
+         from different cameras, lights and decades of client archive, and the
+         spread between the sharp studio frames and the soft ones is the single
+         most expensive-looking thing we can fix without a reshoot. Pulling
+         saturation down and contrast up narrows that spread. Replacement
+         photography drops in under the same grade, so nothing needs retuning.
+         Deliberately not applied to the logo marquee — those marks carry their
+         own brightness(0) invert(1) treatment. */
+      --photo-grade:contrast(1.07) saturate(.62) brightness(.97);
+      --mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 269.87 273.69'%3E%3Cpath d='M262.42,136.55c-12.82-.17-25.39-1.76-37.88-4.67l-20.93-5.54-13.69-5c-13.95-5.97-25.03-14.22-33.04-27.25-5.44-8.83-9.03-18.37-11.98-28.3l-5.16-20.33c-1.87-8.29-3.28-16.58-3.96-25v-.36c-.1-1.23-.19-2.45-.27-3.68-.07-1.32-.12-2.64-.15-3.97l-.24-10.68V.33s-.01-.05-.04-.09V0s-.08.01-.15.08c-.07-.06-.13-.11-.13-.08v.23s-.06.07-.06.09v1.46s-.23,10.68-.23,10.68c-.03,1.33-.08,2.65-.15,3.97-.08,1.23-.17,2.45-.27,3.68v.36c-.68,8.41-2.09,16.7-3.96,25l-5.16,20.33c-2.96,9.93-6.55,19.47-11.98,28.3-8.02,13.02-19.09,21.27-33.04,27.25l-13.69,5-20.93,5.54c-12.49,2.91-25.07,4.5-37.88,4.67l-7.45.25c.53.22,1.11.32,1.62.33l5.98.13c12.33.26,24.47,1.65,36.53,4.4l20.86,5.41,13.65,4.84c14.67,6.08,26.28,14.51,34.61,28.21,5.62,9.24,9.23,19.23,12.23,29.61l4.5,17.88c2.54,11.12,4.08,22.23,4.52,33.63l.23,10.21v1.66c0,.06.02.19.04.28,0,.13.03.33.07.3l.09-.09.09.09s.06-.17.07-.3c.03-.09.04-.22.04-.28v-1.66l.23-10.21c.44-11.4,1.99-22.51,4.52-33.63l4.5-17.88c3-10.37,6.61-20.37,12.23-29.61,8.32-13.7,19.93-22.14,34.61-28.21l13.65-4.84,20.86-5.41c12.05-2.75,24.19-4.15,36.53-4.4l5.98-.13c.51-.01,1.09-.11,1.62-.33l-7.45-.25Z'/%3E%3C/svg%3E");
+    }
+
+    * { box-sizing:border-box; }
+    /* clip, not hidden: the drifting glows are allowed to bleed off the
+       viewport without opening a horizontal scrollbar, and unlike `hidden`
+       this does not turn the root into a containing block for the fixed
+       header. Sections must not clip them locally — see .stats. */
+    html { background:var(--ink); scroll-behavior:smooth; overflow-x:clip; }
+    body {
+      margin:0; background:var(--ink); color:var(--paper);
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size:clamp(15px,1.1vw,17px); line-height:1.6;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a { color:inherit; text-decoration:none; }
+    img,video { display:block; }
+    :focus-visible { outline:2px solid var(--red); outline-offset:4px; }
+
+    /* Film grain: every branded surface in the guide carries it. Generated
+       rather than loaded — the supplied plate is 4.3 MB and does not tile. */
+    body::after {
+      content:""; position:fixed; inset:0; z-index:90; pointer-events:none;
+      opacity:.055; mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+
+    .skip-link {
+      position:fixed; z-index:120; top:12px; left:12px; padding:13px 17px;
+      background:var(--paper); color:var(--ink); transform:translateY(-180%);
+      transition:transform .2s var(--ease);
+      font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+    }
+    .skip-link:focus { transform:none; }
+
+    /* --- Type --------------------------------------------------- */
+    /* The reference's signature: the grotesque and the didone alternate inside
+       one sentence. Kinfolk is the default voice of a headline; .alt flips a run
+       back to Aileron. Kinfolk is caps-only by design. */
+    .display {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      text-transform:uppercase; letter-spacing:.01em; line-height:.96;
+    }
+    .display .alt {
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:600; letter-spacing:-.022em;
+    }
+    .label {
+      font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+    }
+
+    /* Alternation is a device, not a texture. Running it through all eleven
+       headlines is what turned the page's signature move into wallpaper — if
+       every sentence mixes faces, the mix stops meaning anything. It now
+       appears at the three moments the page is allowed to be loud: the hero,
+       the manifesto, and the closing ask. Every other headline sets in one
+       face, so when the mix arrives it reads as emphasis.
+
+       The markup is untouched — the .alt spans stay exactly where they are for
+       the loud moments and simply inherit elsewhere. */
+    .band-head h2 .alt,
+    .proof-lead h2 .alt,
+    .founder-title .alt,
+    .fudge h2 .alt,
+    .system-title .alt,
+    .spot-copy h2 .alt {
+      font-family:inherit; font-weight:inherit; letter-spacing:inherit;
+    }
+
+    /* Didone wants less air the larger it gets; a single tracking value across
+       a 32px section head and a 152px hero leaves the hero looking loose. */
+    .hero-title,.manifesto h2,.closing h2 { letter-spacing:-.012em; }
+
+    /* --- Header ------------------------------------------------- */
+    .site-head {
+      position:fixed; z-index:20; inset:0 0 auto; height:92px;
+      padding:0 var(--gutter); display:flex; align-items:center; gap:clamp(20px,3vw,60px);
+      border-bottom:1px solid var(--line);
+    }
+    .site-head::before {
+      content:""; position:absolute; z-index:-1; inset:0;
+      background:linear-gradient(to bottom,rgba(13,13,13,.82),rgba(13,13,13,.34) 70%,transparent);
+      pointer-events:none;
+    }
+    .wordmark { flex:none; line-height:0; }
+    .wordmark img { width:auto; height:27px; }
+    .head-right { display:flex; align-items:center; gap:clamp(10px,1.4vw,18px); margin-left:auto; }
+
+    /* Burger, always present. The inline nav moved into the overlay, so the
+       header carries three things only: mark, ask, menu. */
+    .menu-toggle {
+      display:grid; place-items:center; flex:none; width:46px; height:46px;
+      border:1px solid rgba(249,249,249,.4); border-radius:50%;
+      background:none; color:inherit; cursor:pointer;
+      transition:background var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail);
+    }
+    .menu-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .menu-toggle-lines,.menu-toggle-lines::before,.menu-toggle-lines::after {
+      display:block; width:17px; height:1px; background:currentColor;
+      transition:transform var(--t-detail) var(--ease-detail),background var(--t-detail) var(--ease-detail);
+    }
+    .menu-toggle-lines { position:relative; }
+    .menu-toggle-lines::before,.menu-toggle-lines::after { content:""; position:absolute; left:0; }
+    .menu-toggle-lines::before { top:-5px; }
+    .menu-toggle-lines::after { top:5px; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-lines { background:transparent; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-lines::before { top:0; transform:rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-lines::after { top:0; transform:rotate(-45deg); }
+
+    /* --- Menu overlay ------------------------------------------- */
+    .menu-overlay {
+      position:fixed; z-index:110; inset:0; width:100vw; min-height:100svh;
+      padding:clamp(96px,12vh,130px) var(--gutter) clamp(28px,4vh,44px);
+      background:var(--ink-deep); color:var(--paper);
+      display:flex; flex-direction:column; justify-content:space-between; gap:40px;
+      transform:translateX(100%); visibility:hidden;
+      transition:transform .62s var(--ease-weight),visibility 0s .62s;
+    }
+    .menu-overlay.is-open { transform:none; visibility:visible; transition-delay:0s; }
+    .overlay-close {
+      position:absolute; top:23px; right:var(--gutter); width:46px; height:46px;
+      display:grid; place-items:center; padding:0;
+      border:1px solid rgba(249,249,249,.4); border-radius:50%;
+      background:none; color:inherit; cursor:pointer;
+      transition:background var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail);
+    }
+    .overlay-close:hover { background:var(--red); border-color:var(--red); color:var(--paper); }
+    .overlay-close svg { width:20px; height:20px; }
+    .overlay-nav { display:flex; flex-direction:column; align-items:flex-end; }
+    .overlay-nav a {
+      font-size:clamp(38px,6vw,86px); line-height:1.02;
+      transition:color var(--t-detail) var(--ease-detail);
+    }
+    .overlay-nav a:hover { color:var(--red); }
+    .overlay-nav a:nth-child(1){--i:0}.overlay-nav a:nth-child(2){--i:1}.overlay-nav a:nth-child(3){--i:2}
+    .overlay-nav a:nth-child(4){--i:3}.overlay-nav a:nth-child(5){--i:4}.overlay-nav a:nth-child(6){--i:5}
+    /* The links arrive one after another rather than together — the one place
+       a stagger is allowed to be noticeable, because the panel is otherwise
+       empty while it travels. */
+    .menu-overlay.is-open .overlay-nav a {
+      animation:overlayIn .5s var(--ease-weight) both;
+      animation-delay:calc(.14s + var(--i,0) * .045s);
+    }
+    @keyframes overlayIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+    .overlay-bottom { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:30px; }
+    .award-lockups { display:flex; flex-wrap:wrap; }
+    .award-lockup {
+      display:grid; grid-template-columns:40px auto; gap:12px; align-items:center;
+      min-width:168px; padding:0 20px; border-left:1px solid var(--line);
+    }
+    .award-lockup:first-child { padding-left:0; border-left:0; }
+    .award-mark { width:40px; height:40px; border:1px solid rgba(249,249,249,.3); }
+    .award-lockup span { display:block; font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
+    .award-lockup span + span { margin-top:5px; color:var(--muted); }
+    .social-links { display:flex; gap:9px; }
+    .social-links a {
+      width:44px; height:44px; display:grid; place-items:center;
+      border:1px solid var(--line); border-radius:50%;
+      transition:background var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail);
+    }
+    .social-links a:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .social-links svg { width:17px; height:17px; fill:currentColor; }
+
+    .btn-pill {
+      flex:none; display:inline-flex; align-items:center; gap:12px;
+      min-height:44px; padding:0 22px; border:1px solid rgba(249,249,249,.4); border-radius:999px;
+      font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+    }
+    .btn-pill:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .btn-pill .arrow { width:11px; height:11px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      transition:transform .35s var(--ease); }
+    .btn-pill:hover .arrow { transform:rotate(90deg) scale(1.2); }
+
+    @media (max-width:1080px) {
+      /* The header is now mark + ask + burger at every width, so there is no
+         desktop nav to hide. Only the ask collapses on the narrowest screens,
+         where the burger already carries it. */
+      .btn-pill-head { display:none; }
+    }
+
+    /* --- Hero --------------------------------------------------- */
+    /* No video here — it moves to the section below. The ground is black with
+       two large out-of-focus lights bleeding in from opposing corners, which is
+       the identity's own banner composition. */
+    .hero {
+      position:relative; isolation:isolate; overflow:hidden;
+      min-height:100svh; padding:clamp(140px,17vh,210px) var(--gutter) clamp(48px,6vh,80px);
+      display:flex; flex-direction:column; justify-content:flex-end;
+      background:var(--ink-deep);
+    }
+    .hero-light { position:absolute; z-index:-1; inset:0; pointer-events:none; }
+    .hero-light::before,.hero-light::after {
+      content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+    }
+    .hero-light::before {
+      width:min(72vw,1020px); top:-24vh; right:-14vw;
+      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+      animation:driftA 28s var(--ease) infinite alternate;
+    }
+    .hero-light::after {
+      width:min(62vw,860px); bottom:-30vh; left:-18vw;
+      background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.95),rgba(53,36,213,.5) 38%,rgba(53,36,213,.08) 62%,transparent 74%);
+      animation:driftB 35s var(--ease) -11s infinite alternate;
+    }
+    @keyframes driftA { to { transform:translate3d(-3%,4%,0) scale(1.08); } }
+    @keyframes driftB { to { transform:translate3d(4%,-3%,0) scale(1.07); } }
+
+    .hero-eyebrow { margin:0 0 auto; text-align:right; }
+
+    /* The reference sets 6 words; this headline is 23. The opening clause keeps
+       the poster scale and alternation, and the qualifier that follows drops to a
+       supporting line — the full sentence is intact, the hierarchy does the work. */
+    .hero-title { margin:0; max-width:13ch; font-size:clamp(46px,8.6vw,152px); }
+    /* Keeps the closing phrase together so it wraps as a unit instead of leaving
+       "and" stranded at the end of the previous line. */
+    .hero-title .keep { white-space:nowrap; }
+    .hero-title .tail {
+      display:block; margin-top:clamp(18px,2.2vw,34px); max-width:46ch;
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:300; font-size:clamp(15px,1.45vw,21px); line-height:1.5;
+      letter-spacing:.01em; text-transform:none; color:rgba(249,249,249,.78);
+    }
+    .hero-title em { font-style:normal; }
+
+    /* --- Showreel aperture -------------------------------------- */
+    /* The brand mark opens to reveal the work: the video plays inside the star,
+       which scales up on scroll until it fills the frame. Driven by scroll
+       position through a CSS variable rather than by scrubbing playback —
+       seeking on every frame stutters badly on mid-range machines. */
+    .reel { position:relative; height:260vh; background:var(--ink); }
+    .reel-stage {
+      position:sticky; top:0; height:100svh; overflow:hidden;
+      display:grid; place-items:center;
+    }
+    .reel-frame {
+      position:absolute; inset:0;
+      -webkit-mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
+              mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
+    }
+    /* At 16% the star is ~200px and shows a 200px crop of a 1440px frame, so
+       whatever happens to be mid-screen becomes the mark. The reel opens on
+       black brush lettering over white, which cut a gash straight through it.
+
+       So the mark starts as the mark: a solid fill that crossfades to the
+       footage as the aperture widens. The mask on the parent clips this too,
+       so it is always exactly the star. --reel-reveal clears early, well
+       before the shape stops reading as a star, so most of the scroll is
+       spent on the work rather than on a logo. */
+    .reel-frame::after {
+      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:var(--paper); opacity:calc(1 - var(--reel-reveal,0));
+    }
+    /* Once the star has opened past the frame the mask and the grade are both
+       no-ops, but the compositor still re-rasterises a full-viewport masked,
+       filtered video on every scroll frame — which cost the reel about a fifth
+       of its playback rate. Dropping both in the revealed state is visually
+       identical and hands the frames back to decoding. */
+    .reel.is-revealed .reel-frame { -webkit-mask:none; mask:none; }
+    .reel.is-revealed .reel-frame video { filter:none; }
+    .reel-frame video {
+      width:100%; height:100%; object-fit:cover;
+      /* A light hold on the footage through the middle of the opening, gone by
+         the time the reel is the only thing on screen. */
+      filter:brightness(calc(.72 + .28 * var(--reel-progress,0)))
+             saturate(calc(.6 + .4 * var(--reel-progress,0)));
+    }
+    .reel-bar {
+      position:absolute; z-index:2; inset:auto clamp(22px,4vw,74px) clamp(26px,4vh,40px);
+      display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+      pointer-events:none;
+    }
+    .reel-bar span { color:rgba(249,249,249,.6); }
+    .reel-toggle {
+      pointer-events:auto; display:grid; place-items:center; width:46px; height:46px;
+      border:1px solid rgba(249,249,249,.75); border-radius:50%;
+      /* The reel cuts between white cards and dark footage, so the control
+         carries its own ground rather than trusting the frame behind it. */
+      background:rgba(13,13,13,.62); color:var(--paper); cursor:pointer;
+      transition:background .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+    }
+    .reel-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .reel-toggle svg { width:15px; height:15px; fill:currentColor; }
+
+    @media (prefers-reduced-motion:reduce) {
+      .reel { height:auto; }
+      .reel-stage { position:static; height:auto; }
+      .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+      /* Nothing drives --reel-progress or --reel-reveal here, so the grade and
+         the solid mark must both be switched off explicitly — left alone the
+         overlay stays fully opaque and covers the reel with a blank panel. */
+      .reel-frame video { filter:none; }
+      .reel-frame::after { display:none; }
+      .hero-light::before,.hero-light::after { animation:none; }
+    }
+    .no-js .reel { height:auto; }
+    .no-js .reel-stage { position:static; height:auto; }
+    .no-js .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+    .no-js .reel-frame video { filter:none; }
+    .no-js .reel-frame::after { display:none; }
+
+    /* --- Stats ------------------------------------------------- */
+    /* The reference sets these as four oversized didone numerals on black, with
+       soft red light drifting behind them. The figures carry the section; the
+       labels stay small and quiet underneath. */
+    .stats-light { display:none; }
+    .stats {
+      /* No overflow:hidden — clipping a soft glow leaves a hard edge at the
+         section boundary. The page is one continuous black, so the light is
+         allowed to bleed past the section the way the reference's does. */
+      position:relative; isolation:isolate;
+      padding:clamp(80px,8.5vw,160px) var(--gutter) clamp(110px,12.5vw,230px);
+    }
+    /* The stats glow is gone. Red and blue were appearing as large blurred
+       haze in three separate places, which is a generic gradient treatment and
+       the opposite of decisive. They now bookend the page only — hero and
+       footer — so the middle of the page is clean black and the colour means
+       arrival and departure rather than atmosphere.
+       Removing it also retires the 4px horizontal overflow it caused. */
+    /* Four equal columns, as the reference sets them. A hierarchy was tried
+       here and reverted: leading on "35+" made the smallest figure the loudest,
+       which fought the numbers themselves. An even row reads as a ledger —
+       stated once, confidently, without a pitch. */
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(24px,4vw,70px);
+    }
+    /* Kinfolk is a didone and sets very wide, so the row read loose and thin
+       against the reference. Tighter tracking pulls the figures in, a hairline
+       stroke adds weight the family has no bold cut for, and the size comes
+       down nearer the reference's 76px. */
+    .stat strong {
+      display:block;
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:clamp(40px,5.3vw,84px); line-height:.88; letter-spacing:-.035em;
+      -webkit-text-stroke:.7px currentColor;
+    }
+    .stat span {
+      display:block; margin-top:clamp(10px,1.2vw,18px); max-width:24ch;
+      color:var(--muted); font-size:clamp(12px,.95vw,14px); line-height:1.45;
+    }
+    @media (max-width:860px) {
+      .stats-grid { grid-template-columns:repeat(2,1fr); row-gap:clamp(34px,6vw,54px); }
+    }
+    @media (prefers-reduced-motion:reduce) { .stats-light span { animation:none; } }
+
+    /* --- Services ---------------------------------------------- */
+    /* Two columns: an oversized numeral on the left, everything else on the
+       right. Closed rows show the numeral alone — the reference hides the name
+       until the row opens, so the list reads as four huge figures. */
+    .system { padding:clamp(92px,10vw,180px) var(--gutter) clamp(54px,5.6vw,96px); }
+    .system-head { margin:0 0 clamp(44px,6vh,80px); }
+    .system-title { margin:0; max-width:20ch; font-size:clamp(38px,5.4vw,76px); }
+    .system-meta {
+      margin:clamp(20px,2.6vh,34px) 0 0; max-width:40ch;
+      color:var(--paper); font-size:11px; font-weight:600;
+      letter-spacing:.14em; text-transform:uppercase; line-height:1.5;
+    }
+    /* Separator is drawn, not written, so no character is added to the copy. */
+    .system-meta .sep::before { content:"\00b7"; margin:0 .5em; }
+
+    .system-list { border-top:1px solid var(--line); }
+    /* The numeral sits beside the whole row, not inside the button. When it
+       lived in the button it set that row's height, so an open row showed the
+       name, then ~170px of dead air, then the detail. Now a closed row is
+       still numeral-tall and an open one flows tight under the name. */
+    .system-item {
+      position:relative; border-bottom:1px solid var(--line);
+      display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+      gap:clamp(20px,4vw,70px); align-items:start;
+      padding:clamp(30px,3.2vw,56px) 0;
+      /* The whole row toggles, numeral included — see the click handler. */
+      cursor:pointer;
+    }
+    .system-toggle {
+      width:100%; display:flex; align-items:flex-start; justify-content:space-between; gap:24px;
+      padding:0; border:0; background:none; color:inherit; text-align:left; font:inherit; cursor:pointer;
+    }
+    /* The reference sets these in the hairline grotesque, not the didone. The
+       didone's thick/thin at 260px fought the headline above it, and the
+       -.16em pull sliced the tops and tails of the glyphs against the row
+       hairlines, which read as a clipping bug rather than a crop. */
+    .system-num {
+      display:block;
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:300;
+      /* Was 260px, which made these the largest type anywhere — larger than the
+         hero. They should own their section, not the page. */
+      font-size:clamp(86px,11.5vw,186px); line-height:.84; letter-spacing:-.04em;
+    }
+    /* A shut row carries its name at display size — it is the headline of that
+       stage. Opening it demotes the name to a label so the detail underneath
+       becomes the subject, which is the whole gesture of the row. */
+    .system-name {
+      margin:0; font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:400; font-size:clamp(30px,4.4vw,64px); line-height:1.04;
+      text-transform:uppercase; letter-spacing:-.025em;
+      transition:font-size .45s var(--ease),letter-spacing .45s var(--ease);
+    }
+    .system-item.is-open .system-name { font-size:clamp(21px,2.3vw,34px); letter-spacing:-.012em; }
+    .system-symbol {
+      position:relative; flex:none; width:38px; height:38px; margin-top:6px;
+      display:grid; place-items:center; border:1px solid rgba(249,249,249,.34); border-radius:50%;
+      /* Always present now that the whole row is the control — it is the only
+         thing saying the row opens. */
+      opacity:.5; transition:opacity .35s var(--ease),border-color .3s;
+    }
+    .system-item:hover .system-symbol,
+    .system-item.is-open .system-symbol { opacity:1; }
+    .system-symbol::before,.system-symbol::after {
+      content:""; position:absolute; width:13px; height:1px; background:currentColor;
+      transition:transform .35s var(--ease);
+    }
+    .system-symbol::after { transform:rotate(90deg); }
+    .system-item.is-open .system-symbol::after { transform:rotate(0); }
+
+    .system-panel { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s var(--ease); }
+    .system-item.is-open .system-panel { grid-template-rows:1fr; }
+    .system-panel > div { overflow:hidden; }
+    .system-detail { padding-top:clamp(26px,2.6vw,44px); }
+    .system-for {
+      display:flex; gap:12px; margin:0 0 clamp(26px,3.4vh,42px);
+      max-width:44ch; color:var(--paper); font-size:clamp(13px,1.1vw,17px); line-height:1.5;
+    }
+    .system-for::before {
+      content:""; flex:none; width:9px; height:9px; margin-top:.5em;
+      border:1px solid rgba(249,249,249,.65); border-radius:50%;
+    }
+    .system-outcome span { display:block; margin-bottom:12px; color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+    .system-outcome p {
+      margin:0 0 clamp(26px,3.4vh,42px);
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif;
+      font-size:clamp(18px,1.9vw,30px); text-transform:uppercase; letter-spacing:.03em; line-height:1.2;
+    }
+    .system-tags { display:flex; flex-wrap:wrap; gap:9px; margin:0; padding:0; list-style:none; }
+    .system-tags li {
+      padding:10px 17px; border:1px solid rgba(249,249,249,.3); border-radius:999px;
+      font-size:10px; font-weight:600; letter-spacing:.11em; text-transform:uppercase;
+    }
+    @media (max-width:820px) {
+      .system-item { grid-template-columns:1fr; gap:14px; }
+      .system-num { font-size:clamp(84px,24vw,150px); }
+    }
+    @media (prefers-reduced-motion:reduce) { .system-panel { transition:none; } }
+
+
+    /* --- Shared editorial primitives ---------------------------- */
+    /* Everything below the services list sits on the same black ground.
+       The reference never cuts to a light panel, so neither does this: the
+       only colour that interrupts the page is the red scribble, the red
+       marks in the marquee and the blue behind one word. */
+    /* The quiet baseline. Most sections now sit closer together than they did,
+       which is what buys the room for the two moments that open right out.
+       An even rhythm across fourteen sections is what made the page read flat:
+       when everything is spaced like a feature, nothing is one. */
+    /* Breathing room top and bottom, so a section owns its own space instead of
+       being separated only by the one above it ending. Sized in vw, not vh: the
+       previous clamp pinned to its 72px floor on any viewport under ~1350px
+       tall, which is most laptops — the page was crowded for the people most
+       likely to be reading it. Section rhythm should follow the measure. */
+    .band { padding-inline:var(--gutter); padding-block:clamp(60px,6.8vw,114px); }
+    /* The header is fixed at 92px, so every in-page link would otherwise land
+       its heading underneath it. */
+    :is(section,footer)[id] { scroll-margin-top:112px; }
+    .band-head {
+      display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+      gap:24px; margin-bottom:clamp(28px,4vh,40px);
+    }
+    .band-head h2 { margin:0; font-size:clamp(32px,3.7vw,54px); }
+    .band-note { max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+    .eyebrow { display:block; margin:0 0 clamp(20px,3vh,28px); }
+    .vh { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+    /* --- Entrance -------------------------------------------- */
+    /* Restrained on purpose: 14px of travel and a long settle, never a slide or
+       a bounce. The point is that content arrives composed rather than that
+       anything is seen to move — if the animation is legible as an animation it
+       has already failed at this price point.
+
+       The hidden state is applied by script (.reveal-ready) rather than sitting
+       in the stylesheet, so a failed or slow script can never leave the page
+       blank, and there is no flash of hidden content before JS runs. */
+    .reveal-ready [data-reveal] { opacity:0; transform:translateY(14px); }
+    .reveal-ready [data-reveal].is-in {
+      opacity:1; transform:none;
+      transition:opacity .95s var(--ease-weight),transform .95s var(--ease-weight);
+      transition-delay:calc(var(--i,0) * 65ms);
+    }
+    /* The hero is the only thing that moves on load rather than on scroll, and
+       it travels further because nothing has been established yet to disturb. */
+    .hero-eyebrow,.hero-title { animation:heroIn 1.15s var(--ease-weight) both; }
+    .hero-title { animation-delay:.1s; }
+    @keyframes heroIn { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
+
+    @media (prefers-reduced-motion:reduce) {
+      .reveal-ready [data-reveal] { opacity:1; transform:none; transition:none; }
+      .hero-eyebrow,.hero-title { animation:none; }
+      .menu-overlay { transition:none; }
+      .menu-overlay.is-open .overlay-nav a { animation:none; }
+    }
+
+    /* --- Craft layer -------------------------------------------- */
+    /* Motion had one duration and one curve on everything, which reads as a
+       default rather than a decision. Weight should move slowly, detail should
+       move quickly — that difference is most of what makes an interface feel
+       considered rather than assembled. */
+    :root {
+      --ease-weight:cubic-bezier(.16,1,.3,1);   /* large masses, long settle */
+      --ease-detail:cubic-bezier(.3,.7,.2,1);   /* small elements, crisp */
+      --t-weight:.72s;
+      --t-detail:.22s;
+    }
+    .system-panel { transition:grid-template-rows var(--t-weight) var(--ease-weight); }
+    .system-name { transition:font-size var(--t-weight) var(--ease-weight),letter-spacing var(--t-weight) var(--ease-weight); }
+    .btn-pill { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
+    .btn-pill .arrow { transition:transform var(--t-detail) var(--ease-detail); }
+
+    /* Testimonial rows were inert. A quote is the most persuasive thing on the
+       page and nothing acknowledged the cursor being on one. */
+    .trow { transition:background var(--t-detail) var(--ease-detail); }
+    .trow:hover { background:rgba(249,249,249,.025); }
+    .trow-mark { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
+    .trow:hover .trow-mark { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+
+    /* --- Selected work ------------------------------------------ */
+    /* A hand-set gallery, not a grid: six panels of deliberately unequal
+       width and vertical offset. Widths total 94% per row and the 2% column
+       gap makes up the rest, so the row fills the measure exactly. */
+    .gallery { display:flex; flex-wrap:wrap; align-items:flex-start; gap:28px 2%; }
+    .gallery > a { display:flex; flex-direction:column; gap:12px; min-width:0; }
+    /* Panel size carries weight, and right now weight follows image strength.
+       02 and 04 are sharp studio frames and lead; 03 holds the middle; 01, 05
+       and 06 are a phone snapshot and two soft frames, so they sit small where
+       their flaws do not read. All six projects stay on the page.
+
+       This ordering is interim. When the reshoots land, re-sort by actual
+       project significance — the widths below are the only thing to change. */
+    .gallery > a:nth-child(1) { width:19%; margin-top:96px; }   /* 01 weak  */
+    .gallery > a:nth-child(2) { width:47%; margin-top:0; }      /* 02 lead  */
+    .gallery > a:nth-child(3) { width:28%; margin-top:48px; }   /* 03 mid   */
+    .gallery > a:nth-child(4) { width:45%; margin-top:30px; }   /* 04 lead  */
+    .gallery > a:nth-child(5) { width:21%; margin-top:150px; }  /* 05 weak  */
+    .gallery > a:nth-child(6) { width:26%; margin-top:-40px; }  /* 06 weak  */
+    .shot { position:relative; overflow:hidden; background:var(--ink); }
+    /* Every photographic slot takes its crop from --pos, set per image where
+       the subject is not centred. Replacing a file is then a one-line change
+       with no layout work — see ASSET-SPEC.md for the target of each slot. */
+    .shot img {
+      width:100%; height:100%; object-fit:cover;
+      object-position:var(--pos,center center); filter:var(--photo-grade);
+      transition:transform .7s var(--ease),filter .7s var(--ease);
+    }
+    /* Hover lifts the grade rather than removing it, so a hovered panel does
+       not jump to a different colour world than the ones beside it. */
+    .gallery > a:hover .shot img,
+    .gallery > a:focus-visible .shot img { transform:scale(1.04); filter:contrast(1.04) saturate(.82); }
+    .gallery > a:nth-child(1) .shot { aspect-ratio:4/5; }
+    .gallery > a:nth-child(2) .shot { aspect-ratio:16/11; }
+    .gallery > a:nth-child(3) .shot { aspect-ratio:3/4; }
+    .gallery > a:nth-child(4) .shot { aspect-ratio:16/11; }
+    .gallery > a:nth-child(5) .shot { aspect-ratio:1; }
+    .gallery > a:nth-child(6) .shot { aspect-ratio:3/4; }
+    /* Project titles stay in the grotesque: six serif titles at this size
+       would compete with the section heading directly above them. */
+    .shot-title {
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:17px; line-height:1.15; text-transform:uppercase; letter-spacing:-.01em;
+    }
+    .shot-meta { color:rgba(249,249,249,.6); font-size:10px; }
+    .shot-meta .sep::before { content:"\00b7"; margin:0 .5em; }
+    /* The whole panel is the link, so six standing "learn more" labels only
+       repeat an affordance the cursor already gives. Kept in the markup for
+       screen readers and revealed on intent, which is what stops the gallery
+       reading like a listings template. */
+    .shot-more {
+      color:var(--paper); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+      opacity:0; transform:translateY(-4px);
+      transition:opacity .3s var(--ease),transform .3s var(--ease);
+    }
+    .gallery > a:hover .shot-more,
+    .gallery > a:focus-visible .shot-more { opacity:1; transform:none; }
+    /* Touch has no hover state to reveal it with. */
+    @media (hover:none) { .shot-more { opacity:1; transform:none; color:rgba(249,249,249,.6); } }
+
+    /* --- Manifesto ---------------------------------------------- */
+    /* The measure is set in em, not ch. ch is the width of the resolved font's
+       "0" — Kinfolk's is 0.70em and the macOS Didot fallback's is 0.52em, so a
+       ch-based measure silently narrows by a quarter whenever the webfont does
+       not arrive, which is what turns this headline into seven lines instead
+       of five. 13.3em is the same measure Kinfolk gave, now independent of
+       which serif actually resolves. */
+    /* One of the two places the page is allowed to open right out. The
+       statement arrives after a long silence and is followed by another, so it
+       reads as a held breath rather than as the next item in a list. Empty
+       space is the cheapest thing to produce and the most expensive thing to
+       look at, and the page had almost none. */
+    .manifesto { padding-block:clamp(118px,13.5vw,250px); }
+    .manifesto h2 { margin:0; max-width:13.3em; font-size:clamp(40px,5.6vw,88px); line-height:.94; }
+    /* The circle is drawn, not typed: a single open stroke that overshoots
+       its own start, so it reads as a hand mark rather than an ellipse. */
+    .ring { position:relative; display:inline-block; }
+    .ring svg {
+      position:absolute; left:-9%; top:-22%; width:118%; height:150%;
+      overflow:visible; pointer-events:none;
+    }
+    .manifesto .btn-pill { margin-top:clamp(28px,4vh,36px); }
+
+    /* --- Founder ------------------------------------------------ */
+    .founder-plate { padding:0 var(--gutter) clamp(44px,4.6vw,84px); }
+    .founder-plate figure { margin:0; }
+    /* TODO(asset): the reference sets a wide environmental plate here and no
+       landscape founder frame was supplied — every shot is portrait, and
+       anzhelika-portrait.png is a cut-out that floats in black at this width.
+       16/8 with a low crop keeps the room in frame instead of reducing the
+       band to a face. Replace once a wide plate is delivered. */
+    .founder-plate img {
+      width:100%; aspect-ratio:16/8; object-fit:cover;
+      object-position:var(--pos,center 24%); filter:var(--photo-grade);
+    }
+    .founder-plate figcaption { padding-top:10px; text-align:right; color:rgba(249,249,249,.6); font-size:10px; }
+    .duo { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,5vw,48px); align-items:start; }
+    .founder-title { margin:clamp(16px,2.4vh,22px) 0 0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
+    .founder-body { padding-top:34px; color:rgba(249,249,249,.88); font-size:16px; line-height:1.7; }
+    .founder-body p { margin:0 0 20px; }
+    .founder-body .btn-pill { margin-top:6px; }
+
+    /* --- Team --------------------------------------------------- */
+    .roster { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
+    .roster figure { display:flex; flex-direction:column; gap:12px; margin:0; }
+    .roster figure:nth-child(even) { margin-top:60px; }
+    .roster .shot { aspect-ratio:3/4; }
+    .roster figcaption { display:flex; flex-direction:column; gap:12px; }
+    .roster h3 {
+      margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .roster p { margin:0; max-width:24ch; color:rgba(249,249,249,.7); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; line-height:1.35; }
+    .roster-placeholder {
+      display:grid; place-items:center; width:100%; height:100%;
+      background:linear-gradient(145deg,#34312e,#171717); color:rgba(249,249,249,.18);
+      font:400 clamp(90px,11vw,200px)/1 "Kinfolk",Didot,"Bodoni 72",Georgia,serif;
+    }
+
+    /* --- Recognition -------------------------------------------- */
+    /* Client names, not logo files: thirteen marks drawn in thirteen
+       palettes never sit together, and the reference sets the names as type
+       with the brand mark between them. */
+    .marquee {
+      --logo-w:clamp(150px,16vw,220px);
+      --logo-mark:clamp(25px,2.7vw,38px);
+      --logo-h:clamp(40px,4.2vw,56px);
+      border-block:1px solid rgba(249,249,249,.28); padding:26px 0;
+      overflow:hidden; display:flex; width:max-content; max-width:100%;
+    }
+    .marquee-track {
+      display:flex; flex:none; align-items:center; white-space:nowrap;
+      animation:namesScroll 46s linear infinite;
+    }
+    .marquee:hover .marquee-track { animation-play-state:paused; }
+    /* The supplied marks are black artwork on transparency, so on this page
+       they were all but invisible — inverting makes them white without
+       touching the transparent ground. They are also 400px canvases with a lot
+       of built-in padding, so the box has to run large for the mark to read at
+       a normal size. */
+    /* Every mark gets the same box and is fitted inside it. Constraining by
+       height alone let aspect ratio decide optical weight: these range from
+       1.00 (a square badge) to 5.10 (a long wordmark), so the square one
+       rendered as a 74px block beside 37px strips and owned the whole row.
+       A fixed box makes a wide mark fill the width and a square one fill the
+       height, which is what actually reads as even. */
+    .marquee-track figure {
+      position:relative; margin:0; flex:none;
+      width:var(--logo-w); height:var(--logo-h);
+    }
+    /* Each file is a square canvas with the mark letterboxed inside it, and
+       the mark fills anywhere from 16% to 80% of that canvas. Fitting the
+       canvas therefore sizes the padding, not the logo, which is why one mark
+       came out 26px tall and another 6px. --f carries each file's measured
+       content fraction, so every mark lands on the same optical height and
+       the transparent surplus simply overhangs the box unseen. */
+    /* Sized, not scaled. The previous version laid each logo out small and then
+       transform-scaled it up by as much as 3x, which resamples a 400px source
+       past its own resolution — that is the softness that shows the moment
+       opacity lifts on hover. Setting the height directly means the browser
+       rasterises once, downscaling from the 400px master, so every mark is
+       sharp. Centring is absolute rather than grid/flex because an item taller
+       than its box stops being centred by those, which is what threw the marks
+       onto different baselines when this was last tried. */
+    .marquee-track img {
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:auto; height:calc(var(--logo-mark) / var(--f,.25)); max-width:none;
+      object-fit:contain;
+      /* brightness(0) crushes every opaque pixel to black and keeps the alpha,
+         then invert lifts it to flat white. A plain invert() leaves greys as
+         greys, which is why the halftone behind one wordmark came back as mud
+         rather than as part of the mark. */
+      filter:brightness(0) invert(1); opacity:.78; transition:opacity .4s var(--ease);
+    }
+    /* Two of the supplied marks are already light artwork on a dark ground.
+       Inverting those turned them into solid pale blocks; lifting their
+       brightness turned the dark ground into a grey slab. They want the grade
+       and nothing else, so the ground sinks into the page and only the light
+       part of the mark is left. */
+    .marquee-track img[data-light] { filter:grayscale(1); }
+    .marquee-track figure:hover img { opacity:1; }
+    .marquee-track i {
+      /* Smaller than the marks it separates — at 18px it was competing with
+         the shorter wordmarks instead of punctuating them. */
+      flex:none; width:13px; height:13px; margin:0 clamp(14px,1.6vw,24px); background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    @keyframes namesScroll { to { transform:translateX(-100%); } }
+
+    /* --- Proof -------------------------------------------------- */
+    .proof-head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:clamp(28px,4vh,40px); }
+    .proof-lead { display:flex; flex-direction:column; gap:18px; }
+    .proof-lead h2 { margin:0; font-size:clamp(32px,3.7vw,54px); }
+    .proof-badges { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-end; }
+    .proof-badges > div { display:flex; flex-direction:column; gap:6px; }
+    .stars { color:var(--red); font-size:13px; letter-spacing:.2em; }
+    .proof-badges strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:26px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    /* Rows, not cards: a bordered card grid turns six quotes into a
+       comparison table. The hairline does all the separating work. */
+    .trow {
+      display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr) 48px; gap:40px;
+      align-items:center; padding:36px 0; border-top:1px solid rgba(249,249,249,.28);
+    }
+    .trow-meta { display:flex; flex-direction:column; gap:8px; }
+    .trow-meta strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .trow-meta small { color:rgba(249,249,249,.65); font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    .trow blockquote {
+      margin:0; font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:clamp(18px,1.7vw,24px); line-height:1.2; text-transform:uppercase; letter-spacing:-.005em;
+    }
+    .trow-mark {
+      justify-self:end; width:36px; height:36px; display:grid; place-items:center;
+      border:1px solid rgba(249,249,249,.6); border-radius:50%;
+    }
+    .trow-mark::before {
+      content:""; width:12px; height:12px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    .proof-foot { padding-top:28px; border-top:1px solid rgba(249,249,249,.28); }
+
+    /* --- Spotlight ---------------------------------------------- */
+    .spot { position:relative; overflow:hidden; background:var(--ink); }
+    /* Every photograph on the page carries the same grade; the stage shot's
+       LED wash was the one image still running at full saturation. */
+    .spot img {
+      width:100%; aspect-ratio:16/8; object-fit:cover;
+      object-position:var(--pos,center 32%); filter:var(--photo-grade);
+    }
+    /* The photograph is dark at the bottom already; this only guarantees the
+       copy holds at small sizes where the crop tightens. */
+    .spot::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.12) 58%,transparent 80%);
+    }
+    .spot-copy {
+      position:absolute; z-index:1; left:clamp(20px,4vw,56px); right:clamp(20px,4vw,56px);
+      bottom:clamp(20px,4vw,56px); display:flex; flex-direction:column; align-items:flex-start; gap:18px;
+    }
+    .spot-copy h2 { margin:0; max-width:17ch; font-size:clamp(32px,4.1vw,62px); line-height:.98; }
+    /* One word on blue — the single place the secondary brand colour appears. */
+    .spot-copy h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
+    .spot-copy p { margin:0; font-size:16px; }
+
+    /* --- Newsletter --------------------------------------------- */
+    .fudge h2 { margin:0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
+    .fudge-copy { display:flex; flex-direction:column; gap:24px; }
+    .fudge-copy > p { margin:0; max-width:500px; color:rgba(249,249,249,.85); font-size:15px; line-height:1.7; }
+    .fudge-points { display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none; }
+    .fudge-points li {
+      display:inline-flex; align-items:center; min-height:30px; padding:0 14px;
+      border:1px solid rgba(249,249,249,.85); border-radius:999px;
+      font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+    }
+    .fudge-field { display:flex; align-items:center; max-width:520px; border-bottom:1px solid var(--paper); }
+    .fudge-field:focus-within { border-color:var(--red); }
+    .fudge-field input {
+      flex:1 1 auto; min-width:0; min-height:52px; padding:0; border:0; outline:0; background:none;
+      color:var(--paper); font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:300; font-size:16px;
+    }
+    .fudge-field input::placeholder { color:rgba(249,249,249,.5); }
+    .fudge-field button {
+      flex:none; min-height:52px; padding:0; border:0; background:none; color:inherit; cursor:pointer;
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+    }
+    .fudge-note { margin:0; color:rgba(249,249,249,.65); font-size:12px; }
+    .fudge-visual { display:flex; justify-content:center; }
+    /* The one light object on the page: a printed cover lying on the black. */
+    .fudge-card {
+      position:relative; overflow:hidden; width:min(100%,440px); aspect-ratio:4/5; padding:32px;
+      background:var(--paper); color:#161a1b; display:flex; flex-direction:column; justify-content:space-between;
+      transform:rotate(-3deg); transition:transform .5s var(--ease);
+    }
+    .fudge-visual:hover .fudge-card { transform:rotate(-1deg) translateY(-7px); }
+    .fudge-card::before {
+      content:""; position:absolute; right:-42%; bottom:-46%; width:160%; aspect-ratio:1; border-radius:50%;
+      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.85),rgba(240,66,34,.34) 42%,transparent 70%);
+      pointer-events:none;
+    }
+    .fudge-card > * { position:relative; }
+    .fudge-card-top { display:flex; justify-content:space-between; gap:18px; }
+    /* Sized against the 440px card, not the viewport: "founders." in the
+       semibold grotesque runs wider than the reference's 400 weight and
+       overshot the card edge at the reference's 84px. */
+    .fudge-card-title { margin:0; font-size:clamp(42px,4.4vw,64px); line-height:.86; }
+    .fudge-card-title span { display:block; }
+    .fudge-card-foot { margin:0; font-size:15px; line-height:1.5; }
+
+    /* --- Final CTA ---------------------------------------------- */
+    /* The other. Last thing before the footer, and the only ask on the page
+       that should feel inevitable rather than repeated. */
+    .closing { padding-block:clamp(132px,15.5vw,290px); }
+    /* The single decisive use of red on the page. Every other pill is an
+       outline, so the one that matters is the one that is filled. */
+    .closing .btn-pill {
+      background:var(--red); border-color:var(--red); color:var(--paper);
+    }
+    .closing .btn-pill:hover { background:#cf3419; border-color:#cf3419; color:var(--paper); }
+    .closing h2 { margin:0; font-size:clamp(48px,7.6vw,118px); line-height:.92; }
+    .closing .btn-pill { margin-top:clamp(30px,4.5vh,40px); }
+
+    /* --- Footer ------------------------------------------------- */
+    /* The page opens and closes on the same two lights. They sit behind the
+       wordmark rather than beside it, so the mark reads as lit from within.
+       The inner element clips them: left unclipped they would extend the
+       document past the footer and add dead scroll at the very bottom. */
+    .site-footer { position:relative; isolation:isolate; padding:0 var(--gutter) 28px; }
+    .footer-light { position:absolute; z-index:-1; inset:0; overflow:hidden; pointer-events:none; }
+    .footer-light::before,.footer-light::after {
+      content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+    }
+    .footer-light::before {
+      width:min(58vw,820px); top:-18%; right:-12vw;
+      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.5),rgba(240,66,34,.24) 38%,rgba(240,66,34,.05) 62%,transparent 74%);
+      animation:driftA 31s var(--ease) infinite alternate;
+    }
+    .footer-light::after {
+      width:min(52vw,720px); bottom:-26%; left:-16vw;
+      background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.5),rgba(53,36,213,.23) 38%,rgba(53,36,213,.05) 62%,transparent 74%);
+      animation:driftB 38s var(--ease) -9s infinite alternate;
+    }
+    @media (prefers-reduced-motion:reduce) { .footer-light::before,.footer-light::after { animation:none; } }
+    /* The wordmark runs the full measure here — it is the sign-off, and the
+       artwork is the only place the logo face appears. */
+    .footer-mark { width:100%; height:auto; margin-bottom:56px; }
+    .footer-grid {
+      display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px;
+      padding-top:32px; border-top:1px solid rgba(249,249,249,.28);
+    }
+    .footer-grid > * { display:flex; flex-direction:column; gap:8px; }
+    .footer-grid h3 { margin:0 0 6px; color:rgba(249,249,249,.5); font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    .footer-blurb { max-width:28ch; }
+    .footer-legal { align-items:flex-end; text-align:right; }
+    .footer-grid a { opacity:.82; transition:opacity .25s,color .25s; }
+    .footer-grid a:hover { opacity:1; color:var(--red); }
+    .footer-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; margin-top:40px; }
+
+    /* --- Responsive --------------------------------------------- */
+    @media (max-width:980px) {
+      .duo,.roster { grid-template-columns:minmax(0,1fr); }
+      .roster figure:nth-child(even) { margin-top:0; }
+      .founder-body { padding-top:0; }
+      .footer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .footer-legal { align-items:flex-start; text-align:left; }
+    }
+    @media (max-width:820px) {
+      /* The hand-set offsets only read at full measure; below it they stack. */
+      .gallery { gap:30px; }
+      .gallery > a:nth-child(n) { width:100%; margin-top:0; }
+      .gallery > a:nth-child(n) .shot { aspect-ratio:4/5; }
+      .trow { grid-template-columns:minmax(0,1fr) 36px; gap:20px; align-items:start; }
+      .trow blockquote { grid-column:1/-1; grid-row:2; }
+      .proof-badges { gap:24px; }
+      .spot-copy { position:static; padding:22px 0 0; }
+      .spot::after { display:none; }
+      .fudge-field { max-width:none; }
+    }
+    @media (max-width:560px) {
+      .trow-meta strong,.roster h3 { font-size:24px; }
+      /* The field and its 27-character button cannot share a line here. */
+      .fudge-field { flex-wrap:wrap; }
+      .fudge-field button { min-height:44px; margin-bottom:8px; }
+      .fudge-card { padding:24px; }
+      .footer-grid { grid-template-columns:minmax(0,1fr); }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .marquee-track { animation:none; }
+      .shot img,.fudge-card { transition:none; }
+    }
+  </style>
+</head>
+<body class="no-js">
+  <a class="skip-link" href="#reel">Skip to content</a>
+
+  <header class="site-head">
+    <a class="wordmark" href="#top" aria-label="Rysing home"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" /></a>
+    <div class="head-right">
+      <a class="btn-pill btn-pill-head" href="#contact">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" aria-label="Open menu"><span class="menu-toggle-lines" aria-hidden="true"></span></button>
+    </div>
+  </header>
+
+  <aside class="menu-overlay" id="menu-overlay" aria-hidden="true">
+    <button class="overlay-close" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+    <nav class="overlay-nav display" aria-label="Overlay navigation">
+      <a href="#top">Home</a><a href="#founder">About</a><a href="#system">Services</a><a href="#work">Portfolio</a><a href="/blog">Blog</a><a href="#contact">Contact</a>
+    </nav>
+    <div class="overlay-bottom">
+      <!-- TODO(asset): real award logo files pending from client Drive -->
+      <div class="award-lockups" aria-label="Awards">
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+      </div>
+      <!-- TODO(link): final social profile URLs not supplied -->
+      <div class="social-links" aria-label="Social media">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.5-3.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v7h4v-7h3.2l.8-4h-4V9c0-.7.3-1 1-1Z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM2 9h4v13H2V9Zm7 0h4v1.8c1-1.4 2.4-2.2 4.2-2.2 4 0 4.8 2.6 4.8 6V22h-4v-6.6c0-1.6 0-3.6-2.2-3.6S13 13.5 13 15.3V22H9V9Z"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.7 3.3-3.2 16c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20 2.9c.9-.3 1.9.2 1.7.4Z"/></svg></a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="top">
+    <section class="hero">
+      <span class="hero-light" aria-hidden="true"></span>
+      <p class="hero-eyebrow label">Branding &amp; visibility studio for courageous brands</p>
+      <h1 class="hero-title display">
+        <span class="alt">Rise into</span> visibility, authority <span class="keep"><span class="alt">and</span> <em>impact</em></span>
+        <span class="tail">with a clear strategy, differentiated brand and thought leadership content</span>
+      </h1>
+    </section>
+
+    <section class="reel" id="reel" aria-label="Showreel">
+      <div class="reel-stage">
+        <div class="reel-frame">
+          <!-- reel-03 is the only dark frame in the set; reel-01/04/05 are white
+               or saturated orange title cards and flash against the page. -->
+          <video class="reel-video" autoplay muted loop playsinline preload="metadata" poster="rysing-assets/reel-03.jpg" aria-label="Rysing showreel">
+            <source src="rysing-assets/rysing-showreel-web.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="reel-bar">
+          <span class="label">rysing showreel</span>
+          <button class="reel-toggle" type="button" aria-label="Pause showreel" aria-pressed="false">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3h4v14H4zm8 0h4v14h-4z" /></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Studio results">
+      <span class="stats-light" aria-hidden="true"><span></span><span></span></span>
+      <div class="stats-grid" data-reveal data-stagger>
+        <div class="stat"><strong>35+</strong><span>personal brands built</span></div>
+        <div class="stat"><strong>350+</strong><span>students taught</span></div>
+        <div class="stat"><strong>3000+</strong><span>content pieces published</span></div>
+        <div class="stat"><strong>50k+</strong><span>followers and subscribers over all platforms</span></div>
+      </div>
+    </section>
+
+    <section class="system" id="system" aria-labelledby="system-title">
+      <div class="system-head" data-reveal>
+        <h2 class="system-title display" id="system-title"><span class="alt">We can grow your brand on</span> four levels</h2>
+        <p class="system-meta">Programs<span class="sep" aria-hidden="true"></span>We are based in Vienna, Austria and we operate across Europe.</p>
+      </div>
+      <div class="system-list">
+        <!-- First stage opens on load, as the reference and rysing-comments
+             both do: with every row shut the section is four numerals and a
+             column of air, and nothing tells you the rows open at all. -->
+        <div class="system-item is-open">
+          <b class="system-num">01</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="true" aria-controls="svc-01">
+              <h3 class="system-name">Brand Building</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-01" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those who want to become the only choice in their industry</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Be understood, and remembered.</p></div>
+                <ul class="system-tags"><li>Brand strategy</li><li>Category position</li><li>Message architecture</li><li>Offer narrative</li></ul>
+              </div></div>
+            </div>
+          </div>
+        </div>
+        <div class="system-item">
+          <b class="system-num">02</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-02">
+              <h3 class="system-name">Design &amp; Websites</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-02" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those who want a differentiated and scalable brand presence</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Become unmistakably you.</p></div>
+                <ul class="system-tags"><li>Brand design</li><li>Website design</li><li>Website development</li><li>SEO &amp; GEO</li><li>Videography</li></ul>
+              </div></div>
+            </div>
+          </div>
+        </div>
+        <div class="system-item">
+          <b class="system-num">03</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-03">
+              <h3 class="system-name">LinkedIn &amp; Instagram Marketing</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-03" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those who want to grow their influence on social media</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Be seen in the right places.</p></div>
+                <ul class="system-tags"><li>Content strategy</li><li>Content automations</li><li>Content creation</li><li>Social media management</li><li>Content shooting</li><li>Content editing</li><li>Reels and shorts</li><li>Performance analysis</li></ul>
+              </div></div>
+            </div>
+          </div>
+        </div>
+        <div class="system-item">
+          <b class="system-num">04</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-04">
+              <h3 class="system-name">Lead Gen &amp; Sales</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-04" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those ready to make a big, lasting impact.</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Be chosen for what comes next.</p></div>
+                <ul class="system-tags"><li>Podcast</li><li>Videocast</li><li>YouTube channel</li><li>Long form content</li><li>Production</li><li>Post-production</li><li>Keynote writing</li></ul>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="work" aria-labelledby="work-title">
+      <div class="band-head" data-reveal>
+        <h2 class="display" id="work-title"><span class="alt">Selected</span> work</h2>
+        <a class="btn-pill" href="#work">Learn more <span class="arrow" aria-hidden="true"></span></a>
+      </div>
+      <div class="gallery" data-stagger>
+        <!-- TODO(link): case study page does not exist yet -->
+        <a href="#">
+          <span class="shot"><img style="--pos:center 62%" src="rysing-assets/project-01-bommer.webp" alt="Gerd Bommer speaking as an investor and personal brand" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Speaker and Investor Persona Brand — Gerd Bommer</span>
+          <span class="shot-meta label">01<span class="sep" aria-hidden="true"></span>Founder positioning</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): case study page does not exist yet -->
+        <a href="#">
+          <span class="shot"><img style="--pos:center 48%" src="rysing-assets/project-02-alex.webp" alt="Luxury design studio work for world-class hotels" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Luxury design studio for the finest hotels in the world</span>
+          <span class="shot-meta label">02<span class="sep" aria-hidden="true"></span>Identity &amp; website</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://clemensdoppler.com/">
+          <span class="shot"><img style="--pos:center 38%" src="rysing-assets/project-03-doppler.webp" alt="Clemens Doppler speaking as a business coach" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Speaker and Business Coach</span>
+          <span class="shot-meta label">03<span class="sep" aria-hidden="true"></span>Speaker platform</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://futurfai.com/">
+          <span class="shot"><img style="--pos:center 50%" src="rysing-assets/project-04-futurfai.webp" alt="AI and law consultancy brand team" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">AI and Law Consultancy Brand</span>
+          <span class="shot-meta label">04<span class="sep" aria-hidden="true"></span>Consultancy brand</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://jenniferdjongow.com/">
+          <span class="shot"><img style="--pos:center 34%" src="rysing-assets/project-05-djongow.webp" alt="Jennifer Djongow as a wealth manager and expert brand" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Wealth Manager Expert Brand</span>
+          <span class="shot-meta label">05<span class="sep" aria-hidden="true"></span>Expert brand</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://julianknowle.com/">
+          <span class="shot"><img style="--pos:center 30%" src="rysing-assets/project-06-knowle.webp" alt="Julian Knowle as an elite tennis coach and speaker" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Elite Tennis Coach and Speaker Brand</span>
+          <span class="shot-meta label">06<span class="sep" aria-hidden="true"></span>Coach and speaker brand</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="band manifesto" id="approach" aria-labelledby="approach-title">
+      <p data-reveal class="eyebrow label">Who we work with</p>
+      <h2 data-reveal class="display" id="approach-title">
+        <span class="alt">For</span> courageous brands <span class="alt">and ambitious founders who want to build a</span>
+        <span class="ring">legacy<svg viewBox="0 0 400 130" preserveAspectRatio="none" aria-hidden="true"><path d="M24 74 C 18 28, 190 8, 330 20 C 430 30, 410 104, 300 116 C 190 128, 30 118, 14 78 C 6 52, 110 22, 250 16" stroke="#F04222" stroke-width="2.2" fill="none" stroke-linecap="round" /></svg></span>
+        <span class="alt">and create a lasting</span> impact
+      </h2>
+      <a class="btn-pill" href="#contact">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+    </section>
+
+    <section class="founder-plate" id="founder">
+      <figure>
+        <img src="rysing-assets/anzhelika-office.webp" alt="Anzhelika, founder of Rysing, in her studio" loading="lazy" decoding="async" />
+        <figcaption class="label">Anzhelika, founder of Rysing</figcaption>
+      </figure>
+    </section>
+
+    <section class="band" aria-labelledby="founder-title">
+      <div class="duo" data-reveal>
+        <div>
+          <p class="label">Founder</p>
+          <h2 class="founder-title display" id="founder-title"><span class="alt">The studio exists to give</span> voices <span class="alt">to people who want to make a</span> real impact.</h2>
+        </div>
+        <div class="founder-body">
+          <p>A courageous brand refuses to conform. It belongs to someone who would rather be disliked than ignored. Who says the thing their industry is not ready to hear, and says it anyway. Who left the safe path, took the unpopular position, built what nobody asked for and who is building something meant to outlast them.</p>
+          <p>Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+          <p>Led by Anzhelika and delivered by an interdisciplinary team, Rysing Studio translates a founder's courage and ambition into a differentiated, visible brand.</p>
+          <!-- TODO(link): About page destination pending -->
+          <a class="btn-pill" href="#">Learn more <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="team-title">
+      <div class="band-head" data-reveal>
+        <h2 class="display" id="team-title"><span class="alt">Behind the</span> work.</h2>
+        <p class="band-note">Brand strategy, design, web and content come together in one close team. No account managers or handoffs to people you've never met. You speak directly with the people doing the work.</p>
+      </div>
+      <div class="roster" data-stagger>
+        <figure>
+          <span class="shot"><img style="--pos:center 38%" src="rysing-assets/anzhelika-chair.webp" alt="Anzhelika seated in the studio" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Anzhelika</h3><p>Founder · The mind behind it all</p></figcaption>
+        </figure>
+        <figure>
+          <span class="shot"><img style="--pos:center 32%" src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
+        </figure>
+        <figure>
+          <span class="shot"><img style="--pos:center 28%" src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
+        </figure>
+        <!-- TODO(copy): Kristina's discipline remains unconfirmed -->
+        <figure>
+          <span class="shot"><span class="roster-placeholder" aria-hidden="true">K</span></span>
+          <figcaption><h3>Kristina</h3><p>Discipline to be confirmed</p></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band" id="recognition" aria-labelledby="recognition-title">
+      <p class="eyebrow label" id="recognition-title">Trusted by founders, speakers and teams across Europe</p>
+      <div class="marquee" aria-label="Client logos" data-reveal>
+        <div class="marquee-track">
+          <figure><img style="--f:0.2" src="rysing-assets/logo-clemensdoppler.webp" alt="Clemens Doppler" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-gerdbommer.webp" alt="Gerd Bommer" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.317" src="rysing-assets/logo-jenniferdjongow.webp" alt="Jennifer Djongow" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.283" src="rysing-assets/logo-julianknowle.webp" alt="Julian Knowle" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.217" src="rysing-assets/logo-futurfai.webp" alt="FuturfAI" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.475" src="rysing-assets/logo-u4success.webp" alt="U4Success" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-wise-up.webp" alt="Wise Up" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.45" src="rysing-assets/logo-digitalworld.webp" alt="Digital World" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.158" src="rysing-assets/logo-digitfinance.webp" alt="Digit Finance" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.167" src="rysing-assets/logo-volkshilfe.webp" alt="Volkshilfe" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.8" src="rysing-assets/logo-mam.webp" alt="MAM" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.233" src="rysing-assets/logo-dsp.webp" alt="Der Schulter Physio" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.533" src="rysing-assets/logo-rb.webp" alt="RB Real Beauty" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i>
+        </div>
+        <div class="marquee-track" aria-hidden="true">
+          <figure><img style="--f:0.2" src="rysing-assets/logo-clemensdoppler.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-gerdbommer.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.317" src="rysing-assets/logo-jenniferdjongow.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.283" src="rysing-assets/logo-julianknowle.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.217" src="rysing-assets/logo-futurfai.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.475" src="rysing-assets/logo-u4success.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-wise-up.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.45" src="rysing-assets/logo-digitalworld.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.158" src="rysing-assets/logo-digitfinance.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.167" src="rysing-assets/logo-volkshilfe.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.8" src="rysing-assets/logo-mam.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.233" src="rysing-assets/logo-dsp.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.533" src="rysing-assets/logo-rb.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- TODO(copy): testimonials, review totals and award claims require final approval -->
+    <section class="band" id="proof" aria-labelledby="proof-title">
+      <div class="proof-head" data-reveal>
+        <div class="proof-lead">
+          <h2 class="display" id="proof-title"><span class="alt">In their</span> words</h2>
+          <p class="band-note">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+        </div>
+        <div class="proof-badges">
+          <div><span class="stars" aria-hidden="true">★★★★★</span><span class="label">4.9 / 5 · 49 reviews</span></div>
+          <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
+        </div>
+      </div>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Marcus H.</strong><small>Founder, B2B SaaS</small></div>
+        <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Elena V.</strong><small>Keynote speaker</small></div>
+        <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Tobias R.</strong><small>Agency owner</small></div>
+        <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Sophie L.</strong><small>Consultant</small></div>
+        <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Daniel K.</strong><small>Co-founder, DTC brand</small></div>
+        <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Nadia S.</strong><small>Executive coach</small></div>
+        <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <div class="proof-foot"><a class="btn-pill" href="#proof">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
+    </section>
+
+    <section class="band" id="spotlight" aria-labelledby="spotlight-title">
+      <div class="spot" data-reveal>
+        <img src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Speaker on stage, mid-gesture, wearing a headset microphone" loading="lazy" decoding="async" />
+        <div class="spot-copy">
+          <p class="label">For keynote speakers</p>
+          <h2 class="display" id="spotlight-title"><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
+          <p>Build your speaker brand and rise into thought leadership.</p>
+          <a class="btn-pill" href="rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="band fudge" id="sunday-fudge" aria-labelledby="fudge-title">
+      <div class="duo">
+        <div class="fudge-copy">
+          <p class="label">Newsletter — Sunday Fudge</p>
+          <!-- The hyphen is a legal break point; holding the compound together
+               stops the line ending on a stranded "mini-". -->
+          <h2 class="display" id="fudge-title"><span class="alt">Get free access to my</span> business and marketing <span class="alt" style="white-space:nowrap">mini-courses</span></h2>
+          <!-- TODO(copy): audience figure requires final verification -->
+          <p>Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
+          <ul class="fudge-points">
+            <li>Sharp perspective</li>
+            <li>Useful prompts</li>
+            <li>Sunday delivery</li>
+          </ul>
+          <form id="fudge-form">
+            <div class="fudge-field">
+              <label class="vh" for="fudge-email">Email</label>
+              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Your email" required aria-describedby="fudge-status" />
+              <button type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="fudge-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
+          </form>
+        </div>
+        <div class="fudge-visual">
+          <article class="fudge-card" aria-label="Sunday Fudge newsletter cover">
+            <div class="fudge-card-top label"><span>Sunday edition</span><span>Rysing Studio</span></div>
+            <p class="fudge-card-title display"><span class="alt">Fudge</span><span>for</span><span class="alt">founders.</span></p>
+            <p class="fudge-card-foot">People branding.<br />Without the fluff.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band closing" id="contact" aria-labelledby="contact-title">
+      <p data-reveal class="eyebrow label">Ready when you are</p>
+      <h2 data-reveal class="display" id="contact-title"><span class="alt">Turn your</span> vision <span class="alt">into a</span> courageous brand <span class="alt">and thought leader</span> reputation.</h2>
+      <a class="btn-pill" href="mailto:hello@rysing.agency">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="footer-light" aria-hidden="true"></span>
+    <a href="#top" aria-label="Rysing, back to top"><img class="footer-mark" src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" loading="lazy" decoding="async" /></a>
+    <div class="footer-grid label">
+      <p class="footer-blurb">Brand, content and sales for founders who want to become the only choice in their industry.</p>
+      <nav aria-label="Company">
+        <h3>Company</h3>
+        <a href="#system">Services</a><a href="#spotlight">Keynote speaking</a><a href="#work">Work</a><a href="#sunday-fudge">Sunday Fudge</a><a href="#contact">Apply to work with us</a>
+      </nav>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:hello@rysing.agency">hello@rysing.agency</a><a href="#">rysing.agency</a><span>Vienna, Austria</span>
+      </div>
+      <!-- TODO(link): legal pages pending -->
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="#">Imprint</a><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a><a href="#">Cookie Policy</a><a href="#top">Back to top ↑</a>
+      </nav>
+    </div>
+    <div class="footer-meta label">
+      <span>© 2026 Rysing, Vienna, Austria. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.body.classList.remove('no-js');
+
+    /* Declared once, up front: every block below branches on it. */
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Entrance. Each element reveals once and is then released — an observer
+       that keeps firing on every pass makes a long page feel restless, and
+       re-animating content the reader has already seen is the tell of a
+       template. Staggered groups index their own children so the markup does
+       not have to carry positions. */
+    const revealTargets = document.querySelectorAll('[data-reveal],[data-stagger] > *');
+    if (revealTargets.length && !reduce && 'IntersectionObserver' in window) {
+      document.querySelectorAll('[data-stagger]').forEach((group) => {
+        [...group.children].forEach((child, i) => {
+          child.setAttribute('data-reveal', '');
+          child.style.setProperty('--i', i);
+        });
+      });
+      document.body.classList.add('reveal-ready');
+      const pending = new Set(document.querySelectorAll('[data-reveal]'));
+      const show = (el) => { el.classList.add('is-in'); pending.delete(el); revealed.unobserve(el); };
+      const revealed = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => { if (entry.isIntersecting) show(entry.target); });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+      pending.forEach((el) => revealed.observe(el));
+
+      /* An element that is jumped straight past never changes intersection
+         state, so the observer never fires for it and it stays hidden for
+         good. The menu's own anchors do exactly that, and so does Cmd+End or a
+         fast flick. Sweep anything that is now at or above the fold. */
+      let sweeping = false;
+      const sweep = () => {
+        sweeping = false;
+        [...pending].forEach((el) => {
+          if (el.getBoundingClientRect().top < window.innerHeight) show(el);
+        });
+      };
+      addEventListener('scroll', () => {
+        if (!sweeping) { sweeping = true; requestAnimationFrame(sweep); }
+      }, { passive: true });
+      /* Covers a hash landing, where the jump happens before any scroll event. */
+      requestAnimationFrame(sweep);
+    }
+
+    /* Full-screen menu. The header carries mark, ask and burger only, so this
+       panel is the entire navigation and has to be properly operable: focus is
+       trapped inside it, Escape closes, focus returns to the button that
+       opened it, and the page behind cannot scroll while it is up. */
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menu = document.querySelector('#menu-overlay');
+    if (menuToggle && menu) {
+      const closeBtn = menu.querySelector('.overlay-close');
+      const focusables = () => [...menu.querySelectorAll('a[href],button:not([disabled])')];
+      const closeMenu = () => {
+        menu.classList.remove('is-open');
+        menu.setAttribute('aria-hidden', 'true');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open menu');
+        document.body.style.overflow = '';
+        menuToggle.focus();
+      };
+      const openMenu = () => {
+        menu.classList.add('is-open');
+        menu.setAttribute('aria-hidden', 'false');
+        menuToggle.setAttribute('aria-expanded', 'true');
+        menuToggle.setAttribute('aria-label', 'Close menu');
+        document.body.style.overflow = 'hidden';
+        focusables()[0]?.focus();
+      };
+      menuToggle.addEventListener('click', () => menu.classList.contains('is-open') ? closeMenu() : openMenu());
+      closeBtn?.addEventListener('click', closeMenu);
+      menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+      document.addEventListener('keydown', (event) => {
+        if (!menu.classList.contains('is-open')) return;
+        if (event.key === 'Escape') { closeMenu(); return; }
+        if (event.key !== 'Tab') return;
+        const f = focusables();
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      });
+    }
+
+    /* Aperture: map the reel section's scroll progress onto the mask size, so the
+       mark opens from a small star to a frame-filling shape. Written to a custom
+       property inside rAF; the browser then does the compositing. The same
+       progress drives the footage grade, so the mark stays legible while small. */
+    const reel = document.querySelector('.reel');
+    if (reel && !reduce) {
+      const MIN = 16, MAX = 620;
+      let ticking = false;
+      let isRevealed = false;
+      const update = () => {
+        ticking = false;
+        const r = reel.getBoundingClientRect();
+        const span = r.height - window.innerHeight;
+        const p = Math.min(1, Math.max(0, -r.top / (span || 1)));
+        /* Ease out so the opening decelerates as it fills rather than snapping. */
+        const eased = 1 - Math.pow(1 - p, 2.6);
+        reel.style.setProperty('--aperture', (MIN + (MAX - MIN) * eased).toFixed(2));
+        /* The grade should clear well before the aperture finishes, or the reel
+           still looks muddy once it is the only thing on screen. */
+        reel.style.setProperty('--reel-progress', Math.min(1, eased * 1.6).toFixed(3));
+        /* Solid mark -> footage. Starts almost immediately and is done by the
+           time the star is roughly a third open. */
+        const reveal = Math.min(1, Math.max(0, (eased - 0.04) / 0.26));
+        reel.style.setProperty('--reel-reveal', reveal.toFixed(3));
+        /* Past this point the star already covers the frame and the grade has
+           already resolved to identity, so shedding both is invisible. Toggled
+           only on change — writing a class every frame is its own cost. */
+        const revealed = eased >= 0.92;
+        if (revealed !== isRevealed) {
+          isRevealed = revealed;
+          reel.classList.toggle('is-revealed', revealed);
+        }
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      addEventListener('scroll', onScroll, { passive:true });
+      addEventListener('resize', onScroll);
+      update();
+    }
+
+    /* Showreel transport. The reel also stops once it leaves the viewport: a
+       13 MB loop has no reason to keep decoding behind eight other sections,
+       and it must not resume if the visitor chose to stop it. */
+    const video = document.querySelector('.reel-video');
+    const reelToggle = document.querySelector('.reel-toggle');
+    if (video && reelToggle) {
+      const PLAY = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3l11 7-11 7z"/></svg>';
+      const PAUSE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3h4v14H4zm8 0h4v14h-4z"/></svg>';
+      let stoppedByUser = false;
+      /* Assume on screen until the observer says otherwise, so a pause that
+         arrives before the first observer callback is still recovered. */
+      let inView = true;
+      /* If the browser is refusing to keep it playing — a deliberate power
+         policy rather than a glitch — stop fighting it after a few tries so we
+         never spin on pause/play. The counter decays, so a hiccup a minute
+         later is still recovered. */
+      let retries = 0, retryWindow = 0;
+      const mayRetry = () => {
+        const now = Date.now();
+        if (now - retryWindow > 4000) { retries = 0; retryWindow = now; }
+        return ++retries <= 3;
+      };
+      const sync = () => {
+        const paused = video.paused;
+        reelToggle.innerHTML = paused ? PLAY : PAUSE;
+        reelToggle.setAttribute('aria-pressed', String(paused));
+        reelToggle.setAttribute('aria-label', paused ? 'Play showreel' : 'Pause showreel');
+      };
+      reelToggle.addEventListener('click', () => {
+        stoppedByUser = !video.paused;
+        if (video.paused) video.play().then(sync).catch(sync);
+        else { video.pause(); sync(); }
+      });
+      /* Autoplay starts after this script runs, so a one-off sync would leave
+         the control reading "play" over a playing reel. Track the element. */
+      video.addEventListener('play', sync);
+      video.addEventListener('pause', () => {
+        sync();
+        /* Nothing but the reader and the observer below is allowed to stop
+           this reel, and plenty of things try: Safari pauses muted autoplay
+           video under Low Power Mode and when it judges the element offscreen,
+           backgrounded tabs suspend it, and a decoder hiccup on a 13 MB loop
+           can drop it out of playback. If it stopped while it is still on
+           screen and the reader did not ask for it, start it again. */
+        if (!stoppedByUser && inView && !document.hidden && mayRetry()) {
+          video.play().then(sync).catch(() => {});
+        }
+      });
+      /* Coming back to the tab should not leave a dead frame sitting there. */
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && !stoppedByUser && inView && video.paused) {
+          video.play().then(sync).catch(() => {});
+        }
+      });
+      sync();
+
+      /* Watch the section, not the video. The video lives inside the sticky
+         stage, so its box leaves the viewport the instant the stage releases at
+         the end of the section — which put the pause/play boundary exactly
+         where the reader is still scrolling, and nudging across it stopped and
+         started the reel over and over.
+
+         Observing the 260vh section with a full viewport of margin on each side
+         means it only stops once the reel is comfortably away, and a small
+         scroll near the edge never touches it. */
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => entries.forEach((entry) => {
+          inView = entry.isIntersecting;
+          if (!inView && !video.paused) { video.pause(); sync(); }
+          else if (inView && !stoppedByUser && video.paused) { video.play().then(sync).catch(sync); }
+        }), { threshold:0, rootMargin:'100% 0px 100% 0px' }).observe(reel || video);
+      }
+    }
+
+    /* Services accordion: one row open at a time. The whole row is the target,
+       not just the name — the numeral is half the row's width and was dead to
+       the pointer. The button stays the keyboard and screen-reader control. */
+    document.querySelectorAll('.system-item').forEach((item) => {
+      const btn = item.querySelector('.system-toggle');
+      const toggle = () => {
+        const open = item.classList.contains('is-open');
+        document.querySelectorAll('.system-item.is-open').forEach((el) => {
+          el.classList.remove('is-open');
+          el.querySelector('.system-toggle').setAttribute('aria-expanded', 'false');
+        });
+        if (!open) { item.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); }
+      };
+      item.addEventListener('click', (event) => {
+        /* Let the button fire its own click, or the row would toggle twice and
+           land back where it started. */
+        if (event.target.closest('.system-toggle')) return;
+        /* Reading the open panel usually means selecting from it; collapsing
+           the row out from under a drag would be hostile. */
+        if (String(getSelection())) return;
+        toggle();
+      });
+      btn.addEventListener('click', toggle);
+    });
+
+    /* Newsletter form */
+    const form = document.querySelector('#fudge-form');
+    const status = document.querySelector('#fudge-status');
+    if (form && status) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        status.textContent = 'Thanks. Signup will be enabled when the mailing platform is connected.';
+      });
+    }
+  </script>
+</body>
+</html>
