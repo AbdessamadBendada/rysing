@@ -44,7 +44,11 @@
     }
 
     * { box-sizing:border-box; }
-    html { background:var(--ink); scroll-behavior:smooth; }
+    /* clip, not hidden: the drifting glows are allowed to bleed off the
+       viewport without opening a horizontal scrollbar, and unlike `hidden`
+       this does not turn the root into a containing block for the fixed
+       header. Sections must not clip them locally — see .stats. */
+    html { background:var(--ink); scroll-behavior:smooth; overflow-x:clip; }
     body {
       margin:0; background:var(--ink); color:var(--paper);
       font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -187,16 +191,66 @@
       -webkit-mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
               mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
     }
-    .reel-frame video { width:100%; height:100%; object-fit:cover; }
+    /* At 16% the star is ~200px and shows a 200px crop of a 1440px frame, so
+       whatever happens to be mid-screen becomes the mark. The reel opens on
+       black brush lettering over white, which cut a gash straight through it.
+
+       So the mark starts as the mark: a solid fill that crossfades to the
+       footage as the aperture widens. The mask on the parent clips this too,
+       so it is always exactly the star. --reel-reveal clears early, well
+       before the shape stops reading as a star, so most of the scroll is
+       spent on the work rather than on a logo. */
+    .reel-frame::after {
+      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:var(--paper); opacity:calc(1 - var(--reel-reveal,0));
+    }
+    /* Once the star has opened past the frame the mask and the grade are both
+       no-ops, but the compositor still re-rasterises a full-viewport masked,
+       filtered video on every scroll frame — which cost the reel about a fifth
+       of its playback rate. Dropping both in the revealed state is visually
+       identical and hands the frames back to decoding. */
+    .reel.is-revealed .reel-frame { -webkit-mask:none; mask:none; }
+    .reel.is-revealed .reel-frame video { filter:none; }
+    .reel-frame video {
+      width:100%; height:100%; object-fit:cover;
+      /* A light hold on the footage through the middle of the opening, gone by
+         the time the reel is the only thing on screen. */
+      filter:brightness(calc(.72 + .28 * var(--reel-progress,0)))
+             saturate(calc(.6 + .4 * var(--reel-progress,0)));
+    }
+    .reel-bar {
+      position:absolute; z-index:2; inset:auto clamp(22px,4vw,74px) clamp(26px,4vh,40px);
+      display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+      pointer-events:none;
+    }
+    .reel-bar span { color:rgba(249,249,249,.6); }
+    .reel-toggle {
+      pointer-events:auto; display:grid; place-items:center; width:46px; height:46px;
+      border:1px solid rgba(249,249,249,.75); border-radius:50%;
+      /* The reel cuts between white cards and dark footage, so the control
+         carries its own ground rather than trusting the frame behind it. */
+      background:rgba(13,13,13,.62); color:var(--paper); cursor:pointer;
+      transition:background .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+    }
+    .reel-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .reel-toggle svg { width:15px; height:15px; fill:currentColor; }
+
     @media (prefers-reduced-motion:reduce) {
       .reel { height:auto; }
       .reel-stage { position:static; height:auto; }
       .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+      /* Nothing drives --reel-progress or --reel-reveal here, so the grade and
+         the solid mark must both be switched off explicitly — left alone the
+         overlay stays fully opaque and covers the reel with a blank panel. */
+      .reel-frame video { filter:none; }
+      .reel-frame::after { display:none; }
       .hero-light::before,.hero-light::after { animation:none; }
     }
     .no-js .reel { height:auto; }
     .no-js .reel-stage { position:static; height:auto; }
     .no-js .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+    .no-js .reel-frame video { filter:none; }
+    .no-js .reel-frame::after { display:none; }
 
     /* --- Stats ------------------------------------------------- */
     /* The reference sets these as four oversized didone numerals on black, with
@@ -229,10 +283,15 @@
     .stats-grid {
       display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(24px,4vw,70px);
     }
+    /* Kinfolk is a didone and sets very wide, so the row read loose and thin
+       against the reference. Tighter tracking pulls the figures in, a hairline
+       stroke adds weight the family has no bold cut for, and the size comes
+       down nearer the reference's 76px. */
     .stat strong {
       display:block;
       font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-      font-size:clamp(46px,6.4vw,104px); line-height:.9; letter-spacing:.01em;
+      font-size:clamp(40px,5.3vw,84px); line-height:.88; letter-spacing:-.035em;
+      -webkit-text-stroke:.7px currentColor;
     }
     .stat span {
       display:block; margin-top:clamp(10px,1.2vw,18px); max-width:24ch;
@@ -244,81 +303,456 @@
     @media (prefers-reduced-motion:reduce) { .stats-light span { animation:none; } }
 
     /* --- Services ---------------------------------------------- */
-    /* The reference shows closed rows as nothing but an oversized numeral sliced
-       by the row edge. Opening a row reveals the outcome and the tag set. */
+    /* Two columns: an oversized numeral on the left, everything else on the
+       right. Closed rows show the numeral alone — the reference hides the name
+       until the row opens, so the list reads as four huge figures. */
     .system { padding:clamp(76px,9vh,130px) var(--gutter) clamp(90px,11vh,150px); }
-    .system-head { margin:0 0 clamp(44px,6vh,84px); }
-    .system-eyebrow { margin:0 0 clamp(18px,2.4vh,30px); color:var(--muted); }
-    .system-title { margin:0; max-width:22ch; font-size:clamp(34px,5.2vw,86px); }
-    .system-lede { margin:clamp(16px,2vh,26px) 0 0; max-width:46ch; color:var(--muted); }
+    .system-head { margin:0 0 clamp(44px,6vh,80px); }
+    .system-title { margin:0; max-width:20ch; font-size:clamp(40px,7.2vw,124px); }
+    .system-meta {
+      margin:clamp(20px,2.6vh,34px) 0 0; max-width:40ch;
+      color:var(--paper); font-size:11px; font-weight:600;
+      letter-spacing:.14em; text-transform:uppercase; line-height:1.5;
+    }
+    /* Separator is drawn, not written, so no character is added to the copy. */
+    .system-meta .sep::before { content:"\00b7"; margin:0 .5em; }
 
     .system-list { border-top:1px solid var(--line); }
-    .system-item { position:relative; overflow:hidden; border-bottom:1px solid var(--line); }
+    /* The numeral sits beside the whole row, not inside the button. When it
+       lived in the button it set that row's height, so an open row showed the
+       name, then ~170px of dead air, then the detail. Now a closed row is
+       still numeral-tall and an open one flows tight under the name. */
+    .system-item {
+      position:relative; border-bottom:1px solid var(--line);
+      display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+      gap:clamp(20px,4vw,70px); align-items:start;
+      padding:clamp(26px,3.4vh,48px) 0;
+      /* The whole row toggles, numeral included — see the click handler. */
+      cursor:pointer;
+    }
     .system-toggle {
-      width:100%; display:grid;
-      grid-template-columns:clamp(110px,14vw,230px) minmax(0,1.1fr) minmax(0,1.4fr) 44px;
-      gap:clamp(16px,2.6vw,44px); align-items:center;
-      padding:clamp(22px,2.6vh,34px) 0;
-      border:0; background:none; color:inherit; text-align:left; font:inherit; cursor:pointer;
+      width:100%; display:flex; align-items:flex-start; justify-content:space-between; gap:24px;
+      padding:0; border:0; background:none; color:inherit; text-align:left; font:inherit; cursor:pointer;
     }
+    /* The reference sets these in the hairline grotesque, not the didone. The
+       didone's thick/thin at 260px fought the headline above it, and the
+       -.16em pull sliced the tops and tails of the glyphs against the row
+       hairlines, which read as a clipping bug rather than a crop. */
     .system-num {
-      display:block; margin:-.2em 0;
-      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-      font-size:clamp(68px,8vw,140px); line-height:.78; letter-spacing:.01em;
-      opacity:.92; transition:opacity .4s;
+      display:block;
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:300;
+      font-size:clamp(104px,15vw,260px); line-height:.82; letter-spacing:-.04em;
     }
+    /* A shut row carries its name at display size — it is the headline of that
+       stage. Opening it demotes the name to a label so the detail underneath
+       becomes the subject, which is the whole gesture of the row. */
     .system-name {
-      margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-      font-size:clamp(17px,1.65vw,27px); text-transform:uppercase; letter-spacing:.04em; line-height:1.15;
+      margin:0; font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:400; font-size:clamp(30px,4.4vw,64px); line-height:1.04;
+      text-transform:uppercase; letter-spacing:-.025em;
+      transition:font-size .45s var(--ease),letter-spacing .45s var(--ease);
     }
-    .system-for { margin:0; color:var(--muted); font-size:clamp(12px,1vw,15px); line-height:1.5; }
+    .system-item.is-open .system-name { font-size:clamp(21px,2.3vw,34px); letter-spacing:-.012em; }
     .system-symbol {
-      position:relative; width:44px; height:44px; justify-self:end;
-      display:grid; place-items:center; border:1px solid rgba(249,249,249,.28); border-radius:50%;
-      transition:border-color .3s,background .3s,color .3s;
+      position:relative; flex:none; width:38px; height:38px; margin-top:6px;
+      display:grid; place-items:center; border:1px solid rgba(249,249,249,.34); border-radius:50%;
+      /* Always present now that the whole row is the control — it is the only
+         thing saying the row opens. */
+      opacity:.5; transition:opacity .35s var(--ease),border-color .3s;
     }
-    .system-item:hover .system-symbol { border-color:var(--paper); }
+    .system-item:hover .system-symbol,
+    .system-item.is-open .system-symbol { opacity:1; }
     .system-symbol::before,.system-symbol::after {
-      content:""; position:absolute; width:14px; height:1px; background:currentColor;
+      content:""; position:absolute; width:13px; height:1px; background:currentColor;
       transition:transform .35s var(--ease);
     }
     .system-symbol::after { transform:rotate(90deg); }
-    .system-item.is-open .system-symbol { background:var(--red); border-color:var(--red); }
     .system-item.is-open .system-symbol::after { transform:rotate(0); }
 
-    /* Height is animated via grid-template-rows so the panel can size to its own
-       content instead of needing a hard-coded max-height. */
     .system-panel { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s var(--ease); }
     .system-item.is-open .system-panel { grid-template-rows:1fr; }
     .system-panel > div { overflow:hidden; }
-    .system-panel-inner {
-      display:grid; grid-template-columns:clamp(110px,14vw,230px) minmax(0,1.1fr) minmax(0,1.4fr) 44px;
-      gap:clamp(16px,2.6vw,44px);
-      padding:0 0 clamp(26px,3.4vh,44px);
+    .system-detail { padding-top:clamp(24px,3vh,38px); }
+    .system-for {
+      display:flex; gap:12px; margin:0 0 clamp(26px,3.4vh,42px);
+      max-width:44ch; color:var(--paper); font-size:clamp(13px,1.1vw,17px); line-height:1.5;
     }
-    .system-outcome { grid-column:2; }
-    .system-outcome span { display:block; margin-bottom:10px; color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+    .system-for::before {
+      content:""; flex:none; width:9px; height:9px; margin-top:.5em;
+      border:1px solid rgba(249,249,249,.65); border-radius:50%;
+    }
+    .system-outcome span { display:block; margin-bottom:12px; color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
     .system-outcome p {
-      margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif;
-      font-size:clamp(16px,1.5vw,24px); text-transform:uppercase; letter-spacing:.03em; line-height:1.2;
+      margin:0 0 clamp(26px,3.4vh,42px);
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif;
+      font-size:clamp(18px,1.9vw,30px); text-transform:uppercase; letter-spacing:.03em; line-height:1.2;
     }
-    .system-tags { grid-column:3; display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none; }
+    .system-tags { display:flex; flex-wrap:wrap; gap:9px; margin:0; padding:0; list-style:none; }
     .system-tags li {
-      display:inline-flex; align-items:center; gap:7px;
-      padding:8px 14px; border:1px solid rgba(249,249,249,.26); border-radius:999px;
-      font-size:11px; letter-spacing:.06em;
-    }
-    .system-tags li::before {
-      content:""; flex:none; width:8px; height:8px; background:var(--red);
-      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      padding:10px 17px; border:1px solid rgba(249,249,249,.3); border-radius:999px;
+      font-size:10px; font-weight:600; letter-spacing:.11em; text-transform:uppercase;
     }
     @media (max-width:820px) {
-      .system-toggle,.system-panel-inner { grid-template-columns:clamp(74px,19vw,110px) 1fr 40px; }
-      .system-for { display:none; }
-      .system-outcome,.system-tags { grid-column:2; }
-      .system-tags { margin-top:18px; }
+      .system-item { grid-template-columns:1fr; gap:14px; }
+      .system-num { font-size:clamp(84px,24vw,150px); }
     }
     @media (prefers-reduced-motion:reduce) { .system-panel { transition:none; } }
+
+
+    /* --- Shared editorial primitives ---------------------------- */
+    /* Everything below the services list sits on the same black ground.
+       The reference never cuts to a light panel, so neither does this: the
+       only colour that interrupts the page is the red scribble, the red
+       marks in the marquee and the blue behind one word. */
+    .band { padding:0 var(--gutter) clamp(104px,13vh,170px); }
+    /* The header is fixed at 92px, so every in-page link would otherwise land
+       its heading underneath it. */
+    :is(section,footer)[id] { scroll-margin-top:112px; }
+    .band-head {
+      display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+      gap:24px; margin-bottom:clamp(28px,4vh,40px);
+    }
+    .band-head h2 { margin:0; font-size:clamp(44px,5.4vw,80px); }
+    .band-note { max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+    .eyebrow { display:block; margin:0 0 clamp(20px,3vh,28px); }
+    .vh { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+    /* --- Selected work ------------------------------------------ */
+    /* A hand-set gallery, not a grid: six panels of deliberately unequal
+       width and vertical offset. Widths total 94% per row and the 2% column
+       gap makes up the rest, so the row fills the measure exactly. */
+    .gallery { display:flex; flex-wrap:wrap; align-items:flex-start; gap:28px 2%; }
+    .gallery > a { display:flex; flex-direction:column; gap:12px; min-width:0; }
+    .gallery > a:nth-child(1) { width:23%; margin-top:0; }
+    .gallery > a:nth-child(2) { width:43%; margin-top:60px; }
+    .gallery > a:nth-child(3) { width:28%; margin-top:0; }
+    .gallery > a:nth-child(4) { width:36%; margin-top:40px; }
+    .gallery > a:nth-child(5) { width:22%; margin-top:140px; }
+    .gallery > a:nth-child(6) { width:36%; margin-top:-60px; }
+    .shot { position:relative; overflow:hidden; background:var(--ink); }
+    .shot img { width:100%; height:100%; object-fit:cover; filter:saturate(.78); transition:transform .7s var(--ease),filter .7s var(--ease); }
+    .gallery > a:hover .shot img,
+    .gallery > a:focus-visible .shot img { transform:scale(1.04); filter:saturate(1); }
+    .gallery > a:nth-child(1) .shot { aspect-ratio:4/5; }
+    .gallery > a:nth-child(2) .shot { aspect-ratio:16/11; }
+    .gallery > a:nth-child(3) .shot { aspect-ratio:3/4; }
+    .gallery > a:nth-child(4) .shot { aspect-ratio:16/11; }
+    .gallery > a:nth-child(5) .shot { aspect-ratio:1; }
+    .gallery > a:nth-child(6) .shot { aspect-ratio:3/4; }
+    /* Project titles stay in the grotesque: six serif titles at this size
+       would compete with the section heading directly above them. */
+    .shot-title {
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:17px; line-height:1.15; text-transform:uppercase; letter-spacing:-.01em;
+    }
+    .shot-meta { color:rgba(249,249,249,.6); font-size:10px; }
+    .shot-meta .sep::before { content:"\00b7"; margin:0 .5em; }
+    /* The whole panel is the link, so six standing "learn more" labels only
+       repeat an affordance the cursor already gives. Kept in the markup for
+       screen readers and revealed on intent, which is what stops the gallery
+       reading like a listings template. */
+    .shot-more {
+      color:var(--paper); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+      opacity:0; transform:translateY(-4px);
+      transition:opacity .3s var(--ease),transform .3s var(--ease);
+    }
+    .gallery > a:hover .shot-more,
+    .gallery > a:focus-visible .shot-more { opacity:1; transform:none; }
+    /* Touch has no hover state to reveal it with. */
+    @media (hover:none) { .shot-more { opacity:1; transform:none; color:rgba(249,249,249,.6); } }
+
+    /* --- Manifesto ---------------------------------------------- */
+    /* The measure is set in em, not ch. ch is the width of the resolved font's
+       "0" — Kinfolk's is 0.70em and the macOS Didot fallback's is 0.52em, so a
+       ch-based measure silently narrows by a quarter whenever the webfont does
+       not arrive, which is what turns this headline into seven lines instead
+       of five. 13.3em is the same measure Kinfolk gave, now independent of
+       which serif actually resolves. */
+    .manifesto h2 { margin:0; max-width:13.3em; font-size:clamp(44px,6.4vw,100px); line-height:.94; }
+    /* The circle is drawn, not typed: a single open stroke that overshoots
+       its own start, so it reads as a hand mark rather than an ellipse. */
+    .ring { position:relative; display:inline-block; }
+    .ring svg {
+      position:absolute; left:-9%; top:-22%; width:118%; height:150%;
+      overflow:visible; pointer-events:none;
+    }
+    .manifesto .btn-pill { margin-top:clamp(28px,4vh,36px); }
+
+    /* --- Founder ------------------------------------------------ */
+    .founder-plate { padding:0 var(--gutter) clamp(56px,8vh,72px); }
+    .founder-plate figure { margin:0; }
+    /* TODO(asset): the reference sets a wide environmental plate here and no
+       landscape founder frame was supplied — every shot is portrait, and
+       anzhelika-portrait.png is a cut-out that floats in black at this width.
+       16/8 with a low crop keeps the room in frame instead of reducing the
+       band to a face. Replace once a wide plate is delivered. */
+    .founder-plate img { width:100%; aspect-ratio:16/8; object-fit:cover; object-position:center 24%; filter:saturate(.78); }
+    .founder-plate figcaption { padding-top:10px; text-align:right; color:rgba(249,249,249,.6); font-size:10px; }
+    .duo { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,5vw,48px); align-items:start; }
+    .founder-title { margin:clamp(16px,2.4vh,22px) 0 0; font-size:clamp(36px,4.2vw,62px); line-height:.95; }
+    .founder-body { padding-top:34px; color:rgba(249,249,249,.88); font-size:16px; line-height:1.7; }
+    .founder-body p { margin:0 0 20px; }
+    .founder-body .btn-pill { margin-top:6px; }
+
+    /* --- Team --------------------------------------------------- */
+    .roster { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
+    .roster figure { display:flex; flex-direction:column; gap:12px; margin:0; }
+    .roster figure:nth-child(even) { margin-top:60px; }
+    .roster .shot { aspect-ratio:3/4; }
+    .roster figcaption { display:flex; flex-direction:column; gap:12px; }
+    .roster h3 {
+      margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .roster p { margin:0; max-width:24ch; color:rgba(249,249,249,.7); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; line-height:1.35; }
+    .roster-placeholder {
+      display:grid; place-items:center; width:100%; height:100%;
+      background:linear-gradient(145deg,#34312e,#171717); color:rgba(249,249,249,.18);
+      font:400 clamp(90px,11vw,200px)/1 "Kinfolk",Didot,"Bodoni 72",Georgia,serif;
+    }
+
+    /* --- Recognition -------------------------------------------- */
+    /* Client names, not logo files: thirteen marks drawn in thirteen
+       palettes never sit together, and the reference sets the names as type
+       with the brand mark between them. */
+    .marquee {
+      --logo-w:clamp(128px,13vw,178px);
+      --logo-mark:clamp(19px,2vw,27px);
+      --logo-h:clamp(40px,4.2vw,56px);
+      border-block:1px solid rgba(249,249,249,.28); padding:26px 0;
+      overflow:hidden; display:flex; width:max-content; max-width:100%;
+    }
+    .marquee-track {
+      display:flex; flex:none; align-items:center; white-space:nowrap;
+      animation:namesScroll 46s linear infinite;
+    }
+    .marquee:hover .marquee-track { animation-play-state:paused; }
+    /* The supplied marks are black artwork on transparency, so on this page
+       they were all but invisible — inverting makes them white without
+       touching the transparent ground. They are also 400px canvases with a lot
+       of built-in padding, so the box has to run large for the mark to read at
+       a normal size. */
+    /* Every mark gets the same box and is fitted inside it. Constraining by
+       height alone let aspect ratio decide optical weight: these range from
+       1.00 (a square badge) to 5.10 (a long wordmark), so the square one
+       rendered as a 74px block beside 37px strips and owned the whole row.
+       A fixed box makes a wide mark fill the width and a square one fill the
+       height, which is what actually reads as even. */
+    .marquee-track figure {
+      display:grid; place-items:center; margin:0; flex:none;
+      width:var(--logo-w); height:var(--logo-h);
+    }
+    /* Each file is a square canvas with the mark letterboxed inside it, and
+       the mark fills anywhere from 16% to 80% of that canvas. Fitting the
+       canvas therefore sizes the padding, not the logo, which is why one mark
+       came out 26px tall and another 6px. --f carries each file's measured
+       content fraction, so every mark lands on the same optical height and
+       the transparent surplus simply overhangs the box unseen. */
+    .marquee-track img {
+      width:auto; height:auto; max-width:var(--logo-w); max-height:var(--logo-h);
+      object-fit:contain;
+      /* Scale rather than size: growing the canvas made the tall ones overflow
+         the row box, and overflowing items stop centring, which is what threw
+         the marks onto different baselines. A transform leaves layout alone,
+         so every box stays on one line. .48 is the ratio of target mark height
+         to row height, which both clamps hold across the range. */
+      transform:scale(calc(.48 / var(--f,.25)));
+      /* brightness(0) crushes every opaque pixel to black and keeps the alpha,
+         then invert lifts it to flat white. A plain invert() leaves greys as
+         greys, which is why the halftone behind one wordmark came back as mud
+         rather than as part of the mark. */
+      filter:brightness(0) invert(1); opacity:.78; transition:opacity .4s var(--ease);
+    }
+    /* Two of the supplied marks are already light artwork on a dark ground.
+       Inverting those turned them into solid pale blocks; lifting their
+       brightness turned the dark ground into a grey slab. They want the grade
+       and nothing else, so the ground sinks into the page and only the light
+       part of the mark is left. */
+    .marquee-track img[data-light] { filter:grayscale(1); }
+    .marquee-track figure:hover img { opacity:1; }
+    .marquee-track i {
+      /* Smaller than the marks it separates — at 18px it was competing with
+         the shorter wordmarks instead of punctuating them. */
+      flex:none; width:13px; height:13px; margin:0 clamp(14px,1.6vw,24px); background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    @keyframes namesScroll { to { transform:translateX(-100%); } }
+
+    /* --- Proof -------------------------------------------------- */
+    .proof-head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:clamp(28px,4vh,40px); }
+    .proof-lead { display:flex; flex-direction:column; gap:18px; }
+    .proof-lead h2 { margin:0; font-size:clamp(44px,5.4vw,80px); }
+    .proof-badges { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-end; }
+    .proof-badges > div { display:flex; flex-direction:column; gap:6px; }
+    .stars { color:var(--red); font-size:13px; letter-spacing:.2em; }
+    .proof-badges strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:26px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    /* Rows, not cards: a bordered card grid turns six quotes into a
+       comparison table. The hairline does all the separating work. */
+    .trow {
+      display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr) 48px; gap:40px;
+      align-items:center; padding:36px 0; border-top:1px solid rgba(249,249,249,.28);
+    }
+    .trow-meta { display:flex; flex-direction:column; gap:8px; }
+    .trow-meta strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .trow-meta small { color:rgba(249,249,249,.65); font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    .trow blockquote {
+      margin:0; font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:clamp(18px,1.7vw,24px); line-height:1.2; text-transform:uppercase; letter-spacing:-.005em;
+    }
+    .trow-mark {
+      justify-self:end; width:36px; height:36px; display:grid; place-items:center;
+      border:1px solid rgba(249,249,249,.6); border-radius:50%;
+    }
+    .trow-mark::before {
+      content:""; width:12px; height:12px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    .proof-foot { padding-top:28px; border-top:1px solid rgba(249,249,249,.28); }
+
+    /* --- Spotlight ---------------------------------------------- */
+    .spot { position:relative; overflow:hidden; background:var(--ink); }
+    /* Every photograph on the page carries the same grade; the stage shot's
+       LED wash was the one image still running at full saturation. */
+    .spot img { width:100%; aspect-ratio:16/8; object-fit:cover; object-position:center 32%; filter:saturate(.78); }
+    /* The photograph is dark at the bottom already; this only guarantees the
+       copy holds at small sizes where the crop tightens. */
+    .spot::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.12) 58%,transparent 80%);
+    }
+    .spot-copy {
+      position:absolute; z-index:1; left:clamp(20px,4vw,56px); right:clamp(20px,4vw,56px);
+      bottom:clamp(20px,4vw,56px); display:flex; flex-direction:column; align-items:flex-start; gap:18px;
+    }
+    .spot-copy h2 { margin:0; max-width:17ch; font-size:clamp(36px,5vw,76px); line-height:.98; }
+    /* One word on blue — the single place the secondary brand colour appears. */
+    .spot-copy h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
+    .spot-copy p { margin:0; font-size:16px; }
+
+    /* --- Newsletter --------------------------------------------- */
+    .fudge h2 { margin:0; font-size:clamp(36px,4.4vw,64px); line-height:.95; }
+    .fudge-copy { display:flex; flex-direction:column; gap:24px; }
+    .fudge-copy > p { margin:0; max-width:500px; color:rgba(249,249,249,.85); font-size:15px; line-height:1.7; }
+    .fudge-points { display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none; }
+    .fudge-points li {
+      display:inline-flex; align-items:center; min-height:30px; padding:0 14px;
+      border:1px solid rgba(249,249,249,.85); border-radius:999px;
+      font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+    }
+    .fudge-field { display:flex; align-items:center; max-width:520px; border-bottom:1px solid var(--paper); }
+    .fudge-field:focus-within { border-color:var(--red); }
+    .fudge-field input {
+      flex:1 1 auto; min-width:0; min-height:52px; padding:0; border:0; outline:0; background:none;
+      color:var(--paper); font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:300; font-size:16px;
+    }
+    .fudge-field input::placeholder { color:rgba(249,249,249,.5); }
+    .fudge-field button {
+      flex:none; min-height:52px; padding:0; border:0; background:none; color:inherit; cursor:pointer;
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+    }
+    .fudge-note { margin:0; color:rgba(249,249,249,.65); font-size:12px; }
+    .fudge-visual { display:flex; justify-content:center; }
+    /* The one light object on the page: a printed cover lying on the black. */
+    .fudge-card {
+      position:relative; overflow:hidden; width:min(100%,440px); aspect-ratio:4/5; padding:32px;
+      background:var(--paper); color:#161a1b; display:flex; flex-direction:column; justify-content:space-between;
+      transform:rotate(-3deg); transition:transform .5s var(--ease);
+    }
+    .fudge-visual:hover .fudge-card { transform:rotate(-1deg) translateY(-7px); }
+    .fudge-card::before {
+      content:""; position:absolute; right:-42%; bottom:-46%; width:160%; aspect-ratio:1; border-radius:50%;
+      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.85),rgba(240,66,34,.34) 42%,transparent 70%);
+      pointer-events:none;
+    }
+    .fudge-card > * { position:relative; }
+    .fudge-card-top { display:flex; justify-content:space-between; gap:18px; }
+    /* Sized against the 440px card, not the viewport: "founders." in the
+       semibold grotesque runs wider than the reference's 400 weight and
+       overshot the card edge at the reference's 84px. */
+    .fudge-card-title { margin:0; font-size:clamp(42px,4.4vw,64px); line-height:.86; }
+    .fudge-card-title span { display:block; }
+    .fudge-card-foot { margin:0; font-size:15px; line-height:1.5; }
+
+    /* --- Final CTA ---------------------------------------------- */
+    .closing h2 { margin:0; font-size:clamp(48px,7.6vw,118px); line-height:.92; }
+    .closing .btn-pill { margin-top:clamp(30px,4.5vh,40px); }
+
+    /* --- Footer ------------------------------------------------- */
+    /* The page opens and closes on the same two lights. They sit behind the
+       wordmark rather than beside it, so the mark reads as lit from within.
+       The inner element clips them: left unclipped they would extend the
+       document past the footer and add dead scroll at the very bottom. */
+    .site-footer { position:relative; isolation:isolate; padding:0 var(--gutter) 28px; }
+    .footer-light { position:absolute; z-index:-1; inset:0; overflow:hidden; pointer-events:none; }
+    .footer-light::before,.footer-light::after {
+      content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+    }
+    .footer-light::before {
+      width:min(58vw,820px); top:-18%; right:-12vw;
+      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.5),rgba(240,66,34,.24) 38%,rgba(240,66,34,.05) 62%,transparent 74%);
+      animation:driftA 31s var(--ease) infinite alternate;
+    }
+    .footer-light::after {
+      width:min(52vw,720px); bottom:-26%; left:-16vw;
+      background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.5),rgba(53,36,213,.23) 38%,rgba(53,36,213,.05) 62%,transparent 74%);
+      animation:driftB 38s var(--ease) -9s infinite alternate;
+    }
+    @media (prefers-reduced-motion:reduce) { .footer-light::before,.footer-light::after { animation:none; } }
+    /* The wordmark runs the full measure here — it is the sign-off, and the
+       artwork is the only place the logo face appears. */
+    .footer-mark { width:100%; height:auto; margin-bottom:56px; }
+    .footer-grid {
+      display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px;
+      padding-top:32px; border-top:1px solid rgba(249,249,249,.28);
+    }
+    .footer-grid > * { display:flex; flex-direction:column; gap:8px; }
+    .footer-grid h3 { margin:0 0 6px; color:rgba(249,249,249,.5); font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    .footer-blurb { max-width:28ch; }
+    .footer-legal { align-items:flex-end; text-align:right; }
+    .footer-grid a { opacity:.82; transition:opacity .25s,color .25s; }
+    .footer-grid a:hover { opacity:1; color:var(--red); }
+    .footer-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; margin-top:40px; }
+
+    /* --- Responsive --------------------------------------------- */
+    @media (max-width:980px) {
+      .duo,.roster { grid-template-columns:minmax(0,1fr); }
+      .roster figure:nth-child(even) { margin-top:0; }
+      .founder-body { padding-top:0; }
+      .footer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .footer-legal { align-items:flex-start; text-align:left; }
+    }
+    @media (max-width:820px) {
+      /* The hand-set offsets only read at full measure; below it they stack. */
+      .gallery { gap:30px; }
+      .gallery > a:nth-child(n) { width:100%; margin-top:0; }
+      .gallery > a:nth-child(n) .shot { aspect-ratio:4/5; }
+      .trow { grid-template-columns:minmax(0,1fr) 36px; gap:20px; align-items:start; }
+      .trow blockquote { grid-column:1/-1; grid-row:2; }
+      .proof-badges { gap:24px; }
+      .spot-copy { position:static; padding:22px 0 0; }
+      .spot::after { display:none; }
+      .fudge-field { max-width:none; }
+    }
+    @media (max-width:560px) {
+      .trow-meta strong,.roster h3 { font-size:24px; }
+      /* The field and its 27-character button cannot share a line here. */
+      .fudge-field { flex-wrap:wrap; }
+      .fudge-field button { min-height:44px; margin-bottom:8px; }
+      .fudge-card { padding:24px; }
+      .footer-grid { grid-template-columns:minmax(0,1fr); }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .marquee-track { animation:none; }
+      .shot img,.fudge-card { transition:none; }
+    }
   </style>
 </head>
 <body class="no-js">
@@ -346,9 +780,17 @@
     <section class="reel" id="reel" aria-label="Showreel">
       <div class="reel-stage">
         <div class="reel-frame">
-          <video class="reel-video" autoplay muted loop playsinline preload="metadata" poster="rysing-assets/reel-05.jpg" aria-label="Rysing showreel">
+          <!-- reel-03 is the only dark frame in the set; reel-01/04/05 are white
+               or saturated orange title cards and flash against the page. -->
+          <video class="reel-video" autoplay muted loop playsinline preload="metadata" poster="rysing-assets/reel-03.jpg" aria-label="Rysing showreel">
             <source src="rysing-assets/rysing-showreel-web.mp4" type="video/mp4" />
           </video>
+        </div>
+        <div class="reel-bar">
+          <span class="label">rysing showreel</span>
+          <button class="reel-toggle" type="button" aria-label="Pause showreel" aria-pressed="false">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3h4v14H4zm8 0h4v14h-4z" /></svg>
+          </button>
         </div>
       </div>
     </section>
@@ -365,82 +807,335 @@
 
     <section class="system" id="system" aria-labelledby="system-title">
       <div class="system-head">
-        <p class="system-eyebrow label">Programs</p>
-        <h2 class="system-title display" id="system-title"><span class="alt">We can grow</span> your brand <span class="alt">on</span> four levels</h2>
-        <p class="system-lede">We are based in Vienna, Austria and we operate across Europe.</p>
+        <h2 class="system-title display" id="system-title"><span class="alt">We can grow your brand on</span> four levels</h2>
+        <p class="system-meta">Programs<span class="sep" aria-hidden="true"></span>We are based in Vienna, Austria and we operate across Europe.</p>
       </div>
       <div class="system-list">
-        <div class="system-item">
-          <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-01">
-            <b class="system-num">01</b>
-            <h3 class="system-name">Brand Building</h3>
-            <p class="system-for">For those who want to become the only choice in their industry</p>
-            <span class="system-symbol" aria-hidden="true"></span>
-          </button>
-          <div class="system-panel" id="svc-01" role="region">
-            <div><div class="system-panel-inner">
-              <div class="system-outcome"><span>Stage outcome</span><p>Be understood, and remembered.</p></div>
-              <ul class="system-tags"><li>Brand strategy</li><li>Category position</li><li>Message architecture</li><li>Offer narrative</li></ul>
-            </div></div>
+        <!-- First stage opens on load, as the reference and rysing-comments
+             both do: with every row shut the section is four numerals and a
+             column of air, and nothing tells you the rows open at all. -->
+        <div class="system-item is-open">
+          <b class="system-num">01</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="true" aria-controls="svc-01">
+              <h3 class="system-name">Brand Building</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-01" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those who want to become the only choice in their industry</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Be understood, and remembered.</p></div>
+                <ul class="system-tags"><li>Brand strategy</li><li>Category position</li><li>Message architecture</li><li>Offer narrative</li></ul>
+              </div></div>
+            </div>
           </div>
         </div>
         <div class="system-item">
-          <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-02">
-            <b class="system-num">02</b>
-            <h3 class="system-name">Design &amp; Websites</h3>
-            <p class="system-for">For those who want a differentiated and scalable brand presence</p>
-            <span class="system-symbol" aria-hidden="true"></span>
-          </button>
-          <div class="system-panel" id="svc-02" role="region">
-            <div><div class="system-panel-inner">
-              <div class="system-outcome"><span>Stage outcome</span><p>Become unmistakably you.</p></div>
-              <ul class="system-tags"><li>Brand design</li><li>Website design</li><li>Website development</li><li>SEO &amp; GEO</li><li>Videography</li></ul>
-            </div></div>
+          <b class="system-num">02</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-02">
+              <h3 class="system-name">Design &amp; Websites</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-02" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those who want a differentiated and scalable brand presence</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Become unmistakably you.</p></div>
+                <ul class="system-tags"><li>Brand design</li><li>Website design</li><li>Website development</li><li>SEO &amp; GEO</li><li>Videography</li></ul>
+              </div></div>
+            </div>
           </div>
         </div>
         <div class="system-item">
-          <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-03">
-            <b class="system-num">03</b>
-            <h3 class="system-name">LinkedIn &amp; Instagram Marketing</h3>
-            <p class="system-for">For those who want to grow their influence on social media</p>
-            <span class="system-symbol" aria-hidden="true"></span>
-          </button>
-          <div class="system-panel" id="svc-03" role="region">
-            <div><div class="system-panel-inner">
-              <div class="system-outcome"><span>Stage outcome</span><p>Be seen in the right places.</p></div>
-              <ul class="system-tags"><li>Content strategy</li><li>Content automations</li><li>Content creation</li><li>Social media management</li><li>Content shooting</li><li>Content editing</li><li>Reels and shorts</li><li>Performance analysis</li></ul>
-            </div></div>
+          <b class="system-num">03</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-03">
+              <h3 class="system-name">LinkedIn &amp; Instagram Marketing</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-03" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those who want to grow their influence on social media</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Be seen in the right places.</p></div>
+                <ul class="system-tags"><li>Content strategy</li><li>Content automations</li><li>Content creation</li><li>Social media management</li><li>Content shooting</li><li>Content editing</li><li>Reels and shorts</li><li>Performance analysis</li></ul>
+              </div></div>
+            </div>
           </div>
         </div>
         <div class="system-item">
-          <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-04">
-            <b class="system-num">04</b>
-            <h3 class="system-name">Lead Gen &amp; Sales</h3>
-            <p class="system-for">For those ready to make a big, lasting impact.</p>
-            <span class="system-symbol" aria-hidden="true"></span>
-          </button>
-          <div class="system-panel" id="svc-04" role="region">
-            <div><div class="system-panel-inner">
-              <div class="system-outcome"><span>Stage outcome</span><p>Be chosen for what comes next.</p></div>
-              <ul class="system-tags"><li>Podcast</li><li>Videocast</li><li>YouTube channel</li><li>Long form content</li><li>Production</li><li>Post-production</li><li>Keynote writing</li></ul>
-            </div></div>
+          <b class="system-num">04</b>
+          <div class="system-body">
+            <button class="system-toggle" type="button" aria-expanded="false" aria-controls="svc-04">
+              <h3 class="system-name">Lead Gen &amp; Sales</h3>
+              <span class="system-symbol" aria-hidden="true"></span>
+            </button>
+            <div class="system-panel" id="svc-04" role="region">
+              <div><div class="system-detail">
+                <p class="system-for">For those ready to make a big, lasting impact.</p>
+                <div class="system-outcome"><span>Stage outcome</span><p>Be chosen for what comes next.</p></div>
+                <ul class="system-tags"><li>Podcast</li><li>Videocast</li><li>YouTube channel</li><li>Long form content</li><li>Production</li><li>Post-production</li><li>Keynote writing</li></ul>
+              </div></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
+
+    <section class="band" id="work" aria-labelledby="work-title">
+      <div class="band-head">
+        <h2 class="display" id="work-title"><span class="alt">Selected</span> work</h2>
+        <a class="btn-pill" href="#work">Learn more <span class="arrow" aria-hidden="true"></span></a>
+      </div>
+      <div class="gallery">
+        <!-- TODO(link): case study page does not exist yet -->
+        <a href="#">
+          <span class="shot"><img src="rysing-assets/project-01-bommer.webp" alt="Gerd Bommer speaking as an investor and personal brand" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Speaker and Investor Persona Brand — Gerd Bommer</span>
+          <span class="shot-meta label">01<span class="sep" aria-hidden="true"></span>Founder positioning</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): case study page does not exist yet -->
+        <a href="#">
+          <span class="shot"><img src="rysing-assets/project-02-alex.webp" alt="Luxury design studio work for world-class hotels" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Luxury design studio for the finest hotels in the world</span>
+          <span class="shot-meta label">02<span class="sep" aria-hidden="true"></span>Identity &amp; website</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://clemensdoppler.com/">
+          <span class="shot"><img src="rysing-assets/project-03-doppler.webp" alt="Clemens Doppler speaking as a business coach" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Speaker and Business Coach</span>
+          <span class="shot-meta label">03<span class="sep" aria-hidden="true"></span>Speaker platform</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://futurfai.com/">
+          <span class="shot"><img src="rysing-assets/project-04-futurfai.webp" alt="AI and law consultancy brand team" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">AI and Law Consultancy Brand</span>
+          <span class="shot-meta label">04<span class="sep" aria-hidden="true"></span>Consultancy brand</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://jenniferdjongow.com/">
+          <span class="shot"><img src="rysing-assets/project-05-djongow.webp" alt="Jennifer Djongow as a wealth manager and expert brand" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Wealth Manager Expert Brand</span>
+          <span class="shot-meta label">05<span class="sep" aria-hidden="true"></span>Expert brand</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+        <!-- TODO(link): temporary client-site destination -->
+        <a href="https://julianknowle.com/">
+          <span class="shot"><img src="rysing-assets/project-06-knowle.webp" alt="Julian Knowle as an elite tennis coach and speaker" loading="lazy" decoding="async" /></span>
+          <span class="shot-title">Elite Tennis Coach and Speaker Brand</span>
+          <span class="shot-meta label">06<span class="sep" aria-hidden="true"></span>Coach and speaker brand</span>
+          <span class="shot-more">Learn more →</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="band manifesto" id="approach" aria-labelledby="approach-title">
+      <p class="eyebrow label">Who we work with</p>
+      <h2 class="display" id="approach-title">
+        <span class="alt">For</span> courageous brands <span class="alt">and ambitious founders who want to build a</span>
+        <span class="ring">legacy<svg viewBox="0 0 400 130" preserveAspectRatio="none" aria-hidden="true"><path d="M24 74 C 18 28, 190 8, 330 20 C 430 30, 410 104, 300 116 C 190 128, 30 118, 14 78 C 6 52, 110 22, 250 16" stroke="#F04222" stroke-width="2.2" fill="none" stroke-linecap="round" /></svg></span>
+        <span class="alt">and create a lasting</span> impact
+      </h2>
+      <a class="btn-pill" href="#contact">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+    </section>
+
+    <section class="founder-plate" id="founder">
+      <figure>
+        <img src="rysing-assets/anzhelika-office.webp" alt="Anzhelika, founder of Rysing, in her studio" loading="lazy" decoding="async" />
+        <figcaption class="label">Anzhelika, founder of Rysing</figcaption>
+      </figure>
+    </section>
+
+    <section class="band" aria-labelledby="founder-title">
+      <div class="duo">
+        <div>
+          <p class="label">Founder</p>
+          <h2 class="founder-title display" id="founder-title"><span class="alt">The studio exists to give</span> voices <span class="alt">to people who want to make a</span> real impact.</h2>
+        </div>
+        <div class="founder-body">
+          <p>A courageous brand refuses to conform. It belongs to someone who would rather be disliked than ignored. Who says the thing their industry is not ready to hear, and says it anyway. Who left the safe path, took the unpopular position, built what nobody asked for and who is building something meant to outlast them.</p>
+          <p>Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+          <p>Led by Anzhelika and delivered by an interdisciplinary team, Rysing Studio translates a founder's courage and ambition into a differentiated, visible brand.</p>
+          <!-- TODO(link): About page destination pending -->
+          <a class="btn-pill" href="#">Learn more <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="team-title">
+      <div class="band-head">
+        <h2 class="display" id="team-title"><span class="alt">Behind the</span> work.</h2>
+        <p class="band-note">Brand strategy, design, web and content come together in one close team. No account managers or handoffs to people you've never met. You speak directly with the people doing the work.</p>
+      </div>
+      <div class="roster">
+        <figure>
+          <span class="shot"><img src="rysing-assets/anzhelika-chair.webp" alt="Anzhelika seated in the studio" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Anzhelika</h3><p>Founder · The mind behind it all</p></figcaption>
+        </figure>
+        <figure>
+          <span class="shot"><img src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
+        </figure>
+        <figure>
+          <span class="shot"><img src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
+        </figure>
+        <!-- TODO(copy): Kristina's discipline remains unconfirmed -->
+        <figure>
+          <span class="shot"><span class="roster-placeholder" aria-hidden="true">K</span></span>
+          <figcaption><h3>Kristina</h3><p>Discipline to be confirmed</p></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band" id="recognition" aria-labelledby="recognition-title">
+      <p class="eyebrow label" id="recognition-title">Trusted by founders, speakers and teams across Europe</p>
+      <div class="marquee" aria-label="Client logos">
+        <div class="marquee-track">
+          <figure><img style="--f:0.2" src="rysing-assets/logo-clemensdoppler.webp" alt="Clemens Doppler" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-gerdbommer.webp" alt="Gerd Bommer" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.317" src="rysing-assets/logo-jenniferdjongow.webp" alt="Jennifer Djongow" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.283" src="rysing-assets/logo-julianknowle.webp" alt="Julian Knowle" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.217" src="rysing-assets/logo-futurfai.webp" alt="FuturfAI" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.475" src="rysing-assets/logo-u4success.webp" alt="U4Success" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-wise-up.webp" alt="Wise Up" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.45" src="rysing-assets/logo-digitalworld.webp" alt="Digital World" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.158" src="rysing-assets/logo-digitfinance.webp" alt="Digit Finance" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.167" src="rysing-assets/logo-volkshilfe.webp" alt="Volkshilfe" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.8" src="rysing-assets/logo-mam.webp" alt="MAM" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.233" src="rysing-assets/logo-dsp.webp" alt="Der Schulter Physio" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.533" src="rysing-assets/logo-rb.webp" alt="RB Real Beauty" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i>
+        </div>
+        <div class="marquee-track" aria-hidden="true">
+          <figure><img style="--f:0.2" src="rysing-assets/logo-clemensdoppler.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-gerdbommer.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.317" src="rysing-assets/logo-jenniferdjongow.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.283" src="rysing-assets/logo-julianknowle.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.217" src="rysing-assets/logo-futurfai.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.475" src="rysing-assets/logo-u4success.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-wise-up.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.45" src="rysing-assets/logo-digitalworld.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.158" src="rysing-assets/logo-digitfinance.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.167" src="rysing-assets/logo-volkshilfe.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.8" src="rysing-assets/logo-mam.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.233" src="rysing-assets/logo-dsp.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.533" src="rysing-assets/logo-rb.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- TODO(copy): testimonials, review totals and award claims require final approval -->
+    <section class="band" id="proof" aria-labelledby="proof-title">
+      <div class="proof-head">
+        <div class="proof-lead">
+          <h2 class="display" id="proof-title"><span class="alt">In their</span> words</h2>
+          <p class="band-note">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+        </div>
+        <div class="proof-badges">
+          <div><span class="stars" aria-hidden="true">★★★★★</span><span class="label">4.9 / 5 · 49 reviews</span></div>
+          <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
+        </div>
+      </div>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Marcus H.</strong><small>Founder, B2B SaaS</small></div>
+        <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Elena V.</strong><small>Keynote speaker</small></div>
+        <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Tobias R.</strong><small>Agency owner</small></div>
+        <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Sophie L.</strong><small>Consultant</small></div>
+        <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Daniel K.</strong><small>Co-founder, DTC brand</small></div>
+        <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <article class="trow">
+        <div class="trow-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Nadia S.</strong><small>Executive coach</small></div>
+        <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
+        <span class="trow-mark" aria-hidden="true"></span>
+      </article>
+      <div class="proof-foot"><a class="btn-pill" href="#proof">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
+    </section>
+
+    <section class="band" id="spotlight" aria-labelledby="spotlight-title">
+      <div class="spot">
+        <img src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Speaker on stage, mid-gesture, wearing a headset microphone" loading="lazy" decoding="async" />
+        <div class="spot-copy">
+          <p class="label">For keynote speakers</p>
+          <h2 class="display" id="spotlight-title"><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
+          <p>Build your speaker brand and rise into thought leadership.</p>
+          <a class="btn-pill" href="rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="band fudge" id="sunday-fudge" aria-labelledby="fudge-title">
+      <div class="duo">
+        <div class="fudge-copy">
+          <p class="label">Newsletter — Sunday Fudge</p>
+          <!-- The hyphen is a legal break point; holding the compound together
+               stops the line ending on a stranded "mini-". -->
+          <h2 class="display" id="fudge-title"><span class="alt">Get free access to my</span> business and marketing <span class="alt" style="white-space:nowrap">mini-courses</span></h2>
+          <!-- TODO(copy): audience figure requires final verification -->
+          <p>Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
+          <ul class="fudge-points">
+            <li>Sharp perspective</li>
+            <li>Useful prompts</li>
+            <li>Sunday delivery</li>
+          </ul>
+          <form id="fudge-form">
+            <div class="fudge-field">
+              <label class="vh" for="fudge-email">Email</label>
+              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Your email" required aria-describedby="fudge-status" />
+              <button type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="fudge-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
+          </form>
+        </div>
+        <div class="fudge-visual">
+          <article class="fudge-card" aria-label="Sunday Fudge newsletter cover">
+            <div class="fudge-card-top label"><span>Sunday edition</span><span>Rysing Studio</span></div>
+            <p class="fudge-card-title display"><span class="alt">Fudge</span><span>for</span><span class="alt">founders.</span></p>
+            <p class="fudge-card-foot">People branding.<br />Without the fluff.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band closing" id="contact" aria-labelledby="contact-title">
+      <p class="eyebrow label">Ready when you are</p>
+      <h2 class="display" id="contact-title"><span class="alt">Turn your</span> vision <span class="alt">into a</span> courageous brand <span class="alt">and thought leader</span> reputation.</h2>
+      <a class="btn-pill" href="mailto:hello@rysing.agency">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <span class="footer-light" aria-hidden="true"></span>
+    <a href="#top" aria-label="Rysing, back to top"><img class="footer-mark" src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" loading="lazy" decoding="async" /></a>
+    <div class="footer-grid label">
+      <p class="footer-blurb">Brand, content and sales for founders who want to become the only choice in their industry.</p>
+      <nav aria-label="Company">
+        <h3>Company</h3>
+        <a href="#system">Services</a><a href="#spotlight">Keynote speaking</a><a href="#work">Work</a><a href="#sunday-fudge">Sunday Fudge</a><a href="#contact">Apply to work with us</a>
+      </nav>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:hello@rysing.agency">hello@rysing.agency</a><a href="#">rysing.agency</a><span>Vienna, Austria</span>
+      </div>
+      <!-- TODO(link): legal pages pending -->
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="#">Imprint</a><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a><a href="#">Cookie Policy</a><a href="#top">Back to top ↑</a>
+      </nav>
+    </div>
+    <div class="footer-meta label">
+      <span>© 2026 Rysing, Vienna, Austria. All rights reserved.</span>
+    </div>
+  </footer>
 
   <script>
     document.body.classList.remove('no-js');
 
     /* Aperture: map the reel section's scroll progress onto the mask size, so the
        mark opens from a small star to a frame-filling shape. Written to a custom
-       property inside rAF; the browser then does the compositing. */
+       property inside rAF; the browser then does the compositing. The same
+       progress drives the footage grade, so the mark stays legible while small. */
     const reel = document.querySelector('.reel');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reel && !reduce) {
       const MIN = 16, MAX = 620;
       let ticking = false;
+      let isRevealed = false;
       const update = () => {
         ticking = false;
         const r = reel.getBoundingClientRect();
@@ -449,7 +1144,21 @@
         /* Ease out so the opening decelerates as it fills rather than snapping. */
         const eased = 1 - Math.pow(1 - p, 2.6);
         reel.style.setProperty('--aperture', (MIN + (MAX - MIN) * eased).toFixed(2));
-        reel.style.setProperty('--reel-progress', p.toFixed(3));
+        /* The grade should clear well before the aperture finishes, or the reel
+           still looks muddy once it is the only thing on screen. */
+        reel.style.setProperty('--reel-progress', Math.min(1, eased * 1.6).toFixed(3));
+        /* Solid mark -> footage. Starts almost immediately and is done by the
+           time the star is roughly a third open. */
+        const reveal = Math.min(1, Math.max(0, (eased - 0.04) / 0.26));
+        reel.style.setProperty('--reel-reveal', reveal.toFixed(3));
+        /* Past this point the star already covers the frame and the grade has
+           already resolved to identity, so shedding both is invisible. Toggled
+           only on change — writing a class every frame is its own cost. */
+        const revealed = eased >= 0.92;
+        if (revealed !== isRevealed) {
+          isRevealed = revealed;
+          reel.classList.toggle('is-revealed', revealed);
+        }
       };
       const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
       addEventListener('scroll', onScroll, { passive:true });
@@ -457,18 +1166,114 @@
       update();
     }
 
-    /* Services accordion: one row open at a time, matching the reference. */
-    document.querySelectorAll('.system-toggle').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const item = btn.closest('.system-item');
+    /* Showreel transport. The reel also stops once it leaves the viewport: a
+       13 MB loop has no reason to keep decoding behind eight other sections,
+       and it must not resume if the visitor chose to stop it. */
+    const video = document.querySelector('.reel-video');
+    const reelToggle = document.querySelector('.reel-toggle');
+    if (video && reelToggle) {
+      const PLAY = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3l11 7-11 7z"/></svg>';
+      const PAUSE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3h4v14H4zm8 0h4v14h-4z"/></svg>';
+      let stoppedByUser = false;
+      /* Assume on screen until the observer says otherwise, so a pause that
+         arrives before the first observer callback is still recovered. */
+      let inView = true;
+      /* If the browser is refusing to keep it playing — a deliberate power
+         policy rather than a glitch — stop fighting it after a few tries so we
+         never spin on pause/play. The counter decays, so a hiccup a minute
+         later is still recovered. */
+      let retries = 0, retryWindow = 0;
+      const mayRetry = () => {
+        const now = Date.now();
+        if (now - retryWindow > 4000) { retries = 0; retryWindow = now; }
+        return ++retries <= 3;
+      };
+      const sync = () => {
+        const paused = video.paused;
+        reelToggle.innerHTML = paused ? PLAY : PAUSE;
+        reelToggle.setAttribute('aria-pressed', String(paused));
+        reelToggle.setAttribute('aria-label', paused ? 'Play showreel' : 'Pause showreel');
+      };
+      reelToggle.addEventListener('click', () => {
+        stoppedByUser = !video.paused;
+        if (video.paused) video.play().then(sync).catch(sync);
+        else { video.pause(); sync(); }
+      });
+      /* Autoplay starts after this script runs, so a one-off sync would leave
+         the control reading "play" over a playing reel. Track the element. */
+      video.addEventListener('play', sync);
+      video.addEventListener('pause', () => {
+        sync();
+        /* Nothing but the reader and the observer below is allowed to stop
+           this reel, and plenty of things try: Safari pauses muted autoplay
+           video under Low Power Mode and when it judges the element offscreen,
+           backgrounded tabs suspend it, and a decoder hiccup on a 13 MB loop
+           can drop it out of playback. If it stopped while it is still on
+           screen and the reader did not ask for it, start it again. */
+        if (!stoppedByUser && inView && !document.hidden && mayRetry()) {
+          video.play().then(sync).catch(() => {});
+        }
+      });
+      /* Coming back to the tab should not leave a dead frame sitting there. */
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && !stoppedByUser && inView && video.paused) {
+          video.play().then(sync).catch(() => {});
+        }
+      });
+      sync();
+
+      /* Watch the section, not the video. The video lives inside the sticky
+         stage, so its box leaves the viewport the instant the stage releases at
+         the end of the section — which put the pause/play boundary exactly
+         where the reader is still scrolling, and nudging across it stopped and
+         started the reel over and over.
+
+         Observing the 260vh section with a full viewport of margin on each side
+         means it only stops once the reel is comfortably away, and a small
+         scroll near the edge never touches it. */
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => entries.forEach((entry) => {
+          inView = entry.isIntersecting;
+          if (!inView && !video.paused) { video.pause(); sync(); }
+          else if (inView && !stoppedByUser && video.paused) { video.play().then(sync).catch(sync); }
+        }), { threshold:0, rootMargin:'100% 0px 100% 0px' }).observe(reel || video);
+      }
+    }
+
+    /* Services accordion: one row open at a time. The whole row is the target,
+       not just the name — the numeral is half the row's width and was dead to
+       the pointer. The button stays the keyboard and screen-reader control. */
+    document.querySelectorAll('.system-item').forEach((item) => {
+      const btn = item.querySelector('.system-toggle');
+      const toggle = () => {
         const open = item.classList.contains('is-open');
         document.querySelectorAll('.system-item.is-open').forEach((el) => {
           el.classList.remove('is-open');
           el.querySelector('.system-toggle').setAttribute('aria-expanded', 'false');
         });
         if (!open) { item.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); }
+      };
+      item.addEventListener('click', (event) => {
+        /* Let the button fire its own click, or the row would toggle twice and
+           land back where it started. */
+        if (event.target.closest('.system-toggle')) return;
+        /* Reading the open panel usually means selecting from it; collapsing
+           the row out from under a drag would be hostile. */
+        if (String(getSelection())) return;
+        toggle();
       });
+      btn.addEventListener('click', toggle);
     });
+
+    /* Newsletter form */
+    const form = document.querySelector('#fudge-form');
+    const status = document.querySelector('#fudge-status');
+    if (form && status) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        status.textContent = 'Thanks. Signup will be enabled when the mailing platform is connected.';
+      });
+    }
   </script>
 </body>
 </html>
