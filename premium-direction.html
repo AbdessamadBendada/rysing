@@ -389,6 +389,9 @@
       font-size:clamp(40px,5.3vw,84px); line-height:.88; letter-spacing:-.035em;
       -webkit-text-stroke:.7px currentColor;
     }
+    /* Only while counting: proportional figures reflow as digits are added,
+       and a number that shuffles sideways undoes the point of animating it. */
+    .stat strong.is-counting { font-variant-numeric:tabular-nums; }
     .stat span {
       display:block; margin-top:clamp(10px,1.2vw,18px); max-width:24ch;
       color:var(--muted); font-size:clamp(12px,.95vw,14px); line-height:1.45;
@@ -1386,6 +1389,55 @@
       }, { passive: true });
       /* Covers a hash landing, where the jump happens before any scroll event. */
       requestAnimationFrame(sweep);
+    }
+
+    /* Stats count up on arrival. The figures are parsed out of the authored
+       text rather than hardcoded here, so the markup stays the single source
+       of truth and the value that lands is byte-identical to what was written
+       — these numbers are copy, and copy is not generated in a script.
+
+       The count is skipped entirely under reduced motion, and without JS the
+       authored text simply stands. */
+    const statFigures = document.querySelectorAll('.stat strong');
+    if (statFigures.length && !reduce && 'IntersectionObserver' in window) {
+      const parse = (text) => {
+        const m = text.match(/^(\D*)([\d.,]+)(.*)$/);
+        return m ? { pre: m[1], value: parseFloat(m[2].replace(/,/g, '')), post: m[3], raw: text } : null;
+      };
+      const counters = [...statFigures]
+        .map((el) => ({ el, data: parse(el.textContent.trim()) }))
+        .filter((c) => c.data);
+
+      const run = (counter, delay) => {
+        const { pre, value, post, raw } = counter.data;
+        const DURATION = 850;
+        counter.el.classList.add('is-counting');
+        const begin = performance.now() + delay;
+        const step = (now) => {
+          const t = Math.min(1, Math.max(0, (now - begin) / DURATION));
+          /* Decelerate onto the number instead of stopping dead on it. */
+          const eased = 1 - Math.pow(1 - t, 3);
+          if (t < 1) {
+            counter.el.textContent = pre + Math.round(value * eased) + post;
+            requestAnimationFrame(step);
+          } else {
+            /* Restore the authored string exactly — never a reformatted one. */
+            counter.el.textContent = raw;
+            counter.el.classList.remove('is-counting');
+          }
+        };
+        requestAnimationFrame(step);
+      };
+
+      const counted = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const i = counters.findIndex((c) => c.el === entry.target);
+          if (i > -1) run(counters[i], i * 70);  /* matches the reveal stagger */
+          counted.unobserve(entry.target);
+        });
+      }, { threshold: 0.4 });
+      counters.forEach((c) => counted.observe(c.el));
     }
 
     /* Full-screen menu. The header carries mark, ask and burger only, so this
