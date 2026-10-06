@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated at commit `e807407`. Read this before touching anything.
+Last updated at commit `ae893fb`. Read this before touching anything.
 
 ---
 
@@ -56,6 +56,7 @@ Unresolved: see §6.
 | `premium-direction.html` | **The active build. The only page to edit.** |
 | `new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
+| `testimonials.html` | The three slider directions considered for §7, under the real tokens. Direction A shipped. Kept as the argument; not part of the build. |
 | `rysing-comments.html` | Frozen copy/structure baseline. Read-only. |
 | `AGENTS.md` | Settled decisions and the local testing harness. Read the ACTIVE TRACK section. |
 | `new-direction-comments.md` | Why the previous direction was not premium. 12 ranked problems. |
@@ -161,6 +162,14 @@ showed 23 dropped frames that vanished when interleaved and repeated.
 seam measured 26px and was really 178px.
 The single-threaded `python3 -m http.server` dies on the 13MB showreel; use a
 threaded one or every other navigation times out.
+**Screenshots cannot sample a sub-second animation.** A Playwright round trip is
+~300ms–1s, so capturing "during" an 800ms effect returns near-arbitrary frames —
+a first attempt at the §7 bloom reported it already finished at t=0. Two things
+work: sample `getComputedStyle` inside `page.evaluate` on `requestAnimationFrame`
+for the curve, and pause the animation via `el.getAnimations()` with an explicit
+`currentTime` before capturing for the look. The scripts were scratch and are
+gone; the two techniques are the part worth keeping. `playwright-core` driving
+the installed Chrome via `channel: 'chrome'` needs no browser download.
 
 **Images pasted into chat sometimes arrive as generic file-type icons**, not the
 picture. When that happens, say so and ask for the path. I guessed from
@@ -181,6 +190,12 @@ filenames once and wired up entirely the wrong asset.
   artwork. It is visibly mottled in the marquee.
 - Testimonials are placeholder names, and review totals, award claims and
   Kristina's role are all unverified.
+- **Six testimonial portraits.** All six squares share one stand-in
+  (`anzhelika-chair.webp`). Ask for head-and-shoulders crops: the stand-in is a
+  full-body seated shot and at 68px it reads as a small figure, not a face.
+  400×400 is ample — the slot is 68px at its largest. Each is wired on its own
+  by swapping that quote's `img src`, plus a `--pos` focal point if the crop
+  needs one.
 - The newsletter form has no backend.
 - **Kinfolk's web licence is not cleared.** Aileron is public domain. Qualy, the
   logo face, is never loaded — the wordmark ships as artwork.
@@ -194,6 +209,9 @@ filenames once and wired up entirely the wrong asset.
   three has neither — no index, and the label stands. Reconcile.
 - The OPS Detox panel says **"for startups"**; the client's own merchandise and
   site both say **"for scale-ups"**. Someone has to decide which is right.
+- `01 / 06` above the testimonial index is the only string on the page that was
+  not in the frozen copy. It is interface rather than copy and it echoes the
+  services numerals, but it is new visible text and it is one line to remove.
 
 **Still parked**
 
@@ -207,7 +225,10 @@ filenames once and wired up entirely the wrong asset.
 
 - `RYSING_PROJECT_DIRECTION.md` and `new-direction-2.html` have been sitting
   modified and uncommitted since Oct 3. They are not this track's work and have
-  been deliberately left out of every push.
+  been deliberately left out of every push, including `ae893fb` — which was
+  asked for as "push everything". Committing another agent's half-finished
+  workspace on a general instruction is not what that instruction means. If they
+  are ever wanted, commit them on their own and say so.
 - `ASSET-SPEC.md` still describes three active projects. There are nine.
 - `ASSET-SPEC.md` has no entry for the six testimonial portraits. Add one before
   forwarding — see §7 for what to ask for.
@@ -287,8 +308,5 @@ Open, for the client:
   for the rule to hang in, so the underline becomes the cursor and the autoplay
   clock is not shown. Deliberate — better than a progress bar on a phone.
 
-**A Playwright harness is worth keeping.** `trace.js` samples computed styles
-per animation frame; `shots.js` pauses an animation at set times and captures
-it. The 25ms bug above was invisible to reasoning and to screenshots — round
-trips are far too slow to sample a sub-second animation — and only turned into a
-number under per-frame tracing.
+The 25ms bug was invisible to reasoning and to screenshots alike, and only
+became a number under per-frame tracing. See the measurement note in §5.
