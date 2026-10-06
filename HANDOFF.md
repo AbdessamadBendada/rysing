@@ -291,8 +291,20 @@ with it. Resize repaints without animating, or the track sits between columns.
 
 **Arrows, deliberately.** On the index the names were the control, so arrows
 would have been clutter. A drifting rail with no visible control reads as
-broken, and the client asked for a normal slider. Two marks and a hairline that
-fills — the back arrow is the page's own mark rotated, not a second glyph.
+broken, and the client asked for a normal slider. Two marks, and the back arrow
+is the page's own mark rotated rather than a second glyph.
+
+**There was a filling progress hairline and it is gone.** Six quotes three at a
+time is a sliding window, not a sequence of pages, so there is no honest
+fraction to show: the window covers positions 5,6,7 of six, which is either
+133% or a wrap. It overflowed its track and jumped backwards once a cycle. Do
+not re-add one without first deciding what it would actually measure.
+
+**The rewind is idempotent.** Each advance past the end used to schedule its own
+`i -= total`, so clicking faster than the 1.1s reset stacked them — from 7, two
+firings landed on -5, the lit window fell off the start of the array and every
+column went dark. There is one pending reset now, replaced rather than added to,
+and it normalises with modulo so it is correct however far the index has run.
 
 **Steering restarts the dwell rather than ending autoplay.** The opposite of the
 index, where a manual pick ended it for good: a rail gives you no way to sit on
