@@ -305,6 +305,16 @@ its reasons so one ending does not resume on behalf of another still in force.
 Exactly one column enters per advance, so exactly one square blooms at a time,
 and that is what tells you the rail moved instead of a progress bar having to.
 
+**The bloom is driven by `is-entering`, which is set deliberately, never by
+`is-lit`.** Lit means on the measure; entering means newly arrived, and the
+silent rewind is exactly where those two facts part company. Wired to `is-lit`,
+the reset moved the class from the three clones onto the three originals in a
+single frame and fired all three blooms at once — at the loop point, the one
+moment that has to be seamless. The geometry was invisible; the blooms announced
+it. The class is removed again after 850ms or a column that comes back round
+cannot re-trigger it. Arrival deliberately blooms all three together: that is
+the section entering, not the rail looping.
+
 The bloom's timing lives on the keyframes with the element `linear`, which looks
 wrong and is not. `mask-size` interpolates linearly and the mark covers the
 square at ~250% — only 16% of the way from 38% to 1400%. On the page's usual

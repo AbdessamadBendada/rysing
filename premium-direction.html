@@ -940,8 +940,8 @@
        testimonials are still below the fold. Its finished state is identical to
        the resting state, so if the entrance never runs the picture is simply
        there — the animation can only ever add. */
-    .treel-wrap.is-in .treel-item.is-lit .tthumb img { animation:tbloom .8s linear both; }
-    .treel-wrap.is-in .treel-item.is-lit .tthumb::before { animation:tseed .8s linear both; }
+    .treel-wrap.is-in .treel-item.is-entering .tthumb img { animation:tbloom .8s linear both; }
+    .treel-wrap.is-in .treel-item.is-entering .tthumb::before { animation:tseed .8s linear both; }
 
     /* The seed the bloom appears to grow from, and the stand-in when a quote
        has no portrait yet: the mark, low, on the square. Sitting behind the
@@ -1790,6 +1790,20 @@
       };
       const paint = (animate = true) => { place(i, animate); light(); };
 
+      /* Blooming is asked for explicitly, never inferred from what is lit. The
+         class has to come off again or a column that returns later cannot
+         re-trigger it; the animation's end state is the resting state, so
+         removing it changes nothing on screen. */
+      let blooming;
+      const bloom = (indices) => {
+        clearTimeout(blooming);
+        items.forEach((item) => item.classList.remove('is-entering'));
+        indices.forEach((k) => items[k] && items[k].classList.add('is-entering'));
+        blooming = setTimeout(() => {
+          items.forEach((item) => item.classList.remove('is-entering'));
+        }, 850);
+      };
+
       /* The silent rewind, both ways. Once the window has walked a whole set
          the clones on screen are pixel-identical to the originals at the same
          offset, so resetting with the transition suppressed is invisible.
@@ -1803,6 +1817,9 @@
         i += dir;
         if (i < 0) { place(total, false); i = total - 1; }
         paint();
+        /* Only the column that just arrived — the far edge in the direction of
+           travel. The rewind below deliberately blooms nothing. */
+        bloom([dir > 0 ? i + perView() - 1 : i]);
         if (i >= total) {
           setTimeout(() => { i -= total; paint(false); }, 1100);
         }
@@ -1873,12 +1890,19 @@
       paint(false);
 
       if (auto) {
+        /* On arrival the whole row blooms together — that is the section
+           entering, not the rail looping. */
         /* Nothing drifts off screen — it would walk the whole set while nobody
            is looking and leave the blooms firing for no one. */
         if ('IntersectionObserver' in window) {
           hold('offscreen');
+          let arrived = false;
           new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
+              if (entry.isIntersecting && !arrived) {
+                arrived = true;
+                bloom([...Array(perView()).keys()].map((n) => i + n));
+              }
               entry.isIntersecting ? release('offscreen') : hold('offscreen');
             });
           }, { threshold: 0.2 }).observe(treel);
