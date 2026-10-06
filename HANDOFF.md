@@ -30,8 +30,9 @@ Done and verified:
 - **Restraint.** Font alternation appears at three moments only — hero,
   manifesto, closing. Section heads 80px → 54px, services numerals 260px →
   186px.
-- **Colour.** Mid-page glow removed; red and blue bookend the page. One hard
-  red, the closing ask.
+- **Colour.** Red and blue bookend the page. One hard red, the closing ask. The
+  mid-page glow was removed, then deliberately reinstated once for §8 — that is
+  now the only blue between the hero and the footer.
 - **Photography.** One shared `--photo-grade`; every slot takes a focal point
   from `--pos`, so swapping a file is a one-line change.
 - **Header.** Mark, ask, burger. Full-screen overlay carries the nav, awards and
@@ -44,6 +45,9 @@ Done and verified:
   Row one carries a film panel.
 - **Testimonials.** Six rows became a three-up rail that drifts one column at a
   time. Second design — the first was rejected by the client. See §7.
+
+- **Belonging.** The qualifier, between the proof and the ask. New client copy;
+  reverses the no-mid-page-glow decision knowingly. See §8.
 
 Unresolved: see §6.
 
@@ -352,3 +356,49 @@ Open, for the client:
   400x400 is ample; the slot is 68px at its largest. Each is wired on its own by
   swapping that quote's `img src`, plus a `--pos` focal point if the crop needs
   one. `ASSET-SPEC.md` has no entry for these yet.
+
+---
+
+## 8. Belonging
+
+The section between the testimonials and the spotlight. Client's design, client's
+copy, supplied as a screenshot and confirmed word for word before it was built.
+
+**What it is for.** It sells nothing and lists nothing. It names a feeling the
+reader is meant to recognise in themselves and answers it with belonging rather
+than a service. The testimonials are other people's words — proof that this
+works for somebody else — and the closing is the ask. This is what turns "these
+people got results" into "and you are one of them" immediately before being
+asked to apply. Self-selection: anyone who nods at it has qualified themselves.
+
+That is why it carries no eyebrow, no button and no body copy. One sentence held
+in space is the whole design, and anything else added here gives the eye
+somewhere to go other than the line.
+
+**It knowingly reverses two settled decisions.** Both were flagged before
+building and both were approved:
+
+- The mid-page glow was removed early on, and this puts one back. It is the only
+  blue between the hero and the footer, so it should stay the only one. It is
+  built well below the saturation of the supplied mock: at full strength it is
+  the brightest object on a page whose whole argument is restraint, and it would
+  still be ringing when the red closing ask arrives a screen later.
+- It is the fourth font-alternation moment, against the rule that cut it to
+  three (hero, manifesto, closing) so it would read as emphasis rather than
+  wallpaper. It earns it — if any line on the page should detonate it is the one
+  doing the identifying — but if the device starts feeling noisy, drop the
+  alternation from the manifesto, which is the least load-bearing of the three.
+
+**The measure is 20em because that is where the sentence breaks on its own
+clauses:** "...and your brand / are meant for something bigger, / Rysing is the
+place that gets you." At 16em it split "meant for" from "something bigger" and
+ran the second clause into the third, which reads as text that happened to wrap
+rather than a line that was set. Verified by walking the rendered words and
+grouping them by line box, at both ends of the size clamp. It holds three lines
+down to 820px and wraps further below that, which is correct — the alternative
+is type too small to carry the moment.
+
+**The glow's falloff has to bite before the edges.** Spread wide it stops being
+an object and becomes a wash across the whole band, which reads as a blue panel
+the words sit on rather than light behind them. The corners of the section stay
+black on purpose.

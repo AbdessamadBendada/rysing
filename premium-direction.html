@@ -964,6 +964,61 @@
        own foot already closes the section. */
     .proof-foot { margin-top:clamp(30px,3.4vw,58px); padding-top:28px; border-top:1px solid rgba(249,249,249,.28); }
 
+    /* --- Belonging ---------------------------------------------- */
+    /* The qualifier. It sells nothing and lists nothing: it names a feeling
+       the reader is meant to recognise in themselves and answers it with
+       belonging rather than a service. That is why it sits here — the
+       testimonials are other people's words, the closing is the ask, and this
+       is what turns "these people got results" into "and you are one of them"
+       immediately before being asked to apply.
+
+       So it carries no eyebrow, no button and no body copy. One sentence held
+       in space is the whole design; anything else added here would give the
+       eye somewhere to go other than the line. */
+    .belong {
+      position:relative; isolation:isolate; overflow:clip;
+      padding-inline:var(--gutter); padding-block:clamp(120px,15vw,260px);
+      display:flex; flex-direction:column; align-items:center; text-align:center;
+      gap:clamp(26px,3.4vw,52px);
+    }
+    /* Deliberately below the screenshot's saturation. At full strength this is
+       the brightest object on a page whose entire argument is restraint, and it
+       would still be ringing when the red closing ask arrives a screen later.
+       It has to read as light behind the words, not as a panel they sit on. */
+    .belong-glow {
+      position:absolute; z-index:-1; top:50%; left:50%; translate:-50% -50%;
+      width:min(84vw,1120px); aspect-ratio:1/1.12; border-radius:50%;
+      /* The falloff has to bite before the edges or the glow stops being an
+         object and becomes a wash across the whole band — which is what makes
+         it read as a blue panel the words sit on, rather than light behind
+         them. The corners of the section stay black on purpose. */
+      background:radial-gradient(circle at 50% 46%,
+        rgba(53,36,213,.66), rgba(53,36,213,.40) 34%,
+        rgba(53,36,213,.13) 58%, rgba(53,36,213,.03) 73%, transparent 84%);
+      filter:blur(36px); pointer-events:none;
+      animation:driftA 34s var(--ease) infinite alternate;
+    }
+    /* The one red on this screen, and the smallest object in the section. */
+    .belong-mark {
+      display:block; width:clamp(26px,2.6vw,38px); aspect-ratio:1; background:var(--red);
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    /* Kinfolk is the default voice of a headline and .alt flips a run back to
+       the grotesque — the page's existing mechanism, used unchanged. Here the
+       grotesque carries the long clauses and the didone lands on the two
+       phrases doing the work: what they are meant for, and what Rysing is. */
+    /* 20em is measured, not chosen: it is the width at which the sentence
+       breaks on its own clauses — "...and your brand / are meant for something
+       bigger, / Rysing is the place that gets you." At 16em it split "meant
+       for" from "something bigger" and ran the second clause into the third,
+       which reads as text that happened to wrap rather than a line that was
+       set. It holds at both ends of the size clamp. */
+    .belong h2 {
+      margin:0; max-width:20em;
+      font-size:clamp(30px,4.6vw,76px); line-height:1.04; letter-spacing:-.012em;
+      text-wrap:balance;
+    }
+
     /* --- Spotlight ---------------------------------------------- */
     .spot { position:relative; overflow:hidden; background:var(--ink); }
     /* Every photograph on the page carries the same grade; the stage shot's
@@ -1066,7 +1121,9 @@
       background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.5),rgba(53,36,213,.23) 38%,rgba(53,36,213,.05) 62%,transparent 74%);
       animation:driftB 38s var(--ease) -9s infinite alternate;
     }
-    @media (prefers-reduced-motion:reduce) { .footer-light::before,.footer-light::after { animation:none; } }
+    @media (prefers-reduced-motion:reduce) {
+      .footer-light::before,.footer-light::after,.belong-glow { animation:none; }
+    }
     /* The wordmark runs the full measure here — it is the sign-off, and the
        artwork is the only place the logo face appears. */
     .footer-mark { width:100%; height:auto; margin-bottom:56px; }
@@ -1523,6 +1580,18 @@
       </div>
 
       <div class="proof-foot"><a class="btn-pill" href="#proof">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
+    </section>
+
+    <!-- The qualifier. New copy, supplied by the client; it exists nowhere in
+         the earlier baselines. Sits between the proof and the ask on purpose —
+         see the note on .belong. -->
+    <section class="belong" id="belong" aria-labelledby="belong-title">
+      <div class="belong-glow" aria-hidden="true"></div>
+      <span class="belong-mark" data-reveal aria-hidden="true"></span>
+      <h2 class="display" data-reveal id="belong-title">
+        <span class="alt">If you feel like you and your brand are meant for</span> something bigger,
+        <span class="alt">Rysing is the place that</span> gets you.
+      </h2>
     </section>
 
     <section class="band" id="spotlight" aria-labelledby="spotlight-title">
