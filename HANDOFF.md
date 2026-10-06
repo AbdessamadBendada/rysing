@@ -46,6 +46,8 @@ Done and verified:
 - **Testimonials.** Six rows became a three-up rail that drifts one column at a
   time. Second design — the first was rejected by the client. See §7.
 
+- **Newsletter.** Centred column, no printed-cover card. Deletes five strings
+  of baseline copy, knowingly. See §10.
 - **Spotlight.** One giant photograph became three panels on work-row--c's
   geometry. The copy that sat on the image now stands as a section head. See §9.
 - **Belonging.** The qualifier, between the proof and the ask. New client copy;
@@ -456,3 +458,39 @@ Open:
   mock and was built as drawn, but it is worth putting to the client: either
   this section carries three clients who appear nowhere else, or Selected Work
   drops its last row.
+
+---
+
+## 10. Newsletter
+
+A centred column. The two-up with the printed cover beside it is gone.
+
+**It deletes baseline copy, deliberately.** The card carried "Sunday edition",
+"Rysing Studio", "Fudge for founders." and "People branding. Without the fluff."
+— all present in `rysing-comments.html`, so this is a real removal, flagged
+before it was made and built because the supplied design has no card. One revert
+brings it back. If it returns, it needs a home that is not beside the form: the
+reason the centred version works is that the ask is a single field and
+everything above it narrows toward that field instead of sitting beside a second
+object competing for the eye.
+
+It was also the only light object on the page. Nothing else on the page is
+paper-white now.
+
+**It is the fifth font-alternation moment,** and `.fudge h2 .alt` has left the
+neutralised list. Alternation was cut to three (hero, manifesto, closing) so it
+would read as emphasis; §8 made it four and this makes it five. That is the
+device drifting back toward wallpaper — the thing the restraint pass existed to
+stop. Watch it. The manifesto is still the cheapest one to give up.
+
+**The headline measure is 17.3em and it is measured, not chosen.** The window in
+which it breaks after "business" — the way the design sets it — is 17.0 to
+17.6em. Narrower and it falls to three lines, one per face. Wider and "and" is
+dragged up to hang at the end of line one. In `em`, never px: a px measure holds
+the break at one font size and loses it at the next step of the clamp. Verified
+holding the identical break at 1680, 1440, 1200, 1000, 820 and 560px.
+
+**The blue returns at the right edge** as the page approaches the footer, where
+it is already waiting behind the wordmark — so it reads as the footer's light
+rising rather than a fourth use of the colour. Painted as a gradient that
+reaches transparent inside its own box, for the reason in §9.

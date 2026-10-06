@@ -114,9 +114,8 @@
     .band-head h2 .alt,
     .proof-lead h2 .alt,
     .founder-title .alt,
-    .fudge h2 .alt,
     .system-title .alt,
-    .spot-copy h2 .alt {
+    .spot-lead h2 .alt {
       font-family:inherit; font-weight:inherit; letter-spacing:inherit;
     }
 
@@ -1051,50 +1050,62 @@
     .spot-lead p { margin:0; max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
 
     /* --- Newsletter --------------------------------------------- */
-    .fudge h2 { margin:0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
-    .fudge-copy { display:flex; flex-direction:column; gap:24px; }
-    .fudge-copy > p { margin:0; max-width:500px; color:rgba(249,249,249,.85); font-size:15px; line-height:1.7; }
-    .fudge-points { display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none; }
-    .fudge-points li {
-      display:inline-flex; align-items:center; min-height:30px; padding:0 14px;
-      border:1px solid rgba(249,249,249,.85); border-radius:999px;
-      font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+    /* A centred column, not the two-up with a printed cover beside it. The ask
+       is a single field, so everything above it narrows toward that field
+       rather than sitting beside a second object competing for the eye.
+
+       This is the one headline below the fold allowed to alternate faces. It
+       is also the page's last ask before the closing, and the alternation is
+       what distinguishes it from the three section heads around it. */
+    .fudge { position:relative; isolation:isolate; overflow:clip; text-align:center; }
+    /* The blue returns at the right edge as the page approaches the footer,
+       where it is already waiting behind the wordmark — read as the footer's
+       light rising rather than a fourth use of the colour. Painted as a
+       gradient that reaches transparent inside its own box: an oversized shape
+       under overflow:clip gets guillotined into a rectangle. */
+    .fudge-glow {
+      position:absolute; z-index:-1; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse 38% 58% at 96% 64%,
+        rgba(53,36,213,.52), rgba(53,36,213,.30) 34%,
+        rgba(53,36,213,.10) 58%, rgba(53,36,213,.02) 76%, transparent 100%);
     }
-    .fudge-field { display:flex; align-items:center; max-width:520px; border-bottom:1px solid var(--paper); }
+    .fudge-copy {
+      max-width:1150px; margin-inline:auto;
+      display:flex; flex-direction:column; align-items:center; gap:clamp(22px,2.6vw,34px);
+    }
+    /* 17.3em is measured: it is the middle of the 17.0–17.6em window in which
+       the headline breaks after "business", which is how the supplied design
+       sets it. Narrower and it falls to three lines, one per face; wider and
+       "and" is dragged up to hang at the end of line one. In em, not px —
+       a px measure holds the break at one font size and loses it at the next
+       step of the clamp. */
+    .fudge h2 { margin:0; max-width:17.3em; font-size:clamp(30px,4.1vw,62px); line-height:1.02; letter-spacing:-.012em; }
+    .fudge-copy > p { margin:0; max-width:58ch; color:rgba(249,249,249,.85); font-size:15px; line-height:1.75; }
+    .fudge-points { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:0; padding:0; list-style:none; }
+    .fudge-points li {
+      display:inline-flex; align-items:center; min-height:34px; padding:0 18px;
+      border:1px solid rgba(249,249,249,.42); border-radius:999px;
+      font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .fudge form { width:100%; max-width:820px; }
+    /* The field is the whole point of the section, so it runs wider than the
+       sentence above it — the one element here allowed to be the widest. */
+    .fudge-field { display:flex; align-items:center; gap:18px; border-bottom:1px solid var(--paper); text-align:left; }
     .fudge-field:focus-within { border-color:var(--red); }
     .fudge-field input {
-      flex:1 1 auto; min-width:0; min-height:52px; padding:0; border:0; outline:0; background:none;
+      flex:1 1 auto; min-width:0; min-height:56px; padding:0; border:0; outline:0; background:none;
       color:var(--paper); font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
-      font-weight:300; font-size:16px;
+      font-weight:300; font-size:17px;
     }
     .fudge-field input::placeholder { color:rgba(249,249,249,.5); }
     .fudge-field button {
-      flex:none; min-height:52px; padding:0; border:0; background:none; color:inherit; cursor:pointer;
+      flex:none; min-height:56px; padding:0; border:0; background:none; color:inherit; cursor:pointer;
       display:inline-flex; align-items:center; gap:8px;
-      font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+      font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      transition:color var(--t-detail) var(--ease-detail);
     }
-    .fudge-note { margin:0; color:rgba(249,249,249,.65); font-size:12px; }
-    .fudge-visual { display:flex; justify-content:center; }
-    /* The one light object on the page: a printed cover lying on the black. */
-    .fudge-card {
-      position:relative; overflow:hidden; width:min(100%,440px); aspect-ratio:4/5; padding:32px;
-      background:var(--paper); color:#161a1b; display:flex; flex-direction:column; justify-content:space-between;
-      transform:rotate(-3deg); transition:transform .5s var(--ease);
-    }
-    .fudge-visual:hover .fudge-card { transform:rotate(-1deg) translateY(-7px); }
-    .fudge-card::before {
-      content:""; position:absolute; right:-42%; bottom:-46%; width:160%; aspect-ratio:1; border-radius:50%;
-      background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.85),rgba(240,66,34,.34) 42%,transparent 70%);
-      pointer-events:none;
-    }
-    .fudge-card > * { position:relative; }
-    .fudge-card-top { display:flex; justify-content:space-between; gap:18px; }
-    /* Sized against the 440px card, not the viewport: "founders." in the
-       semibold grotesque runs wider than the reference's 400 weight and
-       overshot the card edge at the reference's 84px. */
-    .fudge-card-title { margin:0; font-size:clamp(42px,4.4vw,64px); line-height:.86; }
-    .fudge-card-title span { display:block; }
-    .fudge-card-foot { margin:0; font-size:15px; line-height:1.5; }
+    .fudge-field button:hover { color:var(--red); }
+    .fudge-note { margin:18px 0 0; color:rgba(249,249,249,.55); font-size:12px; }
 
     /* --- Final CTA ---------------------------------------------- */
     /* The other. Last thing before the footer, and the only ask on the page
@@ -1176,12 +1187,11 @@
       /* The field and its 27-character button cannot share a line here. */
       .fudge-field { flex-wrap:wrap; }
       .fudge-field button { min-height:44px; margin-bottom:8px; }
-      .fudge-card { padding:24px; }
       .footer-grid { grid-template-columns:minmax(0,1fr); }
     }
     @media (prefers-reduced-motion:reduce) {
       .marquee-track { animation:none; }
-      .shot img,.fudge-card { transition:none; }
+      .shot img { transition:none; }
       /* Autoplay is off here and the rail steps without easing. The bloom is a
          flourish, so it is the first thing to go; the picture resolves to
          exactly the same frame without it. */
@@ -1634,36 +1644,32 @@
       </div>
     </section>
 
+    <!-- The printed-cover card that used to sit beside this copy is gone, per
+         the supplied design. It carried "Sunday edition", "Rysing Studio",
+         "Fudge for founders." and "People branding. Without the fluff." — all
+         baseline copy, so this is a deliberate removal and not an oversight. -->
     <section class="band fudge" id="sunday-fudge" aria-labelledby="fudge-title">
-      <div class="duo">
-        <div class="fudge-copy">
-          <p class="label">Newsletter — Sunday Fudge</p>
-          <!-- The hyphen is a legal break point; holding the compound together
-               stops the line ending on a stranded "mini-". -->
-          <h2 class="display" id="fudge-title"><span class="alt">Get free access to my</span> business and marketing <span class="alt" style="white-space:nowrap">mini-courses</span></h2>
-          <!-- TODO(copy): audience figure requires final verification -->
-          <p>Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
-          <ul class="fudge-points">
-            <li>Sharp perspective</li>
-            <li>Useful prompts</li>
-            <li>Sunday delivery</li>
-          </ul>
-          <form id="fudge-form">
-            <div class="fudge-field">
-              <label class="vh" for="fudge-email">Email</label>
-              <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Your email" required aria-describedby="fudge-status" />
-              <button type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
-            </div>
-            <p class="fudge-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
-          </form>
-        </div>
-        <div class="fudge-visual">
-          <article class="fudge-card" aria-label="Sunday Fudge newsletter cover">
-            <div class="fudge-card-top label"><span>Sunday edition</span><span>Rysing Studio</span></div>
-            <p class="fudge-card-title display"><span class="alt">Fudge</span><span>for</span><span class="alt">founders.</span></p>
-            <p class="fudge-card-foot">People branding.<br />Without the fluff.</p>
-          </article>
-        </div>
+      <div class="fudge-glow" aria-hidden="true"></div>
+      <div class="fudge-copy">
+        <p class="label" data-reveal>Newsletter — Sunday Fudge</p>
+        <!-- The hyphen is a legal break point; holding the compound together
+             stops the line ending on a stranded "mini-". -->
+        <h2 class="display" data-reveal id="fudge-title"><span class="alt">Get free access to my</span> business and marketing <span class="alt" style="white-space:nowrap">mini-courses</span></h2>
+        <!-- TODO(copy): audience figure requires final verification -->
+        <p data-reveal>Join 2,000 founders and experts reading Sunday Fudge and learn how to acquire clients, build your online business and grow your following on LinkedIn and Instagram.</p>
+        <ul class="fudge-points" data-reveal>
+          <li>Sharp perspective</li>
+          <li>Useful prompts</li>
+          <li>Sunday delivery</li>
+        </ul>
+        <form id="fudge-form" data-reveal>
+          <div class="fudge-field">
+            <label class="vh" for="fudge-email">Email</label>
+            <input id="fudge-email" name="email" type="email" autocomplete="email" placeholder="Your email" required aria-describedby="fudge-status" />
+            <button type="submit">Subscribe to Sunday Fudge <span aria-hidden="true">→</span></button>
+          </div>
+          <p class="fudge-note" id="fudge-status" role="status" aria-live="polite">No spam. Unsubscribe anytime.</p>
+        </form>
       </div>
     </section>
 
