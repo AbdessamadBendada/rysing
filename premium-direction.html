@@ -985,19 +985,29 @@
        the brightest object on a page whose entire argument is restraint, and it
        would still be ringing when the red closing ask arrives a screen later.
        It has to read as light behind the words, not as a panel they sit on. */
+    /* Painted as a gradient that reaches transparent inside its own box, not
+       as an oval larger than the section. The first build sized a 1254px
+       ellipse inside a 725px section under overflow:clip, so the glow was
+       guillotined into a rectangle — a hard top edge and hard sides, straight
+       across the page. It was invisible to every check because the section was
+       screenshotted on its own bounds, which is exactly where the cut fell.
+
+       Deliberately below the saturation of the supplied mock: at full strength
+       this is the brightest object on a page whose whole argument is restraint,
+       and it would still be ringing when the red closing ask arrives a screen
+       later. It has to read as light behind the words, never as a panel they
+       sit on — so the corners of the section stay black. */
     .belong-glow {
-      position:absolute; z-index:-1; top:50%; left:50%; translate:-50% -50%;
-      width:min(84vw,1120px); aspect-ratio:1/1.12; border-radius:50%;
-      /* The falloff has to bite before the edges or the glow stops being an
-         object and becomes a wash across the whole band — which is what makes
-         it read as a blue panel the words sit on, rather than light behind
-         them. The corners of the section stay black on purpose. */
-      background:radial-gradient(circle at 50% 46%,
-        rgba(53,36,213,.66), rgba(53,36,213,.40) 34%,
-        rgba(53,36,213,.13) 58%, rgba(53,36,213,.03) 73%, transparent 84%);
-      filter:blur(36px); pointer-events:none;
-      animation:driftA 34s var(--ease) infinite alternate;
+      position:absolute; z-index:-1; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse 46% 46% at 50% 47%,
+        rgba(53,36,213,.60) 0%, rgba(53,36,213,.38) 30%,
+        rgba(53,36,213,.14) 54%, rgba(53,36,213,.04) 74%, transparent 100%);
+      /* Scale only. A translating drift would walk the faded edge back into the
+         section boundary and the hard edge would return at one end. */
+      animation:belongBreathe 26s var(--ease) infinite alternate;
     }
+    @keyframes belongBreathe { to { transform:scale(1.045); } }
+
     /* The one red on this screen, and the smallest object in the section. */
     .belong-mark {
       display:block; width:clamp(26px,2.6vw,38px); aspect-ratio:1; background:var(--red);

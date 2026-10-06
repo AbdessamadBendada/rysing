@@ -173,6 +173,17 @@ showed 23 dropped frames that vanished when interleaved and repeated.
 seam measured 26px and was really 178px.
 The single-threaded `python3 -m http.server` dies on the 13MB showreel; use a
 threaded one or every other navigation times out.
+**An element screenshot cannot show an edge artifact, because the artifact is
+at the edge.** The belonging glow shipped as a hard-edged rectangle: an ellipse
+larger than its section under `overflow:clip`, guillotined into a straight top
+and straight sides. Every check missed it because the section was captured with
+`locator('#belong').screenshot()`, which crops to exactly the bounds the cut
+fell on. Anything involving a section's boundary — glows, bleeds, sticky seams,
+negative margins — has to be captured in page context with the neighbours
+visible, and is worth a pixel probe across the edge: walk a column of the PNG
+and look for a sudden channel jump. A clean edge reads as page black right up to
+the boundary.
+
 **Screenshots cannot sample a sub-second animation.** A Playwright round trip is
 ~300ms–1s, so capturing "during" an 800ms effect returns near-arbitrary frames —
 a first attempt at the §7 bloom reported it already finished at t=0. Two things
@@ -398,7 +409,13 @@ grouping them by line box, at both ends of the size clamp. It holds three lines
 down to 820px and wraps further below that, which is correct — the alternative
 is type too small to carry the moment.
 
-**The glow's falloff has to bite before the edges.** Spread wide it stops being
-an object and becomes a wash across the whole band, which reads as a blue panel
-the words sit on rather than light behind them. The corners of the section stay
-black on purpose.
+**The glow is a gradient that reaches transparent inside its own box,** not an
+oval larger than the section. Built the other way round first — a 1254px ellipse
+in a 725px section under `overflow:clip` — it was guillotined into a rectangle
+with a hard top edge straight across the page. Its drift is scale-only for the
+same reason: a translating drift walks the faded edge back into the boundary and
+the hard edge returns at one end.
+
+Spread too wide it also stops being an object and becomes a wash across the
+band, which reads as a blue panel the words sit on rather than light behind
+them. The corners of the section stay black on purpose.
