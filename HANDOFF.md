@@ -71,6 +71,7 @@ Unresolved: see §6.
 | `~/Downloads/Homepage-html/Main.dc.html` | The original design reference. Replicate values, never copy markup. |
 
 Work assets added this cycle, all in `rysing-assets/`:
+`work-10-michael-diewald.webp` (spotlight, from the Michael project), 
 `work-01-opsdetox.webp`, `work-02-finer-things.mp4` + `-poster.webp`,
 `work-03-clemens.webp`, `work-06-knowle-victory.webp`, `work-08-u4success.webp`,
 `work-09-digitfinance.webp`. 648KB total for nine panels.
@@ -444,11 +445,12 @@ head takes three.
 
 Open:
 
-- **No photograph of Michael Diewald exists** — only `logo-dsp.webp`. That panel
-  stands in with the mark drawn the way the marquee draws them (knocked to
-  white on a dark tile) so it reads as deliberately held rather than as an image
-  that failed to load. Swap the `<span class="shot shot--pending">` for a normal
-  `.shot` with an `<img>` and it drops straight in.
+- ~~No photograph of Michael Diewald~~ — supplied from the Michael project
+  (`redesign/assets/img/michael-shoulder-model.png`) and now wired as
+  `work-10-michael-diewald.webp`. 1748x1240 PNG at 697KB, centre-cropped to 4:5,
+  resampled to 920x1150 and encoded to webp at 47KB — a 93% saving, and still
+  comfortably above the 2x retina requirement for a 361px slot (0.78x, no
+  upscaling). The stand-in and its CSS are gone.
 - **Gerd Bommer and Finance Consultancy now appear twice on the page** — here and
   in the last row of Selected Work, with identical captions. That came from the
   mock and was built as drawn, but it is worth putting to the client: either

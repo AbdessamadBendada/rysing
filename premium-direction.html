@@ -1050,16 +1050,6 @@
     .spot-lead h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
     .spot-lead p { margin:0; max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
 
-    /* Stand-in for a client with a logo but no photograph yet. The mark is
-       drawn the way the marquee draws them — black artwork on transparency,
-       knocked to white — so the panel reads as deliberately held rather than
-       as a picture that failed to load. */
-    .shot--pending { display:grid; place-items:center; background:#191919; }
-    .shot--pending img {
-      width:46%; height:auto; aspect-ratio:auto; object-fit:contain;
-      filter:brightness(0) invert(1); opacity:.42;
-    }
-
     /* --- Newsletter --------------------------------------------- */
     .fudge h2 { margin:0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
     .fudge-copy { display:flex; flex-direction:column; gap:24px; }
@@ -1629,12 +1619,9 @@
           <span class="shot-title"><b class="name">Gerd Bommer</b> Keynote Speaker and Founder-First Investor</span>
           <span class="shot-more is-standing">Learn more →</span>
         </a>
-        <!-- TODO(asset): no photograph of Michael Diewald exists — only
-             logo-dsp.webp. Standing in with the mark until one is supplied;
-             swap the span for a .shot with an <img> and it drops straight in. -->
         <!-- TODO(link): case study page does not exist yet -->
         <a class="work-item">
-          <span class="shot shot--pending"><img src="rysing-assets/logo-dsp.webp" alt="Der Schulter Physio" loading="lazy" decoding="async" /></span>
+          <span class="shot"><img style="--pos:center 28%" src="rysing-assets/work-10-michael-diewald.webp" alt="Michael Diewald holding a shoulder anatomy model in his clinic" loading="lazy" decoding="async" /></span>
           <span class="shot-title"><b class="name">Michael Diewald</b> The Shoulder Physio</span>
           <span class="shot-more is-standing">Learn more →</span>
         </a>
