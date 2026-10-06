@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated at commit `ae893fb`. Read this before touching anything.
+Last updated at commit `f6eab5d` + the rail rebuild below. Read this before touching anything.
 
 ---
 
@@ -42,8 +42,8 @@ Done and verified:
 - **Stats.** Four equal figures that count up from zero on arrival.
 - **Selected Work.** Three rows of three, each with its own shape signature.
   Row one carries a film panel.
-- **Testimonials.** Six rows became one quote at a time, steered by the six
-  names. See §7.
+- **Testimonials.** Six rows became a three-up rail that drifts one column at a
+  time. Second design — the first was rejected by the client. See §7.
 
 Unresolved: see §6.
 
@@ -56,7 +56,7 @@ Unresolved: see §6.
 | `premium-direction.html` | **The active build. The only page to edit.** |
 | `new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
-| `testimonials.html` | The three slider directions considered for §7, under the real tokens. Direction A shipped. Kept as the argument; not part of the build. |
+| `testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
 | `rysing-comments.html` | Frozen copy/structure baseline. Read-only. |
 | `AGENTS.md` | Settled decisions and the local testing harness. Read the ACTIVE TRACK section. |
 | `new-direction-comments.md` | Why the previous direction was not premium. 12 ranked problems. |
@@ -146,6 +146,13 @@ means *handed off*, not *done*. Do not review files on that signal.
 an approved feature instead of flagging the defect. The defect was real — a
 white blob at small aperture — but the fix was the crossfade, not removal.
 
+**The named-index testimonial slider was rejected by the client.** It shipped —
+one quote at display size, the six names as the navigation, the cursor rule
+doubling as the autoplay clock. She asked instead for a conventional three-up
+slider with autoplay. The reasoning behind the index was sound and is still in
+`testimonials.html`; it was simply not what she wanted. Rebuilt as the rail in
+§7. Do not re-propose the index.
+
 **Stats hierarchy was tried and reverted.** Leading on "35+" made the smallest
 figure the loudest, which fought the numbers themselves. Four equal columns now,
 as the reference sets them. Do not re-propose without a new argument.
@@ -209,9 +216,6 @@ filenames once and wired up entirely the wrong asset.
   three has neither — no index, and the label stands. Reconcile.
 - The OPS Detox panel says **"for startups"**; the client's own merchandise and
   site both say **"for scale-ups"**. Someone has to decide which is right.
-- `01 / 06` above the testimonial index is the only string on the page that was
-  not in the frozen copy. It is interface rather than copy and it echoes the
-  services numerals, but it is new visible text and it is one line to remove.
 
 **Still parked**
 
@@ -237,76 +241,92 @@ filenames once and wired up entirely the wrong asset.
 
 ## 7. Testimonials
 
-Six rows at 24px were the quietest moment on a page that shouts at 118px in the
-closing, in the section that is supposed to be the most persuasive. It is now one
-quote at a time at `clamp(24px,2.9vw,42px)`, and the six names are the
-navigation. No dots, no arrows, no card frames — the names are copy, so the
-control is copy, and the section gained no new furniture.
+Three quotes on the measure, drifting one column at a time.
 
-`testimonials.html` holds the three directions that were considered (named
-index, editorial rail, odometer) under the real tokens. Direction A was chosen.
-Keep the file; it is the argument for why, and the rail is worth re-reading
-before anyone proposes a conventional slider again.
+**This is the second design.** The first shipped a named index — one quote at
+display size, the six names as the navigation — and the client did not want it.
+She asked for a conventional slider, three up, autoplaying. That is a decision,
+not a question; do not re-propose the index. `testimonials.html` still holds the
+three directions originally considered and is worth reading before anyone
+proposes anything here again, but it describes a road already closed.
 
-**All six quotes stay in the markup.** Only one is visible, but every quote,
-name and role is authored, and without JavaScript they stack and read in full.
-The index is built by reading the authored `<strong>` in each quote, so no name
-is written twice and the script invents nothing. A first pass had the names
-living only in `data-name` attributes — that put copy in the script and left the
-page nameless without JS. Do not reintroduce it.
+The job became making a three-up slider not look like one.
 
-**All six quotes share one grid cell.** The stage is always as tall as the
-longest quote, so turning one moves nothing else on the page. A stage that
-resized per quote would shunt the section below it on every turn.
+**No cards.** Three bordered boxes of equal height turn quotes into a comparison
+table, and that is the single thing that makes this pattern read as a template.
+One hairline runs the full measure and the columns hang off it. What holds them
+together instead is the baseline their attributions share — every thumb, name
+and role lands on one line however many lines the quote above it runs. That
+alignment is most of the difference between hand-set and assembled.
 
-**Autoplay, 6s, and the cursor rule is the clock.** The hairline beside the
-active name draws itself across as the dwell elapses. It holds on hover, on
-focus, when the section is off-screen and when the tab is hidden; a manual pick
-ends it permanently rather than deferring it. Pause/resume needs a CSS
-*animation* — `animation-play-state` is the only primitive that freezes
-mid-flight. A transition cannot: zeroing its duration snaps it to the target.
-The dwell is read from `--dwell` in the stylesheet so the rule and the timer
-cannot drift apart.
+**It advances one column, not a page of three.** Paging three is the jolt that
+gives these away. Stepping by one is a drift, which is the behaviour the logo
+marquee already establishes on this page.
 
-**The cursor animates `transform`, not `width`,** and its space is reserved on
-every name. Animating width for six seconds reflows the line every frame and
-drags the name sideways throughout.
+**The rail breaks the right gutter** so the next quote is always entering the
+margin — how the row says there is more without a dot row. Anything off the
+measure is dimmed to .26; asking the eye to read a half-visible column is the
+other half of why these feel cheap.
 
-**The portrait blooms out of the mark** — the showreel aperture's move, played
-small. The picture is always seen through the mark at 1400%, far past the
-square, so nothing is cropped at rest; the animation only runs that scale up
-from 38%. 1400% is chosen so the star's waist clears the corners — its arms run
-on the axes, so the diagonals are what has to be checked.
+**The loop is built from clones** the script marks `aria-hidden`, exactly as the
+marquee duplicates its track. The six authored quotes stay the only place this
+copy is written. Verified: the section's visible text is byte-identical to
+`e807407`, before any slider existed. The `01 / 06` counter is gone with the
+index, so there is now no string on the page outside the frozen copy.
 
-The bloom's timing lives on the keyframes and the element runs `linear`, which
-looks wrong and is not. `mask-size` interpolates linearly and the mark covers
-the square at ~250% — only 16% of the way from 38% to 1400%. On the page's usual
+**Placing and lighting are separate functions, and that is deliberate.** The
+backward wrap has to park the track at a position it is not at before it
+travels, and parking must not light anything. Forward, the silent reset waits
+for the slide to land or the jump happens mid-travel and shows. Backward it is
+the reverse order: park a full set further along, then travel back out of it.
+Stepping back from the first column without that park slides the rail the wrong
+way and reads as the slider correcting itself. It was written wrong the first
+time and caught by walking the loop in Playwright, not by looking at it.
+
+**Every measurement comes from rendered geometry,** never recomputed from the
+CSS: the step is the distance between the first two items, the window is the
+viewport divided by the step. The basis changes at two breakpoints and the gap
+is a clamp, so anything derived from the stylesheet would eventually disagree
+with it. Resize repaints without animating, or the track sits between columns.
+
+**Arrows, deliberately.** On the index the names were the control, so arrows
+would have been clutter. A drifting rail with no visible control reads as
+broken, and the client asked for a normal slider. Two marks and a hairline that
+fills — the back arrow is the page's own mark rotated, not a second glyph.
+
+**Steering restarts the dwell rather than ending autoplay.** The opposite of the
+index, where a manual pick ended it for good: a rail gives you no way to sit on
+a chosen quote, so stopping it dead would strand the reader mid-set.
+
+**Autoplay, 4.6s.** Holds on hover, focus, off-screen and hidden tab, counting
+its reasons so one ending does not resume on behalf of another still in force.
+
+**The portrait blooms out of the mark** — the showreel aperture played small.
+Exactly one column enters per advance, so exactly one square blooms at a time,
+and that is what tells you the rail moved instead of a progress bar having to.
+
+The bloom's timing lives on the keyframes with the element `linear`, which looks
+wrong and is not. `mask-size` interpolates linearly and the mark covers the
+square at ~250% — only 16% of the way from 38% to 1400%. On the page's usual
 `--ease-weight` that point arrived **25ms** in, so the star was a star for a
 frame and a half and the rest crawled invisibly from 1300% to 1400%. It reported
 as "the animation is not visible at all" while running perfectly. The star has
 to hold near its own size and accelerate late — the opposite curve to everything
-else here.
+else here. 1400% is chosen so the star's waist clears the square's corners; its
+arms run on the axes, so the diagonals are what has to be checked.
 
-**The square has no background.** `#1f1f1f` read as a lighter patch on the
+**The thumb square has no background.** `#1f1f1f` read as a lighter patch on the
 section, most visible early in the bloom when the mark is small. Transparent,
 not a matched hex, so it keeps matching if the section changes.
 
-**`.proof-foot` carries its own top margin now.** The old rows each had
-`padding:36px 0`, so that rule had been taking its breathing room second-hand
-from the last row. Removing the rows left it sitting on the attribution.
+**Without JavaScript the rail is a row that wraps,** every quote lit and
+readable. The copy never depends on a script running.
 
 Open, for the client:
 
-- **Six portraits are needed.** All six squares currently share one stand-in
+- **Six portraits are needed.** All six squares share one stand-in
   (`anzhelika-chair.webp`). Ask for head-and-shoulders crops — the stand-in is a
-  full-body seated shot and at 68px it reads as a small figure rather than a
-  face. 400×400 is ample; the slot is 68px at its largest.
-- `01 / 06` above the index is the only string on the page that was not there
-  before. It is interface rather than copy and it echoes the services numerals,
-  but it is new text and it is one line to remove.
-- On mobile the index lies on its side as a scrolling strip. There is no margin
-  for the rule to hang in, so the underline becomes the cursor and the autoplay
-  clock is not shown. Deliberate — better than a progress bar on a phone.
-
-The 25ms bug was invisible to reasoning and to screenshots alike, and only
-became a number under per-frame tracing. See the measurement note in §5.
+  full-body seated shot and at 68px it reads as a small figure, not a face.
+  400x400 is ample; the slot is 68px at its largest. Each is wired on its own by
+  swapping that quote's `img src`, plus a `--pos` focal point if the crop needs
+  one. `ASSET-SPEC.md` has no entry for these yet.

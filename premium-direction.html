@@ -571,25 +571,9 @@
     .btn-pill { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
     .btn-pill .arrow { transition:transform var(--t-detail) var(--ease-detail); }
 
-    /* Testimonials. The quote is the weight and moves on --t-weight; the index
-       is detail and snaps. Six quotes at 24px made the most persuasive thing on
-       the page its quietest moment — one at a time, at display size, fixes the
-       ratio without touching a word. */
-    /* visibility is transitioned by delay, not by step-end. A hidden quote must
-       stay focusable-proof and hit-test-proof for the whole fade out, but an
-       arriving one has to be visible from the first frame — step-end would hold
-       it hidden until its fade had already finished. */
-    .tquote {
-      transition:opacity var(--t-weight) var(--ease-weight),
-                 transform var(--t-weight) var(--ease-weight),
-                 visibility 0s linear var(--t-weight);
-    }
-    .tquote[aria-hidden="false"] {
-      transition:opacity var(--t-weight) var(--ease-weight),
-                 transform var(--t-weight) var(--ease-weight),
-                 visibility 0s linear 0s;
-    }
-    .tname { transition:opacity var(--t-detail) var(--ease-detail); }
+    /* Testimonials. The rail is the weight and moves on its own long curve;
+       the controls are detail and snap. */
+    .treel-step { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
 
     /* --- Selected work ------------------------------------------ */
     /* A hand-set gallery, not a grid: six panels of deliberately unequal
@@ -818,90 +802,93 @@
       font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
       font-size:26px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
     }
-    /* One quote at a time, and the six names are the navigation. Nothing is
-       invented to steer it — no dots, no arrows, no card frames. The names are
-       copy, so the control is copy, which is why this costs the page no new
-       furniture at all.
+    /* Three quotes on the measure, drifting one column at a time.
 
-       Every quote stays in the markup. Only one is visible at a time, but all
-       six are authored, readable without JavaScript and indexable. The copy is
-       the source of truth and the slider is only a view of it. */
-    .tslider {
-      display:grid; grid-template-columns:minmax(0,4fr) minmax(0,7fr);
-      gap:clamp(24px,2.6vw,46px);
+       What makes a three-up testimonial slider read as a template is three
+       bordered boxes of equal height — that turns quotes into a comparison
+       table. There are no boxes here: one hairline runs the full measure and
+       the columns hang off it, which is the page's own separator language
+       doing the work a border would have done badly. The columns are held
+       together instead by the baseline their attributions share.
+
+       Every quote stays authored in the markup. The loop is made from clones
+       the script marks aria-hidden, exactly as the logo marquee already does,
+       so no copy is written twice and the markup stays the source of truth. */
+    .treel-wrap {
       border-top:1px solid rgba(249,249,249,.28); padding-top:clamp(30px,3.6vw,52px);
-      --cursor-w:clamp(20px,2.6vw,42px);
-      --dwell:6s;
+      --gap:clamp(18px,2.2vw,40px);
+      --dwell:4.6s;
     }
-
-    .tindex { display:flex; flex-direction:column; align-items:flex-start; gap:clamp(6px,.9vw,13px); }
-    .tcount { margin-bottom:clamp(14px,1.8vw,24px); color:rgba(249,249,249,.45); }
-    .tname {
-      position:relative; padding:0; border:0; background:none; cursor:pointer; text-align:left;
-      color:var(--paper); opacity:.22;
-      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-      font-size:clamp(22px,2.1vw,30px); line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    /* Breaks the right gutter, so the next quote is always entering the margin.
+       That is how the row says there is more without a dot row underneath it,
+       and it is the move the work rows already make. */
+    .treel {
+      overflow:hidden;
+      margin-right:calc(var(--gutter) * -1);
     }
-    .tname:hover { opacity:.6; }
-    .tname[aria-selected="true"] { opacity:1; }
-
-    /* The active name carries a short rule in its left margin — the section's
-       own hairline language used as a cursor. The space is reserved on every
-       name whether the rule is drawn or not, so the list keeps a single left
-       edge and no name ever slides sideways. That also lets the rule animate
-       on transform rather than width, which costs no layout: animating width
-       for six seconds reflows the line on every frame. */
-    .tname::before {
-      content:""; display:inline-block; vertical-align:.26em;
-      width:var(--cursor-w); height:1px; margin-right:14px; background:var(--paper);
-      transform:scaleX(0); transform-origin:left center;
-      transition:transform var(--t-weight) var(--ease-weight);
+    .treel-track {
+      display:flex; gap:var(--gap); align-items:stretch;
+      transition:transform 1.05s var(--ease-weight);
     }
-    .tname[aria-selected="true"]::before { transform:scaleX(1); }
+    .treel-track.is-jumping { transition:none; }
+    /* Three fill the measure exactly; the fourth begins in the gutter. The
+       gutter is subtracted because this element is a gutter wider than the
+       measure it has to divide. */
+    .treel-item { flex:0 0 calc((100% - var(--gutter) - 2 * var(--gap)) / 3); }
+    /* Only what sits on the measure is lit. Asking the eye to read a column
+       that is half off the page is the other half of why these feel cheap. */
+    .treel-item { opacity:.26; transition:opacity var(--t-weight) var(--ease-weight); }
+    .treel-item.is-lit { opacity:1; }
 
-    /* The cursor is also the clock. It draws across as the dwell elapses and
-       the quote turns when it lands, so the section says it is moving without a
-       progress bar, a dot row or a countdown being added for it. One object,
-       two jobs — the only terms on which autoplay earns a place here. */
-    @keyframes tdraw { from { transform:scaleX(0); } to { transform:scaleX(1); } }
-    .tslider.is-auto .tname[aria-selected="true"]::before {
-      animation:tdraw var(--dwell) linear forwards;
-    }
-    /* An animation is the only primitive that freezes mid-flight and resumes
-       where it stopped; a transition cannot — zeroing its duration snaps it to
-       the target instead of holding it. */
-    .tslider.is-auto.is-paused .tname[aria-selected="true"]::before { animation-play-state:paused; }
-
-    /* All six quotes occupy one grid cell, so the stage is always as tall as
-       the longest of them and turning a quote moves nothing else on the page. A
-       stage that resized per quote would shunt the section below it on every
-       turn, which is most of what makes a slider feel cheap. */
-    .tstage { display:grid; }
-    .tstage > .tquote { grid-area:1/1; }
     .tquote {
-      margin:0; display:flex; flex-direction:column; gap:clamp(22px,2.8vw,38px);
-      opacity:0; visibility:hidden; transform:translateY(14px);
+      margin:0; display:flex; flex-direction:column; gap:clamp(20px,2.4vw,32px);
     }
-    .tquote[aria-hidden="false"] { opacity:1; visibility:visible; transform:none; }
     .tquote blockquote {
-      margin:0; max-width:21em;
+      margin:0;
       font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
-      font-size:clamp(24px,2.9vw,42px); line-height:1.16; text-transform:uppercase; letter-spacing:-.012em;
+      font-size:clamp(18px,1.55vw,23px); line-height:1.26; text-transform:uppercase; letter-spacing:-.005em;
     }
-    /* Pinned to the foot of the stage, so the attribution lands on the same
-       line for every quote however many lines the quote itself runs. */
+
+    /* Controls. A drifting rail with nothing to steer it reads as broken rather
+       than as restraint, so this one earns its furniture — but the least of it:
+       two marks and a rule that fills, no dots. */
+    .treel-foot {
+      display:flex; align-items:center; gap:clamp(20px,3vw,44px);
+      margin-top:clamp(30px,3.4vw,52px);
+    }
+    .treel-step {
+      flex:none; width:44px; height:44px; display:grid; place-items:center;
+      border:1px solid rgba(249,249,249,.4); border-radius:50%;
+      background:none; color:inherit; cursor:pointer;
+      transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail);
+    }
+    .treel-step:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .treel-step::before {
+      content:""; width:12px; height:12px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      transition:transform var(--t-detail) var(--ease-detail);
+    }
+    .treel-step:hover::before { transform:rotate(90deg) scale(1.15); }
+    /* The mark is the page's arrow everywhere else; back is simply it turned
+       around, rather than a second glyph introduced for one button. */
+    .treel-step[data-treel-step="-1"]::before { transform:rotate(180deg); }
+    .treel-step[data-treel-step="-1"]:hover::before { transform:rotate(90deg) scale(1.15); }
+    .treel-steps { display:flex; gap:10px; }
+    /* The same hairline as every rule on the page, with a lit length running
+       along it. It fills and resets with the loop rather than pretending to be
+       a scrollbar. */
+    .treel-progress { position:relative; flex:1 1 auto; height:1px; background:rgba(249,249,249,.18); }
+    .treel-progress::after {
+      content:""; position:absolute; inset:0 auto 0 0; width:var(--p,50%);
+      background:var(--paper); transition:width 1.05s var(--ease-weight);
+    }
+
     .tattrib { margin-top:auto; display:flex; flex-direction:column; align-items:flex-start; gap:12px; }
     .tattrib strong {
       font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-      font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+      font-size:clamp(22px,1.8vw,26px); line-height:1; text-transform:uppercase; letter-spacing:.01em;
     }
     .tattrib small { color:rgba(249,249,249,.65); font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
-    /* The name is authored here, next to the role it belongs to, because that
-       is the pair — and because the index is read from it rather than written
-       twice. Once the slider is live the index is already showing the name at
-       this size, so printing it again under the quote would just be the same
-       word twice; it is suppressed there, not removed from the document. */
-    .tslider.is-live .tattrib strong { display:none; }
 
     /* A small square above the stars. Deliberately small: a large portrait
        makes the section about faces, and at this size a client photograph
@@ -953,8 +940,8 @@
        testimonials are still below the fold. Its finished state is identical to
        the resting state, so if the entrance never runs the picture is simply
        there — the animation can only ever add. */
-    .tslider.is-in .tquote[aria-hidden="false"] .tthumb img { animation:tbloom .8s linear both; }
-    .tslider.is-in .tquote[aria-hidden="false"] .tthumb::before { animation:tseed .8s linear both; }
+    .treel-wrap.is-in .treel-item.is-lit .tthumb img { animation:tbloom .8s linear both; }
+    .treel-wrap.is-in .treel-item.is-lit .tthumb::before { animation:tseed .8s linear both; }
 
     /* The seed the bloom appears to grow from, and the stand-in when a quote
        has no portrait yet: the mark, low, on the square. Sitting behind the
@@ -965,18 +952,20 @@
     }
     .tthumb:empty::before { opacity:.17; animation:none; }
 
-    /* Without JavaScript every quote simply stacks and reads. The copy is never
-       dependent on a script running — the same argument as the hidden entrance
-       state being applied by script rather than sitting in the stylesheet. */
-    .no-js .tindex { display:none; }
-    .no-js .tstage { gap:clamp(26px,3vw,44px); }
-    .no-js .tstage > .tquote { grid-area:auto; }
-    .no-js .tquote { opacity:1; visibility:visible; transform:none; }
+    /* Without JavaScript the rail is simply a row that wraps, every quote lit
+       and readable. The copy never depends on a script running — the same
+       argument as the entrance's hidden state being applied by script rather
+       than sitting in the stylesheet. */
+    .no-js .treel { overflow:visible; margin-right:0; }
+    .no-js .treel-track { flex-wrap:wrap; row-gap:clamp(34px,4vw,56px); }
+    .no-js .treel-item { opacity:1; }
+    .no-js .treel-foot { display:none; }
 
     /* The rows used to carry 36px of their own padding, so this rule inherited
-       its breathing room from the last one. With the slider there is nothing
-       above it but the attribution, and the rule has to hold its own gap. */
-    .proof-foot { margin-top:clamp(44px,5.4vw,88px); padding-top:28px; border-top:1px solid rgba(249,249,249,.28); }
+       its breathing room from the last one. It holds its own gap now, but a
+       smaller one than when the attribution sat directly above it — the rail's
+       own foot already closes the section. */
+    .proof-foot { margin-top:clamp(30px,3.4vw,58px); padding-top:28px; border-top:1px solid rgba(249,249,249,.28); }
 
     /* --- Spotlight ---------------------------------------------- */
     .spot { position:relative; overflow:hidden; background:var(--ink); }
@@ -1098,6 +1087,10 @@
 
     /* --- Responsive --------------------------------------------- */
     @media (max-width:980px) {
+      /* Two on the measure, then one. The basis is the only thing that changes
+         — the step, the window and the loop are all measured from the rendered
+         geometry, so nothing else has to be told. */
+      .treel-item { flex-basis:calc((100% - var(--gutter) - var(--gap)) / 2); }
       .duo,.roster { grid-template-columns:minmax(0,1fr); }
       .roster figure:nth-child(even) { margin-top:0; }
       .founder-body { padding-top:0; }
@@ -1112,30 +1105,14 @@
       .work-row > :nth-child(n) { margin-top:0; }
       .work-item--film .shot { aspect-ratio:16/9; }
       .work-item:not(.work-item--film) .shot { aspect-ratio:4/5; }
-      /* The index lies on its side rather than reverting to stacked rows — the
-         mechanic is the same, only the axis changes. */
-      .tslider { grid-template-columns:minmax(0,1fr); gap:clamp(24px,4vw,38px); }
-      .tindex {
-        flex-direction:row; align-items:center; gap:22px;
-        margin-right:calc(var(--gutter) * -1); padding:0 var(--gutter) 14px 0;
-        overflow-x:auto; scrollbar-width:none;
-      }
-      .tindex::-webkit-scrollbar { display:none; }
-      .tcount { flex:none; margin:0 4px 0 0; }
-      .tname { flex:none; }
-      /* Laid horizontally there is no margin for the rule to hang in, so the
-         underline becomes the cursor and the clock goes unshown — better than
-         parking a progress bar on a phone. */
-      .tname::before { display:none; }
-      .tname[aria-selected="true"] { text-decoration:underline; text-underline-offset:7px; text-decoration-thickness:1px; }
-      .tattrib { margin-top:clamp(6px,2vw,14px); }
       .proof-badges { gap:24px; }
       .spot-copy { position:static; padding:22px 0 0; }
       .spot::after { display:none; }
       .fudge-field { max-width:none; }
     }
     @media (max-width:560px) {
-      .tname,.roster h3 { font-size:24px; }
+      .treel-item { flex-basis:calc(100% - var(--gutter)); }
+      .roster h3 { font-size:24px; }
       /* The field and its 27-character button cannot share a line here. */
       .fudge-field { flex-wrap:wrap; }
       .fudge-field button { min-height:44px; margin-bottom:8px; }
@@ -1145,12 +1122,11 @@
     @media (prefers-reduced-motion:reduce) {
       .marquee-track { animation:none; }
       .shot img,.fudge-card { transition:none; }
-      /* Autoplay is off here, so the cursor rule is a plain state. The quote
-         still crossfades — the change has to stay legible — it just stops
-         travelling. */
-      .tname::before { transition:none; }
-      .tquote { transform:none; transition:opacity .2s linear,visibility 0s linear .2s; }
-      .tquote[aria-hidden="false"] { transition:opacity .2s linear,visibility 0s linear 0s; }
+      /* Autoplay is off here and the rail steps without easing. The bloom is a
+         flourish, so it is the first thing to go; the picture resolves to
+         exactly the same frame without it. */
+      .treel-track { transition:none; }
+      .treel-progress::after { transition:none; }
       /* The bloom is a flourish, so it is the first thing to go. The picture
          resolves to exactly the same frame without it. */
       .tthumb img,.tthumb::before { animation:none !important; }
@@ -1474,8 +1450,9 @@
           <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
         </div>
       </div>
-      <!-- The index is read from these panels, so the quotes, names and roles
-           below are the only place any of this copy is written.
+      <!-- These six are the only place any of this copy is written. The loop
+           is built from clones the script marks aria-hidden, the way the logo
+           marquee above already duplicates its track.
 
            PLACEHOLDER: all six squares currently share one stand-in file so the
            bloom can be judged before the portraits exist. They are not six
@@ -1483,68 +1460,75 @@
            img src, and add a --pos focal point if the crop needs one, as every
            photo slot on this page takes. A .tthumb left empty falls back to the
            mark on its own. -->
-      <div class="tslider" data-tslider data-reveal>
-        <div class="tindex" role="tablist" aria-label="Choose a client" data-tindex>
-          <span class="label tcount" data-tcount>01 / 06</span>
+      <div class="treel-wrap" data-treel data-reveal>
+        <div class="treel">
+          <div class="treel-track" data-treel-track>
+            <figure class="tquote treel-item">
+              <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+              <figcaption class="tattrib">
+                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
+                <span class="stars" aria-hidden="true">★★★★★</span>
+                <strong>Marcus H.</strong>
+                <small>Founder, B2B SaaS</small>
+              </figcaption>
+            </figure>
+            <figure class="tquote treel-item">
+              <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
+              <figcaption class="tattrib">
+                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
+                <span class="stars" aria-hidden="true">★★★★★</span>
+                <strong>Elena V.</strong>
+                <small>Keynote speaker</small>
+              </figcaption>
+            </figure>
+            <figure class="tquote treel-item">
+              <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
+              <figcaption class="tattrib">
+                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
+                <span class="stars" aria-hidden="true">★★★★★</span>
+                <strong>Tobias R.</strong>
+                <small>Agency owner</small>
+              </figcaption>
+            </figure>
+            <figure class="tquote treel-item">
+              <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
+              <figcaption class="tattrib">
+                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
+                <span class="stars" aria-hidden="true">★★★★★</span>
+                <strong>Sophie L.</strong>
+                <small>Consultant</small>
+              </figcaption>
+            </figure>
+            <figure class="tquote treel-item">
+              <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
+              <figcaption class="tattrib">
+                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
+                <span class="stars" aria-hidden="true">★★★★★</span>
+                <strong>Daniel K.</strong>
+                <small>Co-founder, DTC brand</small>
+              </figcaption>
+            </figure>
+            <figure class="tquote treel-item">
+              <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
+              <figcaption class="tattrib">
+                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
+                <span class="stars" aria-hidden="true">★★★★★</span>
+                <strong>Nadia S.</strong>
+                <small>Executive coach</small>
+              </figcaption>
+            </figure>
+          </div>
         </div>
 
-        <div class="tstage">
-          <figure class="tquote" aria-hidden="false">
-            <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
-            <figcaption class="tattrib">
-              <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-              <span class="stars" aria-hidden="true">★★★★★</span>
-              <strong>Marcus H.</strong>
-              <small>Founder, B2B SaaS</small>
-            </figcaption>
-          </figure>
-          <figure class="tquote" aria-hidden="true">
-            <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
-            <figcaption class="tattrib">
-              <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-              <span class="stars" aria-hidden="true">★★★★★</span>
-              <strong>Elena V.</strong>
-              <small>Keynote speaker</small>
-            </figcaption>
-          </figure>
-          <figure class="tquote" aria-hidden="true">
-            <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
-            <figcaption class="tattrib">
-              <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-              <span class="stars" aria-hidden="true">★★★★★</span>
-              <strong>Tobias R.</strong>
-              <small>Agency owner</small>
-            </figcaption>
-          </figure>
-          <figure class="tquote" aria-hidden="true">
-            <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
-            <figcaption class="tattrib">
-              <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-              <span class="stars" aria-hidden="true">★★★★★</span>
-              <strong>Sophie L.</strong>
-              <small>Consultant</small>
-            </figcaption>
-          </figure>
-          <figure class="tquote" aria-hidden="true">
-            <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
-            <figcaption class="tattrib">
-              <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-              <span class="stars" aria-hidden="true">★★★★★</span>
-              <strong>Daniel K.</strong>
-              <small>Co-founder, DTC brand</small>
-            </figcaption>
-          </figure>
-          <figure class="tquote" aria-hidden="true">
-            <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
-            <figcaption class="tattrib">
-              <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-              <span class="stars" aria-hidden="true">★★★★★</span>
-              <strong>Nadia S.</strong>
-              <small>Executive coach</small>
-            </figcaption>
-          </figure>
+        <div class="treel-foot">
+          <div class="treel-steps">
+            <button class="treel-step" type="button" data-treel-step="-1" aria-label="Previous testimonials"></button>
+            <button class="treel-step" type="button" data-treel-step="1" aria-label="Next testimonials"></button>
+          </div>
+          <div class="treel-progress" data-treel-progress aria-hidden="true"></div>
         </div>
       </div>
+
       <div class="proof-foot"><a class="btn-pill" href="#proof">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
     </section>
 
@@ -1754,46 +1738,78 @@
       counters.forEach((c) => counted.observe(c.el));
     }
 
-    /* Testimonials. Six quotes, one at a time, steered by the names.
+    /* Testimonials. Three quotes on the measure, drifting one column at a time.
 
-       The index is read out of the quotes rather than authored twice, so every
-       name exists in exactly one place in the markup and cannot drift out of
-       step with the quote it belongs to. Same principle as the stat figures:
-       the markup is the source of truth and the script only reads it. Nothing
-       here invents a word — if the script never runs, all six quotes stack and
-       read in full, names and all. */
-    const tslider = document.querySelector('[data-tslider]');
-    if (tslider) {
-      const quotes = [...tslider.querySelectorAll('.tquote')];
-      const index = tslider.querySelector('[data-tindex]');
-      const count = tslider.querySelector('[data-tcount]');
-      const pad = (n) => String(n).padStart(2, '0');
+       Advancing a whole page of three is what gives these their jolt; stepping
+       by one is a drift. The loop is made of clones, the way the logo marquee
+       duplicates its track, so the copy is authored exactly once and the
+       clones are marked aria-hidden rather than read out twice. */
+    const treel = document.querySelector('[data-treel]');
+    if (treel) {
+      const track = treel.querySelector('[data-treel-track]');
+      const bar = treel.querySelector('[data-treel-progress]');
+      const originals = [...track.children];
+      const total = originals.length;
 
-      const names = quotes.map((quote, i) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'tname';
-        button.setAttribute('role', 'tab');
-        button.setAttribute('aria-selected', String(i === 0));
-        button.textContent = quote.querySelector('.tattrib strong').textContent;
-        /* Wires the name to the quote both ways, so a screen reader announces
-           them as one control and panel rather than two loose objects. */
-        quote.id ||= `tquote-${i + 1}`;
-        button.id = `tname-${i + 1}`;
-        button.setAttribute('aria-controls', quote.id);
-        quote.setAttribute('role', 'tabpanel');
-        quote.setAttribute('aria-labelledby', button.id);
-        button.addEventListener('click', () => go(i));
-        index.append(button);
-        return button;
+      /* One full set of clones is all the loop needs: the window is never
+         wider than the set, so the furthest it can reach is the last original
+         plus two clones. */
+      originals.forEach((item) => {
+        const clone = item.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.querySelectorAll('img').forEach((img) => { img.alt = ''; });
+        track.append(clone);
       });
+      const items = [...track.children];
 
-      let active = 0;
+      let i = 0;
 
-      /* ---- autoplay ----
-         The dwell is read from the stylesheet, so the rule that draws the
-         cursor and the timer that turns the quote cannot drift apart. */
-      const DWELL = (parseFloat(getComputedStyle(tslider).getPropertyValue('--dwell')) || 6) * 1000;
+      /* Measured from what actually rendered rather than recomputed from the
+         CSS. The item basis changes at two breakpoints and the gap is a clamp;
+         reading the real geometry means the step cannot disagree with it. */
+      const step = () => {
+        const a = items[0].getBoundingClientRect();
+        const b = items[1].getBoundingClientRect();
+        return b.left - a.left;
+      };
+
+      const perView = () => Math.max(1, Math.round(treel.querySelector('.treel').clientWidth / step()));
+
+      /* Placing the track and lighting the columns are separate, because the
+         backward wrap has to park the track at a position it is not at before
+         it travels — and parking must not light anything. */
+      const place = (idx, animate) => {
+        track.classList.toggle('is-jumping', !animate);
+        track.style.transform = `translate3d(${-idx * step()}px,0,0)`;
+        if (!animate) { void track.offsetWidth; track.classList.remove('is-jumping'); }
+      };
+      const light = () => {
+        const lit = perView();
+        items.forEach((item, k) => item.classList.toggle('is-lit', k >= i && k < i + lit));
+        bar.style.setProperty('--p', `${Math.round(((i % total) + lit) / total * 100)}%`);
+      };
+      const paint = (animate = true) => { place(i, animate); light(); };
+
+      /* The silent rewind, both ways. Once the window has walked a whole set
+         the clones on screen are pixel-identical to the originals at the same
+         offset, so resetting with the transition suppressed is invisible.
+
+         Forward, the reset has to wait for the slide to land or the jump
+         happens mid-travel and shows. Backward it is the opposite order: park
+         a full set further along first, then travel back out of it. Stepping
+         back from the first column without that park slides the rail the wrong
+         way — it reads as the slider correcting itself. */
+      const advance = (dir) => {
+        i += dir;
+        if (i < 0) { place(total, false); i = total - 1; }
+        paint();
+        if (i >= total) {
+          setTimeout(() => { i -= total; paint(false); }, 1100);
+        }
+      };
+
+      /* ---- autoplay ---- */
+      const DWELL = (parseFloat(getComputedStyle(treel).getPropertyValue('--dwell')) || 4.6) * 1000;
       let auto = !reduce;
       const holds = new Set();
       let tick = null, startedAt = Date.now(), left = DWELL;
@@ -1801,12 +1817,10 @@
       const arm = (ms) => {
         clearTimeout(tick);
         left = ms; startedAt = Date.now();
-        tick = setTimeout(() => go((active + 1) % quotes.length, true), ms);
+        tick = setTimeout(() => { advance(1); arm(DWELL); }, ms);
       };
-
-      /* Several things can hold it at once — the cursor is over the section and
-         the section has also scrolled away. Counting the reasons stops
-         whichever one ends first from resuming on behalf of the other. */
+      /* Counting the reasons stops whichever hold ends first from resuming on
+         behalf of one that is still in force. */
       const hold = (reason) => {
         if (!auto) return;
         const wasHeld = holds.size > 0;
@@ -1814,74 +1828,60 @@
         if (wasHeld) return;
         clearTimeout(tick);
         left = Math.max(0, left - (Date.now() - startedAt));
-        tslider.classList.add('is-paused');
       };
       const release = (reason) => {
         if (!auto) return;
         holds.delete(reason);
-        if (holds.size) return;
-        tslider.classList.remove('is-paused');
-        arm(left);
-      };
-      /* Once the reader has chosen a quote the section must not keep moving
-         under them. A manual pick ends autoplay for good rather than deferring
-         it — anything else fights the person using it. */
-      const surrender = () => {
-        if (!auto) return;
-        auto = false; holds.clear(); clearTimeout(tick);
-        tslider.classList.remove('is-auto', 'is-paused');
+        if (!holds.size) arm(left);
       };
 
-      function go(i, fromTimer) {
-        if (!fromTimer) surrender();
-        if (i === active) return;
-        quotes[active].setAttribute('aria-hidden', 'true');
-        names[active].setAttribute('aria-selected', 'false');
-        active = i;
-        quotes[i].setAttribute('aria-hidden', 'false');
-        names[i].setAttribute('aria-selected', 'true');
-        count.textContent = `${pad(i + 1)} / ${pad(quotes.length)}`;
-        if (auto && !holds.size) arm(DWELL);
-      }
-
-      /* Arrows move through the index from anywhere inside the section. */
-      tslider.addEventListener('keydown', (event) => {
-        const step = ['ArrowDown', 'ArrowRight'].includes(event.key) ? 1
-                   : ['ArrowUp', 'ArrowLeft'].includes(event.key) ? -1 : 0;
-        if (!step) return;
-        event.preventDefault();
-        const next = (active + step + quotes.length) % quotes.length;
-        names[next].focus();
-        go(next);
+      treel.querySelectorAll('[data-treel-step]').forEach((button) => {
+        button.addEventListener('click', () => {
+          advance(Number(button.dataset.treelStep));
+          /* Steering it yourself restarts the dwell rather than ending
+             autoplay: unlike the index, a rail gives you no way to sit on a
+             chosen quote, so stopping it dead would just strand the reader. */
+          if (auto && !holds.size) arm(DWELL);
+        });
       });
 
-      /* Reading beats rotating: hovering or tabbing in holds the timer. */
-      tslider.addEventListener('pointerenter', () => hold('hover'));
-      tslider.addEventListener('pointerleave', () => release('hover'));
-      tslider.addEventListener('focusin', () => hold('focus'));
-      tslider.addEventListener('focusout', () => release('focus'));
+      treel.addEventListener('keydown', (event) => {
+        const dir = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!dir) return;
+        event.preventDefault();
+        advance(dir);
+        if (auto && !holds.size) arm(DWELL);
+      });
+
+      /* Reading beats rotating. */
+      treel.addEventListener('pointerenter', () => hold('hover'));
+      treel.addEventListener('pointerleave', () => release('hover'));
+      treel.addEventListener('focusin', () => hold('focus'));
+      treel.addEventListener('focusout', () => release('focus'));
       document.addEventListener('visibilitychange', () => {
         document.hidden ? hold('tab') : release('tab');
       });
 
-      count.textContent = `${pad(1)} / ${pad(quotes.length)}`;
-      /* Only now does the section become a slider. Everything that depends on
-         the script having run is gated behind this one class. */
-      tslider.classList.add('is-live');
+      /* The basis changes at two breakpoints, so every measurement is stale
+         after a resize and the track would sit between two columns. */
+      let resizing;
+      addEventListener('resize', () => {
+        clearTimeout(resizing);
+        resizing = setTimeout(() => paint(false), 150);
+      }, { passive: true });
+
+      paint(false);
 
       if (auto) {
-        tslider.classList.add('is-auto');
-        /* Nothing rotates off screen — it would burn through all six quotes
-           while nobody is looking and leave the cursor animation compositing
-           for no one. It starts held and the observer releases it when the
-           section actually arrives; with no observer it simply runs. */
+        /* Nothing drifts off screen — it would walk the whole set while nobody
+           is looking and leave the blooms firing for no one. */
         if ('IntersectionObserver' in window) {
           hold('offscreen');
           new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
               entry.isIntersecting ? release('offscreen') : hold('offscreen');
             });
-          }, { threshold: 0.25 }).observe(tslider);
+          }, { threshold: 0.2 }).observe(treel);
         } else {
           arm(DWELL);
         }
