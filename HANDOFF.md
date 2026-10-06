@@ -46,6 +46,8 @@ Done and verified:
 - **Testimonials.** Six rows became a three-up rail that drifts one column at a
   time. Second design — the first was rejected by the client. See §7.
 
+- **Spotlight.** One giant photograph became three panels on work-row--c's
+  geometry. The copy that sat on the image now stands as a section head. See §9.
 - **Belonging.** The qualifier, between the proof and the ask. New client copy;
   reverses the no-mid-page-glow decision knowingly. See §8.
 
@@ -419,3 +421,36 @@ the hard edge returns at one end.
 Spread too wide it also stops being an object and becomes a wash across the
 band, which reads as a blue panel the words sit on rather than light behind
 them. The corners of the section stay black on purpose.
+
+---
+
+## 9. Spotlight
+
+One full-width photograph with the copy laid over it became three panels.
+
+**The copy did not change.** The eyebrow, the headline and the line beneath it
+used to sit on top of the image; they now stand as a section head. Verified
+against the previous commit: nothing lost from the section, only the three panel
+captions added. "One giant one" meant the picture, not the words.
+
+**It reuses `work-row--c`,** not a second system built for this section — the
+big landscape, then the panel that hangs lowest, then the one between. That is
+exactly the geometry of the supplied mock, and reusing it keeps this section and
+the last row of Selected Work in step if either is ever retuned.
+
+**The lead's width cap belongs on the sentence, not the column.** Capping the
+whole column squeezed a 54px headline into five lines while every other section
+head takes three.
+
+Open:
+
+- **No photograph of Michael Diewald exists** — only `logo-dsp.webp`. That panel
+  stands in with the mark drawn the way the marquee draws them (knocked to
+  white on a dark tile) so it reads as deliberately held rather than as an image
+  that failed to load. Swap the `<span class="shot shot--pending">` for a normal
+  `.shot` with an `<img>` and it drops straight in.
+- **Gerd Bommer and Finance Consultancy now appear twice on the page** — here and
+  in the last row of Selected Work, with identical captions. That came from the
+  mock and was built as drawn, but it is worth putting to the client: either
+  this section carries three clients who appear nowhere else, or Selected Work
+  drops its last row.

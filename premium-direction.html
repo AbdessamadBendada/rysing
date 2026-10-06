@@ -1030,27 +1030,35 @@
     }
 
     /* --- Spotlight ---------------------------------------------- */
-    .spot { position:relative; overflow:hidden; background:var(--ink); }
-    /* Every photograph on the page carries the same grade; the stage shot's
-       LED wash was the one image still running at full saturation. */
-    .spot img {
-      width:100%; aspect-ratio:16/8; object-fit:cover;
-      object-position:var(--pos,center 32%); filter:var(--photo-grade);
+    /* One giant photograph became three panels. The copy did not change: the
+       eyebrow, the headline and the line beneath it used to sit on top of the
+       image and now stand as a section head, so nothing was dropped when the
+       picture they sat on did.
+
+       The row is work-row--c, not a second system invented for this section —
+       the big landscape, then the panel that hangs lowest, then the one that
+       sits between. Reusing it means this section and the last row of Selected
+       Work stay in step if either is ever retuned. */
+    /* The cap belongs on the sentence underneath, not on the whole column —
+       capping the column squeezed a 54px headline into five lines while the
+       other section heads take three. */
+    .spot-lead { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+    .spot-lead p { max-width:46ch; }
+    .spot-lead h2 { margin:0; max-width:15em; font-size:clamp(32px,3.7vw,54px); line-height:.98; }
+    /* One word on blue — besides the belonging glow, the only place the
+       secondary brand colour appears between the hero and the footer. */
+    .spot-lead h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
+    .spot-lead p { margin:0; max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+
+    /* Stand-in for a client with a logo but no photograph yet. The mark is
+       drawn the way the marquee draws them — black artwork on transparency,
+       knocked to white — so the panel reads as deliberately held rather than
+       as a picture that failed to load. */
+    .shot--pending { display:grid; place-items:center; background:#191919; }
+    .shot--pending img {
+      width:46%; height:auto; aspect-ratio:auto; object-fit:contain;
+      filter:brightness(0) invert(1); opacity:.42;
     }
-    /* The photograph is dark at the bottom already; this only guarantees the
-       copy holds at small sizes where the crop tightens. */
-    .spot::after {
-      content:""; position:absolute; inset:0; pointer-events:none;
-      background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.12) 58%,transparent 80%);
-    }
-    .spot-copy {
-      position:absolute; z-index:1; left:clamp(20px,4vw,56px); right:clamp(20px,4vw,56px);
-      bottom:clamp(20px,4vw,56px); display:flex; flex-direction:column; align-items:flex-start; gap:18px;
-    }
-    .spot-copy h2 { margin:0; max-width:17ch; font-size:clamp(32px,4.1vw,62px); line-height:.98; }
-    /* One word on blue — the single place the secondary brand colour appears. */
-    .spot-copy h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
-    .spot-copy p { margin:0; font-size:16px; }
 
     /* --- Newsletter --------------------------------------------- */
     .fudge h2 { margin:0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
@@ -1170,8 +1178,6 @@
       .work-item--film .shot { aspect-ratio:16/9; }
       .work-item:not(.work-item--film) .shot { aspect-ratio:4/5; }
       .proof-badges { gap:24px; }
-      .spot-copy { position:static; padding:22px 0 0; }
-      .spot::after { display:none; }
       .fudge-field { max-width:none; }
     }
     @media (max-width:560px) {
@@ -1605,14 +1611,39 @@
     </section>
 
     <section class="band" id="spotlight" aria-labelledby="spotlight-title">
-      <div class="spot" data-reveal>
-        <img src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Speaker on stage, mid-gesture, wearing a headset microphone" loading="lazy" decoding="async" />
-        <div class="spot-copy">
+      <div class="band-head" data-reveal>
+        <div class="spot-lead">
           <p class="label">For keynote speakers</p>
           <h2 class="display" id="spotlight-title"><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
           <p>Build your speaker brand and rise into thought leadership.</p>
-          <a class="btn-pill" href="rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
         </div>
+        <a class="btn-pill" href="rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
+      </div>
+
+      <!-- Three panels where there was one photograph. Same row geometry as the
+           last row of Selected Work, so the two stay in step. -->
+      <div class="work-row work-row--c" data-stagger>
+        <!-- TODO(link): case study page does not exist yet -->
+        <a class="work-item">
+          <span class="shot"><img style="--pos:center 32%" src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Gerd Bommer speaking on stage, wearing a headset microphone" loading="lazy" decoding="async" /></span>
+          <span class="shot-title"><b class="name">Gerd Bommer</b> Keynote Speaker and Founder-First Investor</span>
+          <span class="shot-more is-standing">Learn more →</span>
+        </a>
+        <!-- TODO(asset): no photograph of Michael Diewald exists — only
+             logo-dsp.webp. Standing in with the mark until one is supplied;
+             swap the span for a .shot with an <img> and it drops straight in. -->
+        <!-- TODO(link): case study page does not exist yet -->
+        <a class="work-item">
+          <span class="shot shot--pending"><img src="rysing-assets/logo-dsp.webp" alt="Der Schulter Physio" loading="lazy" decoding="async" /></span>
+          <span class="shot-title"><b class="name">Michael Diewald</b> The Shoulder Physio</span>
+          <span class="shot-more is-standing">Learn more →</span>
+        </a>
+        <!-- TODO(link): case study page does not exist yet -->
+        <a class="work-item">
+          <span class="shot"><img style="--pos:center center" src="rysing-assets/work-09-digitfinance.webp" alt="Digit Finance brand application" loading="lazy" decoding="async" /></span>
+          <span class="shot-title"><b class="name">Finance</b> Consultancy</span>
+          <span class="shot-more is-standing">Learn more →</span>
+        </a>
       </div>
     </section>
 
