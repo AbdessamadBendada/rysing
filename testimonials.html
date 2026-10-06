@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rysing — testimonials, three directions</title>
+  <meta name="description" content="Three slider directions for the In their words section. Prototype only — not the build." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="rysing-assets/favicon-32.png" />
+  <meta name="theme-color" content="#141414" />
+
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
+
+  <style>
+    /* Rysing — testimonials, three directions.
+
+       PROTOTYPE. Nothing here is wired into premium-direction.html. The point
+       is to look at the same six quotes in three vessels, side by side, under
+       the real tokens — same faces, same grain, same hairlines, same easing —
+       so the comparison is about the vessel and not about the styling.
+
+       Copy is lifted verbatim from premium-direction.html. All six quotes,
+       names, roles, the badges and the review pill appear in every direction.
+       Nothing was rewritten, reordered or dropped.
+
+       Tokens, type and the pill are copied from the build rather than
+       re-derived, so a direction that wins here transplants without retuning.
+       Anything invented for this file is marked LOCAL. */
+
+    @font-face { font-family:"Kinfolk"; src:url("rysing-assets/Kinfolk-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Light.woff2") format("woff2"); font-weight:300; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-SemiBold.woff2") format("woff2"); font-weight:600; font-display:swap; }
+    @font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+
+    /* --- Tokens (from the build) -------------------------------- */
+    :root {
+      --ink:#141414;
+      --ink-deep:#0d0d0d;
+      --paper:#f9f9f9;
+      --red:#f04222;
+      --blue:#3524d5;
+      --muted:#9a9a9a;
+      --line:rgba(249,249,249,.14);
+      --rule:rgba(249,249,249,.28);
+
+      --gutter:clamp(22px,4vw,74px);
+      --ease:cubic-bezier(.2,.75,.2,1);
+      --ease-weight:cubic-bezier(.16,1,.3,1);
+      --ease-detail:cubic-bezier(.3,.7,.2,1);
+      --t-weight:.72s;
+      --t-detail:.22s;
+
+      --mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 269.87 273.69'%3E%3Cpath d='M262.42,136.55c-12.82-.17-25.39-1.76-37.88-4.67l-20.93-5.54-13.69-5c-13.95-5.97-25.03-14.22-33.04-27.25-5.44-8.83-9.03-18.37-11.98-28.3l-5.16-20.33c-1.87-8.29-3.28-16.58-3.96-25v-.36c-.1-1.23-.19-2.45-.27-3.68-.07-1.32-.12-2.64-.15-3.97l-.24-10.68V.33s-.01-.05-.04-.09V0s-.08.01-.15.08c-.07-.06-.13-.11-.13-.08v.23s-.06.07-.06.09v1.46s-.23,10.68-.23,10.68c-.03,1.33-.08,2.65-.15,3.97-.08,1.23-.17,2.45-.27,3.68v.36c-.68,8.41-2.09,16.7-3.96,25l-5.16,20.33c-2.96,9.93-6.55,19.47-11.98,28.3-8.02,13.02-19.09,21.27-33.04,27.25l-13.69,5-20.93,5.54c-12.49,2.91-25.07,4.5-37.88,4.67l-7.45.25c.53.22,1.11.32,1.62.33l5.98.13c12.33.26,24.47,1.65,36.53,4.4l20.86,5.41,13.65,4.84c14.67,6.08,26.28,14.51,34.61,28.21,5.62,9.24,9.23,19.23,12.23,29.61l4.5,17.88c2.54,11.12,4.08,22.23,4.52,33.63l.23,10.21v1.66c0,.06.02.19.04.28,0,.13.03.33.07.3l.09-.09.09.09s.06-.17.07-.3c.03-.09.04-.22.04-.28v-1.66l.23-10.21c.44-11.4,1.99-22.51,4.52-33.63l4.5-17.88c3-10.37,6.61-20.37,12.23-29.61,8.32-13.7,19.93-22.14,34.61-28.21l13.65-4.84,20.86-5.41c12.05-2.75,24.19-4.15,36.53-4.4l5.98-.13c.51-.01,1.09-.11,1.62-.33l-7.45-.25Z'/%3E%3C/svg%3E");
+    }
+
+    * { box-sizing:border-box; }
+    html { background:var(--ink); scroll-behavior:smooth; overflow-x:clip; }
+    body {
+      margin:0; background:var(--ink); color:var(--paper);
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size:clamp(15px,1.1vw,17px); line-height:1.6;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a { color:inherit; text-decoration:none; }
+    img,video { display:block; }
+    :focus-visible { outline:2px solid var(--red); outline-offset:4px; }
+
+    /* Film grain, as the build sets it. */
+    body::after {
+      content:""; position:fixed; inset:0; z-index:90; pointer-events:none;
+      opacity:.055; mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+
+    /* --- Type (from the build) ---------------------------------- */
+    .display {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      text-transform:uppercase; letter-spacing:.01em; line-height:.96;
+    }
+    .display .alt {
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:600; letter-spacing:-.022em;
+    }
+    /* The proof head sets in one face — alternation is reserved for the hero,
+       the manifesto and the closing. The .alt spans stay in the markup and
+       simply inherit, exactly as the build handles it. */
+    .proof-lead h2 .alt { font-family:inherit; font-weight:inherit; letter-spacing:inherit; }
+    .label { font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    .vh { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+    .btn-pill {
+      flex:none; display:inline-flex; align-items:center; gap:12px;
+      min-height:44px; padding:0 22px; border:1px solid rgba(249,249,249,.4); border-radius:999px;
+      font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      background:none; color:inherit; cursor:pointer;
+      font-family:inherit;
+      transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+    }
+    .btn-pill:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .btn-pill .arrow {
+      width:11px; height:11px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+      transition:transform .35s var(--ease);
+    }
+    .btn-pill:hover .arrow { transform:rotate(90deg) scale(1.2); }
+
+    .band { padding-inline:var(--gutter); padding-block:clamp(60px,6.8vw,114px); }
+    .proof-head {
+      display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+      gap:24px; margin-bottom:clamp(28px,4vh,40px);
+    }
+    .proof-lead h2 { margin:0; font-size:clamp(32px,3.7vw,54px); }
+    .band-note { max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+    .proof-badges { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-end; }
+    .proof-badges > div { display:flex; flex-direction:column; gap:6px; }
+    .stars { color:var(--red); font-size:13px; letter-spacing:.2em; }
+    .proof-badges strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:26px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .proof-foot { margin-top:clamp(36px,4.6vw,64px); padding-top:28px; border-top:1px solid var(--rule); }
+
+    /* ============================================================
+       LOCAL — prototype chrome. None of this transplants.
+       A fixed rail of three tabs, so the same six quotes can be
+       compared in one place without scrolling between them.
+       ============================================================ */
+    .proto-bar {
+      position:fixed; z-index:100; inset:0 0 auto; height:66px;
+      padding:0 var(--gutter); display:flex; align-items:center; gap:clamp(14px,2vw,30px);
+      background:rgba(13,13,13,.9); backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
+    }
+    .proto-bar > .label { color:rgba(249,249,249,.45); margin-right:auto; }
+    .proto-tabs { display:flex; gap:8px; }
+    .proto-tab {
+      min-height:34px; padding:0 15px; border:1px solid rgba(249,249,249,.26); border-radius:999px;
+      background:none; color:rgba(249,249,249,.62); cursor:pointer; font-family:inherit;
+      font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail);
+    }
+    .proto-tab:hover { color:var(--paper); border-color:rgba(249,249,249,.6); }
+    .proto-tab[aria-selected="true"] { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .proto-panel[hidden] { display:none; }
+    .proto-note {
+      max-width:74ch; margin:0 auto clamp(10px,2vw,22px); padding:0 var(--gutter);
+      color:rgba(249,249,249,.5); font-size:13px; line-height:1.65;
+    }
+    .proto-note b { color:rgba(249,249,249,.8); font-weight:600; }
+    main { padding-top:66px; }
+
+    /* ============================================================
+       DIRECTION A — the named index
+       One quote at display size. The six names are the navigation,
+       set in the didone at the size .trow-meta strong already uses.
+       No dots, no arrows, nothing invented: the nav is the copy.
+       ============================================================ */
+    .idx-stage {
+      display:grid; grid-template-columns:minmax(0,4fr) minmax(0,7fr);
+      /* Halved from the first pass. At the old 86px the names, the face and
+         the quote read as three separate objects; tight, they read as one
+         spread with a speaker on the left and their words on the right. */
+      gap:clamp(24px,2.6vw,46px);
+      border-top:1px solid var(--rule); padding-top:clamp(30px,3.6vw,52px);
+      --cursor-w:clamp(20px,2.6vw,42px);
+      --dwell:6s;
+    }
+
+    /* The left column is one argument — who is speaking — so the names and the
+       face are siblings in a flex column, not two blocks that happen to sit
+       above each other. */
+    .idx-col { display:flex; flex-direction:column; }
+
+    /* The index. A table of contents, not a control strip. */
+    .idx-list { display:flex; flex-direction:column; align-items:flex-start; gap:clamp(6px,.9vw,13px); }
+    .idx-count { margin-bottom:clamp(14px,1.8vw,24px); color:rgba(249,249,249,.45); }
+    .idx-name {
+      position:relative; padding:0; border:0; background:none; cursor:pointer; text-align:left;
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:clamp(22px,2.1vw,30px); line-height:1; text-transform:uppercase; letter-spacing:.01em;
+      color:var(--paper); opacity:.22;
+      transition:opacity var(--t-detail) var(--ease-detail);
+    }
+    .idx-name:hover { opacity:.6; }
+    .idx-name[aria-selected="true"] { opacity:1; }
+
+    /* The active name carries a short rule out to its left — the section's own
+       hairline language pressed into service as a cursor. The space is
+       reserved on every name whether the rule is there or not, so the list
+       keeps one left edge and no text ever slides sideways. That also means
+       the rule can be animated with transform instead of width, which costs
+       no layout: a 6s width animation would reflow the line every frame. */
+    .idx-name::before {
+      content:""; display:inline-block; vertical-align:.26em;
+      width:var(--cursor-w); height:1px; margin-right:14px; background:var(--paper);
+      transform:scaleX(0); transform-origin:left center;
+      transition:transform var(--t-weight) var(--ease-weight);
+    }
+    .idx-name[aria-selected="true"]::before { transform:scaleX(1); }
+
+    /* Autoplay: the cursor rule is also the timer. It draws itself across as
+       the dwell elapses and the quote changes when it lands — so the section
+       tells you it is moving without a progress bar, dots or a countdown
+       being invented for it. One object, two jobs. */
+    @keyframes idx-draw { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+    .idx-stage.is-auto .idx-name[aria-selected="true"]::before {
+      animation:idx-draw var(--dwell) linear forwards;
+    }
+    /* A CSS animation is the only primitive that pauses mid-flight and resumes
+       where it stopped. A transition cannot: cutting its duration to zero
+       snaps it to the target instead of freezing it. */
+    .idx-stage.is-auto.is-paused .idx-name[aria-selected="true"]::before { animation-play-state:paused; }
+
+    /* The portrait. Deliberately no aspect-ratio: it takes whatever height the
+       quote leaves, so the two columns always bottom out on the same line. A
+       fixed 4:5 frame is what breaks this layout — six names plus a 4:5 face
+       runs ~500px against a 430px quote, and the left column starts driving
+       the height of a section that is supposed to be about the quote. */
+    .idx-portrait {
+      position:relative; overflow:hidden; margin:clamp(22px,2.6vw,38px) 0 0;
+      flex:1 1 auto; min-height:clamp(170px,13vw,240px); background:#1c1c1c;
+    }
+    .idx-portrait img {
+      width:100%; height:100%; object-fit:cover;
+      object-position:var(--pos,center 28%);
+      /* The one grade every photograph on the page carries. Client portraits
+         will arrive from six different cameras; this is what narrows them. */
+      filter:contrast(1.07) saturate(.62) brightness(.97);
+      transition:opacity var(--t-weight) var(--ease-weight),transform var(--t-weight) var(--ease-weight);
+    }
+    /* Marks the stand-in. Removed by handing a name button a data-portrait. */
+    .idx-portrait figcaption {
+      position:absolute; left:14px; bottom:12px;
+      color:rgba(249,249,249,.42); pointer-events:none;
+    }
+    .idx-portrait:not([data-placeholder]) figcaption { display:none; }
+
+    /* The quote. This is the point of the direction: a quote allowed to be as
+       loud as the section heads, instead of six of them at 24px. */
+    .idx-quote { display:flex; flex-direction:column; gap:clamp(22px,2.8vw,38px); min-height:clamp(300px,30vw,430px); }
+    .idx-quote blockquote {
+      margin:0; max-width:21em;
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:clamp(25px,3.1vw,46px); line-height:1.16; text-transform:uppercase; letter-spacing:-.012em;
+    }
+    /* Pinned to the foot of its column, not stacked under the quote. Whichever
+       column is taller — the names plus the face, or a long quote — the
+       attribution and the bottom of the portrait land on the same line, so
+       neither side ever shows trailing dead space. It also puts the stars and
+       the role exactly where a caption belongs under a photograph. */
+    .idx-attrib { margin-top:auto; display:flex; align-items:center; gap:16px; color:rgba(249,249,249,.65); }
+    .idx-attrib .stars { color:var(--red); }
+    .idx-attrib small { font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    /* Weight moves slowly, detail moves quickly — the quote is the weight.
+       14px of travel, matching the page's entrance. The out state is carried
+       on the stage rather than the quote, because the face and the words have
+       to change as one event; two independent fades read as a glitch. */
+    .idx-quote > * {
+      transition:opacity var(--t-weight) var(--ease-weight),transform var(--t-weight) var(--ease-weight);
+    }
+    .idx-stage.is-out .idx-quote > * { opacity:0; transform:translateY(14px); }
+    .idx-stage.is-out .idx-portrait img { opacity:0; transform:translateY(14px) scale(1.02); }
+    .idx-quote .idx-attrib { transition-delay:.06s; }
+
+    /* ============================================================
+       DIRECTION B — the editorial rail
+       The track breaks the right gutter so the next quote is always
+       entering. Drag, wheel or swipe. One hairline as the only
+       indicator — no dots, no arrows.
+       ============================================================ */
+    .rail-wrap { border-top:1px solid var(--rule); padding-top:clamp(30px,3.6vw,52px); }
+    .rail {
+      display:flex; gap:clamp(18px,2.4vw,40px);
+      /* Breaks the gutter on the right only: the left edge stays on the measure
+         with everything else, the right runs off the page. */
+      margin-right:calc(var(--gutter) * -1);
+      padding-right:var(--gutter);
+      overflow-x:auto; overscroll-behavior-x:contain;
+      scroll-snap-type:x mandatory; scrollbar-width:none;
+      cursor:grab;
+    }
+    .rail::-webkit-scrollbar { display:none; }
+    .rail.is-dragging { cursor:grabbing; scroll-snap-type:none; }
+    .rail.is-dragging * { pointer-events:none; }
+    .rail-card {
+      flex:0 0 clamp(260px,34vw,460px); scroll-snap-align:start;
+      display:flex; flex-direction:column; gap:clamp(18px,2vw,28px);
+      padding:clamp(22px,2.4vw,34px) 0 0;
+      border-top:1px solid var(--rule);
+      /* Quotes sit at different heights so the rail reads hand-set rather than
+         as a row of equal cards — the same argument the work rows make. */
+      margin-top:var(--drop,0px);
+      transition:opacity var(--t-weight) var(--ease-weight);
+    }
+    .rail-card:nth-child(even) { --drop:clamp(16px,2.2vw,40px); }
+    .rail-card blockquote {
+      margin:0;
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:clamp(19px,1.8vw,26px); line-height:1.2; text-transform:uppercase; letter-spacing:-.005em;
+    }
+    .rail-meta { display:flex; flex-direction:column; gap:8px; margin-top:auto; }
+    .rail-meta strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:clamp(22px,1.9vw,30px); line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .rail-meta small { color:rgba(249,249,249,.65); font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    /* The one piece of indicator furniture. A hairline that fills, matching the
+       rules above every card rather than introducing a new object. */
+    .rail-progress {
+      position:relative; height:1px; margin-top:clamp(30px,3.4vw,50px);
+      background:rgba(249,249,249,.18);
+    }
+    .rail-progress::after {
+      content:""; position:absolute; inset:0 auto 0 0;
+      width:var(--p,18%); background:var(--paper);
+      transition:width .12s linear;
+    }
+    .rail-hint { margin:14px 0 0; color:rgba(249,249,249,.4); }
+
+    /* ============================================================
+       DIRECTION C — the odometer
+       Borrows the services numerals. The figure rolls vertically as
+       the quote changes.
+       ============================================================ */
+    .odo-stage {
+      display:grid; grid-template-columns:auto minmax(0,1fr); align-items:start;
+      gap:clamp(28px,4.4vw,78px);
+      border-top:1px solid var(--rule); padding-top:clamp(30px,3.6vw,52px);
+    }
+    /* A fixed window one line tall; the strip of figures slides behind it. */
+    .odo-dial {
+      position:relative; overflow:hidden;
+      height:1em; line-height:1;
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:clamp(84px,13vw,186px); letter-spacing:-.012em;
+    }
+    .odo-strip {
+      display:flex; flex-direction:column;
+      transition:transform var(--t-weight) var(--ease-weight);
+      transform:translateY(calc(var(--i,0) * -1em));
+    }
+    .odo-strip span { height:1em; line-height:1; }
+    .odo-of { margin:0 0 clamp(8px,1vw,14px); color:rgba(249,249,249,.45); }
+    .odo-body { display:flex; flex-direction:column; gap:clamp(20px,2.4vw,32px); min-height:clamp(230px,22vw,320px); }
+    .odo-body blockquote {
+      margin:0; max-width:24em;
+      font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+      font-size:clamp(22px,2.5vw,36px); line-height:1.18; text-transform:uppercase; letter-spacing:-.01em;
+    }
+    .odo-meta { display:flex; flex-direction:column; gap:7px; }
+    .odo-meta strong {
+      font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+      font-size:clamp(24px,2vw,30px); line-height:1; text-transform:uppercase; letter-spacing:.01em;
+    }
+    .odo-meta small { color:rgba(249,249,249,.65); font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    .odo-body > * {
+      transition:opacity var(--t-weight) var(--ease-weight),transform var(--t-weight) var(--ease-weight);
+    }
+    .odo-body.is-out > * { opacity:0; transform:translateY(14px); }
+    /* This direction does need arrows — nothing else in it is clickable. That
+       cost is part of what you are judging. */
+    .odo-nav { display:flex; align-items:center; gap:12px; margin-top:auto; }
+    .odo-step {
+      width:44px; height:44px; display:grid; place-items:center;
+      border:1px solid rgba(249,249,249,.4); border-radius:50%;
+      background:none; color:inherit; cursor:pointer;
+      transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail);
+    }
+    .odo-step:hover:not(:disabled) { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+    .odo-step:disabled { opacity:.3; cursor:default; }
+    .odo-step::before {
+      content:""; width:12px; height:12px; background:currentColor;
+      -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+    }
+    .odo-step[data-step="-1"]::before { transform:rotate(180deg); }
+
+    /* --- Responsive --------------------------------------------- */
+    @media (max-width:980px) {
+      /* A: the index becomes a strip above the quote. Same mechanic, laid on
+         its side — not a fallback to stacked rows. */
+      .idx-stage { grid-template-columns:minmax(0,1fr); gap:clamp(26px,4vw,40px); }
+      .idx-list {
+        flex-direction:row; align-items:center; gap:22px;
+        margin-right:calc(var(--gutter) * -1); padding:0 var(--gutter) 16px 0;
+        overflow-x:auto; scrollbar-width:none;
+      }
+      .idx-list::-webkit-scrollbar { display:none; }
+      .idx-count { margin:0 4px 0 0; flex:none; }
+      .idx-name { flex:none; }
+      .idx-name::before,.idx-name[aria-selected="true"]::before { display:none; }
+      .idx-name[aria-selected="true"] { text-decoration:underline; text-underline-offset:7px; text-decoration-thickness:1px; }
+      .idx-quote { min-height:0; }
+      /* The rule is the cursor and the timer at full measure, but laid on its
+         side there is nothing for it to hang in. The underline takes over as
+         the cursor and the autoplay simply has no visible clock here — better
+         than parking a progress bar on a phone. */
+      .idx-stage.is-auto .idx-name[aria-selected="true"]::before { animation:none; }
+      /* With the index horizontal there is no column height to fill, so the
+         face takes a fixed frame and stops being the tallest thing on screen. */
+      .idx-portrait { flex:none; width:clamp(128px,42vw,184px); aspect-ratio:4/5; min-height:0; margin-top:4px; }
+      /* Nothing to push against once the columns stack. */
+      .idx-attrib { margin-top:0; }
+
+      /* C: the dial moves above the quote rather than beside it. */
+      .odo-stage { grid-template-columns:minmax(0,1fr); gap:20px; }
+      .odo-body { min-height:0; }
+      .odo-nav { margin-top:16px; }
+    }
+    @media (max-width:560px) {
+      .proof-badges { gap:24px; }
+      .proto-bar > .label { display:none; }
+      .proto-tab { padding:0 11px; letter-spacing:.1em; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      /* Travel goes, the crossfade stays — the change still needs to be
+         legible, it just stops moving. */
+      .idx-quote > *,.idx-portrait img,.odo-body > * { transition:opacity .2s linear; }
+      .idx-stage.is-out .idx-quote > *,
+      .idx-stage.is-out .idx-portrait img,
+      .odo-body.is-out > * { transform:none; }
+      .odo-strip { transition:none; }
+      /* Autoplay is off under reduced motion, so the cursor is a plain state. */
+      .idx-name::before { transition:none; }
+      html { scroll-behavior:auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOCAL: prototype chrome. -->
+  <div class="proto-bar">
+    <span class="label">Rysing · testimonials · three directions</span>
+    <div class="proto-tabs" role="tablist" aria-label="Testimonial directions">
+      <button class="proto-tab" type="button" role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">A · Named index</button>
+      <button class="proto-tab" type="button" role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">B · Editorial rail</button>
+      <button class="proto-tab" type="button" role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">C · Odometer</button>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ========================================================= -->
+    <!-- DIRECTION A                                               -->
+    <!-- ========================================================= -->
+    <div class="proto-panel" id="panel-a" role="tabpanel" aria-labelledby="tab-a" tabindex="0">
+      <p class="proto-note"><b>A · The named index, second pass.</b> Autoplay on a 6s dwell — the
+      hairline beside the active name <i>is</i> the clock, drawing itself across
+      as the time runs out, so there is no progress bar or dot row. It holds
+      while you hover or tab into it, holds while the section is off-screen, and
+      stops for good the moment you pick a name yourself. Gap halved. Portrait
+      under the index, filling whatever height the quote leaves. Click a name,
+      or use ← →.</p>
+
+      <section class="band" id="proof-a" aria-labelledby="proof-title-a">
+        <div class="proof-head">
+          <div class="proof-lead">
+            <h2 class="display" id="proof-title-a"><span class="alt">In their</span> words</h2>
+            <p class="band-note">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+          </div>
+          <div class="proof-badges">
+            <div><span class="stars" aria-hidden="true">★★★★★</span><span class="label">4.9 / 5 · 49 reviews</span></div>
+            <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
+          </div>
+        </div>
+
+        <div class="idx-stage" data-idx>
+          <!-- Who is speaking: the six names, then the face of whichever one is
+               live. To wire a real portrait, give that name button a
+               data-portrait (and an optional --pos focal point, as every photo
+               slot in the build takes) — the stand-in falls away on its own. -->
+          <div class="idx-col">
+            <div class="idx-list" role="tablist" aria-label="Choose a client">
+              <span class="label idx-count" data-idx-count>01 / 06</span>
+              <button class="idx-name" type="button" role="tab" aria-selected="true">Marcus H.</button>
+              <button class="idx-name" type="button" role="tab" aria-selected="false">Elena V.</button>
+              <button class="idx-name" type="button" role="tab" aria-selected="false">Tobias R.</button>
+              <button class="idx-name" type="button" role="tab" aria-selected="false">Sophie L.</button>
+              <button class="idx-name" type="button" role="tab" aria-selected="false">Daniel K.</button>
+              <button class="idx-name" type="button" role="tab" aria-selected="false">Nadia S.</button>
+            </div>
+
+            <figure class="idx-portrait" data-idx-portrait>
+              <img alt="" data-idx-photo decoding="async" />
+              <figcaption class="label">Portrait pending</figcaption>
+            </figure>
+          </div>
+
+          <figure class="idx-quote" role="tabpanel" aria-live="polite" data-idx-panel>
+            <blockquote data-idx-quote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+            <figcaption class="idx-attrib">
+              <span class="stars" aria-hidden="true">★★★★★</span>
+              <small data-idx-role>Founder, B2B SaaS</small>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="proof-foot"><a class="btn-pill" href="#proof-a">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
+      </section>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- DIRECTION B                                               -->
+    <!-- ========================================================= -->
+    <div class="proto-panel" id="panel-b" role="tabpanel" aria-labelledby="tab-b" tabindex="0" hidden>
+      <p class="proto-note"><b>B · The editorial rail.</b> The track breaks the right gutter, so
+      the next quote is always entering and the section reads as continuing past
+      the page edge. Drag, swipe or scroll sideways. One hairline fills as the
+      only indicator. Honest caveat: this is the move every good agency site
+      makes, and <i>very good template</i> is the exact diagnosis this build
+      exists to fix.</p>
+
+      <section class="band" id="proof-b" aria-labelledby="proof-title-b">
+        <div class="proof-head">
+          <div class="proof-lead">
+            <h2 class="display" id="proof-title-b"><span class="alt">In their</span> words</h2>
+            <p class="band-note">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+          </div>
+          <div class="proof-badges">
+            <div><span class="stars" aria-hidden="true">★★★★★</span><span class="label">4.9 / 5 · 49 reviews</span></div>
+            <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
+          </div>
+        </div>
+
+        <div class="rail-wrap">
+          <div class="rail" data-rail tabindex="0" role="group" aria-label="Client quotes, scroll sideways">
+            <figure class="rail-card">
+              <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+              <figcaption class="rail-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Marcus H.</strong><small>Founder, B2B SaaS</small></figcaption>
+            </figure>
+            <figure class="rail-card">
+              <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
+              <figcaption class="rail-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Elena V.</strong><small>Keynote speaker</small></figcaption>
+            </figure>
+            <figure class="rail-card">
+              <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
+              <figcaption class="rail-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Tobias R.</strong><small>Agency owner</small></figcaption>
+            </figure>
+            <figure class="rail-card">
+              <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
+              <figcaption class="rail-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Sophie L.</strong><small>Consultant</small></figcaption>
+            </figure>
+            <figure class="rail-card">
+              <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
+              <figcaption class="rail-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Daniel K.</strong><small>Co-founder, DTC brand</small></figcaption>
+            </figure>
+            <figure class="rail-card">
+              <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
+              <figcaption class="rail-meta"><span class="stars" aria-hidden="true">★★★★★</span><strong>Nadia S.</strong><small>Executive coach</small></figcaption>
+            </figure>
+          </div>
+          <div class="rail-progress" data-rail-progress aria-hidden="true"></div>
+          <p class="label rail-hint">Drag, or scroll sideways</p>
+        </div>
+
+        <div class="proof-foot"><a class="btn-pill" href="#proof-b">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
+      </section>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- DIRECTION C                                               -->
+    <!-- ========================================================= -->
+    <div class="proto-panel" id="panel-c" role="tabpanel" aria-labelledby="tab-c" tabindex="0" hidden>
+      <p class="proto-note"><b>C · The odometer.</b> Borrows the services numerals: the figure is
+      set in the didone at the same scale and rolls vertically as the quote
+      changes. It ties two sections together — but it makes the <i>number</i>
+      the loudest thing in a section about what people said, and it is the one
+      direction that has to invent arrows. Included so you can see that cost.</p>
+
+      <section class="band" id="proof-c" aria-labelledby="proof-title-c">
+        <div class="proof-head">
+          <div class="proof-lead">
+            <h2 class="display" id="proof-title-c"><span class="alt">In their</span> words</h2>
+            <p class="band-note">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+          </div>
+          <div class="proof-badges">
+            <div><span class="stars" aria-hidden="true">★★★★★</span><span class="label">4.9 / 5 · 49 reviews</span></div>
+            <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
+          </div>
+        </div>
+
+        <div class="odo-stage" data-odo>
+          <div>
+            <p class="label odo-of">Of six</p>
+            <div class="odo-dial display" aria-hidden="true">
+              <div class="odo-strip" data-odo-strip style="--i:0">
+                <span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span>
+              </div>
+            </div>
+          </div>
+
+          <figure class="odo-body" aria-live="polite" data-odo-panel>
+            <blockquote data-odo-quote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
+            <figcaption class="odo-meta">
+              <span class="stars" aria-hidden="true">★★★★★</span>
+              <strong data-odo-name>Marcus H.</strong>
+              <small data-odo-role>Founder, B2B SaaS</small>
+            </figcaption>
+            <div class="odo-nav">
+              <button class="odo-step" type="button" data-step="-1" aria-label="Previous quote"></button>
+              <button class="odo-step" type="button" data-step="1" aria-label="Next quote"></button>
+            </div>
+          </figure>
+        </div>
+
+        <div class="proof-foot"><a class="btn-pill" href="#proof-c">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
+      </section>
+    </div>
+
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* The six quotes, read out of the markup rather than duplicated here.
+       Direction A and C swap text in place, so they need the data — but the
+       authored markup stays the source of truth, the way the stat figures in
+       the build are parsed instead of hardcoded. These are copy. */
+    var QUOTES = Array.prototype.map.call(
+      document.querySelectorAll('[data-rail] .rail-card'),
+      function (card) {
+        return {
+          quote: card.querySelector('blockquote').textContent,
+          name:  card.querySelector('strong').textContent,
+          role:  card.querySelector('small').textContent
+        };
+      }
+    );
+
+    var reduced = window.matchMedia('(prefers-reduced-motion:reduce)');
+
+    /* ---- LOCAL: prototype tabs ---- */
+    (function () {
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.proto-tab'));
+      function show(tab) {
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.setAttribute('aria-selected', String(on));
+          document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+        });
+      }
+      tabs.forEach(function (tab, i) {
+        tab.addEventListener('click', function () { show(tab); });
+        tab.addEventListener('keydown', function (e) {
+          var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+          if (!d) return;
+          e.preventDefault();
+          var next = tabs[(i + d + tabs.length) % tabs.length];
+          next.focus(); show(next);
+        });
+      });
+    })();
+
+    /* ================================================================
+       A — named index
+       ================================================================ */
+    (function () {
+      var stage = document.querySelector('[data-idx]');
+      if (!stage) return;
+
+      var names    = Array.prototype.slice.call(stage.querySelectorAll('.idx-name'));
+      var quoteEl  = stage.querySelector('[data-idx-quote]');
+      var roleEl   = stage.querySelector('[data-idx-role]');
+      var countEl  = stage.querySelector('[data-idx-count]');
+      var frame    = stage.querySelector('[data-idx-portrait]');
+      var photo    = stage.querySelector('[data-idx-photo]');
+      var active   = 0;
+      var swap     = null;
+
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+      /* A stand-in, generated rather than loaded, so the layout can be judged
+         at the real proportions before any portrait exists. Carries the
+         person's initials so the face reads as belonging to the highlighted
+         name — which is the one risk in putting it under the index. */
+      function standIn(name) {
+        var initials = name.replace(/[^A-Za-z ]/g, '').trim().split(/\s+/)
+          .map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase();
+        return 'data:image/svg+xml,' + encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000">' +
+          '<rect width="800" height="1000" fill="#1f1f1f"/>' +
+          '<text x="400" y="500" fill="#f9f9f9" fill-opacity="0.13" font-family="Didot,Georgia,serif" ' +
+          'font-size="320" text-anchor="middle" dominant-baseline="central">' + initials + '</text></svg>'
+        );
+      }
+
+      /* The authored markup stays the source of truth: a real portrait is one
+         data-portrait on the name button, same as the build's photo slots. */
+      function portraitFor(i) {
+        return names[i].dataset.portrait || null;
+      }
+
+      function paint(i) {
+        quoteEl.textContent = QUOTES[i].quote;
+        roleEl.textContent  = QUOTES[i].role;
+
+        var src = portraitFor(i);
+        photo.src = src || standIn(QUOTES[i].name);
+        photo.alt = src ? QUOTES[i].name + ', ' + QUOTES[i].role : '';
+        if (src) { frame.removeAttribute('data-placeholder'); }
+        else { frame.setAttribute('data-placeholder', ''); }
+        /* A focal point travels with the file, never hardcoded per slot. */
+        var pos = names[i].dataset.pos;
+        if (pos) { photo.style.setProperty('--pos', pos); }
+        else { photo.style.removeProperty('--pos'); }
+      }
+
+      /* ---- autoplay ----
+         The dwell is read from CSS so the rule that draws the cursor and the
+         timer that changes the quote cannot drift apart. One number. */
+      var DWELL = (parseFloat(getComputedStyle(stage).getPropertyValue('--dwell')) || 6) * 1000;
+      var auto = !reduced.matches;
+      var holds = new Set();
+      var tick = null, startedAt = Date.now(), left = DWELL;
+
+      function arm(ms) {
+        clearTimeout(tick);
+        left = ms; startedAt = Date.now();
+        tick = setTimeout(function () { go((active + 1) % QUOTES.length, true); }, ms);
+      }
+
+      /* Several things can pause at once — the cursor is over the stage and the
+         section has scrolled away. Counting reasons stops whichever one leaves
+         first from resuming on behalf of the other. */
+      function hold(reason) {
+        if (!auto) return;
+        var was = holds.size;
+        holds.add(reason);
+        if (was) return;
+        clearTimeout(tick);
+        left = Math.max(0, left - (Date.now() - startedAt));
+        stage.classList.add('is-paused');
+      }
+      function release(reason) {
+        if (!auto) return;
+        holds.delete(reason);
+        if (holds.size) return;
+        stage.classList.remove('is-paused');
+        arm(left);
+      }
+      /* Once you have taken control the section should not keep moving under
+         you. Manual choice ends autoplay for good, it does not just delay it. */
+      function surrender() {
+        if (!auto) return;
+        auto = false; holds.clear(); clearTimeout(tick);
+        stage.classList.remove('is-auto', 'is-paused');
+      }
+
+      function go(i, fromTimer) {
+        if (!fromTimer) surrender();
+        if (i === active) return;
+        active = i;
+
+        names.forEach(function (n, k) { n.setAttribute('aria-selected', String(k === i)); });
+        countEl.textContent = pad(i + 1) + ' / ' + pad(QUOTES.length);
+        if (auto && !holds.size) arm(DWELL);
+
+        /* Out, then in. The swap happens while the quote is invisible, so the
+           change of measure never shows as a reflow. */
+        stage.classList.add('is-out');
+        clearTimeout(swap);
+        swap = setTimeout(function () {
+          paint(i);
+          /* Two frames: one to land the new content, one to let the browser
+             register the hidden state before it is removed. A single frame
+             drops the transition on Safari. */
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { stage.classList.remove('is-out'); });
+          });
+        }, reduced.matches ? 140 : 300);
+      }
+
+      names.forEach(function (n, i) {
+        n.addEventListener('click', function () { go(i); });
+      });
+
+      /* Arrow keys work from anywhere in the index. */
+      stage.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1
+              : e.key === 'ArrowUp'   || e.key === 'ArrowLeft'  ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var next = (active + d + QUOTES.length) % QUOTES.length;
+        names[next].focus();
+        go(next);
+      });
+
+      /* Reading beats rotating: hovering or tabbing into the stage holds it. */
+      stage.addEventListener('pointerenter', function () { hold('hover'); });
+      stage.addEventListener('pointerleave', function () { release('hover'); });
+      stage.addEventListener('focusin', function () { hold('focus'); });
+      stage.addEventListener('focusout', function () { release('focus'); });
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) hold('tab'); else release('tab');
+      });
+
+      paint(0);
+
+      if (auto) {
+        stage.classList.add('is-auto');
+        /* Nothing should rotate off-screen — it burns through all six quotes
+           while nobody is looking, and the cursor animation keeps
+           compositing. So it starts held, and the observer releases it when
+           the section actually arrives. Without an observer it simply runs. */
+        if ('IntersectionObserver' in window) {
+          hold('offscreen');
+          new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) release('offscreen'); else hold('offscreen');
+            });
+          }, { threshold: .25 }).observe(stage);
+        } else {
+          arm(DWELL);
+        }
+      }
+    })();
+
+    /* ================================================================
+       B — editorial rail
+       ================================================================ */
+    (function () {
+      var rail = document.querySelector('[data-rail]');
+      if (!rail) return;
+      var bar = document.querySelector('[data-rail-progress]');
+
+      function paint() {
+        var max = rail.scrollWidth - rail.clientWidth;
+        /* The visible fraction is the floor: at rest on a wide screen the bar
+           should report how much of the rail is on screen, not zero. */
+        var seen = rail.clientWidth / rail.scrollWidth;
+        var p = max > 1 ? seen + (1 - seen) * (rail.scrollLeft / max) : 1;
+        bar.style.setProperty('--p', (p * 100).toFixed(2) + '%');
+      }
+
+      rail.addEventListener('scroll', paint, { passive: true });
+      window.addEventListener('resize', paint);
+      paint();
+
+      /* Pointer drag. Snapping is suspended mid-drag and restored on release,
+         otherwise mandatory snap fights every pixel of movement. */
+      var down = false, startX = 0, startLeft = 0, moved = 0;
+
+      rail.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'touch') return;  /* native touch scrolling is better */
+        down = true; moved = 0;
+        startX = e.clientX; startLeft = rail.scrollLeft;
+        rail.setPointerCapture(e.pointerId);
+      });
+
+      rail.addEventListener('pointermove', function (e) {
+        if (!down) return;
+        var dx = e.clientX - startX;
+        if (Math.abs(dx) > 3) rail.classList.add('is-dragging');
+        moved = Math.abs(dx);
+        rail.scrollLeft = startLeft - dx;
+      });
+
+      function release() {
+        if (!down) return;
+        down = false;
+        rail.classList.remove('is-dragging');
+        /* Re-enabling mandatory snap settles the rail onto the nearest card. */
+      }
+      rail.addEventListener('pointerup', release);
+      rail.addEventListener('pointercancel', release);
+
+      /* A drag that moved the rail should not also follow a link or focus a
+         card underneath the cursor. */
+      rail.addEventListener('click', function (e) {
+        if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
+    })();
+
+    /* ================================================================
+       C — odometer
+       ================================================================ */
+    (function () {
+      var stage = document.querySelector('[data-odo]');
+      if (!stage) return;
+
+      var strip   = stage.querySelector('[data-odo-strip]');
+      var panel   = stage.querySelector('[data-odo-panel]');
+      var quoteEl = stage.querySelector('[data-odo-quote]');
+      var nameEl  = stage.querySelector('[data-odo-name]');
+      var roleEl  = stage.querySelector('[data-odo-role]');
+      var steps   = Array.prototype.slice.call(stage.querySelectorAll('.odo-step'));
+      var active  = 0;
+      var timer   = null;
+
+      function go(i) {
+        /* Clamped, not wrapped: an odometer that rolls from 06 back to 01 runs
+           the strip the whole way backwards, which reads as a mistake. */
+        i = Math.max(0, Math.min(QUOTES.length - 1, i));
+        if (i === active) return;
+        active = i;
+
+        strip.style.setProperty('--i', i);
+        steps.forEach(function (b) {
+          var d = Number(b.dataset.step);
+          b.disabled = (d < 0 && active === 0) || (d > 0 && active === QUOTES.length - 1);
+        });
+
+        panel.classList.add('is-out');
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          quoteEl.textContent = QUOTES[i].quote;
+          nameEl.textContent  = QUOTES[i].name;
+          roleEl.textContent  = QUOTES[i].role;
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { panel.classList.remove('is-out'); });
+          });
+        }, reduced.matches ? 140 : 300);
+      }
+
+      steps.forEach(function (b) {
+        b.addEventListener('click', function () { go(active + Number(b.dataset.step)); });
+      });
+      steps[0].disabled = true;
+
+      stage.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        go(active + d);
+      });
+    })();
+
+  })();
+  </script>
+</body>
+</html>
