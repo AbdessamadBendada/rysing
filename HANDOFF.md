@@ -181,6 +181,18 @@ showed 23 dropped frames that vanished when interleaved and repeated.
 seam measured 26px and was really 178px.
 The single-threaded `python3 -m http.server` dies on the 13MB showreel; use a
 threaded one or every other navigation times out.
+**Verify the page, not the section. This was the single worst process failure
+of the cycle.** Three sections were built and signed off one at a time, each
+checked on its own bounds and each fine. Together they put three hard
+horizontal lines across the full width of the page — the hero, the newsletter
+and the closing all cut their own glow flat at their bottom edge. The client saw
+it immediately; no amount of per-section checking would ever have shown it. After
+any section-level change, shoot the whole page and scan every boundary. The
+audit is cheap: `fullPage` screenshot, then for each section edge sample the
+pixel 2px above and 2px below across the width and report the largest channel
+delta. Anything over ~10 is a visible line. The three seams measured 146, 82 and
+51; everything on the page is now ≤3.
+
 **An element screenshot cannot show an edge artifact, because the artifact is
 at the edge.** The belonging glow shipped as a hard-edged rectangle: an ellipse
 larger than its section under `overflow:clip`, guillotined into a straight top
@@ -257,6 +269,10 @@ filenames once and wired up entirely the wrong asset.
   workspace on a general instruction is not what that instruction means. If they
   are ever wanted, commit them on their own and say so.
 - `ASSET-SPEC.md` still describes three active projects. There are nine.
+- The footer wordmark has a soft white orb to the left of the star. It is in the
+  supplied artwork (`rysing-logo-lockup-light.webp`), not a rendering fault —
+  invisible at header size, obvious at full width. Needs clean artwork if the
+  client does not want it.
 - `ASSET-SPEC.md` has no entry for the six testimonial portraits. Add one before
   forwarding — see §7 for what to ask for.
 
@@ -416,6 +432,14 @@ rather than a line that was set. Verified by walking the rendered words and
 grouping them by line box, at both ends of the size clamp. It holds three lines
 down to 820px and wraps further below that, which is correct — the alternative
 is type too small to carry the moment.
+
+**Every decorative glow carries `.glow-soft`,** which fades it to nothing before
+the top and bottom of its own section. Only the vertical axis is faded: left and
+right are clipped at the viewport edge where a cut is invisible. It masks rather
+than resizing each gradient to fit, because the glows are deliberately placed
+off-centre and near their edges, and shrinking them to fit moves the light away
+from where the design puts it. The hero and the footer carry one-sided versions
+of the same fade. Do not add a glow without it.
 
 **The glow is a gradient that reaches transparent inside its own box,** not an
 oval larger than the section. Built the other way round first — a 1254px ellipse

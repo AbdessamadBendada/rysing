@@ -53,6 +53,22 @@
       --mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 269.87 273.69'%3E%3Cpath d='M262.42,136.55c-12.82-.17-25.39-1.76-37.88-4.67l-20.93-5.54-13.69-5c-13.95-5.97-25.03-14.22-33.04-27.25-5.44-8.83-9.03-18.37-11.98-28.3l-5.16-20.33c-1.87-8.29-3.28-16.58-3.96-25v-.36c-.1-1.23-.19-2.45-.27-3.68-.07-1.32-.12-2.64-.15-3.97l-.24-10.68V.33s-.01-.05-.04-.09V0s-.08.01-.15.08c-.07-.06-.13-.11-.13-.08v.23s-.06.07-.06.09v1.46s-.23,10.68-.23,10.68c-.03,1.33-.08,2.65-.15,3.97-.08,1.23-.17,2.45-.27,3.68v.36c-.68,8.41-2.09,16.7-3.96,25l-5.16,20.33c-2.96,9.93-6.55,19.47-11.98,28.3-8.02,13.02-19.09,21.27-33.04,27.25l-13.69,5-20.93,5.54c-12.49,2.91-25.07,4.5-37.88,4.67l-7.45.25c.53.22,1.11.32,1.62.33l5.98.13c12.33.26,24.47,1.65,36.53,4.4l20.86,5.41,13.65,4.84c14.67,6.08,26.28,14.51,34.61,28.21,5.62,9.24,9.23,19.23,12.23,29.61l4.5,17.88c2.54,11.12,4.08,22.23,4.52,33.63l.23,10.21v1.66c0,.06.02.19.04.28,0,.13.03.33.07.3l.09-.09.09.09s.06-.17.07-.3c.03-.09.04-.22.04-.28v-1.66l.23-10.21c.44-11.4,1.99-22.51,4.52-33.63l4.5-17.88c3-10.37,6.61-20.37,12.23-29.61,8.32-13.7,19.93-22.14,34.61-28.21l13.65-4.84,20.86-5.41c12.05-2.75,24.19-4.15,36.53-4.4l5.98-.13c.51-.01,1.09-.11,1.62-.33l-7.45-.25Z'/%3E%3C/svg%3E");
     }
 
+    /* Every decorative glow on the page fades to nothing before it reaches the
+       top and bottom of its own section. Without this a glow is simply cut by
+       the section box and leaves a hard horizontal line the full width of the
+       page — the sections stop being one surface and start looking glued
+       together. Only the vertical axis is faded: left and right are clipped at
+       the viewport edge, where a cut is invisible.
+
+       Masking rather than resizing each gradient to fit, because the glows are
+       deliberately placed off-centre and near their edges; shrinking them to
+       fit would move the light away from where the design puts it. */
+    .glow-soft {
+      --fade:15%;
+      -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
+              mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
+    }
+
     * { box-sizing:border-box; }
     /* clip, not hidden: the drifting glows are allowed to bleed off the
        viewport without opening a horizontal scrollbar, and unlike `hidden`
@@ -241,9 +257,18 @@
       position:relative; isolation:isolate; overflow:hidden;
       min-height:100svh; padding:clamp(140px,17vh,210px) var(--gutter) clamp(48px,6vh,80px);
       display:flex; flex-direction:column; justify-content:flex-end;
-      background:var(--ink-deep);
+      /* The hero's ground is darker than the page. Left as a flat fill it put a
+         second hard line at exactly the same place as the cut glow; it now
+         resolves into the page colour over the last fifth. */
+      background:linear-gradient(to bottom,var(--ink-deep) 0 78%,var(--ink) 100%);
     }
-    .hero-light { position:absolute; z-index:-1; inset:0; pointer-events:none; }
+    /* The lights bleed in from below the fold, so only the bottom needs
+       fading — the top edge is the top of the page. */
+    .hero-light {
+      position:absolute; z-index:-1; inset:0; pointer-events:none;
+      -webkit-mask-image:linear-gradient(to bottom,#000 0 70%,transparent 100%);
+              mask-image:linear-gradient(to bottom,#000 0 70%,transparent 100%);
+    }
     .hero-light::before,.hero-light::after {
       content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
     }
@@ -1150,7 +1175,16 @@
        The inner element clips them: left unclipped they would extend the
        document past the footer and add dead scroll at the very bottom. */
     .site-footer { position:relative; isolation:isolate; padding:0 var(--gutter) 28px; }
-    .footer-light { position:absolute; z-index:-1; inset:0; overflow:hidden; pointer-events:none; }
+    /* overflow:hidden stays — unclipped these extend the document past the
+       footer and add dead scroll at the very bottom. The mask is a separate
+       job: it fades the top so the red is not cut flat against the closing
+       section above, which was the last hard line left on the page. The bottom
+       needs no fade; it is the end of the document. */
+    .footer-light {
+      position:absolute; z-index:-1; inset:0; overflow:hidden; pointer-events:none;
+      -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 100%);
+              mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 100%);
+    }
     .footer-light::before,.footer-light::after {
       content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
     }
@@ -1626,7 +1660,7 @@
          the earlier baselines. Sits between the proof and the ask on purpose —
          see the note on .belong. -->
     <section class="belong" id="belong" aria-labelledby="belong-title">
-      <div class="belong-glow" aria-hidden="true"></div>
+      <div class="belong-glow glow-soft" aria-hidden="true"></div>
       <span class="belong-mark" data-reveal aria-hidden="true"></span>
       <h2 class="display" data-reveal id="belong-title">
         <span class="alt">If you feel like you and your brand are meant for</span> something bigger,
@@ -1673,7 +1707,7 @@
          "Fudge for founders." and "People branding. Without the fluff." — all
          baseline copy, so this is a deliberate removal and not an oversight. -->
     <section class="band fudge" id="sunday-fudge" aria-labelledby="fudge-title">
-      <div class="fudge-glow" aria-hidden="true"></div>
+      <div class="fudge-glow glow-soft" aria-hidden="true"></div>
       <div class="fudge-copy">
         <p class="label" data-reveal>Newsletter — Sunday Fudge</p>
         <!-- The hyphen is a legal break point; holding the compound together
@@ -1703,7 +1737,7 @@
          baseline copy. "Ready to build a legacy?" is new, and it answers the
          manifesto's "build a legacy" at the other end of the page. -->
     <section class="band closing" id="contact" aria-labelledby="contact-title">
-      <div class="closing-glow" aria-hidden="true"></div>
+      <div class="closing-glow glow-soft" aria-hidden="true"></div>
       <h2 data-reveal class="display" id="contact-title"><span class="alt">Ready to build a</span> legacy?</h2>
       <a class="btn-pill" data-reveal href="mailto:hello@rysing.agency">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
     </section>
