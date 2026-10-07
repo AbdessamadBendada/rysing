@@ -326,8 +326,10 @@ other half of why these feel cheap.
 **The loop is built from clones** the script marks `aria-hidden`, exactly as the
 marquee duplicates its track. The six authored quotes stay the only place this
 copy is written. Verified: the section's visible text is byte-identical to
-`e807407`, before any slider existed. The `01 / 06` counter is gone with the
-index, so there is now no string on the page outside the frozen copy.
+`e807407`, before any slider existed — the `01 / 06` counter went with the
+index. That held for this section only, and only until §9 and §11: the
+spotlight's panel captions and "Ready to build a legacy?" are both new copy,
+added on the client's instruction.
 
 **Placing and lighting are separate functions, and that is deliberate.** The
 backward wrap has to park the track at a position it is not at before it
