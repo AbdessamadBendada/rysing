@@ -167,19 +167,29 @@ historical prototype exploration, not the active `rysing-comments.html` build.
 
 - Approved `new-direction-2.html` as a new parallel concept; it does not replace
   or modify `rysing-comments.html`, `new-direction.html`, or any earlier concept.
-- Adopted the structure and visual pacing of the supplied `Main.dc.html`
-  blueprint while rebuilding it as standalone semantic HTML, CSS, and JavaScript.
+- Locked the concept to exactly two sources: `/Users/mac/Downloads/Homepage-html/Main.dc.html`
+  is the sole visual blueprint, and `rysing-comments.html` is the sole source for
+  copy, links, images, accessibility requirements, and unresolved-content markers.
+- Explicitly excluded `new-direction.html` from the design and implementation
+  process. It must not be opened, referenced, copied, or treated as a source for
+  `new-direction-2.html`.
+- Rebuilt `new-direction-2.html` from zero as standalone semantic HTML, CSS, and
+  JavaScript after the earlier implementation violated this source boundary.
+- Adopted only the structure, proportions, typography treatment, colour placement,
+  and section language of the supplied `Main.dc.html` visual blueprint.
 - Removed the showreel from the hero. The new hero is a full-height typographic
   composition with restrained red and blue light, brand texture, and mixed
   serif/sans display treatment.
-- Approved a standalone sticky showreel transition. The Rysing aperture expands
-  on scroll while the video itself plays normally; reduced-motion and no-JavaScript
-  users receive a static rectangular video instead.
+- Approved a standalone framed showreel beneath the typographic hero. A later
+  visual review rejected the oversized sticky aperture treatment as an
+  over-designed departure from the supplied reference.
 - Extended the new direction through the full homepage using the existing copy,
   real project imagery, client marks, founder/team photography, and local Rysing
   logo, pattern, colour, and font assets.
 - Adopted a primarily black editorial canvas with `#f04222` red and `#0044ff`
-  blue reserved for decisive branded moments. The final CTA remains full red.
+  blue reserved for restrained ambient shapes and decisive accents. A later
+  reference-alignment pass removed the full-red final CTA and red service rows;
+  both now remain black with controlled brand-colour punctuation.
 - Adopted the locally supplied Kinfolk/Aileron pairing for this concept to match
   the new brand direction. Kinfolk web licensing must be confirmed before this
   concept can be treated as production-ready.
