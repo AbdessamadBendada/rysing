@@ -1,6 +1,11 @@
 # Handoff
 
-Last updated at commit `b943842`. Read this before touching anything.
+Read this before touching anything.
+
+**The active build is `index.html`, at the root of the repository.** It was called
+`premium-direction.html` until the files were reorganised; every other HTML file
+now lives in `playground/`. Anything below that names `premium-direction.html` is
+a reference to this same file under its old name.
 
 ---
 
@@ -9,9 +14,9 @@ Last updated at commit `b943842`. Read this before touching anything.
 Rysing is a branding and visibility studio selling 20–30k engagements. The site
 has to carry that price before anyone reads a word.
 
-`new-direction.html` reached competent but read as a very good template rather
-than a studio operating at that level. `premium-direction.html` is the fix. The
-diagnosis is in `new-direction-comments.md`; the short version is that every
+`playground/new-direction.html` reached competent but read as a very good
+template rather than a studio operating at that level. `index.html` is the fix.
+The diagnosis is in `new-direction-comments.md`; the short version is that every
 device was used at full strength, everywhere, at once, and the work this borrows
 from spends most of the page near-silent so a few moments can detonate.
 
@@ -21,7 +26,7 @@ The job is to keep inverting that ratio back.
 
 ## 2. Current state
 
-`premium-direction.html` is the active build. It is on `main` and pushed.
+`index.html` is the active build. It is on `main` and pushed.
 
 Done and verified:
 
@@ -67,16 +72,24 @@ Unresolved: see §6.
 
 | File | Role |
 | --- | --- |
-| `premium-direction.html` | **The active build. The only page to edit.** |
-| `new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
-| `new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
-| `testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
-| `rysing-comments.html` | Frozen copy/structure baseline. Read-only. |
-| `AGENTS.md` | Settled decisions and the local testing harness. Read the ACTIVE TRACK section. |
+| `index.html` | **The active build. The only page to edit.** Was `premium-direction.html`. |
+| `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
+| `playground/new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
+| `playground/testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
+| `playground/rysing-comments.html` | Frozen copy/structure baseline. Read-only. |
+| `playground/` (the rest) | Earlier cycles — `rysing.html`, `rysing2.html`, `rysing-v2.html`, `rysing-private.html`, `rysing-branding.html`. History only. |
+| `AGENTS.md` | Settled decisions and the local testing harness. **Its ACTIVE TRACK section is stale — it predates this cycle and still names `new-direction.html` as the build.** Read it for the settled decisions, not for which file to edit. |
 | `new-direction-comments.md` | Why the previous direction was not premium. 12 ranked problems. |
-| `PREMIUM-DIRECTION-PLAN.md` | The brief this build was made against. |
+| `PREMIUM-DIRECTION-PLAN.md` | The brief this build was made against. Still calls the build `premium-direction.html`. |
 | `ASSET-SPEC.md` | Per-slot dimensions, crops, shot list. Send to the client. **Still says only three projects are active — correct before forwarding.** |
 | `~/Downloads/Homepage-html/Main.dc.html` | The original design reference. Replicate values, never copy markup. |
+
+**Everything in `playground/` has broken asset paths.** Those files reference
+`rysing-assets/…` and `rysing brand assets/…` relative to the repository root,
+which no longer resolves from one directory down — 136 references across the nine
+files. They were moved as history, so this was left alone deliberately; if one
+has to render again, prefix its asset paths with `../` rather than copying assets
+into `playground/`.
 
 Work assets added this cycle, all in `rysing-assets/`:
 `work-10-michael-diewald.webp` (spotlight, from the Michael project), 
@@ -176,7 +189,7 @@ white blob at small aperture — but the fix was the crossfade, not removal.
 one quote at display size, the six names as the navigation, the cursor rule
 doubling as the autoplay clock. She asked instead for a conventional three-up
 slider with autoplay. The reasoning behind the index was sound and is still in
-`testimonials.html`; it was simply not what she wanted. Rebuilt as the rail in
+`playground/testimonials.html`; it was simply not what she wanted. Rebuilt as the rail in
 §7. Do not re-propose the index.
 
 **Stats hierarchy was tried and reverted.** Leading on "35+" made the smallest
@@ -276,7 +289,7 @@ filenames once and wired up entirely the wrong asset.
 
 **Housekeeping**
 
-- `RYSING_PROJECT_DIRECTION.md` and `new-direction-2.html` sat modified and
+- `RYSING_PROJECT_DIRECTION.md` and `playground/new-direction-2.html` sat modified and
   uncommitted from Oct 3 and were held out of every push on the grounds that
   committing another track's workspace on a general "push everything" is not
   what that instruction means. They went in on `b943842` once the instruction
@@ -301,7 +314,7 @@ Three quotes on the measure, drifting one column at a time.
 **This is the second design.** The first shipped a named index — one quote at
 display size, the six names as the navigation — and the client did not want it.
 She asked for a conventional slider, three up, autoplaying. That is a decision,
-not a question; do not re-propose the index. `testimonials.html` still holds the
+not a question; do not re-propose the index. `playground/testimonials.html` still holds the
 three directions originally considered and is worth reading before anyone
 proposes anything here again, but it describes a road already closed.
 
@@ -512,7 +525,7 @@ A centred column. The two-up with the printed cover beside it is gone.
 
 **It deletes baseline copy, deliberately.** The card carried "Sunday edition",
 "Rysing Studio", "Fudge for founders." and "People branding. Without the fluff."
-— all present in `rysing-comments.html`, so this is a real removal, flagged
+— all present in `playground/rysing-comments.html`, so this is a real removal, flagged
 before it was made and built because the supplied design has no card. One revert
 brings it back. If it returns, it needs a home that is not beside the form: the
 reason the centred version works is that the ask is a single field and
