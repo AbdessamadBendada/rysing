@@ -34,6 +34,10 @@ const srcDir = path.join(root, 'src');
 
 const read = (p) => fs.readFileSync(p, 'utf8');
 
+/* Keys a page may leave out. Everything else still has to be declared, so a
+   typo in a token remains a build failure rather than an empty attribute. */
+const OPTIONAL = { pagescripts: '' };
+
 /* Pulls the leading `key: value` comment off a page source and returns it
    alongside the remaining markup. A value may be empty (`home:`). */
 function parseFrontMatter(text, file) {
@@ -84,15 +88,25 @@ for (const file of pages) {
   if (meta.home === undefined) throw new Error(`${file}: front matter is missing home`);
   if (!meta.skip) throw new Error(`${file}: front matter is missing skip`);
 
+  /* Marks the nav link that points at this very page, so the current section
+     is indicated without each page having to hand-edit a copy of the nav.
+     Done after the chrome is filled, because the href only resolves then. */
+  const markCurrent = (html) =>
+    html.replace(
+      new RegExp(`href="${file.replace('.', '\\.')}"`, 'g'),
+      `href="${file}" aria-current="page"`,
+    );
+
   /* The chrome is filled first, so its own {{home}}/{{skip}} resolve against
      this page before it is dropped into the layout. */
   const chrome = { ...meta };
   const page = fill(
     layout,
     {
+      ...OPTIONAL,
       ...meta,
-      header: indent(fill(header, chrome, '_header.html'), '  '),
-      footer: indent(fill(footer, chrome, '_footer.html'), '  '),
+      header: indent(markCurrent(fill(header, chrome, '_header.html')), '  '),
+      footer: indent(markCurrent(fill(footer, chrome, '_footer.html')), '  '),
       main: indent(body, ''),
     },
     file,

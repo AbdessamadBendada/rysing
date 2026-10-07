@@ -1,0 +1,91 @@
+<!--
+  title: Contact — Rysing
+  description: Book a 30-minute call or write to Rysing. Branding and visibility studio in Vienna.
+  home: index.html
+  skip: #contact-top
+  pagescripts: <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+-->
+    <!-- The eyebrow, the question and the three details share one section so
+         the red light can run behind all of them, the way the design draws it.
+         Split across two sections each would have to fade out at its own edge
+         and the light would break across the join — HANDOFF §5. -->
+    <section class="band contact-top" id="contact-top" aria-labelledby="contact-title">
+      <div class="contact-top-glow glow-soft" aria-hidden="true"></div>
+
+      <p class="label" data-reveal>Contact</p>
+      <!-- Same two faces as the homepage's closing ask, which this repeats on
+           purpose: arriving here should feel like the answer to that question,
+           not a different page asking a new one. -->
+      <!-- "a legacy?" is held together so the question breaks where the design
+           breaks it. It cannot be done by measure alone: "a legacy?" is wider
+           than "Ready to build a", so any width that fits the first also pulls
+           the "a" up onto line one. Same device as the hero's .keep. -->
+      <h1 class="display contact-title" data-reveal id="contact-title"><span class="alt">Ready to build</span> <span class="keep"><span class="alt">a</span> legacy?</span></h1>
+
+      <dl class="contact-details" data-stagger>
+        <div>
+          <dt class="label">Email</dt>
+          <dd><a href="mailto:hello@rysing.studio">hello@rysing.studio</a></dd>
+        </div>
+        <div>
+          <dt class="label">Phone</dt>
+          <dd><a href="tel:+436803096968">+43 680 3096968</a></dd>
+        </div>
+        <div>
+          <dt class="label">Shipping address</dt>
+          <dd><address>Koflergasse 13/4/20<br />1120 Wien</address></dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="band contact-body" aria-label="Book a call or write to us">
+      <div class="contact-body-glow glow-soft" aria-hidden="true"></div>
+
+      <div class="contact-cols">
+        <div class="contact-col" data-reveal>
+          <h2 class="display contact-h"><span class="alt">Book a</span> call</h2>
+          <!-- Calendly replaces the contents of this div with its iframe. The
+               link below is not decoration: it is what remains when the
+               third-party script is blocked, fails, or JavaScript is off, and
+               it is the same URL the design prints as a caption. -->
+          <div class="calendly-panel">
+            <p class="calendly-fallback">
+              <span class="calendly-mark" aria-hidden="true"></span>
+              <span class="display">Calendly &middot; 30 min</span>
+              <a class="label" href="https://calendly.com/contentfudge_anzhelika/30min" target="_blank" rel="noopener">calendly.com/contentfudge_anzhelika/30min</a>
+            </p>
+            <!-- Deliberately empty and on one line. Calendly appends its iframe
+                 as a child rather than replacing the element, so anything left
+                 inside here is pushed out of the clipped panel instead of being
+                 replaced. The fallback above sits behind this div; `:empty`
+                 collapses the div until Calendly fills it, which keeps the
+                 fallback's link clickable when the script is blocked or off. -->
+            <div class="calendly-inline-widget" data-url="https://calendly.com/contentfudge_anzhelika/30min?background_color=0d0d0d&amp;text_color=f9f9f9&amp;primary_color=f04222" data-auto-load="true" style="min-width:280px;height:100%"></div>
+          </div>
+        </div>
+
+        <div class="contact-col" data-reveal>
+          <h2 class="display contact-h"><span class="alt">Write to</span> us</h2>
+          <form id="contact-form" class="contact-form" novalidate>
+            <div class="field">
+              <label class="label" for="cf-name">Name</label>
+              <input id="cf-name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label class="label" for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label class="label" for="cf-company">Company or website</label>
+              <input id="cf-company" name="company" type="text" autocomplete="organization" />
+            </div>
+            <div class="field">
+              <label class="label" for="cf-message">Message</label>
+              <textarea id="cf-message" name="message" rows="6" required></textarea>
+            </div>
+            <button class="btn-pill btn-pill-solid" type="submit">Send message <span class="arrow" aria-hidden="true"></span></button>
+            <p class="contact-status label" id="contact-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>

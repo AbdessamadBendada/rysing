@@ -183,6 +183,10 @@ body::after {
   transition:color var(--t-detail) var(--ease-detail);
 }
 .overlay-nav a:hover { color:var(--red); }
+/* The page you are already on, marked as the design marks it. Applied by the
+   build to whichever link points at the current file, so a new page never has
+   to hand-edit a copy of the nav. */
+.overlay-nav a[aria-current="page"] { text-decoration:underline; text-underline-offset:.14em; text-decoration-thickness:1px; }
 .overlay-nav a:nth-child(1){--i:0}.overlay-nav a:nth-child(2){--i:1}.overlay-nav a:nth-child(3){--i:2}
 .overlay-nav a:nth-child(4){--i:3}.overlay-nav a:nth-child(5){--i:4}.overlay-nav a:nth-child(6){--i:5}
 /* The links arrive one after another rather than together — the one place
@@ -1237,4 +1241,134 @@ body::after {
   /* The bloom is a flourish, so it is the first thing to go. The picture
      resolves to exactly the same frame without it. */
   .tthumb img,.tthumb::before { animation:none !important; }
+}
+
+/* --- Contact page ------------------------------------------- */
+/* The eyebrow, the question and the three details are one section so the red
+   light runs behind all of them without breaking at a join. */
+.contact-top {
+  position:relative; isolation:isolate; overflow:clip;
+  padding-top:clamp(120px,13vw,210px); padding-bottom:clamp(54px,6vw,96px);
+}
+/* A gradient that reaches transparent inside its own box, never an ellipse
+   larger than the section under overflow:clip — that is the hard-edged
+   rectangle described in HANDOFF §8. Placed high right, as drawn. */
+/* The design draws a body, not a haze: a warm mass with a readable curved
+   edge sitting off the top-right corner. Two stops do that — a wide, low
+   falloff for the atmosphere, and a tighter, brighter core inside it that
+   gives the edge. Held to .52 at the core: at full strength it is the
+   loudest thing on a site whose argument is restraint, and the footer's own
+   red is only a screen below it. */
+.contact-top-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:
+    radial-gradient(circle 30vw at 88% 42%,
+      rgba(246,92,48,.52), rgba(227,64,30,.34) 42%,
+      rgba(186,46,24,.14) 68%, rgba(140,34,20,.04) 84%, transparent 100%),
+    radial-gradient(ellipse 58% 70% at 95% 30%,
+      rgba(240,66,34,.22), rgba(240,66,34,.07) 52%, transparent 86%);
+}
+.contact-top .label { color:var(--muted); }
+/* 14.5em keeps the break after "build a", so the question sets on two lines
+   with "legacy?" alone on the didone — the same break the homepage closing
+   makes. In em, never px: a px measure holds a break at one step of the
+   clamp and loses it at the next (HANDOFF §4). */
+.contact-title {
+  margin:clamp(20px,2.4vw,34px) 0 0; max-width:10.2em;
+  font-size:clamp(40px,6.2vw,96px); line-height:.94;
+}
+.contact-title .keep { white-space:nowrap; }
+
+.contact-details {
+  display:grid; gap:clamp(26px,3vw,48px);
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  margin:clamp(72px,9vw,150px) 0 0;
+}
+.contact-details dt { color:var(--muted); margin-bottom:14px; }
+.contact-details dd { margin:0; }
+.contact-details dd,
+.contact-details address {
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  text-transform:uppercase; letter-spacing:.01em; line-height:1.25;
+  font-size:clamp(17px,1.5vw,23px); font-style:normal;
+}
+.contact-details a { color:inherit; text-decoration:none; background-image:none; }
+.contact-details a:hover { color:var(--red); }
+
+.contact-body { position:relative; isolation:isolate; overflow:clip;
+  padding-top:clamp(70px,8vw,128px); padding-bottom:clamp(90px,10vw,170px); }
+/* The blue answers the red, low on the opposite side, as drawn. */
+.contact-body-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 42% 46% at 2% 74%,
+    rgba(53,36,213,.52), rgba(53,36,213,.26) 40%,
+    rgba(53,36,213,.06) 70%, transparent 100%);
+}
+.contact-cols {
+  display:grid; gap:clamp(40px,5vw,96px);
+  grid-template-columns:minmax(0,1fr) minmax(0,.92fr); align-items:start;
+}
+.contact-h { margin:0 0 clamp(26px,3vw,44px); font-size:clamp(30px,3.6vw,52px); }
+
+/* Booking panel. Fixed height so the outline is a drawn shape before Calendly
+   loads, rather than a box that snaps open when a third-party script lands. */
+/* Taller than the design's panel on purpose: Calendly's booking UI needs
+   roughly 700px and a shorter box crops the time slots, which makes the
+   widget unusable rather than merely tight. If the embed is ever dropped for
+   the designed placeholder, this can come back down to ~580px. */
+.calendly-panel {
+  position:relative; border:1px solid var(--line);
+  height:clamp(560px,58vw,760px); overflow:hidden; background:rgba(13,13,13,.4);
+}
+.calendly-inline-widget { position:relative; z-index:1; height:100%; }
+/* Collapsed until Calendly fills it. An empty but stacked div would otherwise
+   cover the fallback and swallow clicks on its link. */
+.calendly-inline-widget:empty { display:none; }
+/* What is on screen until — or instead of — the embed: blocked, failed, or
+   JavaScript off. Also exactly what the design draws. It sits behind the
+   widget rather than inside it, so Calendly's opaque iframe simply covers it. */
+.calendly-fallback {
+  position:absolute; inset:0; margin:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:16px; text-align:center;
+  padding:30px;
+}
+.calendly-mark {
+  width:26px; height:26px; background:var(--red);
+  -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+}
+.calendly-fallback .display { font-size:clamp(22px,2.3vw,30px); }
+.calendly-fallback a { color:var(--muted); text-decoration:none; background-image:none; }
+.calendly-fallback a:hover { color:var(--paper); }
+
+.contact-form .field { margin-bottom:clamp(26px,3vw,40px); }
+.contact-form .label { display:block; color:var(--muted); margin-bottom:12px; }
+.contact-form input,
+.contact-form textarea {
+  width:100%; padding:8px 0; color:var(--paper); background:transparent;
+  border:0; border-bottom:1px solid var(--line); border-radius:0;
+  font-family:inherit; font-size:16px; line-height:1.5;
+  transition:border-color var(--t-detail) var(--ease-detail);
+}
+.contact-form textarea { resize:vertical; min-height:120px; }
+.contact-form input:focus,
+.contact-form textarea:focus { outline:none; border-bottom-color:var(--paper); }
+/* Flagged only after a submit attempt, never while the field is still being
+   typed into for the first time. */
+.contact-form .field.is-invalid input,
+.contact-form .field.is-invalid textarea { border-bottom-color:var(--red); }
+/* The design draws this one filled. It is the only filled pill on the site —
+   HANDOFF §11 removed the closing ask's red fill — but this is a form's submit
+   rather than a navigation CTA, and a form with no visible commit control is
+   the thing that reads as unfinished. */
+.btn-pill-solid {
+  background:var(--paper); border-color:var(--paper); color:var(--ink);
+  cursor:pointer; font-family:inherit;
+}
+.btn-pill-solid:hover { background:transparent; border-color:var(--paper); color:var(--paper); }
+.contact-status { display:block; margin:18px 0 0; color:var(--muted); letter-spacing:.08em; min-height:1em; }
+.contact-status.is-error { color:var(--red); }
+
+@media (max-width:900px) {
+  .contact-cols { grid-template-columns:minmax(0,1fr); }
+  .contact-details { grid-template-columns:minmax(0,1fr); gap:30px; }
 }

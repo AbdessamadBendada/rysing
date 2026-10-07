@@ -497,3 +497,51 @@ if (form && status) {
     status.textContent = 'Thanks. Signup will be enabled when the mailing platform is connected.';
   });
 }
+
+/* --- Contact form ------------------------------------------- */
+/* Same standing as the newsletter: there is no backend yet, so the form
+   validates and then says so rather than pretending to have sent. novalidate
+   on the element hands validation here, so the messages match the page's own
+   voice instead of the browser's bubbles — but `required` and type="email"
+   stay on the fields, so with JavaScript off the browser still enforces them.
+
+   HANDOFF §6 lists the missing backend. Do not wire a success message to a
+   submit that goes nowhere. */
+const cform = document.querySelector('#contact-form');
+const cstatus = document.querySelector('#contact-status');
+if (cform && cstatus) {
+  const fields = [...cform.querySelectorAll('input, textarea')];
+
+  const invalid = (el) => {
+    const v = el.value.trim();
+    if (el.hasAttribute('required') && !v) return true;
+    return el.type === 'email' && v !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  };
+
+  cform.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let first = null;
+    for (const el of fields) {
+      const bad = invalid(el);
+      el.closest('.field').classList.toggle('is-invalid', bad);
+      if (bad && !first) first = el;
+    }
+    if (first) {
+      cstatus.classList.add('is-error');
+      cstatus.textContent = 'Please complete the highlighted fields.';
+      first.focus();
+      return;
+    }
+    cstatus.classList.remove('is-error');
+    cstatus.textContent = 'Thanks. Sending will be enabled when the form backend is connected.';
+  });
+
+  /* Clears a field's error as soon as it is corrected, but never flags one
+     before the first submit. */
+  fields.forEach((el) => {
+    el.addEventListener('input', () => {
+      const f = el.closest('.field');
+      if (f.classList.contains('is-invalid') && !invalid(el)) f.classList.remove('is-invalid');
+    });
+  });
+}

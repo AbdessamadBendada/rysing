@@ -676,3 +676,117 @@ unchanged sources reports `unchanged` and rewrites nothing.
 **Known gap.** The spotlight's "Learn more" button points at
 `playground/rysing2.html`. That was a stopgap so the move did not leave a 404;
 it links the live page into the archive and wants a real keynote page.
+
+---
+
+## 13. Contact page
+
+`src/contact.html` → `contact.html`. Built from the client's supplied design.
+First page after the homepage, and the first real test of the §12 build.
+
+**The header was left alone.** The supplied design draws a full inline nav —
+HOME ABOUT SERVICES PORTFOLIO BLOG CONTACT with the current page underlined —
+instead of the burger. That was put to the user and the answer was to keep the
+burger everywhere, so the mock's nav is treated as indicative only. **The header
+rework in §6 is still open and still unspecified.** The one change made to the
+chrome: the nav's Contact link now points at `contact.html` instead of the
+homepage's `#contact` anchor. The two "Apply to work with us" pills still point
+at the homepage's closing section; moving them here is an open question.
+
+**`aria-current="page"` is applied by the build,** not hand-written — whichever
+nav link points at the file being built gets it, so a new page never has to
+carry its own edited copy of the nav. Styled as the underline the design draws.
+
+**The question breaks where it breaks by a nowrap, not by a measure.** The
+design sets "READY TO BUILD" / "A LEGACY?". That break cannot be reached by
+width alone: "a legacy?" is wider than "Ready to build a", so any measure that
+fits the first also pulls the "a" up onto line one — confirmed by walking every
+value from 7em to 14.5em. "a legacy?" is held together with the hero's own
+`.keep`. Verified holding at 1680, 1440, 1280, 1024, 900, 768, 560 and 390px.
+
+**Grouping rendered words by their `top` to find line breaks is wrong here,**
+and reported three lines where there are two. The grotesque and the didone have
+different ascents, so two faces sharing a baseline do not share a top. Cluster
+by the vertical midpoint instead. The earlier sections' measurements did not hit
+this because they break between faces rather than across one.
+
+**The hero and the three details are one section,** so the red light runs behind
+all of them. Split in two, each half would have to fade at its own edge under
+`.glow-soft` and the light would break across the join.
+
+### Calendly — works, but does not look like the design
+
+The live embed was chosen over the designed placeholder. It loads and books:
+assets and `api/booking/initial_settings` all return 200, the frame renders
+"1:1 call with Anzhelika", and the profile is real (Anzhelika Tauber,
+`contentfudge_anzhelika`, no unavailability). What it actually looks like:
+
+- **It renders white.** `background_color` / `text_color` / `primary_color` are
+  passed and ignored — custom colours are a paid Calendly feature and this
+  account is on a free plan. A white card on a black page.
+- **It is branded Content Fudge,** in orange, not Rysing — plus Calendly's own
+  "POWERED BY" corner ribbon, which is also plan-gated.
+- **It serves its own cookie-consent banner** inside the panel. The embed sets
+  third-party cookies; for an Austrian business that is a real consent question,
+  not a styling one.
+- **It needs ~700px.** The panel is `clamp(560px,58vw,760px)`, taller than the
+  design's, because a shorter box crops the time slots.
+
+Options, in order of fidelity to the design: upgrade the Calendly plan (fixes
+colours and both brandings at once); or keep the designed dark placeholder and
+link out. Not a decision to make silently — flagged, not resolved.
+
+**It mounts lazily.** Calendly does not build the booking UI until the widget is
+scrolled into view. Any check that loads the page and reads the frame without
+scrolling sees an empty iframe and a spinner that never clears — that is the
+test being wrong, not the embed.
+
+**The fallback sits behind the widget, not inside it.** Calendly *appends* its
+iframe rather than replacing the element, so anything left inside is pushed out
+of the clipped panel — which is what happened first. The placeholder is now a
+sibling underneath, and `.calendly-inline-widget:empty { display:none }`
+collapses the widget until Calendly fills it, so with the script blocked or off
+the fallback's link stays clickable. Verified: with JavaScript disabled the
+widget is `display:none` and `elementFromPoint` returns the link. That is why
+the widget div is written on one line with no whitespace — whitespace would make
+it non-`:empty`.
+
+### Form
+
+No backend, same standing as the newsletter (§6 — there are now two). It
+validates and then says sending is not connected; it never reports success for a
+submit that goes nowhere. `novalidate` moves validation into the page's own
+voice, but `required` and `type="email"` stay on the fields so the browser still
+enforces them with JavaScript off. Fields are flagged only after a first submit
+attempt and cleared as soon as they are corrected. Verified: empty submit flags
+3 fields and focuses the first; a malformed address flags 1; a valid submit
+clears all and reports the pending-backend message.
+
+**The send button is the only filled pill on the site.** §11 removed the closing
+ask's red fill so every pill became an outline. The design draws this one
+filled, and a form whose commit control is as quiet as its labels reads as
+unfinished. Hover inverts it rather than brightening it.
+
+### Verified
+
+Whole page at 1440px: no console errors, no failed requests, nothing overflows
+horizontally at 1680/1280/1024/900/768/560/390, columns collapse at 900.
+Every section boundary probed across the width — median 0, max 3, no column
+over 10, so no seam (§5). With JavaScript off: all copy present, nothing hidden,
+native validation intact, Calendly fallback visible and clickable.
+
+**The homepage was re-checked after the shared files changed,** because this
+page appended to `shared.css` and `shared.js` and edited `_header.html`:
+`index.html` is still pixel-identical to its pre-contact-page baseline — 0 of
+22,821,120 pixels at 1440px.
+
+### Open
+
+- **The email address disagrees with the rest of the site.** This page says
+  `hello@rysing.studio`, as the design does. The footer — on this very page —
+  and the homepage both say `hello@rysing.agency`. Both are visible at once.
+  Built as drawn; someone has to say which is right.
+- The booking URL and the Calendly branding are both `contentfudge`, the earlier
+  brand name.
+- The phone number and Koflergasse address are new copy, not in any earlier
+  file, and unverified.
