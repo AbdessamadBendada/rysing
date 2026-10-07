@@ -2,10 +2,11 @@
 
 Read this before touching anything.
 
-**The active build is `index.html`, at the root of the repository.** It was called
-`premium-direction.html` until the files were reorganised; every other HTML file
-now lives in `playground/`. Anything below that names `premium-direction.html` is
-a reference to this same file under its old name.
+**`index.html` is generated. Do not edit it — edit `src/` and run `node build.js`.**
+It was called `premium-direction.html` until the files were reorganised; every
+other HTML file now lives in `playground/`. Anything below that names
+`premium-direction.html` refers to this same page under its old name. The build
+system is §12.
 
 ---
 
@@ -72,7 +73,11 @@ Unresolved: see §6.
 
 | File | Role |
 | --- | --- |
-| `index.html` | **The active build. The only page to edit.** Was `premium-direction.html`. |
+| `src/index.html` | **The homepage source. Edit this, not `index.html`.** |
+| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. See §12. |
+| `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. |
+| `build.js` | `node build.js`. Zero dependencies. |
+| `index.html` | **Generated — do not edit.** Committed so the site can be served as flat files. Was `premium-direction.html`. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `playground/new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
 | `playground/testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
@@ -586,3 +591,88 @@ build a" on the grotesque line, "legacy?" alone on the didone — anywhere from
 edge. In em regardless, because a px measure holds a break at one step of the
 size clamp and loses it at the next. Verified holding at 1680 down to 560px; at
 390px it takes three lines, which is correct.
+
+---
+
+## 12. The build system
+
+Added when the site needed a second page and the header, footer, 1240 lines of
+CSS and 500 lines of script existed only inside one 2270-line file.
+
+```
+src/_layout.html    the document shell; owns <head> and <main>
+src/_header.html    skip-link, header, menu overlay
+src/_footer.html    footer
+src/index.html      homepage content only, with front matter
+shared.css          the former inline <style>
+shared.js           the former inline <script>
+build.js            node build.js  →  writes index.html at the root
+```
+
+**`index.html` is generated.** Edit `src/` and rebuild. The generated files are
+committed on purpose: the output is flat HTML that needs no JavaScript and no
+server, so the site can be opened from disk, dropped on any host, or handed to
+Divi without the chrome depending on a fetch.
+
+**A new page is one file.** Create `src/<name>.html`, give it front matter, run
+the build. It inherits the chrome and the stylesheet automatically.
+
+```
+<!--
+  title: Keynote speaking — Rysing
+  description: ...
+  home: index.html
+  skip: #intro
+-->
+    <section class="band" id="intro"> ... </section>
+```
+
+`title` and `description` are per-page. The other two keys exist because the
+chrome's links are same-page anchors:
+
+- **`home`** prefixes anchors that live on the homepage. Empty on `src/index.html`
+  so `#work` stays a same-page scroll; `index.html` on a sub-page so the same
+  link navigates home and then scrolls. Without this, a sub-page's nav silently
+  points at ids that are not on it.
+- **`skip`** is the skip-link target, which has to be a real id on that page.
+
+A missing key or an unresolved `{{token}}` fails the build with exit 1. A page
+that ships `{{home}}#work` inside an href is worse than one that refuses to
+build.
+
+**`no-js` moved from `<body>` to `<html>`, cleared by an inline script in the
+head.** Not cosmetic. `.no-js` changes real layout — the reel's sticky stage and
+the testimonial rail, nine rules in `shared.css`. Clearing it from the deferred
+external `shared.js` painted the no-script layout and then reflowed on every
+load, a jump the inline script never had. It is on `<html>` because `<body>` does
+not exist that early. A failed `shared.js` still leaves the page fully readable,
+which is the §2 rule.
+
+**`shared.css` is at the repository root, not in a subfolder.** Its five
+`@font-face` rules use paths relative to the stylesheet (`rysing-assets/…`).
+From `assets/shared.css` those resolve to `assets/rysing-assets/…`, and under
+`font-display:swap` a missing font is not an error — the page renders in Didot
+and Helvetica and looks nearly right. Same silent-failure class as the `ch`
+measure in §4. If the CSS ever moves, rewrite those five paths in the same
+commit.
+
+**The extraction was verified pixel-identical, not eyeballed.** CSS and JS
+compared verbatim against the inline originals; body markup diffed to zero;
+then full-page captures of the old and new pages at 1440px compared row by row
+across all 15,848 rows. A first pass showed 0.43% of pixels differing in the
+hero, the Selected Work film panel and the logo marquee — all three
+continuously animating. Pinning every animation to `currentTime = 0` and parking
+the videos on one frame per §5 took it to **0 of 22,821,120 pixels**. Pausing an
+animation is not the same as pinning it: `animation-play-state:paused` freezes
+it wherever it happened to be, which is not reproducible between two loads.
+Re-run that comparison after any change to the extraction.
+
+Also checked: fonts report `loaded` rather than falling back; zero console
+errors and zero failed requests; with JavaScript disabled the page keeps all
+5,556 characters of copy, all six nav links and all six testimonial quotes at
+full opacity with nothing hidden. The build is idempotent — a second run on
+unchanged sources reports `unchanged` and rewrites nothing.
+
+**Known gap.** The spotlight's "Learn more" button points at
+`playground/rysing2.html`. That was a stopgap so the move did not leave a 404;
+it links the live page into the archive and wants a real keynote page.

@@ -1,0 +1,1240 @@
+/* Rysing — new direction. Built from the design reference, not from the
+   earlier builds. Copy is lifted verbatim from rysing-comments.html.
+
+   LICENSING: Kinfolk's web licence is NOT yet cleared — resolve before
+   production. Aileron is public domain (Sora Sagano). Qualy, the logo face,
+   is never loaded: the wordmark ships as artwork. */
+
+@font-face { font-family:"Kinfolk"; src:url("rysing-assets/Kinfolk-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Light.woff2") format("woff2"); font-weight:300; font-display:swap; }
+@font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-SemiBold.woff2") format("woff2"); font-weight:600; font-display:swap; }
+@font-face { font-family:"Aileron"; src:url("rysing-assets/Aileron-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+
+/* --- Tokens ------------------------------------------------- */
+:root {
+  --ink:#141414;
+  --ink-deep:#0d0d0d;
+  --paper:#f9f9f9;
+  --red:#f04222;
+  --blue:#3524d5;
+  --muted:#9a9a9a;
+  --line:rgba(249,249,249,.14);
+
+  --gutter:clamp(22px,4vw,74px);
+  --ease:cubic-bezier(.2,.75,.2,1);
+
+  /* One grade across every photograph on the page. The supplied images come
+     from different cameras, lights and decades of client archive, and the
+     spread between the sharp studio frames and the soft ones is the single
+     most expensive-looking thing we can fix without a reshoot. Pulling
+     saturation down and contrast up narrows that spread. Replacement
+     photography drops in under the same grade, so nothing needs retuning.
+     Deliberately not applied to the logo marquee — those marks carry their
+     own brightness(0) invert(1) treatment. */
+  --photo-grade:contrast(1.07) saturate(.62) brightness(.97);
+  --mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 269.87 273.69'%3E%3Cpath d='M262.42,136.55c-12.82-.17-25.39-1.76-37.88-4.67l-20.93-5.54-13.69-5c-13.95-5.97-25.03-14.22-33.04-27.25-5.44-8.83-9.03-18.37-11.98-28.3l-5.16-20.33c-1.87-8.29-3.28-16.58-3.96-25v-.36c-.1-1.23-.19-2.45-.27-3.68-.07-1.32-.12-2.64-.15-3.97l-.24-10.68V.33s-.01-.05-.04-.09V0s-.08.01-.15.08c-.07-.06-.13-.11-.13-.08v.23s-.06.07-.06.09v1.46s-.23,10.68-.23,10.68c-.03,1.33-.08,2.65-.15,3.97-.08,1.23-.17,2.45-.27,3.68v.36c-.68,8.41-2.09,16.7-3.96,25l-5.16,20.33c-2.96,9.93-6.55,19.47-11.98,28.3-8.02,13.02-19.09,21.27-33.04,27.25l-13.69,5-20.93,5.54c-12.49,2.91-25.07,4.5-37.88,4.67l-7.45.25c.53.22,1.11.32,1.62.33l5.98.13c12.33.26,24.47,1.65,36.53,4.4l20.86,5.41,13.65,4.84c14.67,6.08,26.28,14.51,34.61,28.21,5.62,9.24,9.23,19.23,12.23,29.61l4.5,17.88c2.54,11.12,4.08,22.23,4.52,33.63l.23,10.21v1.66c0,.06.02.19.04.28,0,.13.03.33.07.3l.09-.09.09.09s.06-.17.07-.3c.03-.09.04-.22.04-.28v-1.66l.23-10.21c.44-11.4,1.99-22.51,4.52-33.63l4.5-17.88c3-10.37,6.61-20.37,12.23-29.61,8.32-13.7,19.93-22.14,34.61-28.21l13.65-4.84,20.86-5.41c12.05-2.75,24.19-4.15,36.53-4.4l5.98-.13c.51-.01,1.09-.11,1.62-.33l-7.45-.25Z'/%3E%3C/svg%3E");
+}
+
+/* Every decorative glow on the page fades to nothing before it reaches the
+   top and bottom of its own section. Without this a glow is simply cut by
+   the section box and leaves a hard horizontal line the full width of the
+   page — the sections stop being one surface and start looking glued
+   together. Only the vertical axis is faded: left and right are clipped at
+   the viewport edge, where a cut is invisible.
+
+   Masking rather than resizing each gradient to fit, because the glows are
+   deliberately placed off-centre and near their edges; shrinking them to
+   fit would move the light away from where the design puts it. */
+.glow-soft {
+  --fade:15%;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
+}
+
+* { box-sizing:border-box; }
+/* clip, not hidden: the drifting glows are allowed to bleed off the
+   viewport without opening a horizontal scrollbar, and unlike `hidden`
+   this does not turn the root into a containing block for the fixed
+   header. Sections must not clip them locally — see .stats. */
+html { background:var(--ink); scroll-behavior:smooth; overflow-x:clip; }
+body {
+  margin:0; background:var(--ink); color:var(--paper);
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:clamp(15px,1.1vw,17px); line-height:1.6;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+a { color:inherit; text-decoration:none; }
+img,video { display:block; }
+:focus-visible { outline:2px solid var(--red); outline-offset:4px; }
+
+/* Film grain: every branded surface in the guide carries it. Generated
+   rather than loaded — the supplied plate is 4.3 MB and does not tile. */
+body::after {
+  content:""; position:fixed; inset:0; z-index:90; pointer-events:none;
+  opacity:.055; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+}
+
+.skip-link {
+  position:fixed; z-index:120; top:12px; left:12px; padding:13px 17px;
+  background:var(--paper); color:var(--ink); transform:translateY(-180%);
+  transition:transform .2s var(--ease);
+  font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+}
+.skip-link:focus { transform:none; }
+
+/* --- Type --------------------------------------------------- */
+/* The reference's signature: the grotesque and the didone alternate inside
+   one sentence. Kinfolk is the default voice of a headline; .alt flips a run
+   back to Aileron. Kinfolk is caps-only by design. */
+.display {
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  text-transform:uppercase; letter-spacing:.01em; line-height:.96;
+}
+.display .alt {
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:600; letter-spacing:-.022em;
+}
+.label {
+  font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+}
+
+/* Alternation is a device, not a texture. Running it through all eleven
+   headlines is what turned the page's signature move into wallpaper — if
+   every sentence mixes faces, the mix stops meaning anything. It now
+   appears at the three moments the page is allowed to be loud: the hero,
+   the manifesto, and the closing ask. Every other headline sets in one
+   face, so when the mix arrives it reads as emphasis.
+
+   The markup is untouched — the .alt spans stay exactly where they are for
+   the loud moments and simply inherit elsewhere. */
+.band-head h2 .alt,
+.proof-lead h2 .alt,
+.founder-title .alt,
+.system-title .alt,
+.spot-lead h2 .alt {
+  font-family:inherit; font-weight:inherit; letter-spacing:inherit;
+}
+
+/* Didone wants less air the larger it gets; a single tracking value across
+   a 32px section head and a 152px hero leaves the hero looking loose. */
+.hero-title,.manifesto h2,.closing h2 { letter-spacing:-.012em; }
+
+/* --- Header ------------------------------------------------- */
+.site-head {
+  position:fixed; z-index:20; inset:0 0 auto; height:92px;
+  padding:0 var(--gutter); display:flex; align-items:center; gap:clamp(20px,3vw,60px);
+  border-bottom:1px solid var(--line);
+}
+.site-head::before {
+  content:""; position:absolute; z-index:-1; inset:0;
+  background:linear-gradient(to bottom,rgba(13,13,13,.82),rgba(13,13,13,.34) 70%,transparent);
+  pointer-events:none;
+}
+.wordmark { flex:none; line-height:0; }
+.wordmark img { width:auto; height:27px; }
+.head-right { display:flex; align-items:center; gap:clamp(10px,1.4vw,18px); margin-left:auto; }
+
+/* Burger, always present. The inline nav moved into the overlay, so the
+   header carries three things only: mark, ask, menu. */
+.menu-toggle {
+  display:grid; place-items:center; flex:none; width:46px; height:46px;
+  border:1px solid rgba(249,249,249,.4); border-radius:50%;
+  background:none; color:inherit; cursor:pointer;
+  transition:background var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail);
+}
+.menu-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+.menu-toggle-lines,.menu-toggle-lines::before,.menu-toggle-lines::after {
+  display:block; width:17px; height:1px; background:currentColor;
+  transition:transform var(--t-detail) var(--ease-detail),background var(--t-detail) var(--ease-detail);
+}
+.menu-toggle-lines { position:relative; }
+.menu-toggle-lines::before,.menu-toggle-lines::after { content:""; position:absolute; left:0; }
+.menu-toggle-lines::before { top:-5px; }
+.menu-toggle-lines::after { top:5px; }
+.menu-toggle[aria-expanded="true"] .menu-toggle-lines { background:transparent; }
+.menu-toggle[aria-expanded="true"] .menu-toggle-lines::before { top:0; transform:rotate(45deg); }
+.menu-toggle[aria-expanded="true"] .menu-toggle-lines::after { top:0; transform:rotate(-45deg); }
+
+/* --- Menu overlay ------------------------------------------- */
+.menu-overlay {
+  position:fixed; z-index:110; inset:0; width:100vw; min-height:100svh;
+  padding:clamp(96px,12vh,130px) var(--gutter) clamp(28px,4vh,44px);
+  background:var(--ink-deep); color:var(--paper);
+  display:flex; flex-direction:column; justify-content:space-between; gap:40px;
+  transform:translateX(100%); visibility:hidden;
+  transition:transform .62s var(--ease-weight),visibility 0s .62s;
+}
+.menu-overlay.is-open { transform:none; visibility:visible; transition-delay:0s; }
+.overlay-close {
+  position:absolute; top:23px; right:var(--gutter); width:46px; height:46px;
+  display:grid; place-items:center; padding:0;
+  border:1px solid rgba(249,249,249,.4); border-radius:50%;
+  background:none; color:inherit; cursor:pointer;
+  transition:background var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail);
+}
+.overlay-close:hover { background:var(--red); border-color:var(--red); color:var(--paper); }
+.overlay-close svg { width:20px; height:20px; }
+.overlay-nav { display:flex; flex-direction:column; align-items:flex-end; }
+.overlay-nav a {
+  font-size:clamp(38px,6vw,86px); line-height:1.02;
+  transition:color var(--t-detail) var(--ease-detail);
+}
+.overlay-nav a:hover { color:var(--red); }
+.overlay-nav a:nth-child(1){--i:0}.overlay-nav a:nth-child(2){--i:1}.overlay-nav a:nth-child(3){--i:2}
+.overlay-nav a:nth-child(4){--i:3}.overlay-nav a:nth-child(5){--i:4}.overlay-nav a:nth-child(6){--i:5}
+/* The links arrive one after another rather than together — the one place
+   a stagger is allowed to be noticeable, because the panel is otherwise
+   empty while it travels. */
+.menu-overlay.is-open .overlay-nav a {
+  animation:overlayIn .5s var(--ease-weight) both;
+  animation-delay:calc(.14s + var(--i,0) * .045s);
+}
+@keyframes overlayIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+.overlay-bottom { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:30px; }
+.award-lockups { display:flex; flex-wrap:wrap; }
+.award-lockup {
+  display:grid; grid-template-columns:40px auto; gap:12px; align-items:center;
+  min-width:168px; padding:0 20px; border-left:1px solid var(--line);
+}
+.award-lockup:first-child { padding-left:0; border-left:0; }
+.award-mark { width:40px; height:40px; border:1px solid rgba(249,249,249,.3); }
+.award-lockup span { display:block; font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
+.award-lockup span + span { margin-top:5px; color:var(--muted); }
+.social-links { display:flex; gap:9px; }
+.social-links a {
+  width:44px; height:44px; display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:50%;
+  transition:background var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail);
+}
+.social-links a:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+.social-links svg { width:17px; height:17px; fill:currentColor; }
+
+.btn-pill {
+  flex:none; display:inline-flex; align-items:center; gap:12px;
+  min-height:44px; padding:0 22px; border:1px solid rgba(249,249,249,.4); border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease);
+}
+.btn-pill:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+.btn-pill .arrow { width:11px; height:11px; background:currentColor;
+  -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+  transition:transform .35s var(--ease); }
+.btn-pill:hover .arrow { transform:rotate(90deg) scale(1.2); }
+
+@media (max-width:1080px) {
+  /* The header is now mark + ask + burger at every width, so there is no
+     desktop nav to hide. Only the ask collapses on the narrowest screens,
+     where the burger already carries it. */
+  .btn-pill-head { display:none; }
+}
+
+/* --- Hero --------------------------------------------------- */
+/* No video here — it moves to the section below. The ground is black with
+   two large out-of-focus lights bleeding in from opposing corners, which is
+   the identity's own banner composition. */
+.hero {
+  position:relative; isolation:isolate; overflow:hidden;
+  min-height:100svh; padding:clamp(140px,17vh,210px) var(--gutter) clamp(48px,6vh,80px);
+  display:flex; flex-direction:column; justify-content:flex-end;
+  /* The hero's ground is darker than the page. Left as a flat fill it put a
+     second hard line at exactly the same place as the cut glow; it now
+     resolves into the page colour over the last fifth. */
+  background:linear-gradient(to bottom,var(--ink-deep) 0 78%,var(--ink) 100%);
+}
+/* The lights bleed in from below the fold, so only the bottom needs
+   fading — the top edge is the top of the page. */
+.hero-light {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0 70%,transparent 100%);
+          mask-image:linear-gradient(to bottom,#000 0 70%,transparent 100%);
+}
+.hero-light::before,.hero-light::after {
+  content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+}
+.hero-light::before {
+  width:min(72vw,1020px); top:-24vh; right:-14vw;
+  background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+  animation:driftA 28s var(--ease) infinite alternate;
+}
+.hero-light::after {
+  width:min(62vw,860px); bottom:-30vh; left:-18vw;
+  background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.95),rgba(53,36,213,.5) 38%,rgba(53,36,213,.08) 62%,transparent 74%);
+  animation:driftB 35s var(--ease) -11s infinite alternate;
+}
+@keyframes driftA { to { transform:translate3d(-3%,4%,0) scale(1.08); } }
+@keyframes driftB { to { transform:translate3d(4%,-3%,0) scale(1.07); } }
+
+.hero-eyebrow { margin:0 0 auto; text-align:right; }
+
+/* The reference sets 6 words; this headline is 23. The opening clause keeps
+   the poster scale and alternation, and the qualifier that follows drops to a
+   supporting line — the full sentence is intact, the hierarchy does the work. */
+.hero-title { margin:0; max-width:13ch; font-size:clamp(46px,8.6vw,152px); }
+/* Keeps the closing phrase together so it wraps as a unit instead of leaving
+   "and" stranded at the end of the previous line. */
+.hero-title .keep { white-space:nowrap; }
+.hero-title .tail {
+  display:block; margin-top:clamp(18px,2.2vw,34px); max-width:46ch;
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:300; font-size:clamp(15px,1.45vw,21px); line-height:1.5;
+  letter-spacing:.01em; text-transform:none; color:rgba(249,249,249,.78);
+}
+.hero-title em { font-style:normal; }
+
+/* --- Showreel aperture -------------------------------------- */
+/* The brand mark opens to reveal the work: the video plays inside the star,
+   which scales up on scroll until it fills the frame. Driven by scroll
+   position through a CSS variable rather than by scrubbing playback —
+   seeking on every frame stutters badly on mid-range machines. */
+.reel { position:relative; height:260vh; background:var(--ink); }
+.reel-stage {
+  position:sticky; top:0; height:100svh; overflow:hidden;
+  display:grid; place-items:center;
+}
+.reel-frame {
+  position:absolute; inset:0;
+  -webkit-mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
+          mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
+}
+/* At 16% the star is ~200px and shows a 200px crop of a 1440px frame, so
+   whatever happens to be mid-screen becomes the mark. The reel opens on
+   black brush lettering over white, which cut a gash straight through it.
+
+   So the mark starts as the mark: a solid fill that crossfades to the
+   footage as the aperture widens. The mask on the parent clips this too,
+   so it is always exactly the star. --reel-reveal clears early, well
+   before the shape stops reading as a star, so most of the scroll is
+   spent on the work rather than on a logo. */
+.reel-frame::after {
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:var(--paper); opacity:calc(1 - var(--reel-reveal,0));
+}
+/* Once the star has opened past the frame the mask and the grade are both
+   no-ops, but the compositor still re-rasterises a full-viewport masked,
+   filtered video on every scroll frame — which cost the reel about a fifth
+   of its playback rate. Dropping both in the revealed state is visually
+   identical and hands the frames back to decoding. */
+.reel.is-revealed .reel-frame { -webkit-mask:none; mask:none; }
+.reel.is-revealed .reel-frame video { filter:none; }
+.reel-frame video {
+  width:100%; height:100%; object-fit:cover;
+  /* A light hold on the footage through the middle of the opening, gone by
+     the time the reel is the only thing on screen. */
+  filter:brightness(calc(.72 + .28 * var(--reel-progress,0)))
+         saturate(calc(.6 + .4 * var(--reel-progress,0)));
+}
+.reel-bar {
+  position:absolute; z-index:2; inset:auto clamp(22px,4vw,74px) clamp(26px,4vh,40px);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+  pointer-events:none;
+}
+.reel-bar span { color:rgba(249,249,249,.6); }
+.reel-toggle {
+  pointer-events:auto; display:grid; place-items:center; width:46px; height:46px;
+  border:1px solid rgba(249,249,249,.75); border-radius:50%;
+  /* The reel cuts between white cards and dark footage, so the control
+     carries its own ground rather than trusting the frame behind it. */
+  background:rgba(13,13,13,.62); color:var(--paper); cursor:pointer;
+  transition:background .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+}
+.reel-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+.reel-toggle svg { width:15px; height:15px; fill:currentColor; }
+
+@media (prefers-reduced-motion:reduce) {
+  .reel { height:auto; }
+  .reel-stage { position:static; height:auto; }
+  .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+  /* Nothing drives --reel-progress or --reel-reveal here, so the grade and
+     the solid mark must both be switched off explicitly — left alone the
+     overlay stays fully opaque and covers the reel with a blank panel. */
+  .reel-frame video { filter:none; }
+  .reel-frame::after { display:none; }
+  .hero-light::before,.hero-light::after { animation:none; }
+}
+.no-js .reel { height:auto; }
+.no-js .reel-stage { position:static; height:auto; }
+.no-js .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+.no-js .reel-frame video { filter:none; }
+.no-js .reel-frame::after { display:none; }
+
+/* --- Stats ------------------------------------------------- */
+/* The reference sets these as four oversized didone numerals on black, with
+   soft red light drifting behind them. The figures carry the section; the
+   labels stay small and quiet underneath. */
+.stats-light { display:none; }
+.stats {
+  /* No overflow:hidden — clipping a soft glow leaves a hard edge at the
+     section boundary. The page is one continuous black, so the light is
+     allowed to bleed past the section the way the reference's does. */
+  position:relative; isolation:isolate;
+  padding:clamp(80px,8.5vw,160px) var(--gutter) clamp(110px,12.5vw,230px);
+}
+/* The stats glow is gone. Red and blue were appearing as large blurred
+   haze in three separate places, which is a generic gradient treatment and
+   the opposite of decisive. They now bookend the page only — hero and
+   footer — so the middle of the page is clean black and the colour means
+   arrival and departure rather than atmosphere.
+   Removing it also retires the 4px horizontal overflow it caused. */
+/* Four equal columns, as the reference sets them. A hierarchy was tried
+   here and reverted: leading on "35+" made the smallest figure the loudest,
+   which fought the numbers themselves. An even row reads as a ledger —
+   stated once, confidently, without a pitch. */
+.stats-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(24px,4vw,70px);
+}
+/* Kinfolk is a didone and sets very wide, so the row read loose and thin
+   against the reference. Tighter tracking pulls the figures in, a hairline
+   stroke adds weight the family has no bold cut for, and the size comes
+   down nearer the reference's 76px. */
+.stat strong {
+  display:block;
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  font-size:clamp(40px,5.3vw,84px); line-height:.88; letter-spacing:-.035em;
+  -webkit-text-stroke:.7px currentColor;
+}
+/* Only while counting: proportional figures reflow as digits are added,
+   and a number that shuffles sideways undoes the point of animating it. */
+.stat strong.is-counting { font-variant-numeric:tabular-nums; }
+.stat span {
+  display:block; margin-top:clamp(10px,1.2vw,18px); max-width:24ch;
+  color:var(--muted); font-size:clamp(12px,.95vw,14px); line-height:1.45;
+}
+@media (max-width:860px) {
+  .stats-grid { grid-template-columns:repeat(2,1fr); row-gap:clamp(34px,6vw,54px); }
+}
+@media (prefers-reduced-motion:reduce) { .stats-light span { animation:none; } }
+
+/* --- Services ---------------------------------------------- */
+/* Two columns: an oversized numeral on the left, everything else on the
+   right. Closed rows show the numeral alone — the reference hides the name
+   until the row opens, so the list reads as four huge figures. */
+.system { padding:clamp(92px,10vw,180px) var(--gutter) clamp(54px,5.6vw,96px); }
+.system-head { margin:0 0 clamp(44px,6vh,80px); }
+.system-title { margin:0; max-width:20ch; font-size:clamp(38px,5.4vw,76px); }
+.system-meta {
+  margin:clamp(20px,2.6vh,34px) 0 0; max-width:40ch;
+  color:var(--paper); font-size:11px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; line-height:1.5;
+}
+/* Separator is drawn, not written, so no character is added to the copy. */
+.system-meta .sep::before { content:"\00b7"; margin:0 .5em; }
+
+.system-list { border-top:1px solid var(--line); }
+/* The numeral sits beside the whole row, not inside the button. When it
+   lived in the button it set that row's height, so an open row showed the
+   name, then ~170px of dead air, then the detail. Now a closed row is
+   still numeral-tall and an open one flows tight under the name. */
+.system-item {
+  position:relative; border-bottom:1px solid var(--line);
+  display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+  gap:clamp(20px,4vw,70px); align-items:start;
+  padding:clamp(30px,3.2vw,56px) 0;
+  /* The whole row toggles, numeral included — see the click handler. */
+  cursor:pointer;
+}
+.system-toggle {
+  width:100%; display:flex; align-items:flex-start; justify-content:space-between; gap:24px;
+  padding:0; border:0; background:none; color:inherit; text-align:left; font:inherit; cursor:pointer;
+}
+/* The reference sets these in the hairline grotesque, not the didone. The
+   didone's thick/thin at 260px fought the headline above it, and the
+   -.16em pull sliced the tops and tails of the glyphs against the row
+   hairlines, which read as a clipping bug rather than a crop. */
+.system-num {
+  display:block;
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:300;
+  /* Was 260px, which made these the largest type anywhere — larger than the
+     hero. They should own their section, not the page. */
+  font-size:clamp(86px,11.5vw,186px); line-height:.84; letter-spacing:-.04em;
+}
+/* A shut row carries its name at display size — it is the headline of that
+   stage. Opening it demotes the name to a label so the detail underneath
+   becomes the subject, which is the whole gesture of the row. */
+.system-name {
+  margin:0; font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:400; font-size:clamp(30px,4.4vw,64px); line-height:1.04;
+  text-transform:uppercase; letter-spacing:-.025em;
+  transition:font-size .45s var(--ease),letter-spacing .45s var(--ease);
+}
+.system-item.is-open .system-name { font-size:clamp(21px,2.3vw,34px); letter-spacing:-.012em; }
+.system-symbol {
+  position:relative; flex:none; width:38px; height:38px; margin-top:6px;
+  display:grid; place-items:center; border:1px solid rgba(249,249,249,.34); border-radius:50%;
+  /* Always present now that the whole row is the control — it is the only
+     thing saying the row opens. */
+  opacity:.5; transition:opacity .35s var(--ease),border-color .3s;
+}
+.system-item:hover .system-symbol,
+.system-item.is-open .system-symbol { opacity:1; }
+.system-symbol::before,.system-symbol::after {
+  content:""; position:absolute; width:13px; height:1px; background:currentColor;
+  transition:transform .35s var(--ease);
+}
+.system-symbol::after { transform:rotate(90deg); }
+.system-item.is-open .system-symbol::after { transform:rotate(0); }
+
+.system-panel { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s var(--ease); }
+.system-item.is-open .system-panel { grid-template-rows:1fr; }
+.system-panel > div { overflow:hidden; }
+.system-detail { padding-top:clamp(26px,2.6vw,44px); }
+.system-for {
+  display:flex; gap:12px; margin:0 0 clamp(26px,3.4vh,42px);
+  max-width:44ch; color:var(--paper); font-size:clamp(13px,1.1vw,17px); line-height:1.5;
+}
+.system-for::before {
+  content:""; flex:none; width:9px; height:9px; margin-top:.5em;
+  border:1px solid rgba(249,249,249,.65); border-radius:50%;
+}
+.system-outcome span { display:block; margin-bottom:12px; color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+.system-outcome p {
+  margin:0 0 clamp(26px,3.4vh,42px);
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif;
+  font-size:clamp(18px,1.9vw,30px); text-transform:uppercase; letter-spacing:.03em; line-height:1.2;
+}
+.system-tags { display:flex; flex-wrap:wrap; gap:9px; margin:0; padding:0; list-style:none; }
+.system-tags li {
+  padding:10px 17px; border:1px solid rgba(249,249,249,.3); border-radius:999px;
+  font-size:10px; font-weight:600; letter-spacing:.11em; text-transform:uppercase;
+}
+@media (max-width:820px) {
+  .system-item { grid-template-columns:1fr; gap:14px; }
+  .system-num { font-size:clamp(84px,24vw,150px); }
+}
+@media (prefers-reduced-motion:reduce) { .system-panel { transition:none; } }
+
+
+/* --- Shared editorial primitives ---------------------------- */
+/* Everything below the services list sits on the same black ground.
+   The reference never cuts to a light panel, so neither does this: the
+   only colour that interrupts the page is the red scribble, the red
+   marks in the marquee and the blue behind one word. */
+/* The quiet baseline. Most sections now sit closer together than they did,
+   which is what buys the room for the two moments that open right out.
+   An even rhythm across fourteen sections is what made the page read flat:
+   when everything is spaced like a feature, nothing is one. */
+/* Breathing room top and bottom, so a section owns its own space instead of
+   being separated only by the one above it ending. Sized in vw, not vh: the
+   previous clamp pinned to its 72px floor on any viewport under ~1350px
+   tall, which is most laptops — the page was crowded for the people most
+   likely to be reading it. Section rhythm should follow the measure. */
+.band { padding-inline:var(--gutter); padding-block:clamp(60px,6.8vw,114px); }
+/* The header is fixed at 92px, so every in-page link would otherwise land
+   its heading underneath it. */
+:is(section,footer)[id] { scroll-margin-top:112px; }
+.band-head {
+  display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+  gap:24px; margin-bottom:clamp(28px,4vh,40px);
+}
+.band-head h2 { margin:0; font-size:clamp(32px,3.7vw,54px); }
+.band-note { max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+.eyebrow { display:block; margin:0 0 clamp(20px,3vh,28px); }
+.vh { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+/* --- Entrance -------------------------------------------- */
+/* Restrained on purpose: 14px of travel and a long settle, never a slide or
+   a bounce. The point is that content arrives composed rather than that
+   anything is seen to move — if the animation is legible as an animation it
+   has already failed at this price point.
+
+   The hidden state is applied by script (.reveal-ready) rather than sitting
+   in the stylesheet, so a failed or slow script can never leave the page
+   blank, and there is no flash of hidden content before JS runs. */
+.reveal-ready [data-reveal] { opacity:0; transform:translateY(14px); }
+.reveal-ready [data-reveal].is-in {
+  opacity:1; transform:none;
+  transition:opacity .95s var(--ease-weight),transform .95s var(--ease-weight);
+  transition-delay:calc(var(--i,0) * 65ms);
+}
+/* The hero is the only thing that moves on load rather than on scroll, and
+   it travels further because nothing has been established yet to disturb. */
+.hero-eyebrow,.hero-title { animation:heroIn 1.15s var(--ease-weight) both; }
+.hero-title { animation-delay:.1s; }
+@keyframes heroIn { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
+
+@media (prefers-reduced-motion:reduce) {
+  .reveal-ready [data-reveal] { opacity:1; transform:none; transition:none; }
+  .hero-eyebrow,.hero-title { animation:none; }
+  .menu-overlay { transition:none; }
+  .menu-overlay.is-open .overlay-nav a { animation:none; }
+}
+
+/* --- Craft layer -------------------------------------------- */
+/* Motion had one duration and one curve on everything, which reads as a
+   default rather than a decision. Weight should move slowly, detail should
+   move quickly — that difference is most of what makes an interface feel
+   considered rather than assembled. */
+:root {
+  --ease-weight:cubic-bezier(.16,1,.3,1);   /* large masses, long settle */
+  --ease-detail:cubic-bezier(.3,.7,.2,1);   /* small elements, crisp */
+  --t-weight:.72s;
+  --t-detail:.22s;
+}
+.system-panel { transition:grid-template-rows var(--t-weight) var(--ease-weight); }
+.system-name { transition:font-size var(--t-weight) var(--ease-weight),letter-spacing var(--t-weight) var(--ease-weight); }
+.btn-pill { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
+.btn-pill .arrow { transition:transform var(--t-detail) var(--ease-detail); }
+
+/* Testimonials. The rail is the weight and moves on its own long curve;
+   the controls are detail and snap. */
+.treel-step { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
+
+/* --- Selected work ------------------------------------------ */
+/* A hand-set gallery, not a grid: six panels of deliberately unequal
+   width and vertical offset. Widths total 94% per row and the 2% column
+   gap makes up the rest, so the row fills the measure exactly. */
+/* Rows of three. Each row declares its own column proportions and its own
+   vertical offsets, so three rows of the same count never read as a
+   repeated template. The wide column is the one that carries film. */
+.work-row {
+  display:grid; gap:clamp(18px,2.4vw,40px);
+  align-items:start; margin-bottom:clamp(40px,5.5vw,96px);
+}
+.work-row:last-of-type { margin-bottom:0; }
+.work-row--a { grid-template-columns:0.78fr 1.5fr 0.92fr; }
+/* Row B runs landscape, narrow portrait, tall portrait — three different
+   shapes rather than one frame repeated, with the right-hand panel the
+   largest so the row has somewhere to land. */
+.work-row--b { grid-template-columns:1.55fr 0.95fr 1.6fr; }
+.work-row--a > :nth-child(1) { margin-top:clamp(28px,4vw,76px); }
+.work-row--a > :nth-child(3) { margin-top:clamp(10px,1.4vw,26px); }
+.work-row--b > :nth-child(1) { margin-top:clamp(12px,1.7vw,32px); }
+.work-row--b > :nth-child(2) { margin-top:clamp(26px,3.8vw,72px); }
+.work-row--b > :nth-child(3) { margin-top:0; }
+.work-row--b > :nth-child(1) .shot { aspect-ratio:4/3; }
+.work-row--b > :nth-child(2) .shot { aspect-ratio:4/5; }
+.work-row--b > :nth-child(3) .shot { aspect-ratio:5/6; }
+
+/* Row C: wide landscape, portrait, near-square — the widest spread of the
+   three rows, and the only one whose panels step down in size left to
+   right. */
+.work-row--c { grid-template-columns:1.75fr 1.05fr 0.85fr; }
+.work-row--c > :nth-child(1) { margin-top:0; }
+.work-row--c > :nth-child(2) { margin-top:clamp(34px,5vw,96px); }
+.work-row--c > :nth-child(3) { margin-top:clamp(20px,3vw,62px); }
+.work-row--c > :nth-child(1) .shot { aspect-ratio:16/10; }
+.work-row--c > :nth-child(2) .shot { aspect-ratio:4/5; }
+.work-row--c > :nth-child(3) .shot { aspect-ratio:9/10; }
+
+/* The client's name in the didone, what we did for them in the grotesque.
+   A distinction with a reason behind it, rather than mixing faces for
+   texture — which is the test every other alternation on this page has to
+   pass too. */
+.shot-title .name {
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  letter-spacing:.01em; text-transform:uppercase;
+}
+/* Row C has no index to carry the caption, so its link label stands rather
+   than waiting for a hover. */
+.shot-more.is-standing { opacity:1; transform:none; color:rgba(249,249,249,.6); }
+.work-item:hover .shot-more.is-standing { color:var(--paper); }
+
+.work-item { display:flex; flex-direction:column; gap:12px; min-width:0; }
+.shot { position:relative; overflow:hidden; background:var(--ink); aspect-ratio:4/5; }
+/* The film panel is the widest in its row, so it takes a landscape frame
+   while the stills beside it stay portrait — the contrast in shape is what
+   stops a row of three reading as a strip. */
+.work-item--film .shot { aspect-ratio:16/9; }
+.shot img,.shot video {
+  width:100%; height:100%; object-fit:cover;
+  object-position:var(--pos,center center); filter:var(--photo-grade);
+  transition:transform .7s var(--ease),filter .7s var(--ease);
+}
+/* Hover lifts the grade rather than removing it, so a hovered panel does
+   not jump to a different colour world than the ones beside it. */
+.work-item:hover .shot img,.work-item:hover .shot video,
+.work-item:focus-visible .shot img,.work-item:focus-visible .shot video {
+  transform:scale(1.04); filter:contrast(1.04) saturate(.82);
+}
+
+.shot-title {
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+  font-size:17px; line-height:1.15; text-transform:uppercase; letter-spacing:-.01em;
+}
+.shot-meta { color:rgba(249,249,249,.6); font-size:10px; }
+.shot-meta .sep::before { content:"\00b7"; margin:0 .5em; }
+/* The whole panel is the link, so standing "learn more" labels only repeat
+   an affordance the cursor already gives. Kept in the markup for screen
+   readers and revealed on intent. */
+.shot-more {
+  color:var(--paper); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+  opacity:0; transform:translateY(-4px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.work-item:hover .shot-more,
+.work-item:focus-visible .shot-more { opacity:1; transform:none; }
+/* Touch has no hover state to reveal it with. */
+@media (hover:none) { .shot-more { opacity:1; transform:none; color:rgba(249,249,249,.6); } }
+
+/* --- Manifesto ---------------------------------------------- */
+/* The measure is set in em, not ch. ch is the width of the resolved font's
+   "0" — Kinfolk's is 0.70em and the macOS Didot fallback's is 0.52em, so a
+   ch-based measure silently narrows by a quarter whenever the webfont does
+   not arrive, which is what turns this headline into seven lines instead
+   of five. 13.3em is the same measure Kinfolk gave, now independent of
+   which serif actually resolves. */
+/* One of the two places the page is allowed to open right out. The
+   statement arrives after a long silence and is followed by another, so it
+   reads as a held breath rather than as the next item in a list. Empty
+   space is the cheapest thing to produce and the most expensive thing to
+   look at, and the page had almost none. */
+.manifesto { padding-block:clamp(118px,13.5vw,250px); }
+.manifesto h2 { margin:0; max-width:13.3em; font-size:clamp(40px,5.6vw,88px); line-height:.94; }
+/* The circle is drawn, not typed: a single open stroke that overshoots
+   its own start, so it reads as a hand mark rather than an ellipse. */
+.ring { position:relative; display:inline-block; }
+.ring svg {
+  position:absolute; left:-9%; top:-22%; width:118%; height:150%;
+  overflow:visible; pointer-events:none;
+}
+.manifesto .btn-pill { margin-top:clamp(28px,4vh,36px); }
+
+/* --- Founder ------------------------------------------------ */
+.founder-plate { padding:0 var(--gutter) clamp(44px,4.6vw,84px); }
+.founder-plate figure { margin:0; }
+/* TODO(asset): the reference sets a wide environmental plate here and no
+   landscape founder frame was supplied — every shot is portrait, and
+   anzhelika-portrait.png is a cut-out that floats in black at this width.
+   16/8 with a low crop keeps the room in frame instead of reducing the
+   band to a face. Replace once a wide plate is delivered. */
+.founder-plate img {
+  width:100%; aspect-ratio:16/8; object-fit:cover;
+  object-position:var(--pos,center 24%); filter:var(--photo-grade);
+}
+.founder-plate figcaption { padding-top:10px; text-align:right; color:rgba(249,249,249,.6); font-size:10px; }
+.duo { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,5vw,48px); align-items:start; }
+.founder-title { margin:clamp(16px,2.4vh,22px) 0 0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
+.founder-body { padding-top:34px; color:rgba(249,249,249,.88); font-size:16px; line-height:1.7; }
+.founder-body p { margin:0 0 20px; }
+.founder-body .btn-pill { margin-top:6px; }
+
+/* --- Team --------------------------------------------------- */
+.roster { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
+.roster figure { display:flex; flex-direction:column; gap:12px; margin:0; }
+.roster figure:nth-child(even) { margin-top:60px; }
+.roster .shot { aspect-ratio:3/4; }
+.roster figcaption { display:flex; flex-direction:column; gap:12px; }
+.roster h3 {
+  margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+}
+.roster p { margin:0; max-width:24ch; color:rgba(249,249,249,.7); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; line-height:1.35; }
+.roster-placeholder {
+  display:grid; place-items:center; width:100%; height:100%;
+  background:linear-gradient(145deg,#34312e,#171717); color:rgba(249,249,249,.18);
+  font:400 clamp(90px,11vw,200px)/1 "Kinfolk",Didot,"Bodoni 72",Georgia,serif;
+}
+
+/* --- Recognition -------------------------------------------- */
+/* Client names, not logo files: thirteen marks drawn in thirteen
+   palettes never sit together, and the reference sets the names as type
+   with the brand mark between them. */
+.marquee {
+  --logo-w:clamp(150px,16vw,220px);
+  --logo-mark:clamp(25px,2.7vw,38px);
+  --logo-h:clamp(40px,4.2vw,56px);
+  border-block:1px solid rgba(249,249,249,.28); padding:26px 0;
+  overflow:hidden; display:flex; width:max-content; max-width:100%;
+}
+.marquee-track {
+  display:flex; flex:none; align-items:center; white-space:nowrap;
+  animation:namesScroll 46s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state:paused; }
+/* The supplied marks are black artwork on transparency, so on this page
+   they were all but invisible — inverting makes them white without
+   touching the transparent ground. They are also 400px canvases with a lot
+   of built-in padding, so the box has to run large for the mark to read at
+   a normal size. */
+/* Every mark gets the same box and is fitted inside it. Constraining by
+   height alone let aspect ratio decide optical weight: these range from
+   1.00 (a square badge) to 5.10 (a long wordmark), so the square one
+   rendered as a 74px block beside 37px strips and owned the whole row.
+   A fixed box makes a wide mark fill the width and a square one fill the
+   height, which is what actually reads as even. */
+.marquee-track figure {
+  position:relative; margin:0; flex:none;
+  width:var(--logo-w); height:var(--logo-h);
+}
+/* Each file is a square canvas with the mark letterboxed inside it, and
+   the mark fills anywhere from 16% to 80% of that canvas. Fitting the
+   canvas therefore sizes the padding, not the logo, which is why one mark
+   came out 26px tall and another 6px. --f carries each file's measured
+   content fraction, so every mark lands on the same optical height and
+   the transparent surplus simply overhangs the box unseen. */
+/* Sized, not scaled. The previous version laid each logo out small and then
+   transform-scaled it up by as much as 3x, which resamples a 400px source
+   past its own resolution — that is the softness that shows the moment
+   opacity lifts on hover. Setting the height directly means the browser
+   rasterises once, downscaling from the 400px master, so every mark is
+   sharp. Centring is absolute rather than grid/flex because an item taller
+   than its box stops being centred by those, which is what threw the marks
+   onto different baselines when this was last tried. */
+.marquee-track img {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:auto; height:calc(var(--logo-mark) / var(--f,.25)); max-width:none;
+  object-fit:contain;
+  /* brightness(0) crushes every opaque pixel to black and keeps the alpha,
+     then invert lifts it to flat white. A plain invert() leaves greys as
+     greys, which is why the halftone behind one wordmark came back as mud
+     rather than as part of the mark. */
+  filter:brightness(0) invert(1); opacity:.78; transition:opacity .4s var(--ease);
+}
+/* Two of the supplied marks are already light artwork on a dark ground.
+   Inverting those turned them into solid pale blocks; lifting their
+   brightness turned the dark ground into a grey slab. They want the grade
+   and nothing else, so the ground sinks into the page and only the light
+   part of the mark is left. */
+.marquee-track img[data-light] { filter:grayscale(1); }
+.marquee-track figure:hover img { opacity:1; }
+.marquee-track i {
+  /* Smaller than the marks it separates — at 18px it was competing with
+     the shorter wordmarks instead of punctuating them. */
+  flex:none; width:13px; height:13px; margin:0 clamp(14px,1.6vw,24px); background:var(--red);
+  -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+}
+@keyframes namesScroll { to { transform:translateX(-100%); } }
+
+/* --- Proof -------------------------------------------------- */
+.proof-head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:clamp(28px,4vh,40px); }
+.proof-lead { display:flex; flex-direction:column; gap:18px; }
+.proof-lead h2 { margin:0; font-size:clamp(32px,3.7vw,54px); }
+.proof-badges { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-end; }
+.proof-badges > div { display:flex; flex-direction:column; gap:6px; }
+.stars { color:var(--red); font-size:13px; letter-spacing:.2em; }
+.proof-badges strong {
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  font-size:26px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+}
+/* Three quotes on the measure, drifting one column at a time.
+
+   What makes a three-up testimonial slider read as a template is three
+   bordered boxes of equal height — that turns quotes into a comparison
+   table. There are no boxes here: one hairline runs the full measure and
+   the columns hang off it, which is the page's own separator language
+   doing the work a border would have done badly. The columns are held
+   together instead by the baseline their attributions share.
+
+   Every quote stays authored in the markup. The loop is made from clones
+   the script marks aria-hidden, exactly as the logo marquee already does,
+   so no copy is written twice and the markup stays the source of truth. */
+.treel-wrap {
+  border-top:1px solid rgba(249,249,249,.28); padding-top:clamp(30px,3.6vw,52px);
+  --gap:clamp(18px,2.2vw,40px);
+  --dwell:4.6s;
+}
+/* Breaks the right gutter, so the next quote is always entering the margin.
+   That is how the row says there is more without a dot row underneath it,
+   and it is the move the work rows already make. */
+.treel {
+  overflow:hidden;
+  margin-right:calc(var(--gutter) * -1);
+}
+.treel-track {
+  display:flex; gap:var(--gap); align-items:stretch;
+  transition:transform 1.05s var(--ease-weight);
+}
+.treel-track.is-jumping { transition:none; }
+/* Three fill the measure exactly; the fourth begins in the gutter. The
+   gutter is subtracted because this element is a gutter wider than the
+   measure it has to divide. */
+.treel-item { flex:0 0 calc((100% - var(--gutter) - 2 * var(--gap)) / 3); }
+/* Only what sits on the measure is lit. Asking the eye to read a column
+   that is half off the page is the other half of why these feel cheap. */
+.treel-item { opacity:.26; transition:opacity var(--t-weight) var(--ease-weight); }
+.treel-item.is-lit { opacity:1; }
+
+.tquote {
+  margin:0; display:flex; flex-direction:column; gap:clamp(20px,2.4vw,32px);
+}
+.tquote blockquote {
+  margin:0;
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:400;
+  font-size:clamp(18px,1.55vw,23px); line-height:1.26; text-transform:uppercase; letter-spacing:-.005em;
+}
+
+/* Controls. A drifting rail with nothing to steer it reads as broken rather
+   than as restraint, so this one earns its furniture — but the least of it:
+   two marks, and nothing else.
+
+   There was a filling hairline here and it is gone. Six quotes three at a
+   time is a sliding window, not a sequence of pages, so there is no honest
+   fraction to show: the window covers positions 5,6,7 of six, which is
+   either 133% or a wrap, and it read as a bar overflowing and then jumping
+   backwards once a cycle. A progress rule has to measure something real. */
+.treel-foot {
+  display:flex; align-items:center; gap:10px;
+  margin-top:clamp(30px,3.4vw,52px);
+}
+.treel-step {
+  flex:none; width:44px; height:44px; display:grid; place-items:center;
+  border:1px solid rgba(249,249,249,.4); border-radius:50%;
+  background:none; color:inherit; cursor:pointer;
+  transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail);
+}
+.treel-step:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
+.treel-step::before {
+  content:""; width:12px; height:12px; background:currentColor;
+  -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+  transition:transform var(--t-detail) var(--ease-detail);
+}
+.treel-step:hover::before { transform:rotate(90deg) scale(1.15); }
+/* The mark is the page's arrow everywhere else; back is simply it turned
+   around, rather than a second glyph introduced for one button. */
+.treel-step[data-treel-step="-1"]::before { transform:rotate(180deg); }
+.treel-step[data-treel-step="-1"]:hover::before { transform:rotate(90deg) scale(1.15); }
+
+.tattrib { margin-top:auto; display:flex; flex-direction:column; align-items:flex-start; gap:12px; }
+.tattrib strong {
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  font-size:clamp(22px,1.8vw,26px); line-height:1; text-transform:uppercase; letter-spacing:.01em;
+}
+.tattrib small { color:rgba(249,249,249,.65); font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+
+/* A small square above the stars. Deliberately small: a large portrait
+   makes the section about faces, and at this size a client photograph
+   reads as a signature on the quote rather than a second subject competing
+   with it. */
+/* No fill of its own. While the mark is still small the square is mostly
+   empty, and any tone at all reads as a lighter patch sitting on the
+   section — so the uncovered part is simply the page. Transparent rather
+   than a matched hex, so it keeps matching if the section ever changes. */
+.tthumb {
+  position:relative; overflow:hidden; flex:none;
+  width:clamp(52px,5vw,68px); aspect-ratio:1; background:none;
+}
+.tthumb img {
+  width:100%; height:100%; object-fit:cover;
+  object-position:var(--pos,center 28%);
+  /* The one grade every photograph on the page carries. Six client
+     portraits will arrive from six cameras; this is what narrows them. */
+  filter:var(--photo-grade);
+  /* The picture is always seen through the mark. At rest the mark is scaled
+     far past the square, so nothing is actually cropped — the shape only
+     becomes visible while it is small, which is the whole of the effect.
+     1400% keeps the star's waist clear of the corners; the arms run on the
+     axes, so the diagonals are the part that has to be checked. */
+  -webkit-mask:var(--mark) center/1400% no-repeat; mask:var(--mark) center/1400% no-repeat;
+}
+
+/* The portrait blooms out of the mark. The same move the showreel aperture
+   makes at the top of the page, played small: the star opens and the image
+   arrives through it, rather than a photograph simply fading up. It is the
+   one flourish in this section, and it only fires on the quote being
+   turned to. */
+/* The timing is carried on the keyframes, not on the element, and the
+   element runs linear. The reason is geometric: mask-size interpolates
+   linearly, and the mark covers the square at about 250% — only 16% of the
+   way from 38% to 1400%. On the page's usual --ease-weight that point
+   arrives 25ms in, so the star was a star for a frame and a half and the
+   remaining 900ms crawled invisibly from 1300% to 1400%. The star has to
+   hold near its own size first and accelerate late, which is the opposite
+   curve to everything else here — hence ease-in on the opening segment. */
+@keyframes tbloom {
+  0%   { -webkit-mask-size:38%; mask-size:38%; opacity:0; animation-timing-function:var(--ease-detail); }
+  20%  { -webkit-mask-size:54%; mask-size:54%; opacity:1; animation-timing-function:cubic-bezier(.66,0,.86,.36); }
+  100% { -webkit-mask-size:1400%; mask-size:1400%; opacity:1; }
+}
+/* Hands over as the aperture passes the size of the square. */
+@keyframes tseed { 0% { opacity:.34; } 62% { opacity:0; } 100% { opacity:0; } }
+/* Gated on the section having arrived, so the bloom is not spent while the
+   testimonials are still below the fold. Its finished state is identical to
+   the resting state, so if the entrance never runs the picture is simply
+   there — the animation can only ever add. */
+.treel-wrap.is-in .treel-item.is-entering .tthumb img { animation:tbloom .8s linear both; }
+.treel-wrap.is-in .treel-item.is-entering .tthumb::before { animation:tseed .8s linear both; }
+
+/* The seed the bloom appears to grow from, and the stand-in when a quote
+   has no portrait yet: the mark, low, on the square. Sitting behind the
+   image it costs nothing once the picture covers it. */
+.tthumb::before {
+  content:""; position:absolute; inset:0; opacity:0; background:var(--paper);
+  -webkit-mask:var(--mark) center/42% no-repeat; mask:var(--mark) center/42% no-repeat;
+}
+.tthumb:empty::before { opacity:.17; animation:none; }
+
+/* Without JavaScript the rail is simply a row that wraps, every quote lit
+   and readable. The copy never depends on a script running — the same
+   argument as the entrance's hidden state being applied by script rather
+   than sitting in the stylesheet. */
+.no-js .treel { overflow:visible; margin-right:0; }
+.no-js .treel-track { flex-wrap:wrap; row-gap:clamp(34px,4vw,56px); }
+.no-js .treel-item { opacity:1; }
+.no-js .treel-foot { display:none; }
+
+/* The rows used to carry 36px of their own padding, so this rule inherited
+   its breathing room from the last one. It holds its own gap now, but a
+   smaller one than when the attribution sat directly above it — the rail's
+   own foot already closes the section. */
+.proof-foot { margin-top:clamp(30px,3.4vw,58px); padding-top:28px; border-top:1px solid rgba(249,249,249,.28); }
+
+/* --- Belonging ---------------------------------------------- */
+/* The qualifier. It sells nothing and lists nothing: it names a feeling
+   the reader is meant to recognise in themselves and answers it with
+   belonging rather than a service. That is why it sits here — the
+   testimonials are other people's words, the closing is the ask, and this
+   is what turns "these people got results" into "and you are one of them"
+   immediately before being asked to apply.
+
+   So it carries no eyebrow, no button and no body copy. One sentence held
+   in space is the whole design; anything else added here would give the
+   eye somewhere to go other than the line. */
+.belong {
+  position:relative; isolation:isolate; overflow:clip;
+  padding-inline:var(--gutter); padding-block:clamp(120px,15vw,260px);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  gap:clamp(26px,3.4vw,52px);
+}
+/* Deliberately below the screenshot's saturation. At full strength this is
+   the brightest object on a page whose entire argument is restraint, and it
+   would still be ringing when the red closing ask arrives a screen later.
+   It has to read as light behind the words, not as a panel they sit on. */
+/* Painted as a gradient that reaches transparent inside its own box, not
+   as an oval larger than the section. The first build sized a 1254px
+   ellipse inside a 725px section under overflow:clip, so the glow was
+   guillotined into a rectangle — a hard top edge and hard sides, straight
+   across the page. It was invisible to every check because the section was
+   screenshotted on its own bounds, which is exactly where the cut fell.
+
+   Deliberately below the saturation of the supplied mock: at full strength
+   this is the brightest object on a page whose whole argument is restraint,
+   and it would still be ringing when the red closing ask arrives a screen
+   later. It has to read as light behind the words, never as a panel they
+   sit on — so the corners of the section stay black. */
+.belong-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 46% 46% at 50% 47%,
+    rgba(53,36,213,.60) 0%, rgba(53,36,213,.38) 30%,
+    rgba(53,36,213,.14) 54%, rgba(53,36,213,.04) 74%, transparent 100%);
+  /* Scale only. A translating drift would walk the faded edge back into the
+     section boundary and the hard edge would return at one end. */
+  animation:belongBreathe 26s var(--ease) infinite alternate;
+}
+@keyframes belongBreathe { to { transform:scale(1.045); } }
+
+/* The one red on this screen, and the smallest object in the section. */
+.belong-mark {
+  display:block; width:clamp(26px,2.6vw,38px); aspect-ratio:1; background:var(--red);
+  -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+}
+/* Kinfolk is the default voice of a headline and .alt flips a run back to
+   the grotesque — the page's existing mechanism, used unchanged. Here the
+   grotesque carries the long clauses and the didone lands on the two
+   phrases doing the work: what they are meant for, and what Rysing is. */
+/* 20em is measured, not chosen: it is the width at which the sentence
+   breaks on its own clauses — "...and your brand / are meant for something
+   bigger, / Rysing is the place that gets you." At 16em it split "meant
+   for" from "something bigger" and ran the second clause into the third,
+   which reads as text that happened to wrap rather than a line that was
+   set. It holds at both ends of the size clamp. */
+.belong h2 {
+  margin:0; max-width:20em;
+  font-size:clamp(30px,4.6vw,76px); line-height:1.04; letter-spacing:-.012em;
+  text-wrap:balance;
+}
+
+/* --- Spotlight ---------------------------------------------- */
+/* One giant photograph became three panels. The copy did not change: the
+   eyebrow, the headline and the line beneath it used to sit on top of the
+   image and now stand as a section head, so nothing was dropped when the
+   picture they sat on did.
+
+   The row is work-row--c, not a second system invented for this section —
+   the big landscape, then the panel that hangs lowest, then the one that
+   sits between. Reusing it means this section and the last row of Selected
+   Work stay in step if either is ever retuned. */
+/* The cap belongs on the sentence underneath, not on the whole column —
+   capping the column squeezed a 54px headline into five lines while the
+   other section heads take three. */
+.spot-lead { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+.spot-lead p { max-width:46ch; }
+.spot-lead h2 { margin:0; max-width:15em; font-size:clamp(32px,3.7vw,54px); line-height:.98; }
+/* One word on blue — besides the belonging glow, the only place the
+   secondary brand colour appears between the hero and the footer. */
+.spot-lead h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
+.spot-lead p { margin:0; max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+
+/* --- Newsletter --------------------------------------------- */
+/* A centred column, not the two-up with a printed cover beside it. The ask
+   is a single field, so everything above it narrows toward that field
+   rather than sitting beside a second object competing for the eye.
+
+   This is the one headline below the fold allowed to alternate faces. It
+   is also the page's last ask before the closing, and the alternation is
+   what distinguishes it from the three section heads around it. */
+.fudge { position:relative; isolation:isolate; overflow:clip; text-align:center; }
+/* The blue returns at the right edge as the page approaches the footer,
+   where it is already waiting behind the wordmark — read as the footer's
+   light rising rather than a fourth use of the colour. Painted as a
+   gradient that reaches transparent inside its own box: an oversized shape
+   under overflow:clip gets guillotined into a rectangle. */
+.fudge-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 38% 58% at 96% 64%,
+    rgba(53,36,213,.52), rgba(53,36,213,.30) 34%,
+    rgba(53,36,213,.10) 58%, rgba(53,36,213,.02) 76%, transparent 100%);
+}
+.fudge-copy {
+  max-width:1150px; margin-inline:auto;
+  display:flex; flex-direction:column; align-items:center; gap:clamp(22px,2.6vw,34px);
+}
+/* 17.3em is measured: it is the middle of the 17.0–17.6em window in which
+   the headline breaks after "business", which is how the supplied design
+   sets it. Narrower and it falls to three lines, one per face; wider and
+   "and" is dragged up to hang at the end of line one. In em, not px —
+   a px measure holds the break at one font size and loses it at the next
+   step of the clamp. */
+.fudge h2 { margin:0; max-width:17.3em; font-size:clamp(30px,4.1vw,62px); line-height:1.02; letter-spacing:-.012em; }
+.fudge-copy > p { margin:0; max-width:58ch; color:rgba(249,249,249,.85); font-size:15px; line-height:1.75; }
+.fudge-points { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:0; padding:0; list-style:none; }
+.fudge-points li {
+  display:inline-flex; align-items:center; min-height:34px; padding:0 18px;
+  border:1px solid rgba(249,249,249,.42); border-radius:999px;
+  font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+}
+.fudge form { width:100%; max-width:820px; }
+/* The field is the whole point of the section, so it runs wider than the
+   sentence above it — the one element here allowed to be the widest. */
+.fudge-field { display:flex; align-items:center; gap:18px; border-bottom:1px solid var(--paper); text-align:left; }
+.fudge-field:focus-within { border-color:var(--red); }
+.fudge-field input {
+  flex:1 1 auto; min-width:0; min-height:56px; padding:0; border:0; outline:0; background:none;
+  color:var(--paper); font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:300; font-size:17px;
+}
+.fudge-field input::placeholder { color:rgba(249,249,249,.5); }
+.fudge-field button {
+  flex:none; min-height:56px; padding:0; border:0; background:none; color:inherit; cursor:pointer;
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  transition:color var(--t-detail) var(--ease-detail);
+}
+.fudge-field button:hover { color:var(--red); }
+.fudge-note { margin:18px 0 0; color:rgba(249,249,249,.55); font-size:12px; }
+
+/* --- Final CTA ---------------------------------------------- */
+/* The last thing before the footer, and the only ask on the page that
+   should feel inevitable rather than repeated. Centred, and nothing in it
+   but the question and the answer. */
+.closing {
+  position:relative; isolation:isolate; overflow:clip;
+  padding-block:clamp(132px,15.5vw,290px);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+}
+/* Red only. The blue that used to sit high right is gone — the newsletter
+   above still bleeds its own blue down into the top of this section, so
+   the colour is present without this section adding a second source of it,
+   and the ask is left on one light rather than two.
+
+   The red sat at 98%, which put almost all of it under the bottom fade of
+   .glow-soft; raised to 74% it reads properly and still clears the fade. */
+.closing-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 38% 40% at 12% 74%,
+    rgba(240,66,34,.26), rgba(240,66,34,.12) 40%,
+    rgba(240,66,34,.03) 68%, transparent 100%);
+}
+/* The question breaks between its two faces — "Ready to build a" on the
+   grotesque line, "legacy?" alone on the didone. Measured: that holds from
+   8.6em up to roughly 12.7em, so 9.4em sits well inside it rather than on
+   an edge. In em regardless, because a px measure holds a break at one
+   step of the size clamp and loses it at the next. */
+.closing h2 { margin:0; max-width:9.4em; font-size:clamp(48px,7.6vw,118px); line-height:.92; }
+/* The fill is gone, per the supplied design. Every pill on the page is now
+   an outline, so nothing is left to mark this as the one that matters —
+   its weight has to come from the space around it and from being the only
+   thing on the screen. */
+.closing .btn-pill { margin-top:clamp(34px,5vh,52px); }
+
+/* --- Footer ------------------------------------------------- */
+/* The page opens and closes on the same two lights. They sit behind the
+   wordmark rather than beside it, so the mark reads as lit from within.
+   The inner element clips them: left unclipped they would extend the
+   document past the footer and add dead scroll at the very bottom. */
+.site-footer { position:relative; isolation:isolate; padding:0 var(--gutter) 28px; }
+/* overflow:hidden stays — unclipped these extend the document past the
+   footer and add dead scroll at the very bottom. The mask is a separate
+   job: it fades the top so the red is not cut flat against the closing
+   section above, which was the last hard line left on the page. The bottom
+   needs no fade; it is the end of the document. */
+.footer-light {
+  position:absolute; z-index:-1; inset:0; overflow:hidden; pointer-events:none;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 100%);
+}
+.footer-light::before,.footer-light::after {
+  content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+}
+.footer-light::before {
+  width:min(58vw,820px); top:-18%; right:-12vw;
+  background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.5),rgba(240,66,34,.24) 38%,rgba(240,66,34,.05) 62%,transparent 74%);
+  animation:driftA 31s var(--ease) infinite alternate;
+}
+.footer-light::after {
+  width:min(52vw,720px); bottom:-26%; left:-16vw;
+  background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.5),rgba(53,36,213,.23) 38%,rgba(53,36,213,.05) 62%,transparent 74%);
+  animation:driftB 38s var(--ease) -9s infinite alternate;
+}
+@media (prefers-reduced-motion:reduce) {
+  .footer-light::before,.footer-light::after,.belong-glow { animation:none; }
+}
+/* The wordmark runs the full measure here — it is the sign-off, and the
+   artwork is the only place the logo face appears. */
+.footer-mark { width:100%; height:auto; margin-bottom:56px; }
+.footer-grid {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px;
+  padding-top:32px; border-top:1px solid rgba(249,249,249,.28);
+}
+.footer-grid > * { display:flex; flex-direction:column; gap:8px; }
+.footer-grid h3 { margin:0 0 6px; color:rgba(249,249,249,.5); font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+.footer-blurb { max-width:28ch; }
+.footer-legal { align-items:flex-end; text-align:right; }
+.footer-grid a { opacity:.82; transition:opacity .25s,color .25s; }
+.footer-grid a:hover { opacity:1; color:var(--red); }
+.footer-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; margin-top:40px; }
+
+/* --- Responsive --------------------------------------------- */
+@media (max-width:980px) {
+  /* Two on the measure, then one. The basis is the only thing that changes
+     — the step, the window and the loop are all measured from the rendered
+     geometry, so nothing else has to be told. */
+  .treel-item { flex-basis:calc((100% - var(--gutter) - var(--gap)) / 2); }
+  .duo,.roster { grid-template-columns:minmax(0,1fr); }
+  .roster figure:nth-child(even) { margin-top:0; }
+  .founder-body { padding-top:0; }
+  .footer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .footer-legal { align-items:flex-start; text-align:left; }
+}
+@media (max-width:820px) {
+  /* The hand-set offsets only read at full measure; below it they stack. */
+  /* The hand-set proportions and offsets only read at full measure. Below
+     it every panel takes the same frame and the offsets are dropped. */
+  .work-row,.work-row--a,.work-row--b { grid-template-columns:1fr; gap:34px; }
+  .work-row > :nth-child(n) { margin-top:0; }
+  .work-item--film .shot { aspect-ratio:16/9; }
+  .work-item:not(.work-item--film) .shot { aspect-ratio:4/5; }
+  .proof-badges { gap:24px; }
+  .fudge-field { max-width:none; }
+}
+@media (max-width:560px) {
+  .treel-item { flex-basis:calc(100% - var(--gutter)); }
+  .roster h3 { font-size:24px; }
+  /* The field and its 27-character button cannot share a line here. */
+  .fudge-field { flex-wrap:wrap; }
+  .fudge-field button { min-height:44px; margin-bottom:8px; }
+  .footer-grid { grid-template-columns:minmax(0,1fr); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .marquee-track { animation:none; }
+  .shot img { transition:none; }
+  /* Autoplay is off here and the rail steps without easing. The bloom is a
+     flourish, so it is the first thing to go; the picture resolves to
+     exactly the same frame without it. */
+  .treel-track { transition:none; }
+  /* The bloom is a flourish, so it is the first thing to go. The picture
+     resolves to exactly the same frame without it. */
+  .tthumb img,.tthumb::before { animation:none !important; }
+}
