@@ -1141,21 +1141,18 @@
       padding-block:clamp(132px,15.5vw,290px);
       display:flex; flex-direction:column; align-items:center; text-align:center;
     }
-    /* Both brand colours, low. Blue high right, red low left — the inverse of
-       the footer directly beneath, which runs red high right and blue low
-       left, so the two trade corners across the boundary rather than stacking
-       the same colour twice. The page opens and closes on the same two lights.
-       Gradients that reach transparent inside their own box; an oversized
-       shape under overflow:clip gets guillotined into a rectangle. */
+    /* Red only. The blue that used to sit high right is gone — the newsletter
+       above still bleeds its own blue down into the top of this section, so
+       the colour is present without this section adding a second source of it,
+       and the ask is left on one light rather than two.
+
+       The red sat at 98%, which put almost all of it under the bottom fade of
+       .glow-soft; raised to 74% it reads properly and still clears the fade. */
     .closing-glow {
       position:absolute; z-index:-1; inset:0; pointer-events:none;
-      background:
-        radial-gradient(ellipse 42% 46% at 92% 6%,
-          rgba(53,36,213,.50), rgba(53,36,213,.26) 36%,
-          rgba(53,36,213,.07) 62%, transparent 100%),
-        radial-gradient(ellipse 38% 40% at 12% 98%,
-          rgba(240,66,34,.22), rgba(240,66,34,.10) 40%,
-          rgba(240,66,34,.02) 68%, transparent 100%);
+      background:radial-gradient(ellipse 38% 40% at 12% 74%,
+        rgba(240,66,34,.26), rgba(240,66,34,.12) 40%,
+        rgba(240,66,34,.03) 68%, transparent 100%);
     }
     /* The question breaks between its two faces — "Ready to build a" on the
        grotesque line, "legacy?" alone on the didone. Measured: that holds from

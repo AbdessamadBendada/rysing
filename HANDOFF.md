@@ -542,9 +542,12 @@ its weight from the space around it and from being the only thing on the screen.
 Red survives only in the review stars, the belonging mark and the focus ring.
 If the page ever reads as having no destination, this is the first place to look.
 
-**The two glows trade corners with the footer.** Blue high right and red low
-left here; the footer beneath runs red high right and blue low left, so the same
-colour never stacks twice across the boundary.
+**One light, red, low left.** The blue that sat high right was removed on
+instruction: the newsletter above already bleeds its blue down into the top of
+this section, so the colour is present without this section adding a second
+source, and the ask sits on one light rather than two. The red was at 98%, which
+buried almost all of it under `.glow-soft`'s bottom fade; it is at 74% now, where
+it reads and still clears the fade.
 
 **The measure is 9.4em.** The question breaks between its two faces — "Ready to
 build a" on the grotesque line, "legacy?" alone on the didone — anywhere from
