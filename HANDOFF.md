@@ -1,6 +1,6 @@
 # Handoff
 
-Last updated at commit `f6eab5d` + the rail rebuild below. Read this before touching anything.
+Last updated at commit `b943842`. Read this before touching anything.
 
 ---
 
@@ -27,9 +27,12 @@ Done and verified:
 
 - **Pacing.** Section rhythm follows the measure, with room top and bottom.
   Quiet gaps ~190px; the manifesto and closing open to ~250px.
-- **Restraint.** Font alternation appears at three moments only — hero,
-  manifesto, closing. Section heads 80px → 54px, services numerals 260px →
-  186px.
+- **Restraint.** Section heads 80px → 54px, services numerals 260px → 186px.
+  Font alternation was cut to three moments — hero, manifesto, closing — so it
+  would read as emphasis rather than texture. Client-approved sections have
+  since taken it to **five** (adding §8 and §10). That is the device drifting
+  back toward wallpaper, which is what the restraint pass existed to stop. The
+  manifesto is the cheapest of the three originals to give up.
 - **Colour.** Red and blue bookend the page. The mid-page glow was removed, then
   deliberately reinstated for §8 and again for §10, so blue now appears three
   times between the hero and the footer. The closing's red fill is gone (§11),
@@ -49,8 +52,8 @@ Done and verified:
 
 - **Final CTA.** "Ready to build a legacy?", centred, outline pill. Replaces the
   previous headline and eyebrow — a client copy change. See §11.
-- **Newsletter.** Centred column, no printed-cover card. Deletes five strings
-  of baseline copy, knowingly. See §10.
+- **Newsletter.** Centred column, no printed-cover card. Knowingly deletes four
+  strings of baseline copy. See §10.
 - **Spotlight.** One giant photograph became three panels on work-row--c's
   geometry. The copy that sat on the image now stands as a section head. See §9.
 - **Belonging.** The qualifier, between the proof and the ask. New client copy;
@@ -128,6 +131,17 @@ a phone they would never move. Not always-on — several clips decoding at once
 costs battery and competing motion fights the restraint. Unexpected pauses are
 recovered with a retry ceiling, since Safari stops muted autoplay under Low
 Power Mode.
+
+**Every decorative glow carries `.glow-soft`.** It fades the glow to nothing
+before the top and bottom of its own section. Vertical only — left and right are
+clipped at the viewport edge, where a cut is invisible. Without it a glow is
+simply sliced by the section box and leaves a hard horizontal line the full
+width of the page; three of those shipped at once and are what made the page
+look like sections glued together. It masks rather than resizing each gradient
+to fit, because these glows are placed off-centre and near their edges on
+purpose and shrinking them moves the light away from where the design puts it.
+The hero and footer carry one-sided versions. Do not add a glow without it, and
+see the measurement note in §5 before assuming a new one is clean.
 
 **Assets are recompressed, never shipped as delivered.** The film was a 15.8MB
 60fps master for a 7.8s loop → 224KB. The OPS tote 1.16MB → 98KB. U4Success
@@ -262,19 +276,21 @@ filenames once and wired up entirely the wrong asset.
 
 **Housekeeping**
 
-- `RYSING_PROJECT_DIRECTION.md` and `new-direction-2.html` have been sitting
-  modified and uncommitted since Oct 3. They are not this track's work and have
-  been deliberately left out of every push, including `ae893fb` — which was
-  asked for as "push everything". Committing another agent's half-finished
-  workspace on a general instruction is not what that instruction means. If they
-  are ever wanted, commit them on their own and say so.
-- `ASSET-SPEC.md` still describes three active projects. There are nine.
+- `RYSING_PROJECT_DIRECTION.md` and `new-direction-2.html` sat modified and
+  uncommitted from Oct 3 and were held out of every push on the grounds that
+  committing another track's workspace on a general "push everything" is not
+  what that instruction means. They went in on `b943842` once the instruction
+  was repeated. Checked first — doctype, balanced tags, script parses — but not
+  reviewed for design or behaviour; that is the other track's call. The two
+  changes are consistent with each other: the HTML is a full rebuild and the
+  markdown is the decision-log entry describing it.
+- `ASSET-SPEC.md` still describes three active projects, has no entry for the
+  six testimonial portraits, and none for the spotlight's three panels. Correct
+  all three before forwarding.
 - The footer wordmark has a soft white orb to the left of the star. It is in the
   supplied artwork (`rysing-logo-lockup-light.webp`), not a rendering fault —
   invisible at header size, obvious at full width. Needs clean artwork if the
   client does not want it.
-- `ASSET-SPEC.md` has no entry for the six testimonial portraits. Add one before
-  forwarding — see §7 for what to ask for.
 
 ---
 
