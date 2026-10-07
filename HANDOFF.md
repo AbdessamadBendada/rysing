@@ -30,9 +30,10 @@ Done and verified:
 - **Restraint.** Font alternation appears at three moments only — hero,
   manifesto, closing. Section heads 80px → 54px, services numerals 260px →
   186px.
-- **Colour.** Red and blue bookend the page. One hard red, the closing ask. The
-  mid-page glow was removed, then deliberately reinstated once for §8 — that is
-  now the only blue between the hero and the footer.
+- **Colour.** Red and blue bookend the page. The mid-page glow was removed, then
+  deliberately reinstated for §8 and again for §10, so blue now appears three
+  times between the hero and the footer. The closing's red fill is gone (§11),
+  so there is no longer a single decisive red anywhere.
 - **Photography.** One shared `--photo-grade`; every slot takes a focal point
   from `--pos`, so swapping a file is a one-line change.
 - **Header.** Mark, ask, burger. Full-screen overlay carries the nav, awards and
@@ -46,6 +47,8 @@ Done and verified:
 - **Testimonials.** Six rows became a three-up rail that drifts one column at a
   time. Second design — the first was rejected by the client. See §7.
 
+- **Final CTA.** "Ready to build a legacy?", centred, outline pill. Replaces the
+  previous headline and eyebrow — a client copy change. See §11.
 - **Newsletter.** Centred column, no printed-cover card. Deletes five strings
   of baseline copy, knowingly. See §10.
 - **Spotlight.** One giant photograph became three panels on work-row--c's
@@ -494,3 +497,34 @@ holding the identical break at 1680, 1440, 1200, 1000, 820 and 560px.
 it is already waiting behind the wordmark — so it reads as the footer's light
 rising rather than a fourth use of the colour. Painted as a gradient that
 reaches transparent inside its own box, for the reason in §9.
+
+---
+
+## 11. Final CTA
+
+"Ready to build a legacy?" — centred, one question and one pill.
+
+**It is a client copy change, not a restyle.** It replaces "Turn your vision
+into a courageous brand and thought leader reputation." and drops the eyebrow
+"Ready when you are" — both baseline copy. "Ready to build a legacy?" exists
+nowhere in the earlier files. Checked before building, built because the
+supplied design says so. It does earn its place: it answers the manifesto's
+"build a legacy" at the other end of the page.
+
+**The red fill is gone.** That was the page's single decisive use of red — every
+other pill is an outline, so the one that mattered was the one that was filled.
+Now every pill including this one is an outline, and the closing ask has to take
+its weight from the space around it and from being the only thing on the screen.
+Red survives only in the review stars, the belonging mark and the focus ring.
+If the page ever reads as having no destination, this is the first place to look.
+
+**The two glows trade corners with the footer.** Blue high right and red low
+left here; the footer beneath runs red high right and blue low left, so the same
+colour never stacks twice across the boundary.
+
+**The measure is 9.4em.** The question breaks between its two faces — "Ready to
+build a" on the grotesque line, "legacy?" alone on the didone — anywhere from
+8.6em to about 12.7em, so 9.4em sits well inside the window rather than on an
+edge. In em regardless, because a px measure holds a break at one step of the
+size clamp and loses it at the next. Verified holding at 1680 down to 560px; at
+390px it takes three lines, which is correct.

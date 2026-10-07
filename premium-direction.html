@@ -1108,17 +1108,41 @@
     .fudge-note { margin:18px 0 0; color:rgba(249,249,249,.55); font-size:12px; }
 
     /* --- Final CTA ---------------------------------------------- */
-    /* The other. Last thing before the footer, and the only ask on the page
-       that should feel inevitable rather than repeated. */
-    .closing { padding-block:clamp(132px,15.5vw,290px); }
-    /* The single decisive use of red on the page. Every other pill is an
-       outline, so the one that matters is the one that is filled. */
-    .closing .btn-pill {
-      background:var(--red); border-color:var(--red); color:var(--paper);
+    /* The last thing before the footer, and the only ask on the page that
+       should feel inevitable rather than repeated. Centred, and nothing in it
+       but the question and the answer. */
+    .closing {
+      position:relative; isolation:isolate; overflow:clip;
+      padding-block:clamp(132px,15.5vw,290px);
+      display:flex; flex-direction:column; align-items:center; text-align:center;
     }
-    .closing .btn-pill:hover { background:#cf3419; border-color:#cf3419; color:var(--paper); }
-    .closing h2 { margin:0; font-size:clamp(48px,7.6vw,118px); line-height:.92; }
-    .closing .btn-pill { margin-top:clamp(30px,4.5vh,40px); }
+    /* Both brand colours, low. Blue high right, red low left — the inverse of
+       the footer directly beneath, which runs red high right and blue low
+       left, so the two trade corners across the boundary rather than stacking
+       the same colour twice. The page opens and closes on the same two lights.
+       Gradients that reach transparent inside their own box; an oversized
+       shape under overflow:clip gets guillotined into a rectangle. */
+    .closing-glow {
+      position:absolute; z-index:-1; inset:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 42% 46% at 92% 6%,
+          rgba(53,36,213,.50), rgba(53,36,213,.26) 36%,
+          rgba(53,36,213,.07) 62%, transparent 100%),
+        radial-gradient(ellipse 38% 40% at 12% 98%,
+          rgba(240,66,34,.22), rgba(240,66,34,.10) 40%,
+          rgba(240,66,34,.02) 68%, transparent 100%);
+    }
+    /* The question breaks between its two faces — "Ready to build a" on the
+       grotesque line, "legacy?" alone on the didone. Measured: that holds from
+       8.6em up to roughly 12.7em, so 9.4em sits well inside it rather than on
+       an edge. In em regardless, because a px measure holds a break at one
+       step of the size clamp and loses it at the next. */
+    .closing h2 { margin:0; max-width:9.4em; font-size:clamp(48px,7.6vw,118px); line-height:.92; }
+    /* The fill is gone, per the supplied design. Every pill on the page is now
+       an outline, so nothing is left to mark this as the one that matters —
+       its weight has to come from the space around it and from being the only
+       thing on the screen. */
+    .closing .btn-pill { margin-top:clamp(34px,5vh,52px); }
 
     /* --- Footer ------------------------------------------------- */
     /* The page opens and closes on the same two lights. They sit behind the
@@ -1673,10 +1697,15 @@
       </div>
     </section>
 
+    <!-- COPY CHANGE, deliberate and supplied by the client. This replaces
+         "Turn your vision into a courageous brand and thought leader
+         reputation." and drops the eyebrow "Ready when you are" — both
+         baseline copy. "Ready to build a legacy?" is new, and it answers the
+         manifesto's "build a legacy" at the other end of the page. -->
     <section class="band closing" id="contact" aria-labelledby="contact-title">
-      <p data-reveal class="eyebrow label">Ready when you are</p>
-      <h2 data-reveal class="display" id="contact-title"><span class="alt">Turn your</span> vision <span class="alt">into a</span> courageous brand <span class="alt">and thought leader</span> reputation.</h2>
-      <a class="btn-pill" href="mailto:hello@rysing.agency">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+      <div class="closing-glow" aria-hidden="true"></div>
+      <h2 data-reveal class="display" id="contact-title"><span class="alt">Ready to build a</span> legacy?</h2>
+      <a class="btn-pill" data-reveal href="mailto:hello@rysing.agency">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
     </section>
   </main>
 
