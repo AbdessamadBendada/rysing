@@ -1372,3 +1372,213 @@ body::after {
   .contact-cols { grid-template-columns:minmax(0,1fr); }
   .contact-details { grid-template-columns:minmax(0,1fr); gap:30px; }
 }
+
+/* --- About page --------------------------------------------- */
+/* Alternation runs through almost every headline here because the supplied
+   design sets it that way. That is the opposite of the homepage, where it was
+   cut to three moments so it would read as emphasis rather than texture
+   (HANDOFF §2). It survives here because this page is one continuous argument
+   rather than eleven different sections, but it is the first thing to pull
+   back if the page starts reading as wallpaper. */
+
+.about-hero {
+  position:relative; isolation:isolate; overflow:clip;
+  padding-top:clamp(96px,11vw,170px); padding-bottom:clamp(80px,9vw,140px);
+}
+/* Low right, so the light rises into the paragraph that sits there rather
+   than competing with the headline above it. */
+.about-hero-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 46% 52% at 74% 92%,
+    rgba(240,66,34,.30), rgba(240,66,34,.13) 42%,
+    rgba(240,66,34,.03) 70%, transparent 100%);
+}
+/* The eyebrow is a pill here, not a bare label — the design gives this one a
+   border because it is the page's first object and has nothing above it. */
+.about-pill {
+  display:inline-flex; align-items:center; min-height:32px; padding:0 16px;
+  margin:0 0 clamp(46px,7vw,110px);
+  border:1px solid rgba(249,249,249,.4); border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
+}
+.about-title {
+  /* 12.2em: the design sets "Being known has / almost nothing to / do with
+     being good." That break holds from 12 to 12.5em, so 12.2 sits inside it
+     rather than on an edge. In em, never px (HANDOFF §4). */
+  margin:0; max-width:12.2em;
+  font-size:clamp(38px,5.9vw,92px); line-height:1.02;
+}
+/* Sits under the headline and to the right, as drawn: the headline is the
+   claim and this is the footnote that qualifies it, so it must not start on
+   the same axis. */
+.about-hero-note {
+  max-width:34em; margin:clamp(54px,8vw,130px) 0 0 auto;
+  color:rgba(249,249,249,.86); font-size:15px; line-height:1.72;
+}
+
+/* Two-column sections: the headline holds the left, the argument the right. */
+.about-split {
+  display:grid; gap:clamp(34px,5vw,90px);
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start;
+  margin-top:clamp(26px,3vw,48px);
+}
+/* 11.6em. The courage headline keeps its three-line break ("A courageous
+   brand / refuses to / conform.") from 11 to 20em at 1440 and below, but only
+   to 12.25em at 1680 and 1920, where the column is wide enough to pull
+   "conform." up. 11.6 is the middle of the intersection, so one value holds at
+   every width rather than one that is correct only at the width it was drawn
+   at. The why headline is narrower than this cap in its own column at all
+   widths, so the nowrap does that work instead. */
+.about-h { margin:0; font-size:clamp(30px,3.9vw,58px); line-height:1.04; max-width:11.6em; }
+.about-body p { margin:0 0 1.5em; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72; }
+.about-body p:last-child { margin-bottom:0; }
+/* The didone block that closes the right column. Not a blockquote: it is the
+   same voice continuing, raised in register. */
+.about-pull {
+  margin-top:clamp(30px,3.6vw,54px) !important;
+  color:var(--paper) !important; font-size:clamp(19px,1.9vw,27px) !important;
+  line-height:1.3 !important; letter-spacing:.02em;
+}
+
+.about-why { position:relative; isolation:isolate; overflow:clip; }
+/* The page's loudest light, and the design's: it fills the right of the band
+   behind the argument. Kept under the mock's saturation for the reason in §8 —
+   at full strength it is the brightest thing on the site. */
+.about-why-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 62% 74% at 86% 62%,
+      rgba(243,78,38,.46), rgba(226,60,28,.24) 42%,
+      rgba(176,44,22,.07) 72%, transparent 100%),
+    radial-gradient(ellipse 30% 40% at 96% 54%,
+      rgba(248,116,60,.22), transparent 76%);
+}
+
+.about-conviction {
+  position:relative; isolation:isolate; overflow:clip; text-align:center;
+  padding-top:clamp(84px,10vw,150px); padding-bottom:clamp(84px,10vw,150px);
+}
+/* Hangs off the top edge as a body with a readable curve, the way the design
+   draws it — the section's own corners stay black so it reads as an object
+   rather than a panel the words sit on (HANDOFF §8). */
+.about-conviction-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(circle 34vw at 50% 2%,
+    rgba(246,88,44,.56), rgba(228,62,28,.36) 40%,
+    rgba(178,44,22,.12) 66%, rgba(120,30,18,.03) 82%, transparent 100%);
+}
+.about-conviction .label { color:rgba(249,249,249,.78); }
+.about-conviction-title {
+  margin:clamp(18px,2vw,30px) auto 0; max-width:11em;
+  font-size:clamp(34px,5.4vw,86px); line-height:1.02;
+}
+.about-conviction-body { max-width:40em; margin:clamp(34px,4.4vw,64px) auto 0; }
+.about-conviction-body p {
+  margin:0 0 1.5em; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72;
+}
+.about-conviction-body p:last-child { margin-bottom:0; }
+/* The blue is the page's one cool note and it arrives as a highlight rather
+   than a field, the same device as the homepage's spotlight headline.
+   box-decoration-break so the second line carries its own padding — without
+   it the highlight runs as one ragged block behind both lines. */
+/* 23.7em: "We make the people worth listening / to heard and recognised."
+   holds from 23 to 24.5em. */
+.about-claim {
+  max-width:23.7em; margin:clamp(56px,7vw,110px) auto 0;
+  font-size:clamp(20px,2.5vw,38px); line-height:1.42;
+}
+.about-claim mark {
+  background:var(--blue); color:var(--paper); padding:.06em .18em;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+}
+
+.about-founder { position:relative; isolation:isolate; overflow:clip; }
+/* Blue, low left, answering the red that has run down the page so far. */
+.about-founder-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 34% 44% at 2% 92%,
+    rgba(53,36,213,.50), rgba(53,36,213,.24) 42%,
+    rgba(53,36,213,.05) 72%, transparent 100%);
+}
+.about-founder-grid {
+  display:grid; gap:clamp(34px,5vw,86px);
+  grid-template-columns:minmax(0,.86fr) minmax(0,1fr);
+  align-items:center; margin-top:clamp(26px,3vw,48px);
+}
+.about-portrait { margin:0; }
+.about-portrait img {
+  display:block; width:100%; height:auto; aspect-ratio:4 / 5;
+  object-fit:cover; object-position:var(--pos,center center);
+  filter:var(--photo-grade);
+}
+/* 7.7em puts "Anzhelika" and "Tauber" on their own lines, one face each,
+   as the design sets them. Window is 6 to 9.5em. */
+.about-name { max-width:7.7em; margin:0 0 clamp(22px,2.6vw,38px); font-size:clamp(32px,4.4vw,66px); line-height:1.04; }
+.about-founder-copy p {
+  margin:0 0 1.5em; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72;
+}
+.about-founder-copy p:last-child { margin-bottom:0; }
+
+/* 20.7em: breaks after "and", as drawn. Window is 20 to 21.5em. */
+.about-studio-title { max-width:20.7em; margin-top:clamp(18px,2vw,30px); }
+/* The rule is the section's spine: the headline states it, the three columns
+   carry it. */
+.about-cols {
+  display:grid; gap:clamp(26px,3.4vw,64px);
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  margin-top:clamp(40px,5vw,78px); padding-top:clamp(34px,4vw,62px);
+  border-top:1px solid var(--line);
+}
+.about-cols p { margin:0; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72; }
+
+.about-courage { position:relative; isolation:isolate; overflow:clip; }
+.about-courage-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 44% 64% at 96% 50%,
+    rgba(238,74,36,.38), rgba(214,56,26,.18) 44%,
+    rgba(160,40,20,.05) 74%, transparent 100%);
+}
+
+.about-stats { position:relative; isolation:isolate; overflow:clip; }
+.about-stats-glow {
+  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 40% 50% at 82% 6%,
+    rgba(240,66,34,.26), rgba(240,66,34,.10) 46%, transparent 82%);
+}
+/* Five, not the homepage's four, and the same rule above them. auto-fit so
+   they fold to a readable number of columns instead of five slivers. */
+.about-stats-grid {
+  display:grid; gap:clamp(24px,3vw,44px);
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  padding-top:clamp(34px,4vw,62px); border-top:1px solid var(--line);
+}
+.about-stats-grid .stat { display:flex; flex-direction:column; gap:10px; }
+.about-stats-grid .stat strong {
+  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  font-size:clamp(34px,3.6vw,52px); line-height:1; letter-spacing:.01em;
+}
+.about-stats-grid .stat span {
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(249,249,249,.78);
+}
+.about-stats-foot {
+  display:grid; gap:clamp(26px,4vw,70px);
+  grid-template-columns:minmax(0,1fr) auto; align-items:end;
+  margin-top:clamp(44px,5.6vw,92px);
+}
+.about-stats-foot p {
+  margin:0; max-width:38em; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72;
+}
+.about-award { text-align:right; display:flex; flex-direction:column; gap:8px; }
+.about-award strong { font-size:clamp(19px,2vw,28px); font-weight:400; letter-spacing:.04em; }
+.about-award .label { color:rgba(249,249,249,.72); }
+
+@media (max-width:900px) {
+  .about-split,
+  .about-founder-grid,
+  .about-cols { grid-template-columns:minmax(0,1fr); }
+  .about-hero-note { margin-left:0; }
+  .about-stats-foot { grid-template-columns:minmax(0,1fr); align-items:start; }
+  .about-award { text-align:left; }
+}
+.about-h .keep { white-space:nowrap; }

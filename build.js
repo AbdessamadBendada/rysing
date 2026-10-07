@@ -58,6 +58,20 @@ function parseFrontMatter(text, file) {
 const indent = (text, pad) =>
   text.replace(/\s+$/, '').split('\n').map((l) => (l.trim() ? pad + l : l)).join('\n');
 
+/* Expands `{{> name}}` into `src/_name.html`, so a block of markup that appears
+   on more than one page is written once. The testimonial quotes are the reason
+   this exists: HANDOFF §7 requires the six to have exactly one home, and a page
+   that copies them is a page that will drift from them. */
+function expandIncludes(text, file, depth = 0) {
+  if (depth > 5) throw new Error(`${file}: include nesting too deep (cycle?)`);
+  return text.replace(/^([ \t]*)\{\{>\s*([\w-]+)\s*\}\}[ \t]*$/gm, (_, pad, name) => {
+    const p = path.join(srcDir, `_${name}.html`);
+    if (!fs.existsSync(p)) throw new Error(`${file}: no partial src/_${name}.html for {{> ${name}}}`);
+    const body = expandIncludes(read(p), `_${name}.html`, depth + 1).replace(/\s+$/, '');
+    return pad ? indent(body, pad) : body;
+  });
+}
+
 function fill(template, values, file) {
   const out = template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
     if (!(key in values)) throw new Error(`${file}: no value for {{${key}}}`);
@@ -107,7 +121,7 @@ for (const file of pages) {
       ...meta,
       header: indent(markCurrent(fill(header, chrome, '_header.html')), '  '),
       footer: indent(markCurrent(fill(footer, chrome, '_footer.html')), '  '),
-      main: indent(body, ''),
+      main: indent(expandIncludes(body, file), ''),
     },
     file,
   );

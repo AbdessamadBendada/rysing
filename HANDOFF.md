@@ -790,3 +790,99 @@ page appended to `shared.css` and `shared.js` and edited `_header.html`:
   brand name.
 - The phone number and Koflergasse address are new copy, not in any earlier
   file, and unverified.
+
+---
+
+## 14. About page
+
+`src/about.html` → `about.html`. Seven sections from the supplied designs, then
+the homepage's testimonial rail.
+
+**The rail is included, not copied.** `src/_testimonials.html` now holds the
+whole `#proof` section — heading, badges, six quotes, controls, CTA — and both
+`src/index.html` and `src/about.html` pull it in with `{{> testimonials}}`. §7
+requires the six quotes to have exactly one home; a second page carrying its own
+copy is a second copy that will drift. The build gained `{{> name}}` for this:
+it expands `src/_name.html`, nests up to five deep, and fails on a missing
+partial. **Extracting it changed no output at all** — `index.html` rebuilt
+byte-identical, and is still pixel-identical to its pre-build-system baseline:
+0 of 22,821,120 pixels.
+
+**Every headline measure here is measured.** Each was swept from 6em to 26em,
+the window where the design's break holds was recorded, and the midpoint taken
+rather than an edge:
+
+| Headline | Window | Set |
+| --- | --- | --- |
+| `.about-title` | 12 – 12.5em | 12.2em |
+| `.about-studio-title` | 20 – 21.5em | 20.7em |
+| `.about-claim` | 23 – 24.5em | 23.7em |
+| `.about-name` | 6 – 9.5em | 7.7em |
+| `.about-h` | see below | 11.6em |
+
+`.about-h` is the one with a real conflict. The courage headline holds its
+three-line break from 11 to 20em at 1440 and below, but only to 12.25em at 1680
+and 1920, where the column grows enough to pull "conform." up. 11.6em is the
+middle of the intersection, so one value is right at every width instead of
+right only at the width the design was drawn at.
+
+**Two breaks cannot be reached by measure at all.** "exceptional people" takes
+its own line via `.keep`, because that headline sits in a grid column always
+narrower than any cap — the cap never binds, so only a nowrap can move the
+break. Same situation as the contact question (§13).
+
+**Measuring line breaks by word position has two traps, both hit here.**
+Grouping words by their `top` reports a break between two faces sharing a
+baseline, because the grotesque and the didone have different ascents — cluster
+by vertical midpoint instead. And sorting words by midpoint before grouping
+reorders them *within* a line, which reported "to almost nothing" for a line
+that actually reads "almost nothing to". Walk in document order and start a new
+line only when the midpoint steps down.
+
+**Alternation runs through nearly every headline here,** which is the opposite
+of the homepage, where it was cut to three moments so it would read as emphasis
+rather than texture (§2). It is built as the designs draw it. It survives
+because this page is one continuous argument rather than eleven unrelated
+sections, but it is the first thing to pull back if the page starts reading as
+wallpaper. The included rail keeps the homepage's neutralised heading, so it
+does not add a sixth.
+
+**Five stats, equal.** Not ranked — leading on one figure was tried on the
+homepage and reverted because it made the smallest number the loudest (§5). The
+figures are parsed from the authored text by the existing count-up, so they are
+copy; `.stat strong` binds all instances, and `[data-treel]` binds one, so both
+reused without touching the script.
+
+### Verified
+
+Eight sections, the rail clones six quotes into twelve, the count-up reads
+"3,000+" through its comma, zero console errors, zero failed requests. Every
+designed break holds at 1680, 1440, 1200, 1024, 900, 768 and 560; at 390 the
+hero wraps further, which is correct. Nothing overflows horizontally at any of
+them. All sixteen section boundaries probed across the width: median 0, max 3,
+no column over 10 — no seam (§5). With JavaScript off: 4,756 characters of copy,
+all six quotes at full opacity, nothing hidden. `index.html` and `contact.html`
+both rebuilt byte-identical.
+
+### Open
+
+- **The founder photograph is a white-background studio shot.** The mock labels
+  the slot `ANZHELIKA-CHAIR` and draws a dark box, so `anzhelika-chair.webp` is
+  what is wired — but the file is near-white, which makes it the brightest
+  object on the entire site. §10 removed the newsletter's printed cover for
+  exactly that reason: "nothing else on the page is paper-white now." This puts
+  one back. `anzhelika-cutout.webp` is the same shot at the same resolution
+  **with an alpha channel** — she stands on the black with no box at all and the
+  face reads far larger. Rendered both; the cutout is plainly better, but
+  swapping it is an art-direction call, not a bug fix. Built as specified,
+  flagged here.
+- **The stats contradict the homepage.** This page says "30+ brands built" and
+  "35+ websites launched"; the homepage says "35+ personal brands built". The
+  homepage's "50k+ followers" does not appear here, and this page's "49 named
+  testimonials" does not appear there. Both are live at once.
+- "rysing" is lowercase throughout the body copy here, as the designs set it.
+  The footer and the homepage set "Rysing". Deliberate in the design; worth
+  confirming it is deliberate in the brand.
+- "award-winning", the 350 students figure, both platform names, "sixteen
+  countries" and the HIPE award are all unverified — the same standing as the
+  claims already listed in §6.
