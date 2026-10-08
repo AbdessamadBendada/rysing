@@ -114,7 +114,7 @@ body::after {
 .proof-lead h2 .alt,
 .founder-title .alt,
 .system-title .alt,
-.spot-lead h2 .alt {
+.spot-copy h2 .alt {
   font-family:inherit; font-weight:inherit; letter-spacing:inherit;
 }
 
@@ -697,35 +697,88 @@ body::after {
 .manifesto .btn-pill { margin-top:clamp(28px,4vh,36px); }
 
 /* --- Founder ------------------------------------------------ */
-.founder-plate { padding:0 var(--gutter) clamp(44px,4.6vw,84px); }
-.founder-plate figure { margin:0; }
-/* TODO(asset): the reference sets a wide environmental plate here and no
-   landscape founder frame was supplied — every shot is portrait, and
-   anzhelika-portrait.png is a cut-out that floats in black at this width.
-   16/8 with a low crop keeps the room in frame instead of reducing the
-   band to a face. Replace once a wide plate is delivered. */
-.founder-plate img {
-  width:100%; aspect-ratio:16/8; object-fit:cover;
-  object-position:var(--pos,center 24%); filter:var(--photo-grade);
-}
-.founder-plate figcaption { padding-top:10px; text-align:right; color:rgba(249,249,249,.6); font-size:10px; }
+/* The full-width founder plate is gone on the client's instruction — she
+   did not want her photograph large and above the team. She appears in the
+   team row instead (see .team-lead), and this is now the copy alone. */
 .duo { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,5vw,48px); align-items:start; }
-.founder-title { margin:clamp(16px,2.4vh,22px) 0 0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
-.founder-body { padding-top:34px; color:rgba(249,249,249,.88); font-size:16px; line-height:1.7; }
+/* No top margin: it existed only to clear the "Founder" eyebrow above it,
+   and that eyebrow has been removed. The body column's padding drops with
+   it for the same reason — it was set to meet a headline that started
+   lower down, and kept it would leave the two columns out of step. */
+.founder-title { margin:0; font-size:clamp(30px,3.3vw,46px); line-height:.95; }
+.founder-body { padding-top:8px; color:rgba(249,249,249,.88); font-size:16px; line-height:1.7; }
 .founder-body p { margin:0 0 20px; }
 .founder-body .btn-pill { margin-top:6px; }
 
 /* --- Team --------------------------------------------------- */
-.roster { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
-.roster figure { display:flex; flex-direction:column; gap:12px; margin:0; }
-.roster figure:nth-child(even) { margin-top:60px; }
-.roster .shot { aspect-ratio:3/4; }
-.roster figcaption { display:flex; flex-direction:column; gap:12px; }
-.roster h3 {
-  margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-  font-size:30px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
+/* The founder is a fixed card and the rest of the team drifts past her.
+   Emphasis by behaviour rather than by size: she is the one figure that
+   stays put, the first face in reading order, and the only one without a
+   photographic background behind her. Nothing here is enlarged, because
+   scale is exactly what the client asked to remove. */
+/* Her column is wider than a rail card on purpose, and it has to be: the
+   cutout carries transparent margins either side, so her body fills only
+   about two thirds of its box. Matched box widths would have made her the
+   smallest figure of the five — measured at 248 against the rail's 328. */
+.team {
+  display:grid;
+  /* minmax(0,…) on the rail, or its flex track's min-content wins the
+     negotiation and squeezes her column back to its own minimum. */
+  grid-template-columns:minmax(240px,1.18fr) minmax(0,2.7fr);
+  gap:clamp(22px,3vw,54px); align-items:start;
 }
-.roster p { margin:0; max-width:24ch; color:rgba(249,249,249,.7); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; line-height:1.35; }
+
+.team-lead { margin:0; display:flex; flex-direction:column; gap:14px; }
+/* A framed photograph, like every other face here. This card was built for
+   anzhelika-cutout.webp and carried the machinery that an alpha cutout
+   needs — no frame, an upward scale to crop its transparent margins, and a
+   mask fading her legs out so the crop did not read as a cut. The supplied
+   portrait has a real background, so all three were removed rather than
+   left to act on a picture that does not want them.
+
+   Her emphasis is now entirely positional: the one card that does not
+   move, first in reading order, a larger frame and a larger name. */
+.team-lead-shot { display:block; aspect-ratio:4/5; overflow:hidden; }
+/* The asset is cropped to this ratio on disk, so cover is an exact fit and
+   nothing is thrown away at render time. */
+.team-lead-shot img {
+  width:100%; height:100%; object-fit:cover; object-position:var(--pos,center center);
+  filter:var(--photo-grade);
+}
+
+/* The rail breaks the right gutter so the next face is always entering the
+   margin — the same move the testimonials and the work rows make. */
+.team-rail { --gap:clamp(14px,1.7vw,28px); --dwell:5.2s; }
+.team-view { overflow:hidden; margin-right:calc(var(--gutter) * -1); }
+.team-track {
+  display:flex; gap:var(--gap); align-items:flex-start;
+  transition:transform 1.05s var(--ease-weight);
+}
+.team-track.is-jumping { transition:none; }
+/* Three sit on the measure and the fourth begins in the gutter. */
+.team-item { flex:0 0 calc((100% - var(--gutter) - 2 * var(--gap)) / 3); }
+/* Hand-authored, never nth-child and never random: the offset travels with
+   the person through the loop, and a value that cannot change between
+   passes is the only kind that stays designed. */
+.team-item { margin:0; margin-top:var(--drop,0px); display:flex; flex-direction:column; gap:12px; }
+/* Only what sits on the measure is lit, as the quote rail does. */
+.team-item { opacity:.26; transition:opacity var(--t-weight) var(--ease-weight); }
+.team-item.is-lit { opacity:1; }
+.team-item .shot { aspect-ratio:3/4; }
+
+.team-lead figcaption,.team-item figcaption { display:flex; flex-direction:column; gap:12px; }
+.team-lead h3,.team-item h3 {
+  margin:0; font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
+  line-height:1; text-transform:uppercase; letter-spacing:.01em;
+}
+/* One size step between her and the rest. Any more and it is a hierarchy
+   rather than a nudge. */
+.team-lead h3 { font-size:34px; }
+.team-item h3 { font-size:26px; }
+.team-lead p,.team-item p { margin:0; max-width:24ch; color:rgba(249,249,249,.7); font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; line-height:1.35; }
+/* Her role line holds full strength; the rail's sit back a step. */
+.team-lead p { color:rgba(249,249,249,.88); }
+.team-rail .treel-foot { margin-top:clamp(24px,2.6vw,40px); }
 .roster-placeholder {
   display:grid; place-items:center; width:100%; height:100%;
   background:linear-gradient(145deg,#34312e,#171717); color:rgba(249,249,249,.18);
@@ -968,6 +1021,13 @@ body::after {
 .no-js .treel-track { flex-wrap:wrap; row-gap:clamp(34px,4vw,56px); }
 .no-js .treel-item { opacity:1; }
 .no-js .treel-foot { display:none; }
+/* Same contract for the team rail: nothing lights itself without the
+   script, so unstyled it would be four people at .26 with the fourth
+   clipped out of a hidden overflow. It becomes a row that wraps. */
+.no-js .team-view { overflow:visible; margin-right:0; }
+.no-js .team-track { flex-wrap:wrap; row-gap:clamp(30px,3.6vw,48px); }
+.no-js .team-item { opacity:1; margin-top:0; }
+.no-js .team-rail .treel-foot { display:none; }
 
 /* The rows used to carry 36px of their own padding, so this rule inherited
    its breathing room from the last one. It holds its own gap now, but a
@@ -1041,25 +1101,38 @@ body::after {
 }
 
 /* --- Spotlight ---------------------------------------------- */
-/* One giant photograph became three panels. The copy did not change: the
-   eyebrow, the headline and the line beneath it used to sit on top of the
-   image and now stand as a section head, so nothing was dropped when the
-   picture they sat on did.
-
-   The row is work-row--c, not a second system invented for this section —
-   the big landscape, then the panel that hangs lowest, then the one that
-   sits between. Reusing it means this section and the last row of Selected
-   Work stay in step if either is ever retuned. */
-/* The cap belongs on the sentence underneath, not on the whole column —
-   capping the column squeezed a 54px headline into five lines while the
-   other section heads take three. */
-.spot-lead { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
-.spot-lead p { max-width:46ch; }
-.spot-lead h2 { margin:0; max-width:15em; font-size:clamp(32px,3.7vw,54px); line-height:.98; }
+/* One photograph with the copy laid over its lower-left, as the client's
+   design draws it. This was split into three panels once and has been put
+   back; the three keynote case studies still exist further down the page,
+   standing on their own without this head. */
+.spot { position:relative; overflow:hidden; background:var(--ink); }
+/* Every photograph on the page carries the same grade; the stage shot's
+   LED wash was the one image still running at full saturation. */
+.spot img {
+  width:100%; aspect-ratio:16/8; object-fit:cover;
+  object-position:var(--pos,center 32%); filter:var(--photo-grade);
+}
+/* The photograph is dark at the bottom already; this only guarantees the
+   copy holds at small sizes where the crop tightens. */
+.spot::after {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.12) 58%,transparent 80%);
+}
+.spot-copy {
+  position:absolute; z-index:1; left:clamp(20px,4vw,56px); right:clamp(20px,4vw,56px);
+  bottom:clamp(20px,4vw,56px); display:flex; flex-direction:column; align-items:flex-start; gap:18px;
+}
+/* In em, never ch (§4). The original set 17ch, and that is exactly the trap
+   §4 describes: Kinfolk's zero is 0.70em, so 17ch resolves to ~11.9em with
+   the webfont and ~8.8em without it — both of which break this headline
+   into three lines, not the two the design draws. Swept 16–22em: the
+   design's break "We bring company founders / into the spotlight" holds
+   from 17.2 to 20.2em, so this takes the midpoint rather than an edge. */
+.spot-copy h2 { margin:0; max-width:18.7em; font-size:clamp(32px,4.1vw,62px); line-height:.98; }
 /* One word on blue — besides the belonging glow, the only place the
    secondary brand colour appears between the hero and the footer. */
-.spot-lead h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
-.spot-lead p { margin:0; max-width:46ch; color:rgba(249,249,249,.85); font-size:14px; line-height:1.6; }
+.spot-copy h2 mark { background:var(--blue); color:inherit; padding:0 .12em; }
+.spot-copy p { margin:0; font-size:16px; }
 
 /* --- Newsletter --------------------------------------------- */
 /* A centred column, not the two-up with a printed cover beside it. The ask
@@ -1206,8 +1279,13 @@ body::after {
      — the step, the window and the loop are all measured from the rendered
      geometry, so nothing else has to be told. */
   .treel-item { flex-basis:calc((100% - var(--gutter) - var(--gap)) / 2); }
-  .duo,.roster { grid-template-columns:minmax(0,1fr); }
-  .roster figure:nth-child(even) { margin-top:0; }
+  .team-item { flex-basis:calc((100% - var(--gutter) - var(--gap)) / 2); }
+  /* Below the measure she stops being a column beside the rail and becomes
+     the card above it. The order is unchanged, so she is still first. */
+  .duo,.team { grid-template-columns:minmax(0,1fr); }
+  /* She keeps her portrait proportion and is capped instead of stretched:
+     a contained standing figure in a full-width box shrinks to nothing. */
+  .team-lead { max-width:300px; }
   .founder-body { padding-top:0; }
   .footer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .footer-legal { align-items:flex-start; text-align:left; }
@@ -1221,11 +1299,17 @@ body::after {
   .work-item--film .shot { aspect-ratio:16/9; }
   .work-item:not(.work-item--film) .shot { aspect-ratio:4/5; }
   .proof-badges { gap:24px; }
+  /* Below the measure the copy drops out from over the photograph and
+     stands under it, so the scrim has nothing left to protect. */
+  .spot-copy { position:static; padding:22px 0 0; }
+  .spot::after { display:none; }
   .fudge-field { max-width:none; }
 }
 @media (max-width:560px) {
   .treel-item { flex-basis:calc(100% - var(--gutter)); }
-  .roster h3 { font-size:24px; }
+  .team-item { flex-basis:calc(100% - var(--gutter)); }
+  .team-lead h3 { font-size:28px; }
+  .team-item h3 { font-size:24px; }
   /* The field and its 27-character button cannot share a line here. */
   .fudge-field { flex-wrap:wrap; }
   .fudge-field button { min-height:44px; margin-bottom:8px; }

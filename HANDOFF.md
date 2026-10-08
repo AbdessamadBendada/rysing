@@ -44,6 +44,19 @@ Three pages, all on `main` and pushed: the homepage, contact (§13) and about
 (§14). The homepage is the one this section describes; it is also the one the
 client has signed off, so it is the one a shared-file change must not disturb.
 
+**The section order changed materially this cycle** and several notes below
+predate it. It now runs:
+
+> hero · reel · stats · services · **Selected Work (01–06)** · manifesto ·
+> **spotlight photograph** · **team** · **founder copy** · recognition ·
+> testimonials · belonging · **the last three case studies** · newsletter ·
+> closing
+
+What moved: Selected Work dropped its third row; the spotlight went back to one
+photograph with the copy over it and moved up above the team; the three case
+studies it used to hold now stand bare lower down; the founder's full-width
+plate is gone and her copy block sits below the team.
+
 Done and verified on the homepage:
 
 - **Pacing.** Section rhythm follows the measure, with room top and bottom.
@@ -66,10 +79,16 @@ Done and verified on the homepage:
 - **Entrance.** 14px travel, long settle. Hidden state applied by script so a
   failed script cannot blank the page.
 - **Stats.** Four equal figures that count up from zero on arrival.
-- **Selected Work.** Three rows of three, each with its own shape signature.
-  Row one carries a film panel.
+- **Selected Work.** Two rows of three, each with its own shape signature. Row
+  one carries a film panel. It was three rows; the third moved into the
+  spotlight (§9) on instruction, so the page now runs six case studies, then
+  other sections, then the remaining three.
 - **Testimonials.** Six rows became a three-up rail that drifts one column at a
   time. Second design — the first was rejected by the client. See §7.
+- **Team.** The founder's full-width plate is gone and she now stands inside the
+  team as a fixed lead card with four colleagues drifting past her. The page
+  therefore carries **two rails**, which the script had to be generalised for.
+  See §15.
 
 - **Final CTA.** "Ready to build a legacy?", centred, outline pill. Replaces the
   previous headline and eyebrow — a client copy change. See §11.
@@ -92,7 +111,7 @@ Unresolved: see §6.
 | `src/contact.html` | Contact page source. §13. |
 | `src/about.html` | About page source. §14. |
 | `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all three pages. See §12. |
-| `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). |
+| `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
 | `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. |
 | `build.js` | `node build.js`. Zero dependencies. |
 | `index.html`, `contact.html`, `about.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
@@ -119,6 +138,11 @@ Work assets added this cycle, all in `rysing-assets/`:
 `work-01-opsdetox.webp`, `work-02-finer-things.mp4` + `-poster.webp`,
 `work-03-clemens.webp`, `work-06-knowle-victory.webp`, `work-08-u4success.webp`,
 `work-09-digitfinance.webp`. 648KB total for nine panels.
+
+Team portraits added this cycle, all recompressed per §4 and all 4:5 at
+900x1125: `anzhelika-red-suit.webp` (67KB, from a 7.2MB PNG),
+`kristina-verbitskaia.webp` (92KB) and `marc-babin.webp` (40KB, the only
+landscape source). Full provenance in §15.
 
 ---
 
@@ -308,11 +332,13 @@ filenames once and wired up entirely the wrong asset.
 
 **Open design decisions**
 
-- Row three sets the client's name in the didone and the role in the grotesque.
-  Rows one and two are still single-face. Apply the split to all three, or drop
-  it from row three.
-- Rows one and two carry index numbers and reveal "Learn more" on hover. Row
-  three has neither — no index, and the label stands. Reconcile.
+- The two panel styles now sit in different sections, which makes the split
+  easier to defend than when all three rows were in Selected Work — but it is
+  still unreconciled. Selected Work's rows carry index numbers 01–06, a
+  single-face caption, and reveal "Learn more" on hover. The spotlight row has
+  no index, sets the client's name in the didone against the role in the
+  grotesque, and its label stands rather than revealing. Either that is now the
+  deliberate signature of the spotlight, or it should be reconciled.
 - The OPS Detox panel says **"for startups"**; the client's own merchandise and
   site both say **"for scale-ups"**. Someone has to decide which is right.
 - **"rysing" or "Rysing".** The about page sets it lowercase throughout its body
@@ -366,9 +392,16 @@ Three quotes on the measure, drifting one column at a time.
 
 **It lives in `src/_testimonials.html` and appears on two pages** — the homepage
 and about — included by both with `{{> testimonials}}` (§14). Everything below
-describes the one implementation they share. The script binds a single
-`[data-treel]` guarded by `if (treel)`, so one instance per page is the
-assumption; a second on the same page would not animate.
+describes the one implementation they share.
+
+**The script is no longer single-instance.** It bound one `[data-treel]` under
+`if (treel)` until the team rail (§15) became a second one on the homepage; it
+is now `initRail(treel)` applied to every match. Every piece of state — index,
+clones, dwell, the hold set, the pending rewind — is per-instance and must stay
+that way, or two rails share an index and steer each other. The viewport is
+found by `[data-treel-view]` rather than the `.treel` class, so a second rail
+does not have to borrow these classes to be measured. The testimonial rail's
+behaviour is unchanged and was verified unchanged on both pages.
 
 **This is the second design.** The first shipped a named index — one quote at
 display size, the six names as the navigation — and the client did not want it.
@@ -428,6 +461,26 @@ time is a sliding window, not a sequence of pages, so there is no honest
 fraction to show: the window covers positions 5,6,7 of six, which is either
 133% or a wrap. It overflowed its track and jumped backwards once a cycle. Do
 not re-add one without first deciding what it would actually measure.
+
+**The index can no longer outrun the clone set, and it used to.** Reported by
+the user as the rail "finishing a bit then regenerating". There is exactly one
+clone set, so the index has to stay at or below `total` — but the silent reset
+is deliberately delayed 1.1s so the slide can land, and clicking again inside
+that window walked the index straight past the end of the array. The lit window
+fell off it and the row went dark until the reset caught up. Measured: nine fast
+clicks on the four-person team rail left **nothing lit at all**; the six-quote
+testimonial rail had the same fault with more runway before it showed.
+
+The fix is to settle any pending lap at the top of `advance` before stepping
+again. It costs nothing on screen, because position `i` is pixel-identical to
+`i + total` — the same fact the silent rewind already depends on — and it caps
+the index however fast the button is pressed. `perView` is also clamped to the
+set size, so a rail with fewer people than visible columns cannot read off the
+end either.
+
+**This is a different bug from the idempotent rewind below, in the same 1.1s
+window.** That one stopped resets stacking up; this one stops the index running
+away before a reset fires. Fixing either does not fix the other.
 
 **The rewind is idempotent.** Each advance past the end used to schedule its own
 `i -= total`, so clicking faster than the 1.1s reset stacked them — from 7, two
@@ -547,21 +600,54 @@ them. The corners of the section stay black on purpose.
 
 ## 9. Spotlight
 
-One full-width photograph with the copy laid over it became three panels.
+**The section is now two separate things, in two places on the page.** It was
+one photograph with the copy over it; it became three panels with the copy
+standing as a head; it is now back to the photograph, and the three panels live
+on separately further down. Read both halves before changing either.
 
-**The copy did not change.** The eyebrow, the headline and the line beneath it
-used to sit on top of the image; they now stand as a section head. Verified
-against the previous commit: nothing lost from the section, only the three panel
-captions added. "One giant one" meant the picture, not the words.
+**The photograph, `#spotlight`, sits above the team roster** — between the
+founder band and "Behind the work." — which is where the client's design puts
+it, not where the three-panel version stood. `.spot` is the full-bleed image
+with `.spot-copy` absolutely positioned over its lower-left, carrying all four
+strings: the eyebrow, the headline, the lead and the pill. Restored verbatim
+from `6f11f18^`, markup and CSS, so this is the original and not a rebuild.
 
-**It reuses `work-row--c`,** not a second system built for this section — the
-big landscape, then the panel that hangs lowest, then the one between. That is
-exactly the geometry of the supplied mock, and reusing it keeps this section and
-the last row of Selected Work in step if either is ever retuned.
+**The three keynote case studies stand on their own, lower down,** where the
+three-panel version was — after belonging, before the newsletter. They carry no
+eyebrow, no headline, no lead and no pill, because all four went back onto the
+photograph. The section has an `aria-label` rather than a visible heading, so it
+still has an accessible name without inventing copy. It holds Selected Work's
+old third row: Gerd Bommer, U4Success, Finance Consultancy.
 
-**The lead's width cap belongs on the sentence, not the column.** Capping the
-whole column squeezed a 54px headline into five lines while every other section
-head takes three.
+**`Gerd-Hero-Section-image.webp` is on the page twice** — full-bleed up top, and
+again as the big landscape in that row. They are about five sections apart so
+they do not collide, but it is the same photograph and the client may not want
+it twice. The cheap fix is swapping the row's first panel to Michael Diewald,
+whose asset is still wired and sized (see below); that removes the repeat and
+puts him back at the same time.
+
+**Michael Diewald is currently off the page.** He was the only panel unique to
+the three-panel version, and three clients remained for a three-panel row when
+Selected Work's third row moved in. `rysing-assets/work-10-michael-diewald.webp`
+is still there and the sourcing work below still stands, so restoring him is a
+one-line change. Nothing else references him.
+
+**The headline measure is 18.7em, and the original's `17ch` was wrong.** This is
+§4's trap exactly: Kinfolk's zero is 0.70em, so `17ch` resolves to ~11.9em with
+the webfont and ~8.8em without — and both break this headline into *three*
+lines, not the two the design draws. The original shipped that way. Swept
+16–22em: the design's break, "We bring company founders / into the spotlight",
+holds from 17.2 to 20.2em, so 18.7em is the midpoint rather than an edge.
+Verified holding at 1680, 1440, 1280, 1024, 900 and 768; at 560 and 390 it wraps
+further, which is correct.
+
+**The headline does not alternate faces, and the mock arguably shows that it
+should.** `.spot-copy h2 .alt` is in the neutralised list, so the whole line sets
+in the didone — restored exactly as the original had it. In the supplied mock
+"WE BRING COMPANY FOUNDERS INTO THE" reads as the grotesque against a didone
+"SPOTLIGHT". Left as the original because alternation has already drifted from
+three moments to five (§2, §10) and this would make six; flagged rather than
+decided. One line in the neutralised list either way.
 
 Open:
 
@@ -571,11 +657,14 @@ Open:
   resampled to 920x1150 and encoded to webp at 47KB — a 93% saving, and still
   comfortably above the 2x retina requirement for a 361px slot (0.78x, no
   upscaling). The stand-in and its CSS are gone.
-- **Gerd Bommer and Finance Consultancy now appear twice on the page** — here and
-  in the last row of Selected Work, with identical captions. That came from the
-  mock and was built as drawn, but it is worth putting to the client: either
-  this section carries three clients who appear nowhere else, or Selected Work
-  drops its last row.
+- ~~Gerd Bommer and Finance Consultancy appear twice on the page~~ — resolved by
+  moving Selected Work's third row here. Selected Work drops its last row, which
+  was the second of the two options put to the client.
+- **The three case studies now have no heading of any kind.** That is what was
+  asked for — the copy went back onto the photograph — but a bare row of three
+  panels between belonging and the newsletter has nothing naming it. Worth
+  confirming with the client that it reads as intended and not as a section that
+  lost its title.
 
 ---
 
@@ -981,3 +1070,138 @@ both rebuilt byte-identical.
 - "award-winning", the 350 students figure, both platform names, "sixteen
   countries" and the HIPE award are all unverified — the same standing as the
   claims already listed in §6.
+
+---
+
+## 15. Team rail
+
+"Behind the work." The founder is a fixed card; four colleagues drift past her.
+
+**The client removed her full-width plate.** She did not want her photograph
+large and above the team. `.founder-plate` and its CSS are gone, and the
+founder *copy* block survives — moved below the team, also on instruction. That
+block now carries `id="founder"`, because the shared header's About link points
+at `#founder` and the plate that used to hold that id no longer exists. Moving
+that id is not cosmetic: dropping it would have broken a nav link on all three
+pages at once.
+
+**The "Founder" eyebrow above that headline was removed** on instruction. It is
+the one string dropped from the section, so it is a real copy removal and not a
+restyle; the headline now opens the block. Two spacing values went with it and
+had to: `.founder-title` carried a `clamp(16px,2.4vh,22px)` top margin that
+existed only to clear the eyebrow, and `.founder-body` carried `padding-top:34px`
+set to meet a headline that started lower. Left alone, the two columns fall out
+of step. They are 0 and 8px now — 8 rather than 0 because the didone's cap
+height sits below its box top, so a literal zero reads as the body being high.
+
+> **The founder block is marked to move to the about page.** The user has said
+> it belongs there rather than on the homepage, but asked to leave it in place
+> for now. Do not move it without a fresh instruction — and when it does move,
+> `id="founder"` goes with it, which means the shared header's About link has
+> to be repointed from `index.html#founder` to the about page in the same
+> commit, on all three pages. That link is the reason the id exists at all.
+
+**Emphasis by behaviour, not by size.** She is the one figure that does not
+move, the first in reading order, the only one without a photographic
+background, and her name is one size step larger. Nothing is enlarged for its
+own sake, because scale is precisely what she asked to remove.
+
+**Keeping her outside the track is also what makes the arithmetic work.** The
+rail measures its step as the distance between the first two items, so an
+unequal card inside the track would break `perView` and the placement with it.
+A fixed lead card sidesteps that completely.
+
+**Offsets are per-person, never `nth-child`.** Each figure carries its own
+`--drop`. The rail loops by cloning, and with an odd roster an `nth-child`
+pattern inverts on every pass and lands two offset cards together at the seam.
+Verified: the rendered margins repeat exactly across the clone set
+(`0,46,14,62 / 0,46,14,62`), so the stagger is stable through the loop. They are
+hand-authored rather than randomised for the same reason a random value cannot
+be reviewed, approved, or reproduced in a screenshot.
+
+**Three things were built wrong first and are worth not repeating.**
+
+- *A plinth gradient under her feet.* A radial centred on the bottom edge is
+  brightest exactly where its box clips it, so it rendered as a hard-edged
+  lighter rectangle — §8's mistake again, in a new place. There is no background
+  behind her at all now.
+- *`object-fit:contain`.* The whole standing figure fitted the box, which made
+  her head **smaller** than the head-and-shoulders crops beside her — the exact
+  opposite of the emphasis the card exists for. It is `cover`, cropped from the
+  top to head-and-thigh.
+- *Matching her box to a rail card.* The cutout carries transparent margins, so
+  her body fills about two thirds of its box; matched widths measured 248
+  against the rail's 328 and she was the smallest person on the row. Her column
+  is deliberately wider. Measure the rendered boxes after any change here —
+  the numbers are not what the column widths suggest.
+
+**`minmax(0,…)` on the rail column.** Without it the flex track's min-content
+wins the grid negotiation and squeezes her column to its own minimum; it looked
+like the `fr` values were being ignored.
+
+**Her bottom edge is masked, not cut.** She has no frame, so a straight crop
+reads as a mistake rather than an edge. The last 18% fades out — the same move
+`.glow-soft` makes on every glow.
+
+**Without JavaScript it is a row that wraps,** every face at full opacity and
+the controls hidden, exactly as the quote rail does. Unstyled it would have been
+four people at `.26` with the fourth clipped inside a hidden overflow, since
+nothing lights itself without the script. Verified: all five at opacity 1 with
+JS off, no overflow.
+
+### Verified
+
+Two rails coexist on the homepage with no console errors; the team's four items
+clone to eight, three light at a time, and the testimonial rail still reports
+twelve items and three lit on **both** the homepage and about. Zero overflow and
+zero failed requests on all three pages at 1680/1440/1024/900/768/560/390. All
+section boundaries probed across the width — no new seam. At 900 she stacks
+above the rail capped at 300px and the rail runs two-up; at 390, one-up.
+
+### Open
+
+**All five are real people with real photographs.** There are no placeholder
+tiles left anywhere on the page. The roster, in rail order after the fixed lead:
+
+| Who | Role as supplied | Asset | From |
+| --- | --- | --- | --- |
+| Anzhelika | Founder · The mind behind it all | `anzhelika-red-suit.webp` | 2547x3221 PNG, 7.2MB → 67KB |
+| Kim | Brand identity, design systems, and everything you see | `kim-brand-designer.webp` | unchanged |
+| Ben | Web development, SEO, and everything web-side | `abdessamad-pic.webp` | unchanged |
+| Kristina | Photographer, videographer and content creator | `kristina-verbitskaia.webp` | 1067x1600, 217KB → 92KB |
+| Marc | Partner and producer | `marc-babin.webp` | **1600x1200 landscape**, 92KB → 40KB |
+
+Every slot is 4:5 at 900x1125. Kristina's crop is lifted pixel-for-pixel from
+her original with no resampling at all. **Marc's source is landscape** — the
+only one in the set — so his is a 960x1200 portrait region taken from the left
+of frame where he stands; re-cropping him needs that noted or the next person
+will letterbox him.
+
+**Two AI-generated stand-ins existed briefly and were deleted,** not left in the
+folder. They were used to judge the layout with five photographic tiles before
+the real portraits arrived, and that preview earned one finding worth keeping:
+**a light background behaves like a spotlight on this page regardless of who is
+in it.** A bright tile pulled the eye straight off the founder card. That is the
+constraint to put in `ASSET-SPEC.md` for any future team portrait — mid-tone or
+darker background, no white seamless.
+
+### Open
+
+- **First names, not full names.** The row sets ANZHELIKA, KIM, BEN, KRISTINA,
+  MARC. Kristina Verbitskaia and Marc Babin were supplied in full and the full
+  names are in the `alt` text, but "KRISTINA VERBITSKAIA" at 26px didone wraps
+  to two lines and breaks the baseline the captions share. Put to the user and
+  still unconfirmed. If full names are wanted it has to be all five at once —
+  mixing the two formats in one row is the thing to avoid.
+- **Marc's card is the only one with no environment.** His is a black studio
+  shot, so against the page it reads almost as a cutout while the other four sit
+  in rooms. It looks deliberate rather than broken, but it is a different
+  register and worth a decision.
+- **Anzhelika's red suit is the largest saturated object on the page.** §11
+  removed the closing ask's red fill so that red stayed scarce — it survives
+  only in the review stars, the belonging mark and the focus ring. This is much
+  larger than any of those. It may be right for a founder card; it does change
+  the page's colour argument.
+- `anzhelika-office.webp` and `anzhelika-cutout.webp` are now unused by any
+  page. Left in `rysing-assets/`.
+- `ASSET-SPEC.md` has no entry for the team portraits.

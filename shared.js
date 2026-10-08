@@ -132,8 +132,13 @@ if (statFigures.length && !reduce && 'IntersectionObserver' in window) {
    by one is a drift. The loop is made of clones, the way the logo marquee
    duplicates its track, so the copy is authored exactly once and the
    clones are marked aria-hidden rather than read out twice. */
-const treel = document.querySelector('[data-treel]');
-if (treel) {
+/* One function per rail, not one rail per page. This bound a single
+   querySelector until the team row became a second rail on the homepage;
+   every piece of state below — index, clones, dwell, the hold set, the
+   pending rewind — is per-instance and has to stay that way, or two rails
+   share one index and steer each other. The testimonial rail's behaviour
+   is unchanged: it is simply this function applied to the first match. */
+const initRail = (treel) => {
   const track = treel.querySelector('[data-treel-track]');
   const originals = [...track.children];
   const total = originals.length;
@@ -160,7 +165,16 @@ if (treel) {
     return b.left - a.left;
   };
 
-  const perView = () => Math.max(1, Math.round(treel.querySelector('.treel').clientWidth / step()));
+  /* The viewport is named by attribute rather than by the `.treel` class,
+     so a second rail does not have to borrow the testimonials' classes to
+     be measured. */
+  const view = treel.querySelector('[data-treel-view]');
+  /* Capped at the set size. One clone set is only enough while the window
+     is no wider than the set — with i held at or below total, the furthest
+     the window reaches is total + perView - 1, which has to stay inside
+     the 2 * total items that exist. A rail with fewer people than columns
+     would otherwise read off the end of the array. */
+  const perView = () => Math.min(total, Math.max(1, Math.round(view.clientWidth / step())));
 
   /* Placing the track and lighting the columns are separate, because the
      backward wrap has to park the track at a position it is not at before
@@ -201,6 +215,17 @@ if (treel) {
      way — it reads as the slider correcting itself. */
   let rewind;
   const advance = (dir) => {
+    /* Settle any lap that is still pending before stepping again. The
+       reset below is delayed on purpose so the slide can land, but a
+       second click inside that window used to walk i straight past the end
+       of the single clone set: the lit window fell off the array and the
+       whole row went dark until the reset caught up. Nine fast clicks on
+       the four-person rail left nothing lit at all.
+
+       Settling costs nothing on screen — position i is pixel-identical to
+       i + total, which is the same fact the silent rewind already relies
+       on — and it caps i at total however fast the button is pressed. */
+    if (i >= total) { clearTimeout(rewind); i -= total; place(i, false); }
     i += dir;
     if (i < 0) { place(total, false); i = total - 1; }
     paint();
@@ -308,7 +333,9 @@ if (treel) {
       arm(DWELL);
     }
   }
-}
+};
+
+document.querySelectorAll('[data-treel]').forEach(initRail);
 
 /* Full-screen menu. The header carries mark, ask and burger only, so this
    panel is the entire navigation and has to be properly operable: focus is

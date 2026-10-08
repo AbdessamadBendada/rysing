@@ -237,26 +237,6 @@
         </a>
       </div>
 
-      <div class="work-row work-row--c" data-stagger>
-        <!-- TODO(link): case study page does not exist yet -->
-        <a class="work-item">
-          <span class="shot"><img style="--pos:center 35%" src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Gerd Bommer speaking on stage" loading="lazy" decoding="async" /></span>
-          <span class="shot-title"><b class="name">Gerd Bommer</b> Keynote Speaker and Founder-First Investor</span>
-          <span class="shot-more is-standing">Learn more →</span>
-        </a>
-        <!-- TODO(link): case study page does not exist yet -->
-        <a class="work-item">
-          <span class="shot"><img style="--pos:center 40%" src="rysing-assets/work-08-u4success.webp" alt="U4Success branded shirt" loading="lazy" decoding="async" /></span>
-          <span class="shot-title"><b class="name">U4Success</b> Tutoring Academy</span>
-          <span class="shot-more is-standing">Learn more →</span>
-        </a>
-        <!-- TODO(link): case study page does not exist yet -->
-        <a class="work-item">
-          <span class="shot"><img style="--pos:center center" src="rysing-assets/work-09-digitfinance.webp" alt="Digit Finance brand application" loading="lazy" decoding="async" /></span>
-          <span class="shot-title"><b class="name">Finance</b> Consultancy</span>
-          <span class="shot-more is-standing">Learn more →</span>
-        </a>
-      </div>
     </section>
 
     <section class="band manifesto" id="approach" aria-labelledby="approach-title">
@@ -269,17 +249,86 @@
       <a class="btn-pill" href="#contact">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
     </section>
 
-    <section class="founder-plate" id="founder">
-      <figure>
-        <img src="rysing-assets/anzhelika-office.webp" alt="Anzhelika, founder of Rysing, in her studio" loading="lazy" decoding="async" />
-        <figcaption class="label">Anzhelika, founder of Rysing</figcaption>
-      </figure>
+    <!-- The original spotlight: one photograph with the copy laid over it,
+         restored from 6f11f18^ and moved here, above the team roster. The copy
+         is the same four strings it always was. The three keynote case studies
+         still exist further down the page but no longer carry this head. -->
+    <section class="band" id="spotlight" aria-labelledby="spotlight-title">
+      <div class="spot" data-reveal>
+        <img src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Speaker on stage, mid-gesture, wearing a headset microphone" loading="lazy" decoding="async" />
+        <div class="spot-copy">
+          <p class="label">For keynote speakers</p>
+          <h2 class="display" id="spotlight-title"><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
+          <p>Build your speaker brand and rise into thought leadership.</p>
+          <!-- TODO(link): still points into the archive; wants a keynote page. -->
+          <a class="btn-pill" href="playground/rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
+        </div>
+      </div>
     </section>
 
-    <section class="band" aria-labelledby="founder-title">
+    <!-- The team. The founder's full-width plate above this is gone on the
+         client's instruction; she now stands inside the team rather than over
+         it, and takes her emphasis from being the one card that does not move.
+
+         Four drift, one does not. That is also why the rail arithmetic works:
+         the step is measured between two items, so an unequal lead card would
+         break it — keeping her outside the track sidesteps that entirely. -->
+    <section class="band" id="team" aria-labelledby="team-title">
+      <div class="band-head" data-reveal>
+        <h2 class="display" id="team-title"><span class="alt">Behind the</span> work.</h2>
+        <p class="band-note">Brand strategy, design, web and content come together in one close team. No account managers or handoffs to people you've never met. You speak directly with the people doing the work.</p>
+      </div>
+
+      <div class="team" data-stagger>
+        <!-- Supplied by the client. Cropped to 4:5 head-and-hip from a
+             2547x3221 PNG and encoded to webp: 7.2MB to 67KB, still 2.3x the
+             slot at retina. The earlier cutout stand-in is no longer used. -->
+        <figure class="team-lead">
+          <span class="team-lead-shot"><img src="rysing-assets/anzhelika-red-suit.webp" alt="Anzhelika, founder of Rysing" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Anzhelika</h3><p>Founder · The mind behind it all</p></figcaption>
+        </figure>
+
+        <!-- Each figure carries its own --drop rather than the offsets coming
+             from nth-child. The rail loops by cloning, and with an odd roster
+             an nth-child pattern inverts on every pass and lands two offset
+             cards side by side at the seam. Bound to the person, it cannot. -->
+        <div class="team-rail" data-treel>
+          <div class="team-view" data-treel-view>
+            <div class="team-track" data-treel-track>
+              <figure class="team-item" style="--drop:0px">
+                <span class="shot"><img style="--pos:center 32%" src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" /></span>
+                <figcaption><h3>Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
+              </figure>
+              <figure class="team-item" style="--drop:46px">
+                <span class="shot"><img style="--pos:center 28%" src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" /></span>
+                <figcaption><h3>Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
+              </figure>
+              <figure class="team-item" style="--drop:14px">
+                <span class="shot"><img style="--pos:center 18%" src="rysing-assets/kristina-verbitskaia.webp" alt="Portrait of Kristina Verbitskaia" loading="lazy" decoding="async" /></span>
+                <figcaption><h3>Kristina</h3><p>Photographer, videographer and content creator</p></figcaption>
+              </figure>
+              <figure class="team-item" style="--drop:62px">
+                <span class="shot"><img style="--pos:center 16%" src="rysing-assets/marc-babin.webp" alt="Portrait of Marc Babin" loading="lazy" decoding="async" /></span>
+                <figcaption><h3>Marc</h3><p>Partner and producer</p></figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="treel-foot">
+            <button class="treel-step" type="button" data-treel-step="-1" aria-label="Previous team members"></button>
+            <button class="treel-step" type="button" data-treel-step="1" aria-label="Next team members"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The founder copy, moved below the team on instruction. It carries
+         id="founder" because the shared header's About link points at it and
+         the plate that used to hold that id is gone. -->
+    <section class="band" id="founder" aria-labelledby="founder-title">
       <div class="duo" data-reveal>
+        <!-- The "Founder" eyebrow was removed on instruction. It is the one
+             string dropped from this section; the headline now opens it. -->
         <div>
-          <p class="label">Founder</p>
           <h2 class="founder-title display" id="founder-title"><span class="alt">The studio exists to give</span> voices <span class="alt">to people who want to make a</span> real impact.</h2>
         </div>
         <div class="founder-body">
@@ -289,32 +338,6 @@
           <!-- TODO(link): About page destination pending -->
           <a class="btn-pill" href="#">Learn more <span class="arrow" aria-hidden="true"></span></a>
         </div>
-      </div>
-    </section>
-
-    <section class="band" aria-labelledby="team-title">
-      <div class="band-head" data-reveal>
-        <h2 class="display" id="team-title"><span class="alt">Behind the</span> work.</h2>
-        <p class="band-note">Brand strategy, design, web and content come together in one close team. No account managers or handoffs to people you've never met. You speak directly with the people doing the work.</p>
-      </div>
-      <div class="roster" data-stagger>
-        <figure>
-          <span class="shot"><img style="--pos:center 38%" src="rysing-assets/anzhelika-chair.webp" alt="Anzhelika seated in the studio" loading="lazy" decoding="async" /></span>
-          <figcaption><h3>Anzhelika</h3><p>Founder · The mind behind it all</p></figcaption>
-        </figure>
-        <figure>
-          <span class="shot"><img style="--pos:center 32%" src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" /></span>
-          <figcaption><h3>Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
-        </figure>
-        <figure>
-          <span class="shot"><img style="--pos:center 28%" src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" /></span>
-          <figcaption><h3>Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
-        </figure>
-        <!-- TODO(copy): Kristina's discipline remains unconfirmed -->
-        <figure>
-          <span class="shot"><span class="roster-placeholder" aria-hidden="true">K</span></span>
-          <figcaption><h3>Kristina</h3><p>Discipline to be confirmed</p></figcaption>
-        </figure>
       </div>
     </section>
 
@@ -353,7 +376,7 @@
            photo slot on this page takes. A .tthumb left empty falls back to the
            mark on its own. -->
       <div class="treel-wrap" data-treel data-reveal>
-        <div class="treel">
+        <div class="treel" data-treel-view>
           <div class="treel-track" data-treel-track>
             <figure class="tquote treel-item">
               <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
@@ -433,18 +456,11 @@
       </h2>
     </section>
 
-    <section class="band" id="spotlight" aria-labelledby="spotlight-title">
-      <div class="band-head" data-reveal>
-        <div class="spot-lead">
-          <p class="label">For keynote speakers</p>
-          <h2 class="display" id="spotlight-title"><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
-          <p>Build your speaker brand and rise into thought leadership.</p>
-        </div>
-        <a class="btn-pill" href="playground/rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
-      </div>
-
-      <!-- Three panels where there was one photograph. Same row geometry as the
-           last row of Selected Work, so the two stay in step. -->
+    <!-- The remaining three case studies, standing without a head: the eyebrow,
+         headline, lead and pill that used to sit above them went back onto the
+         photograph further up the page, which is where they started. Selected
+         Work's rows end at 06 and this row carries the last three. -->
+    <section class="band" aria-label="Keynote speaker case studies">
       <div class="work-row work-row--c" data-stagger>
         <!-- TODO(link): case study page does not exist yet -->
         <a class="work-item">
@@ -454,8 +470,8 @@
         </a>
         <!-- TODO(link): case study page does not exist yet -->
         <a class="work-item">
-          <span class="shot"><img style="--pos:center 28%" src="rysing-assets/work-10-michael-diewald.webp" alt="Michael Diewald holding a shoulder anatomy model in his clinic" loading="lazy" decoding="async" /></span>
-          <span class="shot-title"><b class="name">Michael Diewald</b> The Shoulder Physio</span>
+          <span class="shot"><img style="--pos:center 40%" src="rysing-assets/work-08-u4success.webp" alt="U4Success branded shirt" loading="lazy" decoding="async" /></span>
+          <span class="shot-title"><b class="name">U4Success</b> Tutoring Academy</span>
           <span class="shot-more is-standing">Learn more →</span>
         </a>
         <!-- TODO(link): case study page does not exist yet -->
