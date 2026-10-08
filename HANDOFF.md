@@ -160,12 +160,12 @@ load under `font-display:swap`. Reproduced by blocking the font: `19ch` → 974p
 **The showreel aperture stays.** It was removed once and restored on
 instruction; that was the agent's error, not a design change.
 
-**The star is see-through from the first frame, and opens at 22%.** Both on
-instruction, and both reverse a decision recorded here. It used to open as a
-solid `--paper` fill that crossfaded to the footage via `--reel-reveal`; that
-overlay and the variable driving it are gone, and `MIN` went 16 → 22 so a wider
-crop is sampled. See §16 for what this costs, measured — it is not a free
-change, and the evidence is there so nobody has to rediscover it.
+**The star is see-through from the first frame, and opens at 27%** — ~450px at
+1440. Both on instruction, and both reverse a decision recorded here. It used to
+open as a solid `--paper` fill that crossfaded to the footage via
+`--reel-reveal`; that overlay and the variable driving it are gone, and `MIN`
+went 16 → 27. See §16 for what this costs, measured — it is not a free change,
+and the evidence is there so nobody has to rediscover it.
 
 **The reel must keep playing.** The observer watches the `.reel` section, not
 the video — the video's box leaves the viewport the moment the sticky stage
@@ -1217,7 +1217,7 @@ darker background, no white seamless.
 
 The star mask over the reel. Changed on instruction, with a measured cost.
 
-**What it is now.** See-through from the first frame, opening at `MIN = 22`
+**What it is now.** See-through from the first frame, opening at `MIN = 27` (~450px at 1440)
 (`shared.js`). There is no fill: `.reel-frame::after` and the `--reel-reveal`
 variable that faded it are both deleted, along with the two `display:none`
 overrides that existed only to switch the overlay off under `no-js` and reduced
@@ -1229,8 +1229,14 @@ showing a 230px crop of a 1440px frame, so whatever sat mid-screen *became* the
 mark — and the reel opens on "SHOWREEL" in black brush lettering over white,
 which cut a gash straight through it. That was the whole reason for the fill.
 
-**Raising MIN to 22 was the mitigation, and it is a partial one.** A wider crop
-of a white card with black lettering is still a white card with black lettering.
+**Raising MIN was tried as a mitigation and it is not one.** It went 16 → 22 →
+27 (~450px at 1440), the last step purely because a bigger star was asked for.
+The reasoning behind the first bump — that a wider crop samples more of the
+frame and is less likely to land inside flat lettering — does not survive
+contact: the brush lettering spans the whole frame, so a wider aperture shows
+*more* of it. A bigger star makes the gash bigger. **Treat MIN as a size
+decision only.**
+
 Sampled through a live playthrough at the smallest aperture:
 
 | Footage at | Behind the star | Reads as |
@@ -1253,9 +1259,11 @@ which point a see-through star works at every point in the loop. The cost is
 losing the "SHOWREEL" intro from the full-screen view too, where it is presumably
 wanted. That was put to the user and is **not yet decided**.
 
-**If a white blob comes back, raise `MIN` before reaching for the overlay.**
-The overlay costs the opening its reveal, which is the thing the instruction was
-about. The note is in `shared.css` above the mask rule as well.
+**Do not reach for `MIN` to fix a blob or a gash — it does not work, measured.**
+The only two real levers are the footage (start the reel past the title card) or
+the overlay (restore the fill, which costs the opening its reveal and is the
+thing the instruction was about). The same note sits in `shared.css` above the
+mask rule and in `shared.js` above the constant.
 
 **Seeking the reel in a test does not work on the local server.** `currentTime`
 silently stays at 0 because the dev server refuses Range requests (§5), and two

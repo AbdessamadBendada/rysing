@@ -383,11 +383,11 @@ if (menuToggle && menu) {
    progress drives the footage grade, so the mark stays legible while small. */
 const reel = document.querySelector('.reel');
 if (reel && !reduce) {
-  /* MIN was 16. Raised on instruction, and it now carries the job the
-     solid fill used to do: a wider opening samples a wider crop of the
-     frame, so the star is less likely to fill with one flat area of the
-     title card. Lower it and the white-blob defect comes back. */
-  const MIN = 22, MAX = 620;
+  /* MIN was 16, then 22, now 27 — ~450px at 1440. Raised on instruction,
+     purely as a size decision. It does not mitigate the title-card gash
+     the old solid fill existed for: that lettering spans the frame, so a
+     wider crop shows more of it, not less. See HANDOFF section 16. */
+  const MIN = 27, MAX = 620;
   let ticking = false;
   let isRevealed = false;
   const update = () => {

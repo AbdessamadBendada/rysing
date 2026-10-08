@@ -310,12 +310,12 @@ body::after {
    The reason was real: at 16% the star was ~230px and showed a 230px crop
    of a 1440px frame, so whatever sat mid-screen became the mark, and the
    reel opens on black brush lettering over white which cut a gash through
-   it. The aperture now starts at 22% instead, which samples a wider crop
-   and no longer lands inside the lettering.
+   it. MIN is 27 now, ~450px at 1440.
 
-   If a white blob ever comes back here, that is the defect this fill was
-   built for -- raise MIN in shared.js before reaching for the overlay,
-   because the overlay costs the opening its reveal. */
+   A bigger aperture does NOT fix that -- measured, it enlarges it. The
+   lettering spans the whole frame, so a wider crop simply shows more of
+   the same thing. MIN is a size decision, not a mitigation. The only real
+   fix is to stop the reel opening on a title card; see HANDOFF section 16. */
 /* Once the star has opened past the frame the mask and the grade are both
    no-ops, but the compositor still re-rasterises a full-viewport masked,
    filtered video on every scroll frame — which cost the reel about a fifth
