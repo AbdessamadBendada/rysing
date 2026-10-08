@@ -383,7 +383,11 @@ if (menuToggle && menu) {
    progress drives the footage grade, so the mark stays legible while small. */
 const reel = document.querySelector('.reel');
 if (reel && !reduce) {
-  const MIN = 16, MAX = 620;
+  /* MIN was 16. Raised on instruction, and it now carries the job the
+     solid fill used to do: a wider opening samples a wider crop of the
+     frame, so the star is less likely to fill with one flat area of the
+     title card. Lower it and the white-blob defect comes back. */
+  const MIN = 22, MAX = 620;
   let ticking = false;
   let isRevealed = false;
   const update = () => {
@@ -397,10 +401,8 @@ if (reel && !reduce) {
     /* The grade should clear well before the aperture finishes, or the reel
        still looks muddy once it is the only thing on screen. */
     reel.style.setProperty('--reel-progress', Math.min(1, eased * 1.6).toFixed(3));
-    /* Solid mark -> footage. Starts almost immediately and is done by the
-       time the star is roughly a third open. */
-    const reveal = Math.min(1, Math.max(0, (eased - 0.04) / 0.26));
-    reel.style.setProperty('--reel-reveal', reveal.toFixed(3));
+    /* No --reel-reveal any more: the star is see-through from the first
+       frame on instruction, so there is no solid fill left to crossfade. */
     /* Past this point the star already covers the frame and the grade has
        already resolved to identity, so shedding both is invisible. Toggled
        only on change — writing a class every frame is its own cost. */
