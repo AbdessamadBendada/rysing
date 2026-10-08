@@ -2,11 +2,24 @@
 
 Read this before touching anything.
 
-**`index.html` is generated. Do not edit it — edit `src/` and run `node build.js`.**
-It was called `premium-direction.html` until the files were reorganised; every
-other HTML file now lives in `playground/`. Anything below that names
-`premium-direction.html` refers to this same page under its old name. The build
-system is §12.
+**Every page at the root is generated. Do not edit one — edit `src/` and run
+`node build.js`.** The build system is §12.
+
+| Page | Source | Section |
+| --- | --- | --- |
+| `index.html` | `src/index.html` | §2, §7–§11 |
+| `contact.html` | `src/contact.html` | §13 |
+| `about.html` | `src/about.html` | §14 |
+
+This was a single page until recently. `index.html` was called
+`premium-direction.html` before the files were reorganised, and anything below
+that still names `premium-direction.html` refers to it under that old name.
+Every other HTML file now lives in `playground/` as history.
+
+The chrome and the stylesheet are shared by all three, so **a change to
+`src/_header.html`, `src/_footer.html`, `shared.css` or `shared.js` lands on
+every page at once.** After any such change, re-check the pages you did not
+mean to touch — the method and the baseline numbers are in §12.
 
 ---
 
@@ -27,9 +40,11 @@ The job is to keep inverting that ratio back.
 
 ## 2. Current state
 
-`index.html` is the active build. It is on `main` and pushed.
+Three pages, all on `main` and pushed: the homepage, contact (§13) and about
+(§14). The homepage is the one this section describes; it is also the one the
+client has signed off, so it is the one a shared-file change must not disturb.
 
-Done and verified:
+Done and verified on the homepage:
 
 - **Pacing.** Section rhythm follows the measure, with room top and bottom.
   Quiet gaps ~190px; the manifesto and closing open to ~250px.
@@ -74,10 +89,13 @@ Unresolved: see §6.
 | File | Role |
 | --- | --- |
 | `src/index.html` | **The homepage source. Edit this, not `index.html`.** |
-| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. See §12. |
+| `src/contact.html` | Contact page source. §13. |
+| `src/about.html` | About page source. §14. |
+| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all three pages. See §12. |
+| `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). |
 | `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. |
 | `build.js` | `node build.js`. Zero dependencies. |
-| `index.html` | **Generated — do not edit.** Committed so the site can be served as flat files. Was `premium-direction.html`. |
+| `index.html`, `contact.html`, `about.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `playground/new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
 | `playground/testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
@@ -268,9 +286,23 @@ filenames once and wired up entirely the wrong asset.
   (`anzhelika-chair.webp`). Ask for head-and-shoulders crops: the stand-in is a
   full-body seated shot and at 68px it reads as a small figure, not a face.
   400×400 is ample — the slot is 68px at its largest. Each is wired on its own
-  by swapping that quote's `img src`, plus a `--pos` focal point if the crop
-  needs one.
-- The newsletter form has no backend.
+  by swapping that quote's `img src` in `src/_testimonials.html`, plus a `--pos`
+  focal point if the crop needs one. **This now fixes both pages at once** — the
+  rail is shared.
+- **Two forms have no backend,** the newsletter and contact (§13). Both validate
+  and then say sending is not connected; neither reports a false success.
+- **The contact page says `hello@rysing.studio`; the footer on that same page
+  and the homepage say `hello@rysing.agency`.** Both are visible at once. Built
+  as the design draws it. Someone has to say which is right.
+- **Calendly's embed does not look like the design** — white, Content Fudge
+  branding, its own cookie banner, because custom colours and de-branding are
+  paid-plan features. Full detail and the options in §13.
+- **The about page's stats contradict the homepage's.** "30+ brands built" and
+  "35+ websites launched" there against "35+ personal brands built" here;
+  "50k+ followers" appears only here and "49 named testimonials" only there.
+- **The founder photograph on about is a white-background shot** and is now the
+  brightest object on the site. `anzhelika-cutout.webp` is the same photo with
+  an alpha channel. §14.
 - **Kinfolk's web licence is not cleared.** Aileron is public domain. Qualy, the
   logo face, is never loaded — the wordmark ships as artwork.
 
@@ -283,6 +315,17 @@ filenames once and wired up entirely the wrong asset.
   three has neither — no index, and the label stands. Reconcile.
 - The OPS Detox panel says **"for startups"**; the client's own merchandise and
   site both say **"for scale-ups"**. Someone has to decide which is right.
+- **"rysing" or "Rysing".** The about page sets it lowercase throughout its body
+  copy, as its designs do; the footer and the homepage set it capitalised. Both
+  appear on the about page at once.
+- **The header's two "Apply to work with us" pills still point at the
+  homepage's closing section,** not at the contact page that now exists. The nav
+  Contact link was repointed; the pills were deliberately left, because moving
+  them changes the homepage's behaviour. Decide.
+- **The four footer legal links are still `href="#"`** — Imprint, Privacy
+  Policy, Terms & Conditions, Cookie Policy. An Austrian business is expected to
+  carry an Imprint, and the Calendly embed makes the cookie question real.
+- **The nav's Blog link still points at `/blog`,** which does not exist.
 
 **Still parked**
 
@@ -290,7 +333,12 @@ filenames once and wired up entirely the wrong asset.
   that plan — removing Sunday Fudge, trimming CTAs, cutting to three projects,
   adding outcome lines — are **all on hold** under "keep the copy as it is".
   Do not act on them without a fresh instruction.
-- The header is due a rework; the user has said so but not specified what.
+- The header is due a rework. **The contact design drew one** — a full inline
+  nav, HOME ABOUT SERVICES PORTFOLIO BLOG CONTACT with the current page
+  underlined, instead of the burger. It was put to the user and the answer was
+  to keep the burger everywhere, so that mock's nav is indicative only and this
+  item is still open and still unspecified. Do not build it from that mock
+  without a fresh instruction.
 
 **Housekeeping**
 
@@ -315,6 +363,12 @@ filenames once and wired up entirely the wrong asset.
 ## 7. Testimonials
 
 Three quotes on the measure, drifting one column at a time.
+
+**It lives in `src/_testimonials.html` and appears on two pages** — the homepage
+and about — included by both with `{{> testimonials}}` (§14). Everything below
+describes the one implementation they share. The script binds a single
+`[data-treel]` guarded by `if (treel)`, so one instance per page is the
+assumption; a second on the same page would not animate.
 
 **This is the second design.** The first shipped a named index — one quote at
 display size, the six names as the navigation — and the client did not want it.
@@ -425,8 +479,9 @@ Open, for the client:
   (`anzhelika-chair.webp`). Ask for head-and-shoulders crops — the stand-in is a
   full-body seated shot and at 68px it reads as a small figure, not a face.
   400x400 is ample; the slot is 68px at its largest. Each is wired on its own by
-  swapping that quote's `img src`, plus a `--pos` focal point if the crop needs
-  one. `ASSET-SPEC.md` has no entry for these yet.
+  swapping that quote's `img src` in `src/_testimonials.html`, plus a `--pos`
+  focal point if the crop needs one — which now fixes both pages at once.
+  `ASSET-SPEC.md` has no entry for these yet.
 
 ---
 
@@ -600,16 +655,23 @@ Added when the site needed a second page and the header, footer, 1240 lines of
 CSS and 500 lines of script existed only inside one 2270-line file.
 
 ```
-src/_layout.html    the document shell; owns <head> and <main>
-src/_header.html    skip-link, header, menu overlay
-src/_footer.html    footer
-src/index.html      homepage content only, with front matter
-shared.css          the former inline <style>
-shared.js           the former inline <script>
-build.js            node build.js  →  writes index.html at the root
+src/_layout.html        the document shell; owns <head> and <main>
+src/_header.html        skip-link, header, menu overlay
+src/_footer.html        footer
+src/_testimonials.html  the #proof section, included by two pages
+src/index.html          homepage content only, with front matter
+src/contact.html        §13
+src/about.html          §14
+shared.css              the former inline <style>
+shared.js               the former inline <script>
+build.js                node build.js  →  writes every page at the root
 ```
 
-**`index.html` is generated.** Edit `src/` and rebuild. The generated files are
+Any `src/_name.html` is a partial: it is never built as a page (the leading
+underscore is what excludes it) and is pulled into a page with `{{> name}}`.
+
+**The generated pages are** exactly the `src/*.html` files without a leading
+underscore. Edit `src/` and rebuild. The generated files are
 committed on purpose: the output is flat HTML that needs no JavaScript and no
 server, so the site can be opened from disk, dropped on any host, or handed to
 Divi without the chrome depending on a fetch.
@@ -636,9 +698,27 @@ chrome's links are same-page anchors:
   points at ids that are not on it.
 - **`skip`** is the skip-link target, which has to be a real id on that page.
 
-A missing key or an unresolved `{{token}}` fails the build with exit 1. A page
-that ships `{{home}}#work` inside an href is worse than one that refuses to
-build.
+One optional key: **`pagescripts`**, injected at the end of `<body>`, for a
+third-party tag that belongs to one page only. The contact page's Calendly
+loader is the reason it exists; it defaults to empty, so pages that need
+nothing declare nothing.
+
+A missing required key or an unresolved `{{token}}` fails the build with exit 1.
+A page that ships `{{home}}#work` inside an href is worse than one that refuses
+to build. Optional keys are the one exception, and the list of them in
+`build.js` is deliberately short — every name not on it is still a hard failure,
+so a typo in a token never becomes an empty attribute.
+
+**`{{> name}}` includes `src/_name.html`.** Markup that appears on more than one
+page is written once and pulled in; it nests up to five deep and fails on a
+missing partial. The testimonial quotes are why it exists — §7 requires them to
+have exactly one home, and a page that copies them is a page that will drift
+from them.
+
+**The build is idempotent and says so.** A second run on unchanged sources
+prints `unchanged` for every page and rewrites nothing, which makes it a cheap
+check in its own right: if a refactor of the sources prints `unchanged`, the
+output did not move.
 
 **`no-js` moved from `<body>` to `<html>`, cleared by an inline script in the
 head.** Not cosmetic. `.no-js` changes real layout — the reel's sticky stage and
@@ -672,6 +752,21 @@ errors and zero failed requests; with JavaScript disabled the page keeps all
 5,556 characters of copy, all six nav links and all six testimonial quotes at
 full opacity with nothing hidden. The build is idempotent — a second run on
 unchanged sources reports `unchanged` and rewrites nothing.
+
+**Checking a shared-file change, which is the standing regression.** Everything
+in `src/_header.html`, `src/_footer.html`, `shared.css` and `shared.js` reaches
+all three pages, so the risk is no longer "does my page look right" but "did I
+move a page I was not working on". Two cheap checks, in order:
+
+1. Run the build. `unchanged` on a page means its bytes did not move at all,
+   which settles markup immediately and costs nothing.
+2. If the change was to CSS or JS, the bytes will not have moved but the render
+   may have. Shoot the homepage full-page at 1440 and diff it row by row against
+   the previous capture. **The homepage has stayed at 0 of 22,821,120 differing
+   pixels through the build-system extraction, the contact page and the about
+   page** — that is the number to keep. Pin animations to `currentTime = 0`
+   first or the hero, the film panel and the marquee will report differences
+   that are only phase (§5).
 
 **Known gap.** The spotlight's "Learn more" button points at
 `playground/rysing2.html`. That was a stopgap so the move did not leave a 404;
