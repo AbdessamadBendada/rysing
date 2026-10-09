@@ -1840,3 +1840,58 @@ stylesheet's version hash. `src/_testimonials.html` is untouched.
   instruction was "the same numbers as the home page", but the supplied
   screenshot shows this page's existing five figures, so they were left as
   they are. The contradiction is unchanged and still needs deciding.
+
+---
+
+## 23. The about page shares the homepage's testimonials
+
+**Corrected.** §22 built a page-specific block of four named quotes on the
+about page, on my reading of an answer to a question I had framed as an
+either/or. The instruction was, and remains, that the about page carries **the
+same testimonials as the homepage**. `src/about.html` includes
+`{{> testimonials}}` again, exactly as it did before §22, and
+`src/_testimonials.html` was never modified — so the six quotes still have
+exactly one home (§7) and both pages show the same section.
+
+`.about-words`, `.about-word` and their three responsive rules are gone. **One
+trap in removing them:** two of those rules were multi-selector, and stripping
+the `.about-word` line out of
+`.about-team-grid,\n.about-words-grid { … }` left `.about-team-grid,`
+dangling into the *next* rule — which silently gave the team grid
+`max-width:24em` instead of its column count. Verified by reading
+`gridTemplateColumns` back from the rendered page rather than by eye: 4
+columns at 1440, 2 at 1024, 1 at 560. **When deleting one selector from a
+comma-separated group, re-read the whole rule, not the line.**
+
+### The four quotes, preserved
+
+These came from the client's own design and are **the only real, named
+testimonials that have ever been on this site** — the six in
+`src/_testimonials.html` are still the placeholders §6 flags ("Marcus H.",
+"Elena V."). They are recorded here so that removing the block does not lose
+them, and they are the obvious candidates for replacing those placeholders:
+
+| Quote | Attributed to |
+| --- | --- |
+| "When I read what you write, you make me a hundred times bigger than what I am." | Julian Knowle |
+| "You describe me in a way that I never would — but yes, it is me, and I've achieved this." | Jennifer Djongow |
+| "I feel that you saw more in me than I do. And I guess that was the brief. To see more than I can see." | Gvantsa Kikalishvili |
+| "We are summarising the things that I wouldn't dare summarise for myself." | Veneta Behar |
+
+Three of the four names already appear on the site as marks in the logo
+marquee — Julian Knowle, Jennifer Djongow and Clemens Doppler are in
+`src/_marquee.html` — so these are existing clients, not new ones.
+
+**If these replace the placeholders**, it is one edit to
+`src/_testimonials.html` and it lands on both pages at once, which is the
+whole point of that file. Note the rail is built for six and clamps `perView`
+to the set size (§7), so four is safe — but check it, because four quotes in a
+three-up window is the narrowest the rail has ever run.
+
+### Verified
+
+Eleven section boundaries probed from viewport captures: max channel delta 4,
+no seam (§5). Zero horizontal overflow, zero console errors and zero failed
+requests on all three pages at 1680/1440/1024/900/768/560/390. The team grid
+resolves 4/2/1 columns at 1440/1024/560. No reference to `.about-word` remains
+in `src/` or `shared.css`, and `src/_testimonials.html` is untouched.

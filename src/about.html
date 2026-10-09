@@ -162,33 +162,12 @@
       </div>
     </section>
 
-    <!-- This page no longer includes {{> testimonials}}. It carries four
-         named quotes of its own, in a static grid, while the homepage keeps
-         its six-quote rail — a deliberate split, decided rather than drifted
-         into (HANDOFF §22). These four are the first real named testimonials
-         on the site; the homepage's six are still the placeholders §6 flags.
-         No rail, so no clones, no autoplay and no controls. -->
-    <section class="band about-words" aria-labelledby="about-words-title">
-      <p class="label" data-reveal id="about-words-title">In their words</p>
-      <div class="about-words-grid" data-stagger>
-        <figure class="about-word">
-          <blockquote>“When I read what you write, you make me a hundred times bigger than what I am.”</blockquote>
-          <figcaption>Julian Knowle</figcaption>
-        </figure>
-        <figure class="about-word">
-          <blockquote>“You describe me in a way that I never would — but yes, it is me, and I've achieved this.”</blockquote>
-          <figcaption>Jennifer Djongow</figcaption>
-        </figure>
-        <figure class="about-word">
-          <blockquote>“I feel that you saw more in me than I do. And I guess that was the brief. To see more than I can see.”</blockquote>
-          <figcaption>Gvantsa Kikalishvili</figcaption>
-        </figure>
-        <figure class="about-word">
-          <blockquote>“We are summarising the things that I wouldn't dare summarise for myself.”</blockquote>
-          <figcaption>Veneta Behar</figcaption>
-        </figure>
-      </div>
-    </section>
+    <!-- The same quotes as the homepage, from the same file. HANDOFF §7:
+         this copy has exactly one home, so the page includes it rather than
+         carrying a second copy that would drift. A page-specific block of
+         four named quotes stood here briefly; it was removed on instruction
+         and the copy is preserved in HANDOFF §23. -->
+    {{> testimonials}}
 
     <!-- The marquee markup is shared with the homepage's #recognition and
          lives in src/_marquee.html, so the thirteen marks and their --f

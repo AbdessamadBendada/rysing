@@ -1334,31 +1334,6 @@ body::after {
    slug rather than a caption introducing the picture. */
 .about-courage-shot figcaption { align-self:flex-end; color:rgba(249,249,249,.52); }
 
-/* --- About: named quotes ------------------------------------ */
-/* Four quotes, no rail. The hairline above the row and the rules between
-   the columns are the whole structure: no cards, for the reason §7 gives —
-   four bordered boxes of equal height turn quotes into a comparison table. */
-.about-words-grid {
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:clamp(20px,2.4vw,38px);
-  margin-top:clamp(26px,3vw,44px);
-  padding-top:clamp(26px,3vw,44px); border-top:1px solid rgba(249,249,249,.22);
-}
-.about-word { margin:0; display:flex; flex-direction:column; gap:clamp(20px,2.4vw,34px); height:100%; }
-/* The rule belongs to the column, not to the gap, so the last column has
-   none and the row does not end on a floating line. */
-.about-word + .about-word { padding-left:clamp(20px,2.4vw,38px); border-left:1px solid rgba(249,249,249,.16); }
-.about-word blockquote {
-  margin:0; flex:1;
-  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-  font-size:clamp(17px,1.45vw,21px); line-height:1.3;
-  text-transform:uppercase; letter-spacing:.015em;
-}
-.about-word figcaption {
-  color:rgba(249,249,249,.62);
-  font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
-}
-.about-word figcaption::before { content:"— "; }
 
 /* --- About: recognition ------------------------------------- */
 .about-recognition { position:relative; }
@@ -1865,9 +1840,7 @@ body::after {
      well before the page is actually narrow. Two up keeps the face readable,
      and the stagger stays, because it is what stops a 2x2 reading as a
      table. */
-  .about-team-grid,
-  .about-words-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .about-word:nth-child(odd) { padding-left:0; border-left:0; }
+  .about-team-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .about-recog-title { max-width:24em; }
 }
 @media (max-width:900px) {
@@ -1886,10 +1859,7 @@ body::after {
 @media (max-width:620px) {
   /* One up. The stagger goes with it — a --drop on a single column is just
      an uneven gap between cards. */
-  .about-team-grid,
-  .about-words-grid { grid-template-columns:minmax(0,1fr); }
+  .about-team-grid { grid-template-columns:minmax(0,1fr); }
   .about-member { margin-top:0; }
-  .about-word { padding-left:0; border-left:0; }
-  .about-word + .about-word { padding-top:clamp(20px,5vw,30px); border-top:1px solid rgba(249,249,249,.16); }
 }
 .about-h .keep { white-space:nowrap; }
