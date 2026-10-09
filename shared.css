@@ -1553,27 +1553,6 @@ body::after {
 .about-h { margin:0; font-size:clamp(30px,3.9vw,58px); line-height:1.04; max-width:11.6em; }
 .about-body p { margin:0 0 1.5em; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72; }
 .about-body p:last-child { margin-bottom:0; }
-/* The didone block that closes the right column. Not a blockquote: it is the
-   same voice continuing, raised in register. */
-.about-pull {
-  margin-top:clamp(30px,3.6vw,54px) !important;
-  color:var(--paper) !important; font-size:clamp(19px,1.9vw,27px) !important;
-  line-height:1.3 !important; letter-spacing:.02em;
-}
-
-.about-why { position:relative; isolation:isolate; overflow:clip; }
-/* The page's loudest light, and the design's: it fills the right of the band
-   behind the argument. Kept under the mock's saturation for the reason in §8 —
-   at full strength it is the brightest thing on the site. */
-.about-why-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:
-    radial-gradient(ellipse 62% 74% at 86% 62%,
-      rgba(243,78,38,.46), rgba(226,60,28,.24) 42%,
-      rgba(176,44,22,.07) 72%, transparent 100%),
-    radial-gradient(ellipse 30% 40% at 96% 54%,
-      rgba(248,116,60,.22), transparent 76%);
-}
 
 .about-conviction {
   position:relative; isolation:isolate; overflow:clip; text-align:center;

@@ -1447,3 +1447,51 @@ at 1440/900/390. All eight section boundaries on the page probed across the
 width — max channel delta 3, nothing over 10, so no seam (§5), the new
 photograph's bottom edge among them at 2. `index.html` and `contact.html` both
 rebuilt byte-identical, so nothing reached the other two pages.
+
+---
+
+## 19. "Why we exist" was removed
+
+The about page ran hero → **Why we exist** → Our conviction → founder → … It
+now runs hero → Our conviction → founder → … On instruction, chosen
+explicitly over a reorder that would have kept the section further down.
+
+**This is a copy deletion, not a reorder, and none of it is set anywhere
+else.** What went:
+
+- the eyebrow "Why we exist"
+- the headline "Too many exceptional people are unseen and unheard."
+- two paragraphs — "It is rarely for lack of substance…" and "You are a
+  perfectionist, so nothing is ever ready…"
+- the didone pull quote "Meanwhile the room fills up with people who have far
+  less to say and no hesitation about saying it."
+
+One revert brings the section back; it is a single contiguous block in
+`src/about.html` and a single contiguous block in `shared.css`. **Combined
+with §18, the about page has now lost five strings of baseline copy in two
+changes** — the two hero strings and these. Both were instructed and both are
+recorded, but that is most of the page's original argument about the reader,
+and it is worth putting the total in front of the client rather than each
+change on its own.
+
+**Three CSS rules went with it** — `.about-why`, `.about-why-glow` and
+`.about-pull`. Deliberately *not* removed: `.about-split`, `.about-h` and
+`.about-body`, which the courage section still uses. `.about-h`'s 11.6em
+measure in the §14 table was derived from the courage headline, not this one,
+so that table entry still stands.
+
+**The page's loudest light went with it.** `.about-why-glow` was the big red
+wash on the right of the band — §14 called it the brightest thing on the site
+even held under the mock's saturation. The conviction section's own red glow
+is now the page's largest, and it sits directly under the hero photograph.
+That reads well and is arguably the better page for it (§11 wants red scarce),
+but if anyone later asks where the about page's colour went, this is the
+answer.
+
+### Verified
+
+Seven section boundaries now instead of eight, all probed across the width:
+max channel delta 3, nothing over 10, so no seam (§5). Zero horizontal
+overflow, zero console errors and zero failed requests on **all three pages**
+at 1680/1440/1024/900/768/560/390. No reference to any of the three removed
+classes remains in `src/` or `shared.css`.
