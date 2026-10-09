@@ -1228,7 +1228,11 @@ body::after {
    wordmark rather than beside it, so the mark reads as lit from within.
    The inner element clips them: left unclipped they would extend the
    document past the footer and add dead scroll at the very bottom. */
-.site-footer { position:relative; isolation:isolate; padding:0 var(--gutter) 28px; }
+/* The top padding used to live under the wordmark, which opened the footer.
+   The wordmark is the last thing on the page now, so the hairline above the
+   grid opens it instead and needs that room above it or it sits hard against
+   the closing section. */
+.site-footer { position:relative; isolation:isolate; padding:56px var(--gutter) 28px; }
 /* overflow:hidden stays — unclipped these extend the document past the
    footer and add dead scroll at the very bottom. The mask is a separate
    job: it fades the top so the red is not cut flat against the closing
@@ -1256,8 +1260,9 @@ body::after {
   .footer-light::before,.footer-light::after,.belong-glow { animation:none; }
 }
 /* The wordmark runs the full measure here — it is the sign-off, and the
-   artwork is the only place the logo face appears. */
-.footer-mark { width:100%; height:auto; margin-bottom:56px; }
+   artwork is the only place the logo face appears. It is the last thing on
+   the page, below the copyright line, so its room is above it now. */
+.footer-mark { display:block; width:100%; height:auto; margin-top:72px; }
 .footer-grid {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px;
   padding-top:32px; border-top:1px solid rgba(249,249,249,.28);

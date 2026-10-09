@@ -400,7 +400,9 @@ filenames once and wired up entirely the wrong asset.
 - The footer wordmark has a soft white orb to the left of the star. It is in the
   supplied artwork (`rysing-logo-lockup-light.webp`), not a rendering fault —
   invisible at header size, obvious at full width. Needs clean artwork if the
-  client does not want it.
+  client does not want it. **It is more visible since the mark moved to the
+  bottom** (§17): the footer's blue light sits low-left, directly behind the
+  orb, which is the brightest pairing it has had.
 
 ---
 
@@ -1288,3 +1290,32 @@ spotted. Let the video play and sample as it goes.
 - **Decide between three.** Keep it as-is and accept the weak opening; trim the
   reel so it starts on footage and the aperture works throughout; or restore the
   fill, which is the thing that was asked to be removed.
+
+---
+
+## 17. Footer order
+
+**The wordmark is the last thing on the page.** On instruction. It used to open
+the footer, above the link grid; it now sits below the grid *and* below the
+copyright line, so the page signs off on the mark and nothing follows it.
+
+Two spacing values moved with it and had to. The 56px that sat under the mark is
+now `.site-footer`'s top padding — without it the grid's hairline, which is what
+opens the footer now, would sit hard against the closing section above. And
+`.footer-mark`'s `margin-bottom:56px` became `margin-top:72px`; it is also
+`display:block`, because as the last child its inline baseline gap would
+otherwise add a few stray pixels under the page's final element.
+
+**The light behind it changed meaning, and this is worth a look rather than an
+assumption.** The footer's two glows are placed red high-right and blue low-left,
+and the original comment says they sit behind the wordmark so it "reads as lit
+from within." With the mark at the top that was the red; at the bottom it is the
+blue, which now sits directly behind the mark's left end and the star. It still
+reads as lit from within — arguably better — but the colour is different from
+what that comment describes. It also makes the artwork's white orb (§6) the
+brightest thing in the footer.
+
+Verified on all three pages: DOM order grid → meta → mark on each, the mark's
+bottom 28px from the end of the document (the footer's own bottom padding), no
+console errors beyond the deliberately aborted `.mp4`. Zero horizontal overflow
+at 1680/1440/1024/900/768/560/390, the mark scaling 1546px wide down to 346px.
