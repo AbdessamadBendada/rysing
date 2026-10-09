@@ -1495,3 +1495,64 @@ max channel delta 3, nothing over 10, so no seam (§5). Zero horizontal
 overflow, zero console errors and zero failed requests on **all three pages**
 at 1680/1440/1024/900/768/560/390. No reference to any of the three removed
 classes remains in `src/` or `shared.css`.
+
+---
+
+## 20. Our conviction, rebuilt
+
+New copy from the client, and the blue claim removed. The section is still
+centred and still the only centred one on the page.
+
+**The headline lost its article.** "Visibility is a responsibility." →
+"Visibility is responsibility." One word, but it changes the break the design
+wants from three lines to two: "VISIBILITY IS / RESPONSIBILITY."
+
+**The two paragraphs became one.** Both of the old ones are gone — "We build
+brands that come from conviction. Brands that are human, specific…" and "When
+someone with something worth saying decides to be seen…". The replacement is
+"We build brands that come from conviction and a big vision. Brands with the
+courage to stand out and be seen, and the ambition to change something in this
+world. When you work with people and businesses like this, marketing becomes a
+mission."
+
+**The blue-marked claim is gone,** on instruction: "We make the people worth
+listening to heard and recognised." `.about-claim` and `.about-claim mark`
+went with it. That was **the page's only blue object** — §14 called it the
+page's one cool note. Blue survives on the page only as `.about-founder-glow`
+now. The `<mark>` treatment itself is still in use on the homepage spotlight,
+so the device is not lost, just no longer used here.
+
+**The measure that was not measuring anything.** `.about-conviction-body` set
+`max-width:40em`, but `em` there resolved against the *inherited* body size —
+`clamp(15px,1.1vw,17px)` — while the paragraph itself was a fixed `15px`. So
+the measure quietly grew to 17px-ems at 1920 while the text it was measuring
+did not move, and the designed break held over three windows that shared no
+common value: **34.4–35.9em at 1920/1680, 36.9–38.6em at 1440, 39–40.7em at
+1280 and below.** There was no single correct number, which is why the sweep
+reported an empty intersection.
+
+This is the §4 `ch` trap wearing a different coat: *a measure expressed in
+units of a different font than the text it governs.* The fix is one
+declaration — `font-size:15px` on the wrapper, so the em is pinned to the text
+— after which the window is **39–40.7em at every width** and 39.9em is the
+midpoint. The paragraph now takes `font-size:inherit` so the two cannot drift
+apart again. **Check for this anywhere a max-width in `em` sits on a wrapper
+rather than on the element carrying the type.**
+
+**The headline measure was left at 11em deliberately.** Swept 3–26em: the
+break holds from 5.6 to 15em at every width, because "responsibility." is a
+single unbreakable word and the measure only has to stop "Visibility is"
+splitting at one end and pulling the long word up at the other. 11em is well
+inside that, so it was not re-centred on 10.3 — a measure that is not doing
+work is not worth moving. The size went `clamp(34px,5.4vw,86px)` →
+`clamp(34px,5.8vw,104px)` to match the mock's weight; it now sits just under
+the hero's `clamp(40px,6.6vw,118px)`, which is the right order.
+
+### Verified
+
+Both designed breaks hold at 1920, 1680, 1440, 1280, 1024, 900, 768, 560 and
+390 — the headline on two lines and the paragraph on three, at every one.
+Seven section boundaries probed across the width: max channel delta 3, nothing
+over 10, so no seam (§5). Zero horizontal overflow, zero console errors and
+zero failed requests on all three pages at 1680/1440/1024/900/768/560/390. No
+reference to `.about-claim` remains in `src/` or `shared.css`.

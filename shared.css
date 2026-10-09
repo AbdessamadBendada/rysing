@@ -1568,29 +1568,38 @@ body::after {
     rgba(178,44,22,.12) 66%, rgba(120,30,18,.03) 82%, transparent 100%);
 }
 .about-conviction .label { color:rgba(249,249,249,.78); }
+/* 11em, and the window here is unusually forgiving: "responsibility." is a
+   single unbreakable word, so the measure only has to stop "Visibility is"
+   from splitting at one end and from pulling "responsibility." up to join it
+   at the other. Swept 3–26em at 1920/1680/1440/1280/1024/900/768 — the break
+   the design draws holds from 5.6 to 15em at every width. 11em is kept
+   rather than re-centred on 10.3: it is already well inside the window, and
+   a measure that is not doing work is not worth moving. */
 .about-conviction-title {
   margin:clamp(18px,2vw,30px) auto 0; max-width:11em;
-  font-size:clamp(34px,5.4vw,86px); line-height:1.02;
+  font-size:clamp(34px,5.8vw,104px); line-height:1.02;
 }
-.about-conviction-body { max-width:40em; margin:clamp(34px,4.4vw,64px) auto 0; }
+/* font-size here is not decoration — it is what makes the measure mean
+   anything. The paragraph is a fixed 15px, but `em` on this wrapper used to
+   resolve against the inherited body size, which is clamp(15px,1.1vw,17px).
+   So the measure grew to 17px-ems at 1920 while the text it was measuring
+   stayed at 15px, and the designed line breaks held over three different
+   windows that shared no common value — 34.4–35.9em at 1920, 36.9–38.6em at
+   1440, 39–40.7em at 1280 and below. Same family of fault as the `ch` trap
+   in §4: a measure expressed in units of a different font than the text.
+   Setting the size here pins the em, and the window becomes one window.
+
+   39.9em: the design breaks after "the courage to" and after "When you".
+   Swept 28–60em at 1920/1680/1440/1280/1024/900/768 — with the em pinned the
+   window is 39–40.7em and is now the same at every one of them. 39.9 is the
+   midpoint. */
+.about-conviction-body {
+  max-width:39.9em; margin:clamp(34px,4.4vw,64px) auto 0; font-size:15px;
+}
 .about-conviction-body p {
-  margin:0 0 1.5em; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72;
+  margin:0 0 1.5em; color:rgba(249,249,249,.86); font-size:inherit; line-height:1.72;
 }
 .about-conviction-body p:last-child { margin-bottom:0; }
-/* The blue is the page's one cool note and it arrives as a highlight rather
-   than a field, the same device as the homepage's spotlight headline.
-   box-decoration-break so the second line carries its own padding — without
-   it the highlight runs as one ragged block behind both lines. */
-/* 23.7em: "We make the people worth listening / to heard and recognised."
-   holds from 23 to 24.5em. */
-.about-claim {
-  max-width:23.7em; margin:clamp(56px,7vw,110px) auto 0;
-  font-size:clamp(20px,2.5vw,38px); line-height:1.42;
-}
-.about-claim mark {
-  background:var(--blue); color:var(--paper); padding:.06em .18em;
-  -webkit-box-decoration-break:clone; box-decoration-break:clone;
-}
 
 .about-founder { position:relative; isolation:isolate; overflow:clip; }
 /* Blue, low left, answering the red that has run down the page so far. */
