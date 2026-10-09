@@ -845,6 +845,29 @@ load, a jump the inline script never had. It is on `<html>` because `<body>` doe
 not exist that early. A failed `shared.js` still leaves the page fully readable,
 which is the §2 rule.
 
+**The stylesheet and script URLs carry a content hash, and that is load
+bearing.** `shared.css?v={{cssv}}` and `shared.js?v={{jsv}}`; the build hashes
+each file's bytes and fills the token. Without it a CSS-only change ships new
+HTML against whatever stylesheet the browser already has, and the page renders
+as a half-built version of itself — new markup, old layout rules. **This is
+not hypothetical: the about hero (§18) went out exactly that way**, the
+photograph at its natural size with the headline flowing out underneath it,
+because the markup was new and `.about-hero-shot` was not in the cached CSS.
+The pages are flat files on whatever cache headers the host defaults to, and
+these two files reach all three pages, so there is no change here that is too
+small to need this.
+
+It is a query string rather than a fingerprinted filename on purpose:
+`shared.css` has to stay at the repository root under its own name because its
+five `@font-face` rules resolve `rysing-assets/…` relative to the stylesheet
+(below), and a renamed file is one more way to break those paths silently.
+
+A consequence worth knowing before the next regression check: **the two pages
+you did not touch no longer rebuild byte-identical after a CSS or JS change** —
+their version query moves too. That check (§12, below) now means "identical
+apart from the hash". The render is unaffected, since the bytes behind the URL
+are what they always were.
+
 **`shared.css` is at the repository root, not in a subfolder.** Its five
 `@font-face` rules use paths relative to the stylesheet (`rysing-assets/…`).
 From `assets/shared.css` those resolve to `assets/rysing-assets/…`, and under

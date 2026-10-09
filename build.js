@@ -28,11 +28,31 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const root = __dirname;
 const srcDir = path.join(root, 'src');
 
 const read = (p) => fs.readFileSync(p, 'utf8');
+
+/* `{{cssv}}` / `{{jsv}}`: a content hash appended to the stylesheet and script
+   URLs so a browser holding an old copy is forced to fetch the new one.
+
+   This is not housekeeping. The pages are flat files served with whatever
+   cache headers the host happens to default to, and shared.css reaches all
+   three of them — so a CSS-only change ships new HTML against a stale
+   stylesheet and the page renders as a half-built version of itself. That
+   happened: the about hero went out with its markup updated and its layout
+   rules cached away, and the photograph rendered at natural size with the
+   headline flowing out underneath it.
+
+   The query string is deliberate rather than renaming the file. shared.css
+   must stay at the repository root under its own name, because its five
+   @font-face rules resolve `rysing-assets/…` relative to the stylesheet
+   (HANDOFF §12) — a fingerprinted filename would be one more thing that can
+   silently break those paths. */
+const assetVersion = (file) =>
+  crypto.createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex').slice(0, 8);
 
 /* Keys a page may leave out. Everything else still has to be declared, so a
    typo in a token remains a build failure rather than an empty attribute. */
@@ -82,6 +102,8 @@ function fill(template, values, file) {
   return out;
 }
 
+const VERSIONS = { cssv: assetVersion('shared.css'), jsv: assetVersion('shared.js') };
+
 const layout = read(path.join(srcDir, '_layout.html'));
 const header = read(path.join(srcDir, '_header.html'));
 const footer = read(path.join(srcDir, '_footer.html'));
@@ -118,6 +140,7 @@ for (const file of pages) {
     layout,
     {
       ...OPTIONAL,
+      ...VERSIONS,
       ...meta,
       header: indent(markCurrent(fill(header, chrome, '_header.html')), '  '),
       footer: indent(markCurrent(fill(footer, chrome, '_footer.html')), '  '),
