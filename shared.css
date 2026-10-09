@@ -1477,10 +1477,18 @@ body::after {
   min-height:clamp(620px,92vh,980px);
   padding:clamp(150px,18vw,260px) var(--gutter) clamp(44px,5vw,78px);
 }
+/* Two focal points, not one. The box goes from 1.74:1 on a desktop to 0.47:1
+   on a phone, so `cover` throws away three quarters of the frame's width at
+   the narrow end — a centre crop of a two-person interior lands on whatever
+   happens to be between the two people. Both points are authored inline next
+   to the src, so swapping the photograph is still one place in the markup. */
 .about-hero-shot {
   position:absolute; z-index:-2; inset:0;
   width:100%; height:100%; object-fit:cover;
   object-position:var(--pos,center center); filter:var(--photo-grade);
+}
+@media (max-width:760px) {
+  .about-hero-shot { object-position:var(--pos-narrow,var(--pos,center center)); }
 }
 /* Two scrims in one box, not one. The bottom carries the copy and has to go
    properly dark; the top only has to hold the header's own links, which are
@@ -1489,7 +1497,7 @@ body::after {
 .about-hero-scrim {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
   background:
-    linear-gradient(to top,rgba(0,0,0,.78) 0,rgba(0,0,0,.5) 24%,rgba(0,0,0,.1) 54%,transparent 72%),
+    linear-gradient(to top,rgba(0,0,0,.86) 0,rgba(0,0,0,.68) 22%,rgba(0,0,0,.42) 44%,rgba(0,0,0,.15) 64%,transparent 82%),
     linear-gradient(to bottom,rgba(0,0,0,.52) 0,rgba(0,0,0,.14) 14%,transparent 30%);
 }
 /* The photograph's bottom edge is the one place this section meets the black

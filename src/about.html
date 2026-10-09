@@ -9,9 +9,13 @@
          client's design; the two strings it dropped are recorded in
          HANDOFF §18. -->
     <section class="about-hero" id="about-top" aria-labelledby="about-title">
-      <!-- TODO(asset): STAND-IN. The client's own photograph is coming. Swap
-           the src and the --pos focal point and nothing else changes. -->
-      <img class="about-hero-shot" style="--pos:center 46%" src="rysing-assets/Gerd-Hero-Section-image.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async" />
+      <!-- The supplied photograph, cropped: the source carried a "BRAND on
+           TOUR" watermark across its lower left, exactly where the headline
+           sits. See HANDOFF §18 — it is only 1024px wide and wants a larger
+           original. Two focal points: --pos holds the wide crop, --pos-narrow
+           takes over under 760px, where `cover` keeps only a quarter of the
+           width and a centre crop lands on the plant between the chairs. -->
+      <img class="about-hero-shot" style="--pos:62% center; --pos-narrow:86% center" src="rysing-assets/about-hero.webp" alt="Anzhelika Tauber recording a podcast interview" width="1024" height="580" fetchpriority="high" decoding="async" />
       <div class="about-hero-scrim" aria-hidden="true"></div>
 
       <div class="about-hero-copy">

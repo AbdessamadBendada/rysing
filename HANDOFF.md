@@ -315,6 +315,14 @@ filenames once and wired up entirely the wrong asset.
 
 **Blocking on the client**
 
+- **The about hero photograph is only 1024px wide** for a full-viewport slot —
+  it upscales 1.4× at 1× and 2.8× on retina. Ask for the original out of the
+  camera; 2400px+ on the long edge fixes it and nothing in the markup changes.
+  §18.
+- **The about hero crop removed a "BRAND on TOUR" watermark** from the supplied
+  photograph. It sat exactly where the headline does, so the image was unusable
+  as delivered — but it is another brand's mark, so confirm the client is happy
+  to drop the attribution. §18.
 - **The tennis photograph is 640×434** and sits in the largest panel on row two.
   The portrait crop discards 43% of it and it upscales 3.2× on retina. Either
   get a larger original (1400px+ on the long edge) or flip that panel to
@@ -1368,17 +1376,51 @@ frame. Separately, `.about-hero::after` resolves the last 12% to `--ink` so the
 photograph's bottom edge does not cut flat against the black page — the
 one-sided version of what `.glow-soft` does to every glow (§4).
 
-**The image is a stand-in.** `Gerd-Hero-Section-image.webp`, borrowed from the
-homepage spotlight, marked `TODO(asset)` in `src/about.html`. The client's own
-photograph is coming; swapping it is the `src` and the `--pos` focal point and
-nothing else. Note the stand-in is a bright, busy frame and the headline fights
-it — the supplied design is a dark podcast interior, so do not tune the scrims
-against this picture.
+### The photograph
+
+`rysing-assets/about-hero.webp`, the client's own, supplied as
+`~/Downloads/about-hero.jpg`. The podcast interview frame the design draws.
+
+**It is 1024px wide and that is not enough — this is the §6 tennis-photograph
+problem again, worse.** The slot is the full viewport: 1440 CSS px on a
+laptop, 2880 device px on a retina one. The file upscales **1.4× at 1×** and
+**2.8× at 2×**, so it is soft before anyone zooms. Ask for the original out of
+the camera; anything 2400px+ on the long edge fixes it outright and nothing in
+the markup changes. This is the single thing most worth chasing on this page.
+
+**It was cropped, and the crop removed another brand's watermark.** The source
+carried "BRAND on TOUR" in white across its lower left — which is exactly
+where the pill, the headline and the lead now sit, so it was unusable as
+supplied. The bottom 103px went: 1024×683 → 1024×580, which is also a 1.766
+ratio against the hero box's 1.739, so `cover` throws away almost nothing.
+Encoded webp q86, 447KB → 64KB. **Worth confirming the client is happy to drop
+that attribution** — it is their own appearance footage, but it is someone
+else's mark being removed.
+
+**Two focal points, both inline on the img.** `--pos:62% center` for the wide
+crop; `--pos-narrow:86% center` takes over under 760px. The box goes from
+1.74:1 to 0.47:1, so `cover` keeps barely a quarter of the width on a phone —
+at the wide focal point that quarter is the pot plant between the two chairs,
+with neither person in it. The narrow point frames Anzhelika at the mic.
+
+**The scrim was then measured against this picture, not guessed.** Rendered the
+hero with the copy hidden so every sample is genuinely what the type sits on,
+and read the WCAG contrast of white against it. The first pass put parts of the
+headline on **2.9:1 and below** — white type on the white chairs and the
+window. Strengthened the bottom gradient to `.86 / .68 22% / .42 44% /
+.15 64% / transparent 82%`, which also brings the frame closer to the mock's
+mood; it now reads **mean 7.4:1 on line one, 14.3:1 on line two, 16.0:1 on the
+lead**, worst single sample 2.98:1 at the very top row of the first line's
+ascenders. Re-measure that way after any change to the photograph or the
+scrim — sampling the rendered type instead of the background reads glyph
+pixels and reports nonsense.
 
 ### Verified
 
-1440/900/390: zero horizontal overflow, zero console errors, zero failed
-requests. All eight section boundaries on the page probed across the width —
-max channel delta 3, nothing over 10, so no seam (§5), including the new
-photograph's bottom edge at max 1. `index.html` and `contact.html` both rebuilt
-byte-identical, so nothing reached the other two pages.
+Designed break "RYSING IS A BRANDING / AND VISIBILITY STUDIO" holds at 1920,
+1680, 1440, 1280, 1024, 900, 768 and 560; at 390 it takes four lines, which is
+correct. Zero horizontal overflow, zero console errors and zero failed requests
+at 1440/900/390. All eight section boundaries on the page probed across the
+width — max channel delta 3, nothing over 10, so no seam (§5), the new
+photograph's bottom edge among them at 2. `index.html` and `contact.html` both
+rebuilt byte-identical, so nothing reached the other two pages.
