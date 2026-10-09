@@ -23,7 +23,7 @@
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
 
-  <link rel="stylesheet" href="shared.css?v=66636d38" />
+  <link rel="stylesheet" href="shared.css?v=da6cf3ab" />
 </head>
 <body>
   <a class="skip-link" href="#about-top">Skip to content</a>
@@ -115,11 +115,46 @@
         </figure>
         <div class="about-founder-copy" data-reveal>
           <h2 class="display about-name" id="founder-name"><span class="alt">Anzhelika</span> Tauber</h2>
-          <!-- TODO(copy): "award-winning", the 350 figure and both platform
-               names are unverified — HANDOFF §6 flags the award claims. -->
-          <p>rysing was founded by Anzhelika Tauber, an award-winning brand strategist who has taught more than 350 students and built the platforms Personal Brand University and U4Success IB Academy.</p>
-          <p>She is known for pairing strategic rigour with a refusal to make brands boring, and for building the systems that make visibility survive a founder's calendar.</p>
+          <!-- TODO(copy): "award-winning", the 35 brands and 350 students
+               figures are unverified — HANDOFF §6 flags the award claims.
+               Three typos in the supplied design were corrected rather than
+               reproduced: "foudner", "buil tmor" and "ethan" (§22). -->
+          <p>Anzhelika Tauber, the founder of rysing, is an award-winning brand strategist who has built more than 35 brands and taught more than 350 students.</p>
+          <p>She began her career in cancer immunology, where she learned to structure complex systems with discipline and precision. Marketing found her almost by accident, through an Instagram account for her dog, Rio, which grew a following of its own and showed her how attention, story and community really work.</p>
+          <p>Leaving science meant rebuilding her identity from the ground up. Today she brings both worlds together: the rigour of a researcher and the instinct of a creator.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- The homepage's people, in a grid rather than its rail (§15). Four
+         cards, no clones, no autoplay and no controls, so none of the rail's
+         machinery is involved — and Anzhelika is deliberately not among them
+         on instruction, because the founder section directly above is hers.
+         Offsets are per-person `--drop` as on the homepage; here there is no
+         cloning to invert an nth-child pattern, but the convention is kept so
+         both rosters read the same way in source. -->
+    <section class="band about-team" aria-labelledby="about-team-title">
+      <div class="band-head" data-reveal>
+        <h2 class="display" id="about-team-title"><span class="alt">Behind the</span> work.</h2>
+        <p class="band-note">An interdisciplinary team of experts, each at the top of their own field.</p>
+      </div>
+      <div class="about-team-grid" data-stagger>
+        <figure class="about-member" style="--drop:0px">
+          <span class="shot"><img style="--pos:center 32%" src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
+        </figure>
+        <figure class="about-member" style="--drop:64px">
+          <span class="shot"><img style="--pos:center 28%" src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
+        </figure>
+        <figure class="about-member" style="--drop:0px">
+          <span class="shot"><img style="--pos:center 18%" src="rysing-assets/kristina-verbitskaia.webp" alt="Portrait of Kristina Verbitskaia" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Kristina</h3><p>Photographer, videographer and content creator</p></figcaption>
+        </figure>
+        <figure class="about-member" style="--drop:64px">
+          <span class="shot"><img style="--pos:center 16%" src="rysing-assets/marc-babin.webp" alt="Portrait of Marc Babin" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Marc</h3><p>Partner and producer</p></figcaption>
+        </figure>
       </div>
     </section>
 
@@ -136,13 +171,25 @@
     <section class="band about-courage" aria-labelledby="courage-title">
       <div class="about-courage-glow glow-soft" aria-hidden="true"></div>
 
-      <p class="label" data-reveal>Courageous brands</p>
-      <div class="about-split">
-        <h2 class="display about-h" data-reveal id="courage-title"><span class="alt">A courageous brand</span> refuses to conform.</h2>
-        <div class="about-body" data-reveal>
-          <p>It belongs to someone who would rather be disliked than sacrifice what they believe. Who says the thing their industry is not ready to hear yet. Who left the safe path and pursued the unknown one, and who is building something meant to outlast them.</p>
-          <p>Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+      <!-- The copy is unchanged; the photograph beside it is new. The column
+           order is copy then image, so a one-column fallback reads the
+           argument before the illustration of it. -->
+      <div class="about-courage-grid">
+        <div class="about-courage-copy">
+          <p class="label" data-reveal>Courageous brands</p>
+          <h2 class="display about-h" data-reveal id="courage-title"><span class="alt">A courageous brand</span> refuses to conform.</h2>
+          <div class="about-body" data-reveal>
+            <p>It belongs to someone who would rather be disliked than sacrifice what they believe. Who says the thing their industry is not ready to hear yet. Who left the safe path and pursued the unknown one, and who is building something meant to outlast them.</p>
+            <p>Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+          </div>
         </div>
+        <!-- TODO(asset): STAND-IN. The design draws the cable-car interview
+             frame; that file has not been supplied. Swap the src and the
+             --pos and nothing else changes. HANDOFF §22. -->
+        <figure class="about-courage-shot" data-reveal>
+          <img style="--pos:center 30%" src="rysing-assets/work-03-clemens.webp" alt="" width="1000" height="1500" loading="lazy" decoding="async" />
+          <figcaption class="label">On location with Brand on Tour</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -171,97 +218,75 @@
       </div>
     </section>
 
-    <!-- The same six quotes as the homepage, from the same file. HANDOFF §7:
-         this copy has exactly one home, so the page includes it rather than
-         carrying a second copy that would drift. -->
-    <section class="band" id="proof" aria-labelledby="proof-title">
-      <div class="proof-head" data-reveal>
-        <div class="proof-lead">
-          <h2 class="display" id="proof-title"><span class="alt">In their</span> words</h2>
-          <p class="band-note">49 five-star reviews and a HIPE Award for outstanding service and customer satisfaction. Here's what founders say after working with us.</p>
+    <!-- This page no longer includes {{> testimonials}}. It carries four
+         named quotes of its own, in a static grid, while the homepage keeps
+         its six-quote rail — a deliberate split, decided rather than drifted
+         into (HANDOFF §22). These four are the first real named testimonials
+         on the site; the homepage's six are still the placeholders §6 flags.
+         No rail, so no clones, no autoplay and no controls. -->
+    <section class="band about-words" aria-labelledby="about-words-title">
+      <p class="label" data-reveal id="about-words-title">In their words</p>
+      <div class="about-words-grid" data-stagger>
+        <figure class="about-word">
+          <blockquote>“When I read what you write, you make me a hundred times bigger than what I am.”</blockquote>
+          <figcaption>Julian Knowle</figcaption>
+        </figure>
+        <figure class="about-word">
+          <blockquote>“You describe me in a way that I never would — but yes, it is me, and I've achieved this.”</blockquote>
+          <figcaption>Jennifer Djongow</figcaption>
+        </figure>
+        <figure class="about-word">
+          <blockquote>“I feel that you saw more in me than I do. And I guess that was the brief. To see more than I can see.”</blockquote>
+          <figcaption>Gvantsa Kikalishvili</figcaption>
+        </figure>
+        <figure class="about-word">
+          <blockquote>“We are summarising the things that I wouldn't dare summarise for myself.”</blockquote>
+          <figcaption>Veneta Behar</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- The marquee markup is shared with the homepage's #recognition and
+         lives in src/_marquee.html, so the thirteen marks and their --f
+         fractions have exactly one home. The headline above it is new and
+         belongs to this page only. -->
+    <section class="band about-recognition" aria-labelledby="about-recognition-title">
+      <h2 class="display about-recog-title" data-reveal id="about-recognition-title"><span class="mark-star" aria-hidden="true"></span><span class="alt">We see people bigger than they see themselves,</span> and build the brand that proves it.</h2>
+      <p class="eyebrow label" data-reveal>Trusted by founders, speakers and teams across Europe</p>
+      <div class="marquee" aria-label="Client logos" data-reveal>
+        <div class="marquee-track">
+          <figure><img style="--f:0.2" src="rysing-assets/logo-clemensdoppler.webp" alt="Clemens Doppler" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-gerdbommer.webp" alt="Gerd Bommer" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.317" src="rysing-assets/logo-jenniferdjongow.webp" alt="Jennifer Djongow" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.283" src="rysing-assets/logo-julianknowle.webp" alt="Julian Knowle" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.217" src="rysing-assets/logo-futurfai.webp" alt="FuturfAI" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.475" src="rysing-assets/logo-u4success.webp" alt="U4Success" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-wise-up.webp" alt="Wise Up" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.45" src="rysing-assets/logo-digitalworld.webp" alt="Digital World" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.158" src="rysing-assets/logo-digitfinance.webp" alt="Digit Finance" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.167" src="rysing-assets/logo-volkshilfe.webp" alt="Volkshilfe" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.8" src="rysing-assets/logo-mam.webp" alt="MAM" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.233" src="rysing-assets/logo-dsp.webp" alt="Der Schulter Physio" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.533" src="rysing-assets/logo-rb.webp" alt="RB Real Beauty" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i>
         </div>
-        <div class="proof-badges">
-          <div><span class="stars" aria-hidden="true">★★★★★</span><span class="label">4.9 / 5 · 49 reviews</span></div>
-          <div><span class="label">Certified 2025</span><strong>HIPE Award</strong><span class="label">Outstanding service</span></div>
+        <div class="marquee-track" aria-hidden="true">
+          <figure><img style="--f:0.2" src="rysing-assets/logo-clemensdoppler.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-gerdbommer.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.317" src="rysing-assets/logo-jenniferdjongow.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.283" src="rysing-assets/logo-julianknowle.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.217" src="rysing-assets/logo-futurfai.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.475" src="rysing-assets/logo-u4success.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.25" src="rysing-assets/logo-wise-up.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.45" src="rysing-assets/logo-digitalworld.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.158" src="rysing-assets/logo-digitfinance.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.167" src="rysing-assets/logo-volkshilfe.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img data-light style="--f:0.8" src="rysing-assets/logo-mam.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.233" src="rysing-assets/logo-dsp.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i><figure><img style="--f:0.533" src="rysing-assets/logo-rb.webp" alt="" loading="lazy" decoding="async" /></figure><i aria-hidden="true"></i>
         </div>
       </div>
-      <!-- These six are the only place any of this copy is written. The loop
-           is built from clones the script marks aria-hidden, the way the logo
-           marquee above already duplicates its track.
+    </section>
 
-           PLACEHOLDER: all six squares currently share one stand-in file so the
-           bloom can be judged before the portraits exist. They are not six
-           different people yet. Each is replaced on its own — swap that quote's
-           img src, and add a --pos focal point if the crop needs one, as every
-           photo slot on this page takes. A .tthumb left empty falls back to the
-           mark on its own. -->
-      <div class="treel-wrap" data-treel data-reveal>
-        <div class="treel" data-treel-view>
-          <div class="treel-track" data-treel-track>
-            <figure class="tquote treel-item">
-              <blockquote>“Within three months my LinkedIn went from invisible to inbound. They rebuilt my positioning and the leads followed.”</blockquote>
-              <figcaption class="tattrib">
-                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-                <span class="stars" aria-hidden="true">★★★★★</span>
-                <strong>Marcus H.</strong>
-                <small>Founder, B2B SaaS</small>
-              </figcaption>
-            </figure>
-            <figure class="tquote treel-item">
-              <blockquote>“They turned my scattered ideas into a clear brand and a keynote I'm genuinely proud to walk on stage with.”</blockquote>
-              <figcaption class="tattrib">
-                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-                <span class="stars" aria-hidden="true">★★★★★</span>
-                <strong>Elena V.</strong>
-                <small>Keynote speaker</small>
-              </figcaption>
-            </figure>
-            <figure class="tquote treel-item">
-              <blockquote>“The content system they built runs without me. My audience grew while I stayed focused on the business.”</blockquote>
-              <figcaption class="tattrib">
-                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-                <span class="stars" aria-hidden="true">★★★★★</span>
-                <strong>Tobias R.</strong>
-                <small>Agency owner</small>
-              </figcaption>
-            </figure>
-            <figure class="tquote treel-item">
-              <blockquote>“Finally a brand that actually sounds like me, and converts. Best investment I've made this year.”</blockquote>
-              <figcaption class="tattrib">
-                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-                <span class="stars" aria-hidden="true">★★★★★</span>
-                <strong>Sophie L.</strong>
-                <small>Consultant</small>
-              </figcaption>
-            </figure>
-            <figure class="tquote treel-item">
-              <blockquote>“From messy to magnetic. Our website and identity finally match the level of the work we do.”</blockquote>
-              <figcaption class="tattrib">
-                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-                <span class="stars" aria-hidden="true">★★★★★</span>
-                <strong>Daniel K.</strong>
-                <small>Co-founder, DTC brand</small>
-              </figcaption>
-            </figure>
-            <figure class="tquote treel-item">
-              <blockquote>“Professional, fast and genuinely strategic. The five stars are not an exaggeration.”</blockquote>
-              <figcaption class="tattrib">
-                <span class="tthumb"><img src="rysing-assets/anzhelika-chair.webp" alt="" loading="lazy" decoding="async" /></span>
-                <span class="stars" aria-hidden="true">★★★★★</span>
-                <strong>Nadia S.</strong>
-                <small>Executive coach</small>
-              </figcaption>
-            </figure>
-          </div>
-        </div>
+    <section class="band about-standard" aria-labelledby="standard-title">
+      <h2 class="display about-standard-title" data-reveal id="standard-title"><span class="alt">The standard</span> behind every brand.</h2>
+      <!-- A description list, because that is what this is: five named things
+           and what each one means. The rows are divs so each pair can be a
+           grid cell without the dl losing its semantics. -->
+      <dl class="about-standard-list" data-stagger>
+        <div class="about-standard-row"><dt class="display">Excellence.</dt><dd>The work is finished to a standard, rather than to a deadline.</dd></div>
+        <div class="about-standard-row"><dt class="display">Precision.</dt><dd>The right word, the right pixel, the right decision. Detail is the difference.</dd></div>
+        <div class="about-standard-row"><dt class="display">Creativity.</dt><dd>Professional does not mean boring. We connect the character with originality.</dd></div>
+        <div class="about-standard-row"><dt class="display">Integrity.</dt><dd>We tell you what we honestly think, because the truth builds better brands.</dd></div>
+        <div class="about-standard-row"><dt class="display">Care.</dt><dd>We want to understand you deeply enough to reflect you truthfully. That is the whole craft.</dd></div>
+      </dl>
+    </section>
 
-        <div class="treel-foot">
-          <button class="treel-step" type="button" data-treel-step="-1" aria-label="Previous testimonials"></button>
-          <button class="treel-step" type="button" data-treel-step="1" aria-label="Next testimonials"></button>
-        </div>
+    <!-- The ask. Points at the contact page rather than the homepage's
+         closing anchor, which is where the header's two pills still go
+         (HANDOFF §6) — a new control had no reason to inherit that. -->
+    <section class="band about-closing" aria-labelledby="about-closing-title">
+      <h2 class="display about-closing-title" data-reveal id="about-closing-title"><span class="alt">Ready to build your</span> legacy?</h2>
+      <p class="about-closing-note" data-reveal>We make you visible at the size of your ambition, rather than the size of your current reputation.</p>
+      <div class="about-closing-actions" data-reveal>
+        <a class="btn-pill btn-pill--solid" href="contact.html">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+        <a class="btn-quiet" href="index.html#work">See the work</a>
       </div>
-
-      <div class="proof-foot"><a class="btn-pill" href="#proof">Read all 49 reviews <span class="arrow" aria-hidden="true"></span></a></div>
     </section>
   </main>
 

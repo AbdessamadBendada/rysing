@@ -1706,3 +1706,137 @@ channel delta 4 across the whole page**, nothing over 10, so no seam (§5; the
 recorded there). Zero horizontal overflow on all three pages at
 1680/1440/1024/900/768/560/390. `contact.html` and `index.html` rebuilt with no
 change beyond their asset-version query.
+
+---
+
+## 22. The about page restructure
+
+Built from seven supplied screenshots. The page now runs:
+
+> hero · conviction · **founder** · **team** · studio · **courage + photograph**
+> · stats · **named quotes** · **recognition** · **the standard** · **closing**
+
+Four sections are new, two were rewritten, and three were already correct.
+**Nothing was deleted** — the instruction "anything not in these screenshots is
+to be deleted" turned out to remove nothing, because every surviving section
+appeared in one of them.
+
+**Read the prototype screenshots as broken, not as designed.** Three of them
+show `ANZHELIKA-CHAIR`, `KIM-BRAND-DESIGNER`, `ABDESSAMAD-PIC`, `PHOTO`, and a
+row reading "CLEMENS DOPPLER ✦ GERD BOMMER ✦ JENNIFER DJONGOW". Those are
+`alt` text from images the prototype failed to load — the last one is the logo
+marquee, not a typographic name list. Checked against the `alt` attributes in
+`src/_marquee.html`, which they match in order. **Do not rebuild a design from
+a mock's missing-image state.**
+
+### What changed
+
+**Founder — new copy.** Three paragraphs replacing two: the cancer-immunology
+background, the Instagram account for her dog Rio, and leaving science. The
+supplied design carried three typos — "foudner", "buil tmor", "ethan" — which
+were corrected rather than reproduced. The portrait is unchanged (§21).
+
+**Team — a grid, not the rail.** The homepage's four colleagues, static, with
+**Anzhelika deliberately excluded** on instruction: the founder section
+directly above is hers, and the mock shows her only because it predates that
+call. None of the rail's machinery is involved — no clones, no autoplay, no
+controls, nothing dimmed, because nothing is off the measure. The per-person
+`--drop` convention is kept even though, with no cloning, an `nth-child`
+pattern could not invert here (§15); both rosters read the same way in source.
+
+**The team head takes its alternation back.** `.band-head h2 .alt` is in the
+neutralised list, so "Behind the work." set entirely in the didone while the
+design draws "BEHIND THE" in the grotesque. Overridden for
+`.about-team .band-head h2 .alt` only — scoped to this one head rather than
+lifted from the list, or the homepage's section heads would light up with it.
+
+**Courage — a photograph, and a layout fault worth recording.** The copy is
+unchanged; the frame beside it is new. Built first with `align-items:end`,
+which pinned the eyebrow near the foot of a very tall column and left most of
+a screen empty above it. The design runs the photograph past the copy at both
+ends, so the copy is centred in it and the frame is capped at
+`min(78vh,760px)`. The image is a **stand-in** — `work-03-clemens.webp`,
+marked `TODO(asset)`; the design draws a cable-car interview frame that has
+not been supplied.
+
+**Named quotes — about only, by decision.** Four real client testimonials,
+static, four up. This was put as a question and the answer was explicit: the
+about page gets these, **the homepage keeps its six-quote rail untouched**.
+So `src/_testimonials.html` is unchanged and still has exactly one home (§7);
+the about page simply no longer includes it. The consequence is two sets of
+testimonial copy live at once — these four are the first *real* named quotes
+on the site, while the homepage's six are still the placeholders §6 flags.
+No cards, for §7's reason: four bordered boxes of equal height turn quotes
+into a comparison table. One hairline over the row, rules between columns,
+and the attributions share a baseline because `blockquote` takes `flex:1`.
+
+**Recognition — the marquee now has one home.** The thirteen marks and their
+measured `--f` fractions were lifted into `src/_marquee.html` and are included
+by both pages, for the reason the testimonial partial exists (§12): markup on
+two pages that is copied is markup that will drift. **`index.html` rebuilt
+byte-identical** after the extraction — verified, and the reason the partial
+carries no comment of its own is that an HTML comment would have shipped into
+the homepage and broken that guarantee. The headline above it is new and
+belongs to this page.
+
+**The standard, and the closing.** Both new. The standard is a `<dl>` because
+that is what it is — five named things and what each means — with the rows as
+`div`s so each pair can be a grid cell without the list losing its semantics.
+Rows align on `baseline`, not centre: the didone name and the grotesque
+description have different cap heights, and centring two faces of different
+size reads as a misalignment even when the boxes are even.
+
+**The closing CTA is the site's second filled pill.** §11 removed the
+homepage ask's red fill so every pill became an outline, and §13 records the
+contact form's send button as the only filled one. The design draws this one
+filled too, and it is the page's single destination, so it takes the weight —
+flagged here rather than quietly made an outline. It points at `contact.html`;
+the header's two pills still go to the homepage's closing anchor (§6), and a
+new control had no reason to inherit that.
+
+### Measures
+
+Swept, not chosen. Every new measured element carries its own `font-size`, so
+the em is pinned to the text it governs — the fault §20 found.
+
+| Element | Window | Set | |
+| --- | --- | --- | --- |
+| `.about-recog-title` | 28.4 – 32em | **30.2em** | intersection; window differs by width |
+| `.about-standard-title` | 19.7 – 39.9em | **24em** | left alone — not doing work |
+| `.about-closing-title` | 10.4 – 15.5em | **13em** | intersection; 11em sat near the edge |
+| `.about-closing-note` | 33.5 – 36.9em | **35.2em** | **was wrong at 30em** |
+
+Two of these have windows that differ by viewport rather than one window at
+all widths, because the column is a fraction of the viewport while the size is
+a `vw` clamp — the same conflict §14 records for `.about-h`. The intersection
+is the right value there, not any single width's window.
+
+**One was genuinely wrong and only the sweep caught it.** `.about-closing-note`
+was built at 30em, below the 33.5em floor, so it broke a word early against
+the design. It looked fine.
+
+### Verified
+
+Every designed break holds at 1920/1680/1440/1280; below that headlines wrap
+further, which is correct. All **eleven** section boundaries probed from
+viewport captures (never `fullPage` — §5): max channel delta **4**, nothing
+over 10, so no seam. Zero horizontal overflow, zero console errors and zero
+failed requests on all three pages at 1680/1440/1024/900/768/560/390.
+`index.html` and `contact.html` each differ by **exactly one line**, the
+stylesheet's version hash. `src/_testimonials.html` is untouched.
+
+### Open
+
+- **The courage photograph is a stand-in.** The cable-car interview frame in
+  the supplied design has not been delivered. One `src` and one `--pos`.
+- **Kristina's role** is "Photographer, videographer and content creator" here,
+  as on the homepage. The mock says "DISCIPLINE TO BE CONFIRMED", which is the
+  prototype's placeholder, not a copy change — but it does suggest the client
+  may still be deciding it.
+- **Two sets of testimonials now exist**, by decision. Worth revisiting once
+  the homepage's six placeholder quotes are replaced with real ones, at which
+  point one shared set may be wanted again.
+- **The about page's stats still contradict the homepage's** (§6). The
+  instruction was "the same numbers as the home page", but the supplied
+  screenshot shows this page's existing five figures, so they were left as
+  they are. The contradiction is unchanged and still needs deciding.

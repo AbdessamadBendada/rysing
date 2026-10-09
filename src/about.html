@@ -59,11 +59,46 @@
         </figure>
         <div class="about-founder-copy" data-reveal>
           <h2 class="display about-name" id="founder-name"><span class="alt">Anzhelika</span> Tauber</h2>
-          <!-- TODO(copy): "award-winning", the 350 figure and both platform
-               names are unverified — HANDOFF §6 flags the award claims. -->
-          <p>rysing was founded by Anzhelika Tauber, an award-winning brand strategist who has taught more than 350 students and built the platforms Personal Brand University and U4Success IB Academy.</p>
-          <p>She is known for pairing strategic rigour with a refusal to make brands boring, and for building the systems that make visibility survive a founder's calendar.</p>
+          <!-- TODO(copy): "award-winning", the 35 brands and 350 students
+               figures are unverified — HANDOFF §6 flags the award claims.
+               Three typos in the supplied design were corrected rather than
+               reproduced: "foudner", "buil tmor" and "ethan" (§22). -->
+          <p>Anzhelika Tauber, the founder of rysing, is an award-winning brand strategist who has built more than 35 brands and taught more than 350 students.</p>
+          <p>She began her career in cancer immunology, where she learned to structure complex systems with discipline and precision. Marketing found her almost by accident, through an Instagram account for her dog, Rio, which grew a following of its own and showed her how attention, story and community really work.</p>
+          <p>Leaving science meant rebuilding her identity from the ground up. Today she brings both worlds together: the rigour of a researcher and the instinct of a creator.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- The homepage's people, in a grid rather than its rail (§15). Four
+         cards, no clones, no autoplay and no controls, so none of the rail's
+         machinery is involved — and Anzhelika is deliberately not among them
+         on instruction, because the founder section directly above is hers.
+         Offsets are per-person `--drop` as on the homepage; here there is no
+         cloning to invert an nth-child pattern, but the convention is kept so
+         both rosters read the same way in source. -->
+    <section class="band about-team" aria-labelledby="about-team-title">
+      <div class="band-head" data-reveal>
+        <h2 class="display" id="about-team-title"><span class="alt">Behind the</span> work.</h2>
+        <p class="band-note">An interdisciplinary team of experts, each at the top of their own field.</p>
+      </div>
+      <div class="about-team-grid" data-stagger>
+        <figure class="about-member" style="--drop:0px">
+          <span class="shot"><img style="--pos:center 32%" src="rysing-assets/kim-brand-designer.webp" alt="Portrait of Kim" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Kim</h3><p>Brand identity, design systems, and everything you see</p></figcaption>
+        </figure>
+        <figure class="about-member" style="--drop:64px">
+          <span class="shot"><img style="--pos:center 28%" src="rysing-assets/abdessamad-pic.webp" alt="Portrait of Ben" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Ben</h3><p>Web development, SEO, and everything web-side</p></figcaption>
+        </figure>
+        <figure class="about-member" style="--drop:0px">
+          <span class="shot"><img style="--pos:center 18%" src="rysing-assets/kristina-verbitskaia.webp" alt="Portrait of Kristina Verbitskaia" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Kristina</h3><p>Photographer, videographer and content creator</p></figcaption>
+        </figure>
+        <figure class="about-member" style="--drop:64px">
+          <span class="shot"><img style="--pos:center 16%" src="rysing-assets/marc-babin.webp" alt="Portrait of Marc Babin" loading="lazy" decoding="async" /></span>
+          <figcaption><h3>Marc</h3><p>Partner and producer</p></figcaption>
+        </figure>
       </div>
     </section>
 
@@ -80,13 +115,25 @@
     <section class="band about-courage" aria-labelledby="courage-title">
       <div class="about-courage-glow glow-soft" aria-hidden="true"></div>
 
-      <p class="label" data-reveal>Courageous brands</p>
-      <div class="about-split">
-        <h2 class="display about-h" data-reveal id="courage-title"><span class="alt">A courageous brand</span> refuses to conform.</h2>
-        <div class="about-body" data-reveal>
-          <p>It belongs to someone who would rather be disliked than sacrifice what they believe. Who says the thing their industry is not ready to hear yet. Who left the safe path and pursued the unknown one, and who is building something meant to outlast them.</p>
-          <p>Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+      <!-- The copy is unchanged; the photograph beside it is new. The column
+           order is copy then image, so a one-column fallback reads the
+           argument before the illustration of it. -->
+      <div class="about-courage-grid">
+        <div class="about-courage-copy">
+          <p class="label" data-reveal>Courageous brands</p>
+          <h2 class="display about-h" data-reveal id="courage-title"><span class="alt">A courageous brand</span> refuses to conform.</h2>
+          <div class="about-body" data-reveal>
+            <p>It belongs to someone who would rather be disliked than sacrifice what they believe. Who says the thing their industry is not ready to hear yet. Who left the safe path and pursued the unknown one, and who is building something meant to outlast them.</p>
+            <p>Most people carry a version of this inside them and never let it out, because they are afraid of repelling somebody. Courage is staying true to what you believe while you are still scared.</p>
+          </div>
         </div>
+        <!-- TODO(asset): STAND-IN. The design draws the cable-car interview
+             frame; that file has not been supplied. Swap the src and the
+             --pos and nothing else changes. HANDOFF §22. -->
+        <figure class="about-courage-shot" data-reveal>
+          <img style="--pos:center 30%" src="rysing-assets/work-03-clemens.webp" alt="" width="1000" height="1500" loading="lazy" decoding="async" />
+          <figcaption class="label">On location with Brand on Tour</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -115,7 +162,66 @@
       </div>
     </section>
 
-    <!-- The same six quotes as the homepage, from the same file. HANDOFF §7:
-         this copy has exactly one home, so the page includes it rather than
-         carrying a second copy that would drift. -->
-    {{> testimonials}}
+    <!-- This page no longer includes {{> testimonials}}. It carries four
+         named quotes of its own, in a static grid, while the homepage keeps
+         its six-quote rail — a deliberate split, decided rather than drifted
+         into (HANDOFF §22). These four are the first real named testimonials
+         on the site; the homepage's six are still the placeholders §6 flags.
+         No rail, so no clones, no autoplay and no controls. -->
+    <section class="band about-words" aria-labelledby="about-words-title">
+      <p class="label" data-reveal id="about-words-title">In their words</p>
+      <div class="about-words-grid" data-stagger>
+        <figure class="about-word">
+          <blockquote>“When I read what you write, you make me a hundred times bigger than what I am.”</blockquote>
+          <figcaption>Julian Knowle</figcaption>
+        </figure>
+        <figure class="about-word">
+          <blockquote>“You describe me in a way that I never would — but yes, it is me, and I've achieved this.”</blockquote>
+          <figcaption>Jennifer Djongow</figcaption>
+        </figure>
+        <figure class="about-word">
+          <blockquote>“I feel that you saw more in me than I do. And I guess that was the brief. To see more than I can see.”</blockquote>
+          <figcaption>Gvantsa Kikalishvili</figcaption>
+        </figure>
+        <figure class="about-word">
+          <blockquote>“We are summarising the things that I wouldn't dare summarise for myself.”</blockquote>
+          <figcaption>Veneta Behar</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- The marquee markup is shared with the homepage's #recognition and
+         lives in src/_marquee.html, so the thirteen marks and their --f
+         fractions have exactly one home. The headline above it is new and
+         belongs to this page only. -->
+    <section class="band about-recognition" aria-labelledby="about-recognition-title">
+      <h2 class="display about-recog-title" data-reveal id="about-recognition-title"><span class="mark-star" aria-hidden="true"></span><span class="alt">We see people bigger than they see themselves,</span> and build the brand that proves it.</h2>
+      <p class="eyebrow label" data-reveal>Trusted by founders, speakers and teams across Europe</p>
+      {{> marquee}}
+    </section>
+
+    <section class="band about-standard" aria-labelledby="standard-title">
+      <h2 class="display about-standard-title" data-reveal id="standard-title"><span class="alt">The standard</span> behind every brand.</h2>
+      <!-- A description list, because that is what this is: five named things
+           and what each one means. The rows are divs so each pair can be a
+           grid cell without the dl losing its semantics. -->
+      <dl class="about-standard-list" data-stagger>
+        <div class="about-standard-row"><dt class="display">Excellence.</dt><dd>The work is finished to a standard, rather than to a deadline.</dd></div>
+        <div class="about-standard-row"><dt class="display">Precision.</dt><dd>The right word, the right pixel, the right decision. Detail is the difference.</dd></div>
+        <div class="about-standard-row"><dt class="display">Creativity.</dt><dd>Professional does not mean boring. We connect the character with originality.</dd></div>
+        <div class="about-standard-row"><dt class="display">Integrity.</dt><dd>We tell you what we honestly think, because the truth builds better brands.</dd></div>
+        <div class="about-standard-row"><dt class="display">Care.</dt><dd>We want to understand you deeply enough to reflect you truthfully. That is the whole craft.</dd></div>
+      </dl>
+    </section>
+
+    <!-- The ask. Points at the contact page rather than the homepage's
+         closing anchor, which is where the header's two pills still go
+         (HANDOFF §6) — a new control had no reason to inherit that. -->
+    <section class="band about-closing" aria-labelledby="about-closing-title">
+      <h2 class="display about-closing-title" data-reveal id="about-closing-title"><span class="alt">Ready to build your</span> legacy?</h2>
+      <p class="about-closing-note" data-reveal>We make you visible at the size of your ambition, rather than the size of your current reputation.</p>
+      <div class="about-closing-actions" data-reveal>
+        <a class="btn-pill btn-pill--solid" href="contact.html">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+        <a class="btn-quiet" href="index.html#work">See the work</a>
+      </div>
+    </section>
