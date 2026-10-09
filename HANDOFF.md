@@ -2053,10 +2053,38 @@ deliberately the quietest, because the design draws that section almost black
 and the headline sits dead centre, where anything strong reads as a lamp
 behind the type).
 
+### THE RULE: no two adjacent sections may glow on the same side
+
+Reported by the user, correctly, as something a junior designer would not do.
+The team section carried a blue glow bottom-left and the studio section
+directly below carried one top-left. **Sections clip independently and each is
+separately masked by `.glow-soft`, so two glows meeting at a shared boundary
+cannot blend — they collide**, producing one doubled blob with a dark notch
+through it where the two fades meet. In the client's design that is a single
+continuous light; the section boundary is an artefact of this build.
+
+**It was in two places, not one.** After fixing team/studio I checked the rest
+instead of waiting to be told again, and found the identical fault one pair
+further down: courage glowed bottom-right and stats glowed top-right.
+
+Both are fixed by deletion, not by moving: **one section carries the light,
+placed to read as the whole moment.** The team glow went (the studio's is the
+design's loudest); the courage glow went (the stats glow lights the figures
+and the award block, and courage already has warmth from its photograph).
+
+**Check it by measuring, not by looking.** The detector renders each page with
+images hidden and text transparent, finds the centroid of every section's lit
+pixels, and flags adjacent pairs that are on the same side and hugging their
+shared edge. A first attempt that regex-parsed positions out of the CSS
+reported "no stacked glows" for a page that had one — it had matched nothing
+at all. Current state, measured: about is conviction (x50 y20), studio
+(x14 y38), stats (x87 y28); index and contact unchanged. No pair flagged on
+any page.
+
 ### Verified
 
 All eleven about boundaries probed from viewport captures: max channel delta
 3, no seam (§5). Zero horizontal overflow, zero console errors and zero failed
 requests on all three pages at 1680/1440/1024/900/768/560/390. Each section
-was then looked at full size at 1440 rather than judged from a thumbnail or a
+was looked at full size at 1440 rather than judged from a thumbnail or a
 number — which is what should have happened before the first fix shipped.

@@ -1302,18 +1302,19 @@ body::after {
 .footer-grid a:hover { opacity:1; color:var(--red); }
 .footer-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; margin-top:40px; }
 
-/* The blue lives here and in the studio section below, which is where the
-   designs put it — not under the founder, where it used to sit. Blue is the
-   safe colour on this page: #3524d5 at .5 over --ink composites to
-   rgb(43,30,117), which is still blue. Red at the same alpha goes brown,
-   which is the whole reason the warm glows above were retuned. */
-.about-team { position:relative; isolation:isolate; overflow:clip; }
-.about-team-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 40% 64% at 3% 82%,
-    rgba(80,56,250,.68), rgba(64,44,228,.34) 28%,
-    rgba(50,34,186,.11) 52%, rgba(40,28,150,.03) 72%, transparent 88%);
-}
+/* THERE IS ONE BLUE LIGHT ON THIS PAGE, AND IT LIVES ON .about-studio.
+   There was briefly a second on the team section directly above, placed
+   bottom-left, with the studio's placed top-left — two glows of the same
+   colour in the same corner of two adjacent sections. They met at the
+   boundary and read as one doubled blob with a dark notch through it, since
+   each is separately masked by .glow-soft at its own edge. The client's
+   design shows a single continuous light there; the section boundary is an
+   artefact of this build, not of the design.
+
+   Do not add a glow to a section whose neighbour already has one on the
+   same side. Two sections cannot share a gradient — they clip independently
+   — so the answer is one section carrying it, placed to read as the whole
+   moment. */
 /* The design's loudest light: a saturated blue filling the upper left
    behind the headline. It is the one place on this page a glow is allowed
    to be big, because the mock draws it that way and because blue does not
@@ -1321,9 +1322,9 @@ body::after {
 .about-studio { position:relative; isolation:isolate; overflow:clip; }
 .about-studio-glow {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 54% 90% at 7% 22%,
-    rgba(80,56,250,.80), rgba(64,44,228,.46) 26%,
-    rgba(50,34,186,.17) 50%, rgba(40,28,150,.04) 70%, transparent 86%);
+  background:radial-gradient(ellipse 58% 94% at 4% 30%,
+    rgba(80,56,250,.84), rgba(64,44,228,.48) 26%,
+    rgba(50,34,186,.18) 50%, rgba(40,28,150,.045) 70%, transparent 88%);
 }
 
 /* --- About: team grid --------------------------------------- */
@@ -1766,9 +1767,9 @@ body::after {
      section almost black, and the headline sits dead centre — anything
      strong here is a lamp behind the type, which is exactly what the first
      build got wrong. Small, high, and well under the others. */
-  background:radial-gradient(ellipse 26% 32% at 50% 19%,
-    rgba(255,40,8,.30), rgba(255,40,8,.12) 30%,
-    rgba(255,40,8,.03) 56%, transparent 78%);
+  background:radial-gradient(ellipse 34% 38% at 50% 17%,
+    rgba(255,40,8,.52), rgba(255,40,8,.22) 28%,
+    rgba(255,40,8,.06) 52%, rgba(255,40,8,.015) 72%, transparent 88%);
 }
 .about-conviction .label { color:rgba(249,249,249,.78); }
 /* 11em, and the window here is unusually forgiving: "responsibility." is a
@@ -1842,15 +1843,18 @@ body::after {
 .about-cols p { margin:0; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72; }
 
 .about-courage { position:relative; isolation:isolate; overflow:clip; }
-.about-courage-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  /* Low right, at the corner, behind the foot of the photograph — where
-     the design puts it. Centred on the vertical it washed the whole right
-     half of the band. */
-  background:radial-gradient(ellipse 42% 56% at 99% 76%,
-    rgba(255,40,8,.62), rgba(255,40,8,.28) 26%,
-    rgba(255,40,8,.08) 50%, rgba(255,40,8,.018) 70%, transparent 88%);
-}
+/* The courage section carries NO glow. It had one, low right — and the
+   stats section directly below has one high right, so the two met at the
+   boundary and read as a single doubled blob with a notch through it. The
+   same fault as the team/studio pair above, one section further down, found
+   by measuring rendered light rather than by eye. The stats glow is the
+   bigger moment in the design (it lights the figures and the award block),
+   and this section already has warmth of its own from the stage photograph,
+   so this is the one that goes.
+
+   THE RULE: no two adjacent sections may carry a glow on the same side.
+   They clip independently, so they cannot share a gradient — they can only
+   collide. Check it by measuring, not by looking: §25. */
 
 .about-stats { position:relative; isolation:isolate; overflow:clip; }
 .about-stats-glow {
