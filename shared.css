@@ -45,7 +45,15 @@
 
    Masking rather than resizing each gradient to fit, because the glows are
    deliberately placed off-centre and near their edges; shrinking them to
-   fit would move the light away from where the design puts it. */
+   fit would move the light away from where the design puts it.
+
+   THE TRAP: this erases the top and bottom 15% of every glow it is applied
+   to. A gradient core placed at `at 90% -6%` or `at 2% 100%` — which is the
+   natural way to write "light entering from the corner" — lands inside the
+   fade and is almost entirely masked away, so the glow reads as a faint
+   smudge no matter how high its alpha goes. Keep the core between roughly
+   18% and 82% vertically and let the gradient's own falloff reach the edge.
+   HANDOFF §25. */
 .glow-soft {
   --fade:15%;
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
@@ -1226,9 +1234,9 @@ body::after {
      curve composites to rgb(77,32,24) over --ink — brown. Brighter core,
      faster falloff, same position and the same read of "one red light, low
      left" that §11 asks for. */
-  background:radial-gradient(ellipse 32% 34% at 12% 74%,
-    rgba(255,40,8,.28), rgba(255,40,8,.09) 32%,
-    rgba(255,40,8,.02) 58%, transparent 76%);
+  background:radial-gradient(ellipse 38% 42% at 10% 76%,
+    rgba(255,40,8,.56), rgba(255,40,8,.25) 26%,
+    rgba(255,40,8,.07) 50%, rgba(255,40,8,.015) 70%, transparent 86%);
 }
 /* The question breaks between its two faces — "Ready to build a" on the
    grotesque line, "legacy?" alone on the didone. Measured: that holds from
@@ -1302,9 +1310,9 @@ body::after {
 .about-team { position:relative; isolation:isolate; overflow:clip; }
 .about-team-glow {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 30% 52% at -4% 96%,
-    rgba(64,44,224,.46), rgba(53,36,213,.17) 38%,
-    rgba(40,28,160,.04) 66%, transparent 82%);
+  background:radial-gradient(ellipse 40% 64% at 3% 82%,
+    rgba(80,56,250,.68), rgba(64,44,228,.34) 28%,
+    rgba(50,34,186,.11) 52%, rgba(40,28,150,.03) 72%, transparent 88%);
 }
 /* The design's loudest light: a saturated blue filling the upper left
    behind the headline. It is the one place on this page a glow is allowed
@@ -1313,9 +1321,9 @@ body::after {
 .about-studio { position:relative; isolation:isolate; overflow:clip; }
 .about-studio-glow {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 46% 78% at -2% 12%,
-    rgba(70,48,236,.52), rgba(53,36,213,.22) 36%,
-    rgba(40,28,160,.05) 64%, transparent 82%);
+  background:radial-gradient(ellipse 54% 90% at 7% 22%,
+    rgba(80,56,250,.80), rgba(64,44,228,.46) 26%,
+    rgba(50,34,186,.17) 50%, rgba(40,28,150,.04) 70%, transparent 86%);
 }
 
 /* --- About: team grid --------------------------------------- */
@@ -1754,9 +1762,13 @@ body::after {
      The curve matters as much as the alpha. A slow ramp spends most of its
      AREA between .15 and .40, and that band is the brown. A bright core
      that falls off fast keeps the mud down to a thin ring nobody reads. */
-  background:radial-gradient(ellipse 30% 42% at 50% -6%,
-    rgba(255,40,8,.30), rgba(255,40,8,.10) 34%,
-    rgba(255,40,8,.025) 60%, transparent 78%);
+  /* Deliberately the quietest warm on the page. The design draws this
+     section almost black, and the headline sits dead centre — anything
+     strong here is a lamp behind the type, which is exactly what the first
+     build got wrong. Small, high, and well under the others. */
+  background:radial-gradient(ellipse 26% 32% at 50% 19%,
+    rgba(255,40,8,.30), rgba(255,40,8,.12) 30%,
+    rgba(255,40,8,.03) 56%, transparent 78%);
 }
 .about-conviction .label { color:rgba(249,249,249,.78); }
 /* 11em, and the window here is unusually forgiving: "responsibility." is a
@@ -1835,17 +1847,17 @@ body::after {
   /* Low right, at the corner, behind the foot of the photograph — where
      the design puts it. Centred on the vertical it washed the whole right
      half of the band. */
-  background:radial-gradient(ellipse 30% 38% at 101% 92%,
-    rgba(255,40,8,.28), rgba(255,40,8,.09) 32%,
-    rgba(255,40,8,.02) 58%, transparent 76%);
+  background:radial-gradient(ellipse 42% 56% at 99% 76%,
+    rgba(255,40,8,.62), rgba(255,40,8,.28) 26%,
+    rgba(255,40,8,.08) 50%, rgba(255,40,8,.018) 70%, transparent 88%);
 }
 
 .about-stats { position:relative; isolation:isolate; overflow:clip; }
 .about-stats-glow {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 34% 44% at 88% -2%,
-    rgba(255,40,8,.32), rgba(255,40,8,.10) 34%,
-    rgba(255,40,8,.025) 60%, transparent 78%);
+  background:radial-gradient(ellipse 44% 58% at 92% 24%,
+    rgba(255,40,8,.62), rgba(255,40,8,.28) 26%,
+    rgba(255,40,8,.08) 50%, rgba(255,40,8,.018) 70%, transparent 88%);
 }
 /* Five, not the homepage's four, and the same rule above them. auto-fit so
    they fold to a readable number of columns instead of five slivers. */

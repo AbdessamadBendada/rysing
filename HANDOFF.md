@@ -2023,8 +2023,40 @@ deliberate: §2 has red and blue bookending the page, and §8 has the belonging
 glow as the only mid-page blue, approved by the client. The metric is a tool
 for finding accidents, not a rule to apply blindly.
 
+### The over-correction, and the real trap
+
+**The first fix went too far and the user had to push again.** Taking the mud
+out by lowering alpha produced glows that measured beautifully clean and were
+*invisible* — a faint grey-blue smear in a corner where the design draws a
+large saturated field. Absent is not the same as restrained. The metric said
+1.6% washed and the page looked dead; the metric was measuring the right
+thing and I was reading it as a target rather than a floor.
+
+**`.glow-soft` erases the top and bottom 15% of every glow, and that is what
+made them vanish.** Writing a corner light the natural way — `at 90% -6%`,
+`at 2% 100%` — puts the gradient's core inside the mask's fade, so almost all
+of it is removed no matter how high the alpha goes. I had moved every core to
+an edge in the name of "tightening into the corner", which is precisely the
+wrong move under that mask. **Cores belong between roughly 18% and 82%
+vertically**, letting the gradient's own falloff reach the edge. The note is
+now also in `shared.css` directly above `.glow-soft`.
+
+**Brightness is the safe direction, which is counter-intuitive.** The brown is
+in the *dim middle*, not the bright core — `rgba(255,40,8)` composites to
+green/red 0.36 at `.2` but 0.22 at `.5`, which is *more* saturated than the
+brand red itself. So a warm glow that looks muddy should usually get brighter
+and tighter, not fainter.
+
+Final values: blue cores at `.80` (studio) and `.68` (team); warm cores at
+`.62` (courage, stats), `.56` (homepage closing) and `.30` (conviction —
+deliberately the quietest, because the design draws that section almost black
+and the headline sits dead centre, where anything strong reads as a lamp
+behind the type).
+
 ### Verified
 
 All eleven about boundaries probed from viewport captures: max channel delta
 3, no seam (§5). Zero horizontal overflow, zero console errors and zero failed
-requests on all three pages at 1680/1440/1024/900/768/560/390.
+requests on all three pages at 1680/1440/1024/900/768/560/390. Each section
+was then looked at full size at 1440 rather than judged from a thumbnail or a
+number — which is what should have happened before the first fix shipped.
