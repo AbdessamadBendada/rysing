@@ -1319,3 +1319,66 @@ Verified on all three pages: DOM order grid → meta → mark on each, the mark'
 bottom 28px from the end of the document (the footer's own bottom padding), no
 console errors beyond the deliberately aborted `.mp4`. Zero horizontal overflow
 at 1680/1440/1024/900/768/560/390, the mark scaling 1546px wide down to 346px.
+
+---
+
+## 18. About hero
+
+The page opens on a photograph running full bleed under the fixed header,
+with the pill, the headline and the lead over its lower left. Built from the
+client's supplied design. It replaced a copy-only hero that was type on black.
+
+**It drops two strings of live copy, and that is a real removal.** The old
+headline "Being known has almost nothing to do with being good." and its note
+"Whole industries are led by whoever was loudest…" are both gone — the new
+design has no slot for either. They are the kind of line the page is poorer
+for losing; "Too many exceptional people are unseen and unheard." in the next
+section is the nearest surviving relative but is not the same claim. **Put to
+the client before this is treated as settled.** If either comes back, the note
+is the easier of the two to rehome.
+
+**The new copy.** Headline "Rysing is a branding and visibility studio"; lead
+"The studio was founded by Anzhelika Tauber in response to a market flooded
+with plain, mediocre AI brands that exist to fill space rather than to build
+something meaningful." Neither exists in any earlier file.
+
+**The alternation is word-level and runs the whole line** — grotesque "RYSING
+IS A", didone "BRANDING", grotesque "AND", didone "VISIBILITY", grotesque
+"STUDIO". `.display` is Kinfolk by default and `.alt` flips a run to Aileron,
+so the `.alt` spans are the *sans* runs here, which is the opposite of how it
+reads. §14 already notes that alternation runs through nearly every headline
+on this page and is the first thing to pull back if it starts reading as
+wallpaper; this is the loudest instance of it on the site.
+
+**The measure is 13em.** The design sets "RYSING IS A BRANDING / AND
+VISIBILITY STUDIO". Swept 8–26em at 1920/1680/1440/1280/1024/900/768: the
+window is 12.2–13.7em and is **identical at every width**, because the measure
+is in em and the size clamp moves with it — which is the §4 argument stated as
+cleanly as it gets. 13em is the midpoint. At 390 it takes four lines, which is
+correct.
+
+**The red glow is gone from this section.** It existed because the hero was
+type on black and needed something behind it. A glow behind a photograph is
+two light sources competing, and the photograph is the light now.
+
+**Two scrims, not one.** The bottom one carries the copy and goes properly
+dark; the top one only has to hold the header's own links, which are small and
+already light. A single gradient strong enough for the copy flattens the whole
+frame. Separately, `.about-hero::after` resolves the last 12% to `--ink` so the
+photograph's bottom edge does not cut flat against the black page — the
+one-sided version of what `.glow-soft` does to every glow (§4).
+
+**The image is a stand-in.** `Gerd-Hero-Section-image.webp`, borrowed from the
+homepage spotlight, marked `TODO(asset)` in `src/about.html`. The client's own
+photograph is coming; swapping it is the `src` and the `--pos` focal point and
+nothing else. Note the stand-in is a bright, busy frame and the headline fights
+it — the supplied design is a dark podcast interior, so do not tune the scrims
+against this picture.
+
+### Verified
+
+1440/900/390: zero horizontal overflow, zero console errors, zero failed
+requests. All eight section boundaries on the page probed across the width —
+max channel delta 3, nothing over 10, so no seam (§5), including the new
+photograph's bottom edge at max 1. `index.html` and `contact.html` both rebuilt
+byte-identical, so nothing reached the other two pages.

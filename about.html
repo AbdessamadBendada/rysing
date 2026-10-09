@@ -60,12 +60,21 @@
   </aside>
 
   <main id="top">
-    <section class="band about-hero" id="about-top" aria-labelledby="about-title">
-      <div class="about-hero-glow glow-soft" aria-hidden="true"></div>
+    <!-- The page opens on a photograph running under the header, with the
+         copy over its lower left. This replaced a copy-only hero on the
+         client's design; the two strings it dropped are recorded in
+         HANDOFF §18. -->
+    <section class="about-hero" id="about-top" aria-labelledby="about-title">
+      <!-- TODO(asset): STAND-IN. The client's own photograph is coming. Swap
+           the src and the --pos focal point and nothing else changes. -->
+      <img class="about-hero-shot" style="--pos:center 46%" src="rysing-assets/Gerd-Hero-Section-image.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async" />
+      <div class="about-hero-scrim" aria-hidden="true"></div>
 
-      <p class="about-pill" data-reveal>About</p>
-      <h1 class="display about-title" data-reveal id="about-title"><span class="alt">Being known has</span> almost nothing <span class="alt">to do with</span> being good.</h1>
-      <p class="about-hero-note" data-reveal>Whole industries are led by whoever was loudest, while the people with the judgement, the scars and the actual answers stay one degree out of frame. rysing exists to change who gets heard.</p>
+      <div class="about-hero-copy">
+        <p class="about-pill" data-reveal>About</p>
+        <h1 class="display about-title" data-reveal id="about-title"><span class="alt">Rysing is a</span> branding <span class="alt">and</span> visibility <span class="alt">studio</span></h1>
+        <p class="about-hero-note" data-reveal>The studio was founded by Anzhelika Tauber in response to a market flooded with plain, mediocre AI brands that exist to fill space rather than to build something meaningful.</p>
+      </div>
     </section>
 
     <section class="band about-why" aria-labelledby="why-title">

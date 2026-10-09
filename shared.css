@@ -1467,38 +1467,65 @@ body::after {
    rather than eleven different sections, but it is the first thing to pull
    back if the page starts reading as wallpaper. */
 
+/* The page opens on a photograph, full bleed, running under the fixed
+   header. There is no glow here any more: the red one existed because the
+   hero was type on black and needed something behind it, and a light behind
+   a photograph is two sources competing. The photograph is the light now. */
 .about-hero {
   position:relative; isolation:isolate; overflow:clip;
-  padding-top:clamp(96px,11vw,170px); padding-bottom:clamp(80px,9vw,140px);
+  display:flex; align-items:flex-end;
+  min-height:clamp(620px,92vh,980px);
+  padding:clamp(150px,18vw,260px) var(--gutter) clamp(44px,5vw,78px);
 }
-/* Low right, so the light rises into the paragraph that sits there rather
-   than competing with the headline above it. */
-.about-hero-glow {
+.about-hero-shot {
+  position:absolute; z-index:-2; inset:0;
+  width:100%; height:100%; object-fit:cover;
+  object-position:var(--pos,center center); filter:var(--photo-grade);
+}
+/* Two scrims in one box, not one. The bottom carries the copy and has to go
+   properly dark; the top only has to hold the header's own links, which are
+   small and already light. A single gradient strong enough for the copy
+   would flatten the whole frame. */
+.about-hero-scrim {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 46% 52% at 74% 92%,
-    rgba(240,66,34,.30), rgba(240,66,34,.13) 42%,
-    rgba(240,66,34,.03) 70%, transparent 100%);
+  background:
+    linear-gradient(to top,rgba(0,0,0,.78) 0,rgba(0,0,0,.5) 24%,rgba(0,0,0,.1) 54%,transparent 72%),
+    linear-gradient(to bottom,rgba(0,0,0,.52) 0,rgba(0,0,0,.14) 14%,transparent 30%);
 }
+/* The photograph's bottom edge is the one place this section meets the black
+   page, and a hard cut there reads as a pasted-in picture rather than a page
+   that opens on one. The last band resolves to page black so there is no
+   boundary to find — the same move .glow-soft makes, one-sided. */
+.about-hero::after {
+  content:""; position:absolute; z-index:-1; inset:auto 0 0 0; height:12%;
+  pointer-events:none;
+  background:linear-gradient(to top,var(--ink),transparent);
+}
+.about-hero-copy { width:100%; }
 /* The eyebrow is a pill here, not a bare label — the design gives this one a
    border because it is the page's first object and has nothing above it. */
 .about-pill {
   display:inline-flex; align-items:center; min-height:32px; padding:0 16px;
-  margin:0 0 clamp(46px,7vw,110px);
+  margin:0 0 clamp(26px,3vw,52px);
   border:1px solid rgba(249,249,249,.4); border-radius:999px;
   font-size:11px; font-weight:600; letter-spacing:.17em; text-transform:uppercase;
 }
 .about-title {
-  /* 12.2em: the design sets "Being known has / almost nothing to / do with
-     being good." That break holds from 12 to 12.5em, so 12.2 sits inside it
-     rather than on an edge. In em, never px (HANDOFF §4). */
-  margin:0; max-width:12.2em;
-  font-size:clamp(38px,5.9vw,92px); line-height:1.02;
+  /* 13em: the design sets "RYSING IS A BRANDING / AND VISIBILITY STUDIO".
+     Swept 8–26em at 1920/1680/1440/1280/1024/900/768 — the window is
+     12.2–13.7em and is identical at every one of them, because the measure
+     is in em and the size clamp moves with it. 13 is the midpoint rather
+     than an edge. In em, never px, and never ch (HANDOFF §4). */
+  margin:0; max-width:13em;
+  font-size:clamp(40px,6.6vw,118px); line-height:1.0;
 }
-/* Sits under the headline and to the right, as drawn: the headline is the
-   claim and this is the footnote that qualifies it, so it must not start on
-   the same axis. */
+/* It sat under the headline and to the right when the hero was type on
+   black — the headline was the claim and this the footnote qualifying it.
+   Over a photograph everything hangs off one left axis instead, because the
+   copy block is now an object sitting on an image and a second axis inside
+   it reads as two captions rather than one. */
 .about-hero-note {
-  max-width:34em; margin:clamp(54px,8vw,130px) 0 0 auto;
+  max-width:33em; margin:clamp(26px,3vw,46px) 0 0;
   color:rgba(249,249,249,.86); font-size:15px; line-height:1.72;
 }
 
@@ -1663,7 +1690,6 @@ body::after {
   .about-split,
   .about-founder-grid,
   .about-cols { grid-template-columns:minmax(0,1fr); }
-  .about-hero-note { margin-left:0; }
   .about-stats-foot { grid-template-columns:minmax(0,1fr); align-items:start; }
   .about-award { text-align:left; }
 }
