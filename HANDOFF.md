@@ -285,6 +285,24 @@ pixel 2px above and 2px below across the width and report the largest channel
 delta. Anything over ~10 is a visible line. The three seams measured 146, 82 and
 51; everything on the page is now ≤3.
 
+**A `fullPage` screenshot paints `position:fixed` chrome into the stitch, and
+it reports as a seam that does not exist.** The about page's hero boundary came
+back at **221** against a neighbourhood of 1–3, intermittently — two runs in
+three. There was nothing there: `elementFromPoint` at the reported coordinate
+returned the hero image and the section below it, nothing was focused, and no
+paper-coloured element existed in the live DOM anywhere near it. The white box
+in the capture started at **x=12**, which is `.skip-link { left:12px }` — the
+skip-link is `position:fixed` and `translateY(-180%)`, and Chrome's full-page
+capture painted it back in at a stitch boundary, across the edge being probed.
+
+So: probe boundaries from **viewport** screenshots with the edge parked
+mid-screen, not from one stitched `fullPage` capture. Scroll to `edge - 450`,
+shoot the viewport, probe at `edge - scrollY`. Re-measured that way the whole
+about page is **max 4**. The `fullPage` capture is still the right tool for
+*looking* at the page (§5's whole-page rule stands); it is the wrong tool for
+*measuring* an edge. An intermittent result on a boundary near a viewport
+multiple is this, until proven otherwise.
+
 **An element screenshot cannot show an edge artifact, because the artifact is
 at the edge.** The belonging glow shipped as a hard-edged rectangle: an ellipse
 larger than its section under `overflow:clip`, guillotined into a straight top
@@ -1101,10 +1119,13 @@ both rebuilt byte-identical.
 
 ### Open
 
-- **The founder photograph is a white-background studio shot.** The mock labels
-  the slot `ANZHELIKA-CHAIR` and draws a dark box, so `anzhelika-chair.webp` is
-  what is wired — but the file is near-white, which makes it the brightest
-  object on the entire site. §10 removed the newsletter's printed cover for
+- ~~**The founder photograph is a white-background studio shot.**~~ Resolved —
+  `anzhelika-red-suit.webp` is wired instead, on instruction (§21). The note
+  below is kept because it is the argument for the swap, and because
+  `anzhelika-cutout.webp` is still the better answer if the slot ever changes
+  shape. The mock labels the slot `ANZHELIKA-CHAIR` and draws a dark box, so
+  `anzhelika-chair.webp` was what was wired — but the file is near-white, which
+  made it the brightest object on the entire site. §10 removed the newsletter's printed cover for
   exactly that reason: "nothing else on the page is paper-white now." This puts
   one back. `anzhelika-cutout.webp` is the same shot at the same resolution
   **with an alpha channel** — she stands on the black with no box at all and the
@@ -1556,3 +1577,47 @@ Seven section boundaries probed across the width: max channel delta 3, nothing
 over 10, so no seam (§5). Zero horizontal overflow, zero console errors and
 zero failed requests on all three pages at 1680/1440/1024/900/768/560/390. No
 reference to `.about-claim` remains in `src/` or `shared.css`.
+
+---
+
+## 21. The about founder portrait
+
+`anzhelika-chair.webp` → `anzhelika-red-suit.webp`, on instruction.
+
+**It resolves the §14 open item.** The chair shot is a white-background studio
+frame and was the brightest object on the entire site — the same fault §10
+removed the newsletter's printed cover for. The red-suit frame is mid-tone,
+shot against greenery and concrete, and the face reads far larger in it.
+
+**No `--pos`, deliberately.** The file is 4:5 at 900x1125 and `.about-portrait
+img` is `aspect-ratio:4/5`, so `cover` has nothing to crop and a focal point
+would be noise. The chair shot needed `center 28%` because it was 1067x1600.
+
+**The same photograph is now on two pages.** It is the founder's lead card in
+the homepage team rail (§15) and the portrait here. They are a page apart so
+they do not collide, and it is the founder in both places, which is a weaker
+objection than the Gerd repeat in §9 — but it is the same frame twice and the
+client may want a second one. `anzhelika-office.webp` and
+`anzhelika-cutout.webp` are both still unused if so.
+
+**Resolution is adequate, not generous.** 900x1125 natural into a 579x724 slot
+is **1.29x at 2x retina** — under the 2x ideal but well short of the upscaling
+in §18's hero. Not worth chasing on its own; worth bundling into any ask that
+already exists for larger originals.
+
+**It puts the page's largest saturated red next to the founder glow,** which is
+blue and low-left behind her. §15 already flags the suit as the largest
+saturated object on the homepage; it is now that on the about page too. The two
+read well together in place — the blue sits under the frame rather than on it —
+but §11's argument for keeping red scarce is worth remembering if more red
+arrives on this page.
+
+### Verified
+
+Portrait loads as `anzhelika-red-suit.webp`, zero failed requests, zero console
+errors. All seven section boundaries re-probed from viewport captures — **max
+channel delta 4 across the whole page**, nothing over 10, so no seam (§5; the
+`fullPage` reading of 221 at the hero edge was the skip-link artifact now
+recorded there). Zero horizontal overflow on all three pages at
+1680/1440/1024/900/768/560/390. `contact.html` and `index.html` rebuilt with no
+change beyond their asset-version query.
