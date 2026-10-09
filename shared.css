@@ -111,7 +111,7 @@ body::after {
    The markup is untouched — the .alt spans stay exactly where they are for
    the loud moments and simply inherit elsewhere. */
 .band-head h2 .alt,
-.proof-lead h2 .alt,
+.proof-title .alt,
 .founder-title .alt,
 .system-title .alt,
 .spot-copy h2 .alt {
@@ -863,16 +863,13 @@ body::after {
 @keyframes namesScroll { to { transform:translateX(-100%); } }
 
 /* --- Proof -------------------------------------------------- */
-.proof-head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:clamp(28px,4vh,40px); }
-.proof-lead { display:flex; flex-direction:column; gap:18px; }
-.proof-lead h2 { margin:0; font-size:clamp(32px,3.7vw,54px); }
-.proof-badges { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-end; }
-.proof-badges > div { display:flex; flex-direction:column; gap:6px; }
+/* The heading stands alone (§24). The lead paragraph and the two badges
+   that sat beside it are gone, so the flex row that held them is gone with
+   them and the head is simply a heading. `.stars` stays: it is still worn by
+   all six quotes, and it is one of the few red objects §11 left on the
+   site. */
+.proof-title { margin:0 0 clamp(28px,4vh,40px); font-size:clamp(32px,3.7vw,54px); }
 .stars { color:var(--red); font-size:13px; letter-spacing:.2em; }
-.proof-badges strong {
-  font-family:"Kinfolk",Didot,"Bodoni 72",Georgia,serif; font-weight:400;
-  font-size:26px; line-height:1; text-transform:uppercase; letter-spacing:.01em;
-}
 /* Three quotes on the measure, drifting one column at a time.
 
    What makes a three-up testimonial slider read as a template is three
@@ -1453,7 +1450,6 @@ body::after {
   .work-row > :nth-child(n) { margin-top:0; }
   .work-item--film .shot { aspect-ratio:16/9; }
   .work-item:not(.work-item--film) .shot { aspect-ratio:4/5; }
-  .proof-badges { gap:24px; }
   /* Below the measure the copy drops out from over the photograph and
      stands under it, so the scrim has nothing left to protect. */
   .spot-copy { position:static; padding:22px 0 0; }

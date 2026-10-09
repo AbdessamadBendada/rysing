@@ -1895,3 +1895,56 @@ no seam (§5). Zero horizontal overflow, zero console errors and zero failed
 requests on all three pages at 1680/1440/1024/900/768/560/390. The team grid
 resolves 4/2/1 columns at 1440/1024/560. No reference to `.about-word` remains
 in `src/` or `shared.css`, and `src/_testimonials.html` is untouched.
+
+---
+
+## 24. The testimonial head is just a heading
+
+"In their words" stands alone. The lead paragraph and both badges that sat
+beside it are gone, on instruction.
+
+**This is the shared partial, so it landed on the homepage too.** That was the
+point — §23 settled that both pages carry the same testimonial section — but
+it does mean the signed-off homepage changed, and it is the first copy removal
+this cycle to reach it. One revert restores it on both.
+
+### The copy that was removed
+
+- The lead: "49 five-star reviews and a HIPE Award for outstanding service and
+  customer satisfaction. Here's what founders say after working with us."
+- The rating badge: "★★★★★" and "4.9 / 5 · 49 reviews"
+- The award badge: "Certified 2025", "HIPE Award", "Outstanding service"
+
+**The site has not lost the HIPE award claim** — the about page's stats
+section still carries its own "Certified 2025 / HIPE Award / Outstanding
+service" block and the sentence about the award in its foot. The homepage,
+however, now states the award **nowhere at all**, and the "49 reviews" and
+"4.9 / 5" figures are gone from both pages. If that proof is wanted back on
+the homepage it has to be rebuilt, not just reverted into the rail's head —
+unless the head itself returns.
+
+**`.stars` was deliberately kept.** It is still worn by all six quotes, so the
+rating marks did not disappear from the section, and §11 counts the review
+stars among the last few red objects on the site. Removing the rule would
+have taken red out of the whole section.
+
+**What went with it:** `.proof-head`, `.proof-lead` and `.proof-badges` and
+their four rules, plus the `.proof-badges` responsive rule. The heading took
+the class `.proof-title`, which also meant updating the neutralised
+alternation list (`.proof-lead h2 .alt` → `.proof-title .alt`) so "In their"
+keeps setting in the didone rather than suddenly flipping to the grotesque on
+both pages. That list is at the top of the stylesheet, a long way from the
+rule being changed — **check it whenever a headline's class changes.**
+
+**The section's CTA below the quotes was left alone** — "Read all 49 reviews".
+The instruction and its screenshot covered the head band only. Worth noting it
+still says 49, which is the figure just removed from the head above it.
+
+### Verified
+
+Rail unchanged in behaviour on both pages: six quotes clone to twelve, three
+lit, both controls present, twelve `.stars` runs. All section boundaries
+probed from viewport captures — max channel delta 4, no seam (§5). Zero
+horizontal overflow, zero console errors and zero failed requests on all three
+pages at 1680/1440/1024/900/768/560/390. With JavaScript off, both pages still
+show all six quotes at full opacity.
