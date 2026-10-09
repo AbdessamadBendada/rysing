@@ -7,9 +7,14 @@ Read this before touching anything.
 
 | Page | Source | Section |
 | --- | --- | --- |
-| `index.html` | `src/index.html` | §2, §7–§11 |
+| `index.html` | `src/index.html` | §2, §7–§11, §15, §16 |
 | `contact.html` | `src/contact.html` | §13 |
-| `about.html` | `src/about.html` | §14 |
+| `about.html` | `src/about.html` | §14, **§18–§21** |
+| all three | `src/_footer.html` | §17 |
+
+**The about page is the live front.** §14 describes it as first built; §18–§21
+are this cycle and override §14 wherever they disagree. The homepage has not
+been touched since §17.
 
 This was a single page until recently. `index.html` was called
 `premium-direction.html` before the files were reorganised, and anything below
@@ -41,8 +46,28 @@ The job is to keep inverting that ratio back.
 ## 2. Current state
 
 Three pages, all on `main` and pushed: the homepage, contact (§13) and about
-(§14). The homepage is the one this section describes; it is also the one the
-client has signed off, so it is the one a shared-file change must not disturb.
+(§14, §18–§21). The homepage is the one this section describes; it is also the
+one the client has signed off, so it is the one a shared-file change must not
+disturb.
+
+**Two things now reach all three pages and are newer than most of this
+document.** The footer wordmark is the last object on every page rather than
+the first thing in the footer (§17). And `shared.css` / `shared.js` are
+requested with a content-hash query, `shared.css?v=…`, filled by the build —
+without it a CSS-only change ships new markup against a cached stylesheet and
+the page renders half-built, which is exactly how the about hero went out
+once (§12).
+
+**The about page is where the work is.** It has moved furthest from what §14
+describes: a photographic hero replacing a type-on-black one, "Why we exist"
+deleted outright, "Our conviction" rebuilt on new copy with its blue claim
+removed, and the founder portrait swapped. Section order there is now
+**hero · conviction · founder · studio · courage · stats · testimonials**.
+Across §18–§20 it has lost **ten blocks of baseline copy — seventeen
+sentences — and had one headline altered.** Every one was instructed. The
+itemised list and how it was counted are in §19; it is worth putting to the
+client as a total rather than as four separate changes, because no single one
+of them looked large on its own.
 
 **The section order changed materially this cycle** and several notes below
 predate it. It now runs:
@@ -111,11 +136,11 @@ Unresolved: see §6.
 | --- | --- |
 | `src/index.html` | **The homepage source. Edit this, not `index.html`.** |
 | `src/contact.html` | Contact page source. §13. |
-| `src/about.html` | About page source. §14. |
+| `src/about.html` | About page source. §14, and **§18–§21 for everything newer**. |
 | `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all three pages. See §12. |
 | `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
 | `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. |
-| `build.js` | `node build.js`. Zero dependencies. |
+| `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css` and `shared.js` — see §12, this is load bearing. |
 | `index.html`, `contact.html`, `about.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `playground/new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
@@ -135,7 +160,17 @@ files. They were moved as history, so this was left alone deliberately; if one
 has to render again, prefix its asset paths with `../` rather than copying assets
 into `playground/`.
 
-Work assets added this cycle, all in `rysing-assets/`:
+`rysing-assets/about-hero.webp` is the about page's hero photograph (§18).
+Supplied as a 1024x683 jpg, cropped to 1024x580 to remove a "BRAND on TOUR"
+watermark that sat where the headline does, encoded webp q86 at 64KB. **It is
+the lowest-resolution image doing the biggest job on the site** and wants a
+larger original — see §6.
+
+`anzhelika-chair.webp` is no longer the about founder portrait (§21) but is
+still the stand-in behind all six testimonial squares, so it is still live.
+`anzhelika-office.webp` and `anzhelika-cutout.webp` remain unused.
+
+Work assets added in the previous cycle, all in `rysing-assets/`:
 `work-10-michael-diewald.webp` (spotlight, from the Michael project), 
 `work-01-opsdetox.webp`, `work-02-finer-things.mp4` + `-poster.webp`,
 `work-03-clemens.webp`, `work-06-knowle-victory.webp`, `work-08-u4success.webp`,
@@ -333,6 +368,12 @@ filenames once and wired up entirely the wrong asset.
 
 **Blocking on the client**
 
+- **The about page has lost ten blocks of copy across four instructed
+  changes** (§18–§20) — most of what the page said *to the reader*, as opposed
+  to about the studio. Each was approved on its own; the total has never been
+  put to her. The itemised table is in §19. This is first on the list because
+  it is the only item here that is cheap now and expensive later: the strings
+  still exist in git and each is a one-block revert today.
 - **The about hero photograph is only 1024px wide** for a full-viewport slot —
   it upscales 1.4× at 1× and 2.8× on retina. Ask for the original out of the
   camera; 2400px+ on the long edge fixes it and nothing in the markup changes.
@@ -385,6 +426,19 @@ filenames once and wired up entirely the wrong asset.
   deliberate signature of the spotlight, or it should be reconciled.
 - The OPS Detox panel says **"for startups"**; the client's own merchandise and
   site both say **"for scale-ups"**. Someone has to decide which is right.
+- **The red-suit portrait is now on two pages** — the founder's lead card in
+  the homepage team rail and the about founder section (§21). A page apart, and
+  it is the founder in both, so it is a weaker repeat than the Gerd one in §9.
+  `anzhelika-office.webp` and `anzhelika-cutout.webp` are both unused if she
+  wants a second frame.
+- **The about page has no blue object left.** §20 removed the blue-marked
+  claim, which §14 called the page's one cool note; blue survives there only as
+  the founder glow. The `<mark>` device itself is still used on the homepage
+  spotlight, so it is available if the page wants it back.
+- **The about page's largest light is now the conviction glow.** §19 deleted
+  `.about-why-glow`, which was the biggest red wash on the site. The page is
+  quieter and §11 wants red scarce, so this is probably an improvement — but it
+  was not a decision anyone made, it fell out of a copy deletion.
 - **"rysing" or "Rysing".** The about page sets it lowercase throughout its body
   copy, as its designs do; the footer and the homepage set it capitalised. Both
   appear on the about page at once.
@@ -421,8 +475,14 @@ filenames once and wired up entirely the wrong asset.
   changes are consistent with each other: the HTML is a full rebuild and the
   markdown is the decision-log entry describing it.
 - `ASSET-SPEC.md` still describes three active projects, has no entry for the
-  six testimonial portraits, and none for the spotlight's three panels. Correct
-  all three before forwarding.
+  six testimonial portraits, none for the spotlight's three panels, none for
+  the team portraits, and none for the about hero. Correct all five before
+  forwarding — and carry §15's finding into it, that a team portrait needs a
+  mid-tone or darker background because a light one behaves like a spotlight
+  on this page.
+- **§14's measure table was corrected in place** rather than left standing
+  with a note beside it. Two rows moved, three did not; it now carries the two
+  measures §20 added. Checked against `shared.css` rather than assumed.
 - The footer wordmark has a soft white orb to the left of the star. It is in the
   supplied artwork (`rysing-logo-lockup-light.webp`), not a rendering fault —
   invisible at header size, obvious at full width. Needs clean artwork if the
@@ -1065,13 +1125,15 @@ byte-identical, and is still pixel-identical to its pre-build-system baseline:
 the window where the design's break holds was recorded, and the midpoint taken
 rather than an edge:
 
-| Headline | Window | Set |
-| --- | --- | --- |
-| `.about-title` | 12 – 12.5em | 12.2em |
-| `.about-studio-title` | 20 – 21.5em | 20.7em |
-| `.about-claim` | 23 – 24.5em | 23.7em |
-| `.about-name` | 6 – 9.5em | 7.7em |
-| `.about-h` | see below | 11.6em |
+| Headline | Window | Set | |
+| --- | --- | --- | --- |
+| `.about-title` | 12.2 – 13.7em | **13em** | §18 — new copy, re-swept |
+| `.about-conviction-title` | 5.6 – 15em | **11em** | §20 — kept, not re-centred |
+| `.about-conviction-body` | 39 – 40.7em | **39.9em** | §20 — and see the em-pinning fault there |
+| `.about-studio-title` | 20 – 21.5em | 20.7em | stands |
+| `.about-name` | 6 – 9.5em | 7.7em | stands |
+| `.about-h` | see below | 11.6em | stands — from the courage headline |
+| ~~`.about-claim`~~ | ~~23 – 24.5em~~ | — | §20 — removed with the blue claim |
 
 `.about-h` is the one with a real conflict. The courage headline holds its
 three-line break from 11 to 20em at 1440 and below, but only to 12.25em at 1680
@@ -1488,12 +1550,35 @@ else.** What went:
   less to say and no hesitation about saying it."
 
 One revert brings the section back; it is a single contiguous block in
-`src/about.html` and a single contiguous block in `shared.css`. **Combined
-with §18, the about page has now lost five strings of baseline copy in two
-changes** — the two hero strings and these. Both were instructed and both are
-recorded, but that is most of the page's original argument about the reader,
-and it is worth putting the total in front of the client rather than each
-change on its own.
+`src/about.html` and a single contiguous block in `shared.css`.
+
+**The running total for the about page, counted rather than estimated.** Diff
+the rendered text of `about.html` at `c0d0267~1` against HEAD — strip tags and
+comments, split on sentence ends, and list what was present before and is
+absent now. That reports **17 sentences**, which group into **ten blocks**,
+plus one headline altered rather than removed:
+
+| § | Removed | |
+| --- | --- | --- |
+| §18 | hero headline | "Being known has almost nothing to do with being good." |
+| §18 | hero note | "Whole industries are led by whoever was loudest…" |
+| §19 | eyebrow | "Why we exist" |
+| §19 | headline | "Too many exceptional people are unseen and unheard." |
+| §19 | paragraph | "It is rarely for lack of substance…" |
+| §19 | paragraph | "You are a perfectionist, so nothing is ever ready…" |
+| §19 | pull quote | "Meanwhile the room fills up with people…" |
+| §20 | paragraph | "We build brands that come from conviction. Brands that are human…" |
+| §20 | paragraph | "When someone with something worth saying decides to be seen…" |
+| §20 | blue claim | "We make the people worth listening to heard and recognised." |
+
+Altered, not removed: the conviction headline lost its article, "Visibility is
+a responsibility." → "Visibility is responsibility." (§20).
+
+All of it was instructed and all of it is recorded. But that is **most of the
+page's original argument about the reader** — the hero claim, the whole "Why
+we exist" section and both conviction paragraphs were the parts addressed to
+the person reading. What remains addresses the studio. Worth putting in front
+of the client as one total, because no single change looked large on its own.
 
 **Three CSS rules went with it** — `.about-why`, `.about-why-glow` and
 `.about-pull`. Deliberately *not* removed: `.about-split`, `.about-h` and
