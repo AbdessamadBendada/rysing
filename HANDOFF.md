@@ -79,6 +79,8 @@ Done and verified on the homepage:
 - **Entrance.** 14px travel, long settle. Hidden state applied by script so a
   failed script cannot blank the page.
 - **Stats.** Four equal figures that count up from zero on arrival.
+- **Services.** Four stages, first open on load. Row 04 was renamed to "Thought
+  Leadership" on the client's instruction — see §4.
 - **Selected Work.** Two rows of three, each with its own shape signature. Row
   one carries a film panel. It was three rows; the third moved into the
   spotlight (§9) on instruction, so the page now runs six case studies, then
@@ -181,6 +183,17 @@ past its own resolution, which is the softness that showed on hover.
 **Services rows.** The numeral is a grid sibling of the body, not inside the
 button — inside, it set the row height and left ~170px of dead air. Whole row is
 clickable. Shut rows show the name at display size.
+
+**Row 04 is "Thought Leadership".** Renamed from "Lead Gen & Sales" on the
+client's instruction — a visible copy change, so it is a real edit to the
+baseline and not a restyle. It is the better name: that stage already listed
+podcast, videocast, YouTube channel, long form content, production,
+post-production and keynote writing, under the outcome "Be chosen for what comes
+next." Lead generation was only ever in the title. Set in title case to match
+its three siblings in the source; `.system-name` is `text-transform:uppercase`,
+so the case is a source convention rather than anything visible.
+`RYSING_COMMENTS_BRIEF.md` still calls it "Row 04 (Lead Gen & Sales)" and was
+deliberately left — it is a historical brief, not live copy.
 
 **Entrance needs the sweep as well as the observer.** An element jumped past
 never changes intersection state, so the observer never fires and it stays
