@@ -1948,3 +1948,83 @@ probed from viewport captures — max channel delta 4, no seam (§5). Zero
 horizontal overflow, zero console errors and zero failed requests on all three
 pages at 1680/1440/1024/900/768/560/390. With JavaScript off, both pages still
 show all six quotes at full opacity.
+
+---
+
+## 25. The glows were brown, and why
+
+Reported by the user as the background shapes making the page uglier rather
+than prettier. They were right, and nothing in the per-section checking that
+had been done would ever have caught it — every one of these glows passed its
+own seam probe. **The fault was only visible with the whole page in one
+frame.** §5 already says "verify the page, not the section" about hard edges;
+this is the same rule about colour.
+
+### The cause, measured
+
+`--red` is `#f04222`. The page background `--ink` is `#141414` — **a grey, not
+black.** Alpha-compositing a saturated red toward a grey raises its green
+channel relative to red, so a dim red glow is not a dim red: it is brown.
+
+| | composites to | green/red |
+| --- | --- | --- |
+| `--red` at full strength | rgb(240,66,34) | **0.275** |
+| `--red` at `.26` over `--ink` | rgb(77,32,24) | 0.42 |
+| `rgba(255,40,8)` at `.26` over `--ink` | rgb(81,25,17) | **0.31** |
+
+So the warm glows no longer use `--red` as their source. They start hotter and
+with almost no green — `rgba(255,40,8)` — and land close to the brand red's own
+ratio once dimmed. **This is counter-intuitive and will look like a mistake to
+the next person: a glow whose source colour is not the brand colour is correct
+here, and changing it back to `var(--red)` will quietly reintroduce the mud.**
+
+**Curve shape matters as much as alpha.** A slow ramp — `.56 → .36 → .12 → .03`
+— spends most of its *area* between .15 and .40, which is exactly the muddy
+band. A bright core falling off fast keeps that band to a thin ring. Every
+warm glow now runs roughly `.3 → .1 at ~33% → .025 at ~60% → transparent ~77%`.
+
+### Measuring it
+
+Peak colour is the wrong metric and sent me down a blind alley twice. The
+original conviction glow measured rgb(124,48,29), green/red 0.39 — *better*
+than some values that look fine — and it was the ugliest thing on the page.
+**What reads as ugly is area, not hue:** how much of a section is lifted off
+the page black into a mid-tone wash.
+
+The measurement that works: render with every image hidden and all text set
+transparent, so the capture contains nothing but the glow layer, then report
+the percentage of each section's pixels above luminance 34 (the page itself
+is 20). Over ~18% is a wash. The about page is now **1.6% at worst**; before
+this it had four sections well past that.
+
+### What changed
+
+| Section | Before | Now |
+| --- | --- | --- |
+| about conviction | 34vw circle at `.56`, **dead centre behind the headline** | small, high, `.30` — spill from the photograph above |
+| about founder | blue ellipse low left | **removed** — the design draws this section on flat black |
+| about team | none | blue, bottom left, as the mock draws it |
+| about studio | none | blue, upper left — the design's loudest light, and the one glow allowed to be big |
+| about courage | `.38` centred on the right, washing the whole band | `.28`, tightened into the bottom-right corner |
+| about stats | `.26` | `.32`, tightened into the top-right corner |
+| homepage closing | `.26` ramping slowly | same position and read, retuned — it measured rgb(77,32,24) |
+
+**The placement now follows the client's own screenshots,** which is where it
+had drifted from: the mocks put blue in the studio and team sections and flat
+black under the founder, and the build had it the other way round.
+
+**Blue never had this problem.** `#3524d5` at `.5` over `--ink` composites to
+rgb(43,30,117), which is still unambiguously blue. Only the warm glows needed
+retuning, and that asymmetry is worth remembering before adding a new one.
+
+**The homepage's hero and belonging sections were left alone.** They measure
+38.3% and 6.9% washed, which is far past the threshold — and both are
+deliberate: §2 has red and blue bookending the page, and §8 has the belonging
+glow as the only mid-page blue, approved by the client. The metric is a tool
+for finding accidents, not a rule to apply blindly.
+
+### Verified
+
+All eleven about boundaries probed from viewport captures: max channel delta
+3, no seam (§5). Zero horizontal overflow, zero console errors and zero failed
+requests on all three pages at 1680/1440/1024/900/768/560/390.
