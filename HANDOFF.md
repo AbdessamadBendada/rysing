@@ -9,12 +9,20 @@ Read this before touching anything.
 | --- | --- | --- |
 | `index.html` | `src/index.html` | §2, §7–§11, §15, §16 |
 | `contact.html` | `src/contact.html` | §13 |
-| `about.html` | `src/about.html` | §14, **§18–§21** |
+| `about.html` | `src/about.html` | §14, **§18–§25** |
 | all three | `src/_footer.html` | §17 |
+| all three | `src/_testimonials.html` | §7, §23, **§24** |
+| homepage + about | `src/_marquee.html` | §22 |
+| all three | the background glows | **§25 — read this before adding one** |
 
-**The about page is the live front.** §14 describes it as first built; §18–§21
-are this cycle and override §14 wherever they disagree. The homepage has not
-been touched since §17.
+**The about page is the live front.** §14 describes it as first built; §18–§25
+are this cycle and override §14 wherever they disagree.
+
+**The homepage is no longer untouched.** It was, up to §17. Since then §22
+moved its logo marquee into a partial (byte-identical output), §24 removed
+three blocks of copy from the testimonial head it shares with about, and §25
+retuned its closing glow. All three were instructed or were defect fixes, but
+the signed-off page has moved.
 
 This was a single page until recently. `index.html` was called
 `premium-direction.html` before the files were reorganised, and anything below
@@ -59,15 +67,28 @@ the page renders half-built, which is exactly how the about hero went out
 once (§12).
 
 **The about page is where the work is.** It has moved furthest from what §14
-describes: a photographic hero replacing a type-on-black one, "Why we exist"
-deleted outright, "Our conviction" rebuilt on new copy with its blue claim
-removed, and the founder portrait swapped. Section order there is now
-**hero · conviction · founder · studio · courage · stats · testimonials**.
-Across §18–§20 it has lost **ten blocks of baseline copy — seventeen
-sentences — and had one headline altered.** Every one was instructed. The
-itemised list and how it was counted are in §19; it is worth putting to the
-client as a total rather than as four separate changes, because no single one
-of them looked large on its own.
+describes, and §22 rebuilt it wholesale from seven supplied screenshots. Order
+now, read off the built page:
+
+> hero · conviction · founder · **team** · studio · courage **+ photograph** ·
+> stats · testimonials · **recognition** · **the standard** · **closing**
+
+Four sections are new, the founder and conviction copy were rewritten, "Why we
+exist" was deleted outright, and the hero became photographic.
+
+**Thirteen blocks of baseline copy have come off this page**, every one
+instructed: ten across §18–§20 (itemised with the counting method in §19),
+plus the three §24 took out of the shared testimonial head. One headline was
+altered rather than removed. It is worth putting to the client as a total
+rather than as five separate changes, because no single one of them looked
+large on its own — and because §24's three also came off the homepage.
+
+**Two structural rules came out of this cycle and are easy to break by
+accident.** Glows: no two adjacent sections may carry one on the same side,
+and `.glow-soft` erases the top and bottom 15% of every glow, so a core
+written at the edge is masked away (§25). Measures: a `max-width` in `em` on a
+wrapper resolves against the *inherited* font size, not the text it governs
+(§20).
 
 **The section order changed materially this cycle** and several notes below
 predate it. It now runs:
@@ -139,7 +160,8 @@ Unresolved: see §6.
 | `src/about.html` | About page source. §14, and **§18–§21 for everything newer**. |
 | `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all three pages. See §12. |
 | `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
-| `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. |
+| `src/_marquee.html` | The thirteen client logos and their measured `--f` fractions. Included by the homepage's `#recognition` and the about page (§22). **It carries no comment on purpose** — an HTML comment here ships into both pages and breaks the byte-identical guarantee the extraction was checked against. |
+| `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. **The glow rules are the fragile part — §25.** |
 | `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css` and `shared.js` — see §12, this is load bearing. |
 | `index.html`, `contact.html`, `about.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
@@ -368,12 +390,28 @@ filenames once and wired up entirely the wrong asset.
 
 **Blocking on the client**
 
-- **The about page has lost ten blocks of copy across four instructed
-  changes** (§18–§20) — most of what the page said *to the reader*, as opposed
-  to about the studio. Each was approved on its own; the total has never been
-  put to her. The itemised table is in §19. This is first on the list because
-  it is the only item here that is cheap now and expensive later: the strings
-  still exist in git and each is a one-block revert today.
+- **Thirteen blocks of copy have come off the about page across five
+  instructed changes** (§18–§20, §24) — most of what the page said *to the
+  reader*, as opposed to about the studio. Each was approved on its own; the
+  total has never been put to her. The itemised table is in §19. First on the
+  list because it is the only item here that is cheap now and expensive later:
+  the strings still exist in git and each is a one-block revert today.
+- **The homepage no longer states the HIPE award in any visible copy** — the
+  only "HIPE" left in `index.html` is a source comment — and "49 reviews" and
+  "4.9 / 5" are gone from both pages. §24 removed the badges that carried
+  them. The about page still has its own award block in the stats section, so
+  the claim survives there — but if that proof is wanted on the homepage it
+  has to be rebuilt, not reverted, unless the whole testimonial head returns.
+  The rail's own "Read all 49 reviews" button still says 49.
+- **The courage section's photograph is a stand-in.** The design draws a
+  cable-car interview frame that has not been supplied; `work-03-clemens.webp`
+  is wired with a `TODO(asset)` against it. One `src` and one `--pos` (§22).
+- **Four named testimonials are written down but not on the site.** Julian
+  Knowle, Jennifer Djongow, Gvantsa Kikalishvili and Veneta Behar — the only
+  real named quotes that have ever existed for this project, preserved in §23
+  after the block carrying them was removed on instruction. The six live
+  quotes are still placeholders. Replacing them is one edit to
+  `src/_testimonials.html` and lands on both pages.
 - **The about hero photograph is only 1024px wide** for a full-viewport slot —
   it upscales 1.4× at 1× and 2.8× on retina. Ask for the original out of the
   camera; 2400px+ on the long edge fixes it and nothing in the markup changes.
@@ -431,14 +469,15 @@ filenames once and wired up entirely the wrong asset.
   it is the founder in both, so it is a weaker repeat than the Gerd one in §9.
   `anzhelika-office.webp` and `anzhelika-cutout.webp` are both unused if she
   wants a second frame.
-- **The about page has no blue object left.** §20 removed the blue-marked
-  claim, which §14 called the page's one cool note; blue survives there only as
-  the founder glow. The `<mark>` device itself is still used on the homepage
-  spotlight, so it is available if the page wants it back.
-- **The about page's largest light is now the conviction glow.** §19 deleted
-  `.about-why-glow`, which was the biggest red wash on the site. The page is
-  quieter and §11 wants red scarce, so this is probably an improvement — but it
-  was not a decision anyone made, it fell out of a copy deletion.
+- **The about page's blue is now one light, on the studio section.** §20
+  removed the blue-marked claim that §14 called the page's one cool note, and
+  §25 removed the founder glow and the team glow. The `<mark>` device is still
+  used on the homepage spotlight if the page ever wants the claim back.
+- **The about page carries three lights in total** — conviction, studio,
+  stats — after §25 deleted two that were colliding with their neighbours.
+  Whether three is the right number is a design call nobody has made
+  explicitly; it fell out of fixing a defect. Measured positions and the rule
+  against adding a fourth next to an existing one are in §25.
 - **"rysing" or "Rysing".** The about page sets it lowercase throughout its body
   copy, as its designs do; the footer and the homepage set it capitalised. Both
   appear on the about page at once.
@@ -1130,6 +1169,10 @@ rather than an edge:
 | `.about-title` | 12.2 – 13.7em | **13em** | §18 — new copy, re-swept |
 | `.about-conviction-title` | 5.6 – 15em | **11em** | §20 — kept, not re-centred |
 | `.about-conviction-body` | 39 – 40.7em | **39.9em** | §20 — and see the em-pinning fault there |
+| `.about-recog-title` | 28.4 – 32em | **30.2em** | §22 — intersection, window differs by width |
+| `.about-standard-title` | 19.7 – 39.9em | **24em** | §22 — left alone, not doing work |
+| `.about-closing-title` | 10.4 – 15.5em | **13em** | §22 — intersection |
+| `.about-closing-note` | 33.5 – 36.9em | **35.2em** | §22 — **was wrong at 30em** |
 | `.about-studio-title` | 20 – 21.5em | 20.7em | stands |
 | `.about-name` | 6 – 9.5em | 7.7em | stands |
 | `.about-h` | see below | 11.6em | stands — from the courage headline |
