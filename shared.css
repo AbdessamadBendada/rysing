@@ -2056,12 +2056,36 @@ body::after {
 
    The copy sits over them, as it does in the mock. That is only safe while
    the midtone stays down; if these are ever brightened, check the body text
-   on module 01 before shipping it. */
+   on module 01 before shipping it.
+
+   THE MASK IS WHAT KILLS THE BLACK RING. The asset is a glow painted ON
+   BLACK, and that black is opaque artwork, not a transparent surround —
+   verified by compositing it over a bright colour, where the ring stays
+   solid. So it is #000 meeting a #141414 page, and it reads as an outline
+   drawn around every sphere.
+
+   Switching to the cutout does NOT fix it. `Brand Asset_15.png` in the
+   client's Pattern Assets folder is the same artwork with alpha (mean
+   difference 0.9/255 from our webp — ours is literally that file flattened
+   onto black), but its alpha only trims the square corners OUTSIDE the disc.
+   The ring is inside and stays. It is a 2.5MB file for no visible change.
+
+   `closest-side` is load bearing: it makes the gradient's 100% equal the
+   element's half-width, which is the asset's own circle radius, so the stops
+   are in units of that circle. The default (farthest-corner) is 1.41x larger
+   and the fade lands outside the artwork entirely, doing nothing.
+
+   The real fix is an asset re-exported to fade to alpha instead of to black.
+   Until then this trades the hard ring for a soft edge, which also costs the
+   sphere a little of its defined silhouette — that is the trade, and it was
+   made knowingly. */
 .process-orb {
-  left:-30%; bottom:calc(100% - clamp(86px,10vw,170px));
-  width:clamp(200px,25vw,370px);
+  left:-46%; bottom:calc(100% - clamp(86px,10vw,170px));
+  width:clamp(256px,32vw,474px);
   background-image:url("rysing-assets/pattern-red.webp");
-  filter:blur(3px) brightness(.78) saturate(.92);
+  filter:blur(3px) brightness(.84) saturate(.92);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 44%,rgba(0,0,0,0) 80%);
+          mask-image:radial-gradient(circle closest-side,#000 44%,rgba(0,0,0,0) 80%);
 }
 
 /* Lower case, and right where the climb tops out. */
@@ -2082,7 +2106,7 @@ body::after {
      disc sliced flat, which reads as a clipping bug. On the wide layout only
      01 crosses and the design draws it that way; in two columns it would
      happen to every odd module. */
-  .process-orb { left:2%; width:clamp(190px,28vw,310px); }
+  .process-orb { left:0; width:clamp(243px,36vw,397px); }
 }
 @media (max-width:620px) {
   /* One up, and the climb goes flat — a stagger in a single column is just an
@@ -2096,7 +2120,7 @@ body::after {
      wider size stack into one continuous red band down the page — the
      spheres stop being four lights and the body copy has to be read on top
      of it. Alternating breaks the band and keeps one light per module. */
-  .process-orb { left:2%; right:auto; width:min(52vw,230px); }
-  .process-step:nth-child(even) .process-orb { left:auto; right:2%; }
+  .process-orb { left:0; right:auto; width:min(66vw,294px); }
+  .process-step:nth-child(even) .process-orb { left:auto; right:0; }
   .process-rise { text-align:left; }
 }

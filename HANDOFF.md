@@ -2176,6 +2176,36 @@ not need to exist. If a shape is needed, place the asset. The convention is
   light with no edge, not an object. Placed whole it reads as a large dark
   ball sitting in the corner, which is the opposite of light.
 
+**The black ring around each sphere is masked off, and the cutout does not
+fix it.** The asset is a glow painted ON BLACK and that black is opaque
+artwork, not a transparent surround — verified by compositing it over a bright
+colour, where the ring stays solid. Against the `#141414` page it reads as an
+outline drawn around every sphere.
+
+`rysing brand assets/Pattern Assets/Brand Asset_15.png` (red) and
+`Brand Asset_11.png` (blue) are the same artwork WITH alpha — mean difference
+0.9 and 0.7 per channel from our webps, which are literally those files
+flattened onto black. **Swapping them in changes nothing visible:** their alpha
+only trims the square corners outside the disc, and the ring is inside it. Do
+not spend 2.5MB an asset on it.
+
+What works is a mask: `radial-gradient(circle closest-side, …)`, fading out at
+44%→80%, which finishes before the black begins. **`closest-side` is load
+bearing** — it makes the gradient's 100% equal the element's half-width, which
+is the asset's own circle radius, so the stops are in units of that circle. The
+default `farthest-corner` is 1.41x larger, lands outside the artwork, and does
+nothing.
+
+The mask costs about 20% of the visible radius, so the element was scaled up
+~1.28x and `left` moved from -30% to -46% to hold the centre still. Coverage
+measured back at 12.5% against the 12.1% it had before, so the size the client
+signed off on is unchanged.
+
+**The trade is real and was made knowingly:** the hard ring is gone and the
+spheres are softer-edged for it, because that ring was also their silhouette.
+The fix with no trade-off is an asset re-exported to fade to alpha rather than
+to black — the source files to ask for are the two named above.
+
 **The red is graded, and the grade was measured against the mock, not judged
 by eye — eye got it wrong three times running.** Sampling strongly-saturated
 orange pixels across the whole page:
