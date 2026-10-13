@@ -403,9 +403,6 @@ filenames once and wired up entirely the wrong asset.
   the claim survives there — but if that proof is wanted on the homepage it
   has to be rebuilt, not reverted, unless the whole testimonial head returns.
   The rail's own "Read all 49 reviews" button still says 49.
-- **The courage section's photograph is a stand-in.** The design draws a
-  cable-car interview frame that has not been supplied; `work-03-clemens.webp`
-  is wired with a `TODO(asset)` against it. One `src` and one `--pos` (§22).
 - **Four named testimonials are written down but not on the site.** Julian
   Knowle, Jennifer Djongow, Gvantsa Kikalishvili and Veneta Behar — the only
   real named quotes that have ever existed for this project, preserved in §23
@@ -1798,9 +1795,9 @@ unchanged; the frame beside it is new. Built first with `align-items:end`,
 which pinned the eyebrow near the foot of a very tall column and left most of
 a screen empty above it. The design runs the photograph past the copy at both
 ends, so the copy is centred in it and the frame is capped at
-`min(78vh,760px)`. The image is a **stand-in** — `work-03-clemens.webp`,
-marked `TODO(asset)`; the design draws a cable-car interview frame that has
-not been supplied.
+`min(78vh,760px)`. The image is the cable-car interview frame the design
+called for — `about-courage.webp`, supplied by the client and delivered at
+1000×1500 from a 2:3 source, so the slot crops nothing.
 
 **Named quotes — about only, by decision.** Four real client testimonials,
 static, four up. This was put as a question and the answer was explicit: the
@@ -1870,8 +1867,6 @@ stylesheet's version hash. `src/_testimonials.html` is untouched.
 
 ### Open
 
-- **The courage photograph is a stand-in.** The cable-car interview frame in
-  the supplied design has not been delivered. One `src` and one `--pos`.
 - **Kristina's role** is "Photographer, videographer and content creator" here,
   as on the homepage. The mock says "DISCIPLINE TO BE CONFIRMED", which is the
   prototype's placeholder, not a copy change — but it does suggest the client
