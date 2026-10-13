@@ -2151,46 +2151,36 @@ so the rhythm survives a reorder — the same reasoning as the team rail's
 
 Two-up below 1040px, one-up below 620px where the climb goes flat.
 
-### The orbs are objects, not ambient light
+### The shapes are the brand assets. Do not draw them.
 
-This is the one place on the site where a warm light has an **edge**. The
-gradient is explicitly sized (`ellipse 60% 60%`) and placed right of centre
-(`at 66% 46%`), so it reaches transparent at x=6% — the dark crescent — and is
-still at strength when `border-radius` cuts it on the right. That cut is the
-edge the design draws. A plain `circle at …` fades out inside its own box and
-gives four soft balls instead; that was built first and was wrong.
+`rysing-assets/pattern-red.webp` and `pattern-blue.webp` ARE the spheres the
+design draws — an irregular lit mass inside a soft circular vignette. **This
+page shipped once with hand-written radial-gradients in their place** and read
+as four fuzzy blobs. No gradient reproduces that artwork, and the time spent
+tuning gradient stops against §25 was time spent solving a problem that did
+not need to exist. If a shape is needed, place the asset. The convention is
+`.orb` in `playground/rysing-branding.html`.
 
-**They obey §25 even though they are bright.** The first version used
-`rgba(255,124,58)` for the core, which looks like the right orange and
-measured **rgb(240,117,55) on the page — green/red .487, the exact mud §25 is
-about.** The stops are now low-green throughout and measure **.303**, against
-the brand red's own .275. Do not "correct" them toward `var(--red)` or toward
-a friendlier orange; both roads lead back to brown.
+**`mix-blend-mode:screen` is how they sit on the ink.** The surround is pure
+black and screening black is a no-op, so it disappears and only the colour
+survives. Two consequences, both load bearing:
 
-Measured with §25's own method (text transparent, images hidden, count pixels
-above luminance 34): **15.4% lit area**, under the 18% wash threshold. The
-script is not committed — it is ten lines, and §25 describes it.
+- **`.process` must carry its own `background` and `isolation`.** Screen only
+  cancels the surround if there is something to screen *against*. Without the
+  background the shapes composite toward transparency, the surround stays black
+  and paints a dark halo across the page. That was built and seen.
+- **`.process` must therefore clip,** because a shape crossing the bottom edge
+  leaves that backdrop and the halo comes back over the footer. The footer
+  keeps its own blue, which continues the one in the climb.
 
-### The blue, and why the footer's is off here
+**Warm and cool must not overlap. Screen adds.** The blue was first placed
+large enough to reach up behind the climb, and every red sphere over it turned
+**pink**. The blue is kept below the modules for that reason — a colour rule
+here, not a composition preference.
 
-The design shows one blue mass running from the climb down past the wordmark.
-The footer already carries a blue in that exact corner, and the two are
-adjacent — the case the `.about-studio` note forbids, because each is masked
-at its own edge and they meet as a doubled blob with a dark notch. So the
-climb carries it and **`.page-process .footer-light::after` is `content:none`.**
-
-For the same reason `.process` is **not clipped**: clipping cuts the blue flat
-at the footer boundary. This adds no dead scroll — the glow's lowest point
-falls inside the footer's own height, verified at 1440 and 390 where
-`scrollHeight` equals the footer's bottom exactly. If the footer ever gets
-shorter, re-check that.
-
-### bodyclass
-
-`.page-process` comes from a new optional front-matter key, `bodyclass`, which
-build.js puts on `<body>`. It exists for rules that have to reach shared chrome
-from a single page, which so far is only the footer blue above. Pages that omit
-it ship `class=""`.
+§25's brown problem does not arise on this page: nothing is composited toward
+the grey `--ink`. The check here is simpler — are the shapes the assets, and
+is anything pink.
 
 ### Open
 

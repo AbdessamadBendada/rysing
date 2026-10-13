@@ -1927,36 +1927,47 @@ body::after {
 /* Deliberately NOT clipped. The blue is meant to carry on down behind the
    footer and the wordmark, as one light, and a section that clips would cut it
    flat at the footer boundary — the hard line §5 keeps having to be fixed.
-   This adds no dead scroll: the glow's lowest point falls well inside the
-   footer's own height, and html already carries overflow-x:clip for the
-   sideways bleed. Verified at 1440 and 390 — document height is unchanged. */
+   THE BACKGROUND IS LOAD BEARING. The shapes blend with `screen`, and screen
+   only cancels their black surround if there is something to screen *against*.
+   `isolation` makes this section its own group, so the backdrop a shape sees
+   is this background and nothing else — without it the surround composites
+   against transparency, stays black, and paints a dark halo over the page.
+   That is also why the section clips: a shape crossing the bottom edge leaves
+   the backdrop and the halo comes back over the footer. */
 .process {
-  position:relative; isolation:isolate;
+  position:relative; isolation:isolate; overflow:clip;
+  background:var(--ink);
   padding-block:clamp(74px,8vw,128px) clamp(90px,10vw,170px);
 }
 
-/* THE PAGE'S ONE BLUE, AND THE FOOTER'S IS OFF BECAUSE OF IT.
-   The design draws a single blue mass low-left. The footer already carries a
-   blue in exactly that corner, and the two are adjacent — the case the
-   .about-studio note forbids, because each is masked at its own edge and they
-   meet as a doubled blob with a dark notch through it. So this one carries the
-   moment and `.page-process .footer-light::after` is off.
+/* THE BACKGROUND SHAPES ARE THE BRAND ASSETS, NOT GRADIENTS.
+   `pattern-red.webp` and `pattern-blue.webp` are the studio's own artwork and
+   they are what the design draws — an irregular lit mass inside a soft
+   circular vignette, which no radial-gradient reproduces. This page shipped
+   once with hand-written gradients in their place and read as four fuzzy
+   blobs. If a shape is needed, place the asset.
 
-   Blue is allowed to be big: it does not muddy the way the warm lights do
-   (§25 — that failure is specific to red compositing toward the grey --ink).
-   The ramp is `.about-studio-glow`'s, which is the sanctioned one. */
-.process-blue {
-  position:absolute; z-index:-1; left:-24vw; bottom:-46%;
-  width:min(92vw,1120px); aspect-ratio:1; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle at 50% 50%,
-    rgba(74,50,246,.70), rgba(58,38,220,.32) 24%,
-    rgba(46,30,178,.10) 44%, rgba(36,24,140,.028) 62%, transparent 78%);
+   `mix-blend-mode:screen` is how they sit on the page: the surround is pure
+   black and screening black is a no-op, so the surround disappears into the
+   ink and only the colour survives. That is also why §25's brown problem does
+   not arise here — nothing is being composited toward the grey --ink.
+   The convention is `.orb` in playground/rysing-branding.html. */
+.process-blue,
+.process-orb {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  background-repeat:no-repeat; background-position:center; background-size:contain;
+  mix-blend-mode:screen;
 }
-/* One-sided: the top is faded so the blue cannot cut flat against the head of
-   the page, and the bottom is left alone because the section clips it there
-   against the footer, where the gradient has already reached transparent. The
-   two-sided .glow-soft would erase the core — this glow is deliberately low. */
-.page-process .footer-light::after { content:none; }
+
+/* Low-left, as the design draws it, and kept clear of the climb. It was
+   tried at 104vw reaching up behind the modules: `screen` adds, so every red
+   sphere sitting over it turned PINK. The warm and cool lights on this page
+   must not overlap — that is a colour rule here, not a composition one. */
+.process-blue {
+  left:-24vw; bottom:-62%; width:min(82vw,980px);
+  background-image:url("rysing-assets/pattern-blue.webp");
+  filter:blur(20px); opacity:.85;
+}
 
 .process-head { max-width:1680px; margin:0 auto; }
 /* Sized to hold "Four modules. One climb." on one line from roughly 1180px
@@ -2005,37 +2016,15 @@ body::after {
   color:rgba(249,249,249,.76); font-size:13.5px; line-height:1.68;
 }
 
-/* The orbs. These are NOT the page's ambient light — they are objects, which
-   is why they have an edge: the gradient core sits right of centre and is
-   still bright when it reaches the circle, so border-radius cuts a crisp arc
-   there and the light falls away to nothing on the left. That asymmetry is
-   the whole look; centring the core gives four flat discs.
-
-   The source colour is rgba(255,40,8) and NOT var(--red). This looks like a
-   mistake and is not — §25: --red over the grey --ink raises green relative to
-   red, so a dimmed brand red is brown. Starting hotter and with almost no
-   green lands on the brand ratio once dimmed. Changing these to var(--red)
-   reintroduces the mud the client reported.
-
-   The falloff is fast for the same reason: a slow ramp spends its area in the
-   .15-.40 band, which is exactly the muddy one. Bright core, thin ring. */
+/* One sphere per module, rising with it. Same asset as the blue, in red.
+   The blur is light on purpose: the asset carries its own soft edge and its
+   own internal shape, and blurring it hard (the 24px the preloader uses)
+   erases both and gives back the featureless ball this page started with. */
 .process-orb {
-  position:absolute; z-index:-1; pointer-events:none;
-  left:-38%; bottom:calc(100% - clamp(86px,10vw,170px));
-  width:clamp(190px,24vw,352px); aspect-ratio:1; border-radius:50%;
-  filter:blur(2px);
-  /* The gradient is sized (54%) and placed right of centre (70%), so its own
-     falloff reaches transparent at x=16% — the dark crescent — while on the
-     right it is still at full strength when border-radius cuts it. That cut IS
-     the edge the design draws. A `circle at …` with no size fades out inside
-     the box instead, which is what makes a soft ball rather than a lit sphere. */
-  /* Low green at every stop. rgba(255,124,58) was tried for the core and
-     measured rgb(240,117,55) on the page — green/red .487, which is the
-     muddy orange §25 is about, not the brand red. These stops measure .30. */
-  background:radial-gradient(ellipse 60% 60% at 66% 46%,
-    rgba(255,76,26,.95) 0%, rgba(252,44,10,.64) 18%,
-    rgba(226,30,6,.40) 34%, rgba(178,22,5,.24) 52%,
-    rgba(120,15,4,.115) 70%, rgba(62,8,2,.035) 86%, transparent 100%);
+  left:-30%; bottom:calc(100% - clamp(86px,10vw,170px));
+  width:clamp(200px,25vw,370px);
+  background-image:url("rysing-assets/pattern-red.webp");
+  filter:blur(7px); opacity:.95;
 }
 
 /* Lower case, and right where the climb tops out. */
