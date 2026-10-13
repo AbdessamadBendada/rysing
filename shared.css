@@ -2027,15 +2027,41 @@ body::after {
   color:rgba(249,249,249,.76); font-size:13.5px; line-height:1.68;
 }
 
-/* One sphere per module, rising with it. Same asset as the blue, in red.
-   The blur is light on purpose: the asset carries its own soft edge and its
-   own internal shape, and blurring it hard (the 24px the preloader uses)
-   erases both and gives back the featureless ball this page started with. */
+/* One light per module, rising with it.
+
+   SIZED AND GRADED AGAINST THE MOCK BY MEASUREMENT, not by eye — eye got it
+   wrong three times running. Sampling strongly-saturated orange pixels in the
+   client's mock and in the build:
+
+     client mock          12.6% of page, median R 158, p95 rgb(239,65,33)
+     ours, first attempt  13.0% of page, median R 209, p95 rgb(239,65,32)
+
+   Identical coverage, identical peak — so the SIZE was never the problem and
+   neither was the brightest orange. The fault was the MIDTONE: our spheres
+   were flat bright orange across the whole disc where the mock's hold the
+   asset's dark internal lobe and a real falloff. They read as solid painted
+   rocks for that reason, not because they were too big.
+
+   `brightness()` is the control, and **`contrast()` is the wrong tool here** —
+   tried, measured, discarded. The asset's interior sits above mid-grey, so
+   contrast pushes the midtone UP (186 → 209 → 230 as it rises) and collapses
+   the green channel with it, which breaks the hue: the peak went from
+   rgb(239,65,33) to rgb(241,12,4). Darkening and a touch of desaturation land
+   on the mock at median R 162.
+
+   Blur stays low — the dark internal lobe and the vignette are the structure
+   being preserved, and past ~10px both dissolve and the sphere goes back to
+   being a featureless blob. Blur cannot do the darkening either: it only
+   widens the orange-to-black ramp, and even 20px reaches a median of 183.
+
+   The copy sits over them, as it does in the mock. That is only safe while
+   the midtone stays down; if these are ever brightened, check the body text
+   on module 01 before shipping it. */
 .process-orb {
   left:-30%; bottom:calc(100% - clamp(86px,10vw,170px));
   width:clamp(200px,25vw,370px);
   background-image:url("rysing-assets/pattern-red.webp");
-  filter:blur(2px);
+  filter:blur(3px) brightness(.78) saturate(.92);
 }
 
 /* Lower case, and right where the climb tops out. */

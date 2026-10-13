@@ -2176,6 +2176,33 @@ not need to exist. If a shape is needed, place the asset. The convention is
   light with no edge, not an object. Placed whole it reads as a large dark
   ball sitting in the corner, which is the opposite of light.
 
+**The red is graded, and the grade was measured against the mock, not judged
+by eye — eye got it wrong three times running.** Sampling strongly-saturated
+orange pixels across the whole page:
+
+| | coverage | median R | p95 |
+| --- | --- | --- | --- |
+| client mock | 12.6% | **158** | rgb(239,65,33) |
+| first attempt | 13.0% | **209** | rgb(239,65,32) |
+| shipped | 12.1% | **162** | rgb(180,53,29) |
+
+Identical coverage and identical peak on the first attempt — **the size was
+never wrong, and neither was the brightest orange.** The fault was the
+midtone: our spheres were flat bright orange across the disc where the mock's
+hold the asset's dark internal lobe and a real falloff, which is why they read
+as solid painted rocks.
+
+`brightness()` fixes it. **`contrast()` is the wrong tool** — tried, measured,
+discarded: the asset's interior sits above mid-grey so contrast pushes the
+midtone *up* (186 → 209 → 230) and collapses the green channel with it, taking
+the peak to rgb(241,12,4) and breaking the hue. Blur cannot do it either; it
+only widens the orange-to-black ramp, and 20px still leaves a median of 183
+while destroying the silhouette.
+
+The copy sits over the spheres, as it does in the mock. That is only safe
+while the midtone stays down — if these are ever brightened, read module 01's
+body text before shipping.
+
 Because the blue screens, **it must stay clear of the climb**: it was tried
 reaching up behind the modules and every red sphere over it turned **pink**.
 
