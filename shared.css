@@ -2011,7 +2011,11 @@ body::after {
    the only hairline on the page and it is what makes the four read as rungs
    rather than as floating paragraphs. */
 .process-step::before {
-  content:""; display:block; height:1px; margin-bottom:clamp(14px,1.5vw,24px);
+  /* Stops short of the column rather than filling it, so the four rules read
+     as marks on the climb rather than as a table rule running edge to edge.
+     Left-anchored: the gradient fades rightward and the bright end has to stay
+     with the number it belongs to. */
+  content:""; display:block; height:1px; width:88%; margin-bottom:clamp(14px,1.5vw,24px);
   background:linear-gradient(to right,rgba(249,249,249,.42),rgba(249,249,249,.12));
 }
 .process-step-h { margin:0; font-weight:400; }
