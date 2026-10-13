@@ -2161,22 +2161,28 @@ tuning gradient stops against §25 was time spent solving a problem that did
 not need to exist. If a shape is needed, place the asset. The convention is
 `.orb` in `playground/rysing-branding.html`.
 
-**`mix-blend-mode:screen` is how they sit on the ink.** The surround is pure
-black and screening black is a no-op, so it disappears and only the colour
-survives. Two consequences, both load bearing:
+**The red and the blue are lit differently, and that is deliberate.**
 
-- **`.process` must carry its own `background` and `isolation`.** Screen only
-  cancels the surround if there is something to screen *against*. Without the
-  background the shapes composite toward transparency, the surround stays black
-  and paints a dark halo across the page. That was built and seen.
-- **`.process` must therefore clip,** because a shape crossing the bottom edge
-  leaves that backdrop and the halo comes back over the footer. The footer
-  keeps its own blue, which continues the one in the climb.
+- **The red spheres are placed whole, with no blend mode.** The asset is a lit
+  mass inside a dark circular vignette, and **the vignette is the only thing
+  giving it a circular silhouette.** `mix-blend-mode:screen` deletes it —
+  screening pure black is a no-op — leaving the bare orange mass, which is an
+  irregular lump and reads as one. That shipped, and the word for it was
+  "weird". The surround is #000 on a #141414 page, so it reads as a soft dark
+  disc: exactly the sphere the design draws. Blur stays small (2px) for the
+  same reason; blurring hard melts the mass into the vignette and the sphere
+  goes back to being a blob.
+- **The blue keeps `screen`, and a 46px blur.** In the design it is ambient
+  light with no edge, not an object. Placed whole it reads as a large dark
+  ball sitting in the corner, which is the opposite of light.
 
-**Warm and cool must not overlap. Screen adds.** The blue was first placed
-large enough to reach up behind the climb, and every red sphere over it turned
-**pink**. The blue is kept below the modules for that reason — a colour rule
-here, not a composition preference.
+Because the blue screens, **it must stay clear of the climb**: it was tried
+reaching up behind the modules and every red sphere over it turned **pink**.
+
+Screen needs something to screen against, so for the blue's sake `.process`
+carries its own `background` and `isolation` — without them the surround
+composites toward transparency and paints a dark halo. The section clips for
+the same reason. The footer keeps its own blue, which continues this one.
 
 §25's brown problem does not arise on this page: nothing is composited toward
 the grey `--ink`. The check here is simpler — are the shapes the assets, and
