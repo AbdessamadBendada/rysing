@@ -10,10 +10,11 @@ Read this before touching anything.
 | `index.html` | `src/index.html` | §2, §7–§11, §15, §16 |
 | `contact.html` | `src/contact.html` | §13 |
 | `about.html` | `src/about.html` | §14, **§18–§25** |
-| all three | `src/_footer.html` | §17 |
-| all three | `src/_testimonials.html` | §7, §23, **§24** |
+| `process.html` | `src/process.html` | **§26** |
+| all four | `src/_footer.html` | §17 |
+| homepage + about | `src/_testimonials.html` | §7, §23, **§24** |
 | homepage + about | `src/_marquee.html` | §22 |
-| all three | the background glows | **§25 — read this before adding one** |
+| all four | the background glows | **§25 — read this before adding one, and §26** |
 
 **The about page is the live front.** §14 describes it as first built; §18–§25
 are this cycle and override §14 wherever they disagree.
@@ -158,12 +159,13 @@ Unresolved: see §6.
 | `src/index.html` | **The homepage source. Edit this, not `index.html`.** |
 | `src/contact.html` | Contact page source. §13. |
 | `src/about.html` | About page source. §14, and **§18–§21 for everything newer**. |
-| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all three pages. See §12. |
+| `src/process.html` | Process page source. **§26.** |
+| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all four pages. See §12. |
 | `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
 | `src/_marquee.html` | The thirteen client logos and their measured `--f` fractions. Included by the homepage's `#recognition` and the about page (§22). **It carries no comment on purpose** — an HTML comment here ships into both pages and breaks the byte-identical guarantee the extraction was checked against. |
 | `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. **The glow rules are the fragile part — §25.** |
 | `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css` and `shared.js` — see §12, this is load bearing. |
-| `index.html`, `contact.html`, `about.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
+| `index.html`, `contact.html`, `about.html`, `process.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `playground/new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
 | `playground/testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
@@ -2126,3 +2128,74 @@ All eleven about boundaries probed from viewport captures: max channel delta
 requests on all three pages at 1680/1440/1024/900/768/560/390. Each section
 was looked at full size at 1440 rather than judged from a thumbnail or a
 number — which is what should have happened before the first fix shipped.
+
+## 26. The process page
+
+`src/process.html` → `process.html`. Built from the client's supplied design
+for "The spotlight brand framework". Copy is transcribed from that design and
+is not ours to reword.
+
+**It is one `<section>`, not four.** The design draws a single climb under a
+single light. Four sections would each clip and mask their own glow at a
+boundary that exists only in this build — the fault §5 and §25 keep having to
+repair. One section has no seams to defend.
+
+### The ascent
+
+Four modules in a grid, each lifted by `--rise` (a step count, 0–3) converted
+to `margin-top`. **Margin and not `transform`,** because `[data-stagger] > *`
+already owns `transform` for the reveal and would overwrite it the moment each
+module scrolled into view. `--rise` is bound to the slot, not to the module,
+so the rhythm survives a reorder — the same reasoning as the team rail's
+`--drop` (§15).
+
+Two-up below 1040px, one-up below 620px where the climb goes flat.
+
+### The orbs are objects, not ambient light
+
+This is the one place on the site where a warm light has an **edge**. The
+gradient is explicitly sized (`ellipse 60% 60%`) and placed right of centre
+(`at 66% 46%`), so it reaches transparent at x=6% — the dark crescent — and is
+still at strength when `border-radius` cuts it on the right. That cut is the
+edge the design draws. A plain `circle at …` fades out inside its own box and
+gives four soft balls instead; that was built first and was wrong.
+
+**They obey §25 even though they are bright.** The first version used
+`rgba(255,124,58)` for the core, which looks like the right orange and
+measured **rgb(240,117,55) on the page — green/red .487, the exact mud §25 is
+about.** The stops are now low-green throughout and measure **.303**, against
+the brand red's own .275. Do not "correct" them toward `var(--red)` or toward
+a friendlier orange; both roads lead back to brown.
+
+Measured with §25's own method (text transparent, images hidden, count pixels
+above luminance 34): **15.4% lit area**, under the 18% wash threshold. The
+script is not committed — it is ten lines, and §25 describes it.
+
+### The blue, and why the footer's is off here
+
+The design shows one blue mass running from the climb down past the wordmark.
+The footer already carries a blue in that exact corner, and the two are
+adjacent — the case the `.about-studio` note forbids, because each is masked
+at its own edge and they meet as a doubled blob with a dark notch. So the
+climb carries it and **`.page-process .footer-light::after` is `content:none`.**
+
+For the same reason `.process` is **not clipped**: clipping cuts the blue flat
+at the footer boundary. This adds no dead scroll — the glow's lowest point
+falls inside the footer's own height, verified at 1440 and 390 where
+`scrollHeight` equals the footer's bottom exactly. If the footer ever gets
+shorter, re-check that.
+
+### bodyclass
+
+`.page-process` comes from a new optional front-matter key, `bodyclass`, which
+build.js puts on `<body>`. It exists for rules that have to reach shared chrome
+from a single page, which so far is only the footer blue above. Pages that omit
+it ship `class=""`.
+
+### Open
+
+- **The nav calls it "Process"; the design calls it "Services".** The supplied
+  mock shows this page current under a SERVICES nav item, but the built site
+  already points Services at the homepage's `#system`. A new "Process" entry
+  was added to the overlay rather than repointing Services and losing that
+  link. One line in `src/_header.html` if the client wants it the other way.

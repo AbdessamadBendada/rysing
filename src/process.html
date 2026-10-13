@@ -1,0 +1,63 @@
+<!--
+  title: The Spotlight Brand Framework — Rysing
+  description: Four modules, one climb. Rysing's signature method: brand strategy, brand identity, online presence and brand launch.
+  home: index.html
+  skip: #process-top
+  bodyclass: page-process
+-->
+    <!-- The whole page is one section, deliberately. The design draws a single
+         climb with one continuous light behind it, and the four modules are
+         four moments in that climb rather than four sections. Split them and
+         every glow would be clipped and masked at a boundary that exists only
+         in this build — the exact fault §25 and the .about-studio note record.
+         One section, one light, no seams to defend. -->
+    <section class="band process" id="process-top" aria-labelledby="process-title">
+      <!-- The page's one cool light. It is placed here and NOT in the footer,
+           and `.page-process .footer-light::after` is off for that reason: the
+           design shows a single blue mass running from the climb down past the
+           wordmark, and two separately-masked blues meeting at the footer
+           boundary read as one blob with a dark notch through it. §25. -->
+      <span class="process-blue" aria-hidden="true"></span>
+
+      <div class="process-head">
+        <p class="label" data-reveal>The spotlight brand framework</p>
+        <h1 class="display process-title" data-reveal id="process-title"><span class="alt">Four modules.</span> One climb.</h1>
+        <p class="process-intro" data-reveal>Our signature method, and the architecture of everything we build. Each module stands alone. Together they are the climb from undecided to in demand.</p>
+      </div>
+
+      <!-- `--rise` lifts each module above the one before it, so the row reads
+           as an ascent rather than a list. It is bound to the slot, not to the
+           module: the step is the design's rhythm and has to stay even if the
+           copy is reordered — same reasoning as the team rail's `--drop`.
+
+           The number is an <h2> carrying the title, not a decorative digit
+           beside one. A screen reader meets "01. Spotlight brand strategy" in
+           that order, which is the reading order the design draws. -->
+      <ol class="process-climb" data-stagger>
+        <li class="process-step" style="--rise:0">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">01</span> <span class="display"><span class="alt">Spotlight brand</span> strategy</span></h2>
+          <p>Positioning, niche, ideal client, messaging, story and voice. The decision everything downstream is built on.</p>
+        </li>
+        <li class="process-step" style="--rise:1">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">02</span> <span class="display"><span class="alt">Spotlight brand</span> identity</span></h2>
+          <p>Logo and visual identity, naming, photography, videography, speaker reels and media kit. The face the decision wears.</p>
+        </li>
+        <li class="process-step" style="--rise:2">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">03</span> <span class="display"><span class="alt">Spotlight online</span> presence</span></h2>
+          <p>Website, copywriting, social accounts, LinkedIn and Instagram content, newsletter. Where the brand lives and keeps working.</p>
+        </li>
+        <li class="process-step" style="--rise:3">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">04</span> <span class="display"><span class="alt">Spotlight brand</span> launch</span></h2>
+          <p>Campaigns, live launches, webinars and workshops, ads and email automation. Turning the brand into revenue.</p>
+        </li>
+      </ol>
+
+      <!-- Lower case on a page that is otherwise entirely upper case. That is
+           the design's own emphasis and not an oversight: it is the one quiet
+           line at the top of the climb. Do not sentence-case it. -->
+      <p class="process-rise" data-reveal>rise into visibility, authority and impact.</p>
+    </section>

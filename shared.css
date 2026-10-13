@@ -1919,3 +1919,152 @@ body::after {
   .about-member { margin-top:0; }
 }
 .about-h .keep { white-space:nowrap; }
+
+/* --- Process: the spotlight brand framework ------------------ */
+
+/* The page is one section and one light. See src/process.html for why it is
+   not four. */
+/* Deliberately NOT clipped. The blue is meant to carry on down behind the
+   footer and the wordmark, as one light, and a section that clips would cut it
+   flat at the footer boundary — the hard line §5 keeps having to be fixed.
+   This adds no dead scroll: the glow's lowest point falls well inside the
+   footer's own height, and html already carries overflow-x:clip for the
+   sideways bleed. Verified at 1440 and 390 — document height is unchanged. */
+.process {
+  position:relative; isolation:isolate;
+  padding-block:clamp(74px,8vw,128px) clamp(90px,10vw,170px);
+}
+
+/* THE PAGE'S ONE BLUE, AND THE FOOTER'S IS OFF BECAUSE OF IT.
+   The design draws a single blue mass low-left. The footer already carries a
+   blue in exactly that corner, and the two are adjacent — the case the
+   .about-studio note forbids, because each is masked at its own edge and they
+   meet as a doubled blob with a dark notch through it. So this one carries the
+   moment and `.page-process .footer-light::after` is off.
+
+   Blue is allowed to be big: it does not muddy the way the warm lights do
+   (§25 — that failure is specific to red compositing toward the grey --ink).
+   The ramp is `.about-studio-glow`'s, which is the sanctioned one. */
+.process-blue {
+  position:absolute; z-index:-1; left:-24vw; bottom:-46%;
+  width:min(92vw,1120px); aspect-ratio:1; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,
+    rgba(74,50,246,.70), rgba(58,38,220,.32) 24%,
+    rgba(46,30,178,.10) 44%, rgba(36,24,140,.028) 62%, transparent 78%);
+}
+/* One-sided: the top is faded so the blue cannot cut flat against the head of
+   the page, and the bottom is left alone because the section clips it there
+   against the footer, where the gradient has already reached transparent. The
+   two-sided .glow-soft would erase the core — this glow is deliberately low. */
+.page-process .footer-light::after { content:none; }
+
+.process-head { max-width:1680px; margin:0 auto; }
+/* Sized to hold "Four modules. One climb." on one line from roughly 1180px
+   up, which is how the design sets it. Above that the line is the page's
+   whole top edge and a wrap halves its impact. */
+.process-title { margin:.34em 0 0; font-size:clamp(34px,5.1vw,74px); line-height:1.0; }
+.process-intro {
+  margin:clamp(20px,2.4vw,34px) 0 0; max-width:42ch;
+  color:rgba(249,249,249,.84); font-size:15px; line-height:1.72;
+}
+
+/* The climb. Four columns, bottom-heavy on the left: `--rise` is a step count
+   and the margin converts it into the ascent, so module 01 sits three steps
+   low and 04 sits at the top. It is margin and NOT transform on purpose —
+   `[data-stagger] > *` already owns transform for the reveal, and a transform
+   here would be overwritten the moment each step scrolled into view. */
+.process-climb {
+  --step:clamp(34px,4.6vw,86px);
+  list-style:none; margin:clamp(40px,5vw,78px) auto 0; padding:0;
+  max-width:1680px;
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(18px,2.2vw,40px); align-items:start;
+}
+/* Counts down, so a larger --rise sits higher. */
+.process-step {
+  position:relative;
+  margin-top:calc((3 - var(--rise)) * var(--step));
+}
+/* The rule above each module, which the design runs full column width. It is
+   the only hairline on the page and it is what makes the four read as rungs
+   rather than as floating paragraphs. */
+.process-step::before {
+  content:""; display:block; height:1px; margin-bottom:clamp(14px,1.5vw,24px);
+  background:linear-gradient(to right,rgba(249,249,249,.42),rgba(249,249,249,.12));
+}
+.process-step-h { margin:0; font-weight:400; }
+.process-num {
+  display:block; font-size:clamp(40px,4.9vw,74px); line-height:.9;
+  color:var(--paper);
+}
+.process-step-h .display:not(.process-num) {
+  display:block; margin-top:.42em; font-size:clamp(15px,1.42vw,21px); line-height:1.2;
+}
+.process-step p {
+  margin:clamp(12px,1.3vw,20px) 0 0;
+  color:rgba(249,249,249,.76); font-size:13.5px; line-height:1.68;
+}
+
+/* The orbs. These are NOT the page's ambient light — they are objects, which
+   is why they have an edge: the gradient core sits right of centre and is
+   still bright when it reaches the circle, so border-radius cuts a crisp arc
+   there and the light falls away to nothing on the left. That asymmetry is
+   the whole look; centring the core gives four flat discs.
+
+   The source colour is rgba(255,40,8) and NOT var(--red). This looks like a
+   mistake and is not — §25: --red over the grey --ink raises green relative to
+   red, so a dimmed brand red is brown. Starting hotter and with almost no
+   green lands on the brand ratio once dimmed. Changing these to var(--red)
+   reintroduces the mud the client reported.
+
+   The falloff is fast for the same reason: a slow ramp spends its area in the
+   .15-.40 band, which is exactly the muddy one. Bright core, thin ring. */
+.process-orb {
+  position:absolute; z-index:-1; pointer-events:none;
+  left:-38%; bottom:calc(100% - clamp(86px,10vw,170px));
+  width:clamp(190px,24vw,352px); aspect-ratio:1; border-radius:50%;
+  filter:blur(2px);
+  /* The gradient is sized (54%) and placed right of centre (70%), so its own
+     falloff reaches transparent at x=16% — the dark crescent — while on the
+     right it is still at full strength when border-radius cuts it. That cut IS
+     the edge the design draws. A `circle at …` with no size fades out inside
+     the box instead, which is what makes a soft ball rather than a lit sphere. */
+  /* Low green at every stop. rgba(255,124,58) was tried for the core and
+     measured rgb(240,117,55) on the page — green/red .487, which is the
+     muddy orange §25 is about, not the brand red. These stops measure .30. */
+  background:radial-gradient(ellipse 60% 60% at 66% 46%,
+    rgba(255,76,26,.95) 0%, rgba(252,44,10,.64) 18%,
+    rgba(226,30,6,.40) 34%, rgba(178,22,5,.24) 52%,
+    rgba(120,15,4,.115) 70%, rgba(62,8,2,.035) 86%, transparent 100%);
+}
+
+/* Lower case, and right where the climb tops out. */
+.process-rise {
+  max-width:1680px; margin:clamp(52px,7vw,120px) auto 0;
+  text-align:right; color:rgba(249,249,249,.72);
+  font-size:12px; letter-spacing:.04em;
+}
+
+@media (max-width:1040px) {
+  /* Two up. The step halves rather than going flat: the ascent still reads
+     across each pair, which is the point of the section. */
+  .process-climb { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:clamp(34px,5vw,56px); }
+  .process-step:nth-child(odd) { margin-top:var(--step); }
+  .process-step:nth-child(even) { margin-top:0; }
+  /* Pulled inboard. At -38% the left-hand column's orbs hang off the page
+     edge and are cut into half-discs — on the wide layout that happens once,
+     to 01 only, and the design draws it; in two columns it happens to every
+     odd module and starts reading as a clipping bug rather than as light. */
+  .process-orb { left:-12%; width:clamp(190px,30vw,330px); }
+}
+@media (max-width:620px) {
+  /* One up, and the climb goes flat — a stagger in a single column is just an
+     uneven gap. The orbs shrink and tuck behind each number so they stay
+     light behind the module rather than drifting off the page edge. */
+  .process-climb { grid-template-columns:minmax(0,1fr); row-gap:clamp(30px,8vw,46px); }
+  .process-step,
+  .process-step:nth-child(odd),
+  .process-step:nth-child(even) { margin-top:0; }
+  .process-orb { left:-8%; width:min(74vw,320px); }
+  .process-rise { text-align:left; }
+}

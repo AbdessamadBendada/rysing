@@ -21,6 +21,14 @@
            the same link navigates home and then scrolls.
     skip   target of the skip-link, which has to be a real id on this page.
 
+  Optional keys default rather than failing — see OPTIONAL:
+
+    bodyclass  a class on <body>, for the rare rule that has to reach shared
+               chrome from a single page. The process page needs it: its blue
+               runs down into the footer as one light, so the footer's own
+               blue has to be off there and nowhere else (HANDOFF §25's rule
+               that two adjacent sections may not light the same side).
+
   Unresolved `{{token}}` or a missing required key is a hard failure. A page
   that silently ships `{{home}}#work` in an href is worse than one that fails
   to build.
@@ -56,7 +64,7 @@ const assetVersion = (file) =>
 
 /* Keys a page may leave out. Everything else still has to be declared, so a
    typo in a token remains a build failure rather than an empty attribute. */
-const OPTIONAL = { pagescripts: '' };
+const OPTIONAL = { pagescripts: '', bodyclass: '' };
 
 /* Pulls the leading `key: value` comment off a page source and returns it
    alongside the remaining markup. A value may be empty (`home:`). */

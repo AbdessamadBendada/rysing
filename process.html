@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Drops `no-js` before the first paint. It has to be inline and in the
+       head: `.no-js` changes the reel's layout and turns the testimonial rail
+       into a wrapped row, so clearing it from the deferred shared.js would
+       paint the no-script layout and then reflow on every load. The class sits
+       on <html> rather than <body> for the same reason — <body> does not exist
+       yet at this point. A failed shared.js therefore leaves a page that is
+       fully readable, which is the behaviour HANDOFF.md §2 requires. -->
+  <script>document.documentElement.classList.remove('no-js');</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Spotlight Brand Framework — Rysing</title>
+  <meta name="description" content="Four modules, one climb. Rysing's signature method: brand strategy, brand identity, online presence and brand launch." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="rysing-assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rysing-assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="rysing-assets/favicon-180.png" />
+  <meta name="theme-color" content="#141414" />
+
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
+
+  <link rel="stylesheet" href="shared.css?v=b0868a01" />
+</head>
+<body class="page-process">
+  <a class="skip-link" href="#process-top">Skip to content</a>
+
+  <header class="site-head">
+    <a class="wordmark" href="index.html#top" aria-label="Rysing home"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" /></a>
+    <div class="head-right">
+      <a class="btn-pill btn-pill-head" href="index.html#contact">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" aria-label="Open menu"><span class="menu-toggle-lines" aria-hidden="true"></span></button>
+    </div>
+  </header>
+
+  <aside class="menu-overlay" id="menu-overlay" aria-hidden="true">
+    <button class="overlay-close" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+    <nav class="overlay-nav display" aria-label="Overlay navigation">
+      <a href="index.html#top">Home</a><a href="index.html#founder">About</a><a href="index.html#system">Services</a><a href="process.html" aria-current="page">Process</a><a href="index.html#work">Portfolio</a><a href="/blog">Blog</a><a href="contact.html">Contact</a>
+    </nav>
+    <div class="overlay-bottom">
+      <!-- TODO(asset): real award logo files pending from client Drive -->
+      <div class="award-lockups" aria-label="Awards">
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+      </div>
+      <!-- TODO(link): final social profile URLs not supplied -->
+      <div class="social-links" aria-label="Social media">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.5-3.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v7h4v-7h3.2l.8-4h-4V9c0-.7.3-1 1-1Z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM2 9h4v13H2V9Zm7 0h4v1.8c1-1.4 2.4-2.2 4.2-2.2 4 0 4.8 2.6 4.8 6V22h-4v-6.6c0-1.6 0-3.6-2.2-3.6S13 13.5 13 15.3V22H9V9Z"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.7 3.3-3.2 16c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20 2.9c.9-.3 1.9.2 1.7.4Z"/></svg></a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="top">
+    <!-- The whole page is one section, deliberately. The design draws a single
+         climb with one continuous light behind it, and the four modules are
+         four moments in that climb rather than four sections. Split them and
+         every glow would be clipped and masked at a boundary that exists only
+         in this build — the exact fault §25 and the .about-studio note record.
+         One section, one light, no seams to defend. -->
+    <section class="band process" id="process-top" aria-labelledby="process-title">
+      <!-- The page's one cool light. It is placed here and NOT in the footer,
+           and `.page-process .footer-light::after` is off for that reason: the
+           design shows a single blue mass running from the climb down past the
+           wordmark, and two separately-masked blues meeting at the footer
+           boundary read as one blob with a dark notch through it. §25. -->
+      <span class="process-blue" aria-hidden="true"></span>
+
+      <div class="process-head">
+        <p class="label" data-reveal>The spotlight brand framework</p>
+        <h1 class="display process-title" data-reveal id="process-title"><span class="alt">Four modules.</span> One climb.</h1>
+        <p class="process-intro" data-reveal>Our signature method, and the architecture of everything we build. Each module stands alone. Together they are the climb from undecided to in demand.</p>
+      </div>
+
+      <!-- `--rise` lifts each module above the one before it, so the row reads
+           as an ascent rather than a list. It is bound to the slot, not to the
+           module: the step is the design's rhythm and has to stay even if the
+           copy is reordered — same reasoning as the team rail's `--drop`.
+
+           The number is an <h2> carrying the title, not a decorative digit
+           beside one. A screen reader meets "01. Spotlight brand strategy" in
+           that order, which is the reading order the design draws. -->
+      <ol class="process-climb" data-stagger>
+        <li class="process-step" style="--rise:0">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">01</span> <span class="display"><span class="alt">Spotlight brand</span> strategy</span></h2>
+          <p>Positioning, niche, ideal client, messaging, story and voice. The decision everything downstream is built on.</p>
+        </li>
+        <li class="process-step" style="--rise:1">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">02</span> <span class="display"><span class="alt">Spotlight brand</span> identity</span></h2>
+          <p>Logo and visual identity, naming, photography, videography, speaker reels and media kit. The face the decision wears.</p>
+        </li>
+        <li class="process-step" style="--rise:2">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">03</span> <span class="display"><span class="alt">Spotlight online</span> presence</span></h2>
+          <p>Website, copywriting, social accounts, LinkedIn and Instagram content, newsletter. Where the brand lives and keeps working.</p>
+        </li>
+        <li class="process-step" style="--rise:3">
+          <span class="process-orb" aria-hidden="true"></span>
+          <h2 class="process-step-h"><span class="process-num display">04</span> <span class="display"><span class="alt">Spotlight brand</span> launch</span></h2>
+          <p>Campaigns, live launches, webinars and workshops, ads and email automation. Turning the brand into revenue.</p>
+        </li>
+      </ol>
+
+      <!-- Lower case on a page that is otherwise entirely upper case. That is
+           the design's own emphasis and not an oversight: it is the one quiet
+           line at the top of the climb. Do not sentence-case it. -->
+      <p class="process-rise" data-reveal>rise into visibility, authority and impact.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="footer-light" aria-hidden="true"></span>
+    <div class="footer-grid label">
+      <p class="footer-blurb">Brand, content and sales for founders who want to become the only choice in their industry.</p>
+      <nav aria-label="Company">
+        <h3>Company</h3>
+        <a href="index.html#system">Services</a><a href="index.html#spotlight">Keynote speaking</a><a href="index.html#work">Work</a><a href="index.html#sunday-fudge">Sunday Fudge</a><a href="index.html#contact">Apply to work with us</a>
+      </nav>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:hello@rysing.agency">hello@rysing.agency</a><a href="#">rysing.agency</a><span>Vienna, Austria</span>
+      </div>
+      <!-- TODO(link): legal pages pending -->
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="#">Imprint</a><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a><a href="#">Cookie Policy</a><a href="#top">Back to top ↑</a>
+      </nav>
+    </div>
+    <div class="footer-meta label">
+      <span>© 2026 Rysing, Vienna, Austria. All rights reserved.</span>
+    </div>
+    <a href="index.html#top" aria-label="Rysing, back to top"><img class="footer-mark" src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" loading="lazy" decoding="async" /></a>
+  </footer>
+
+  <script src="shared.js?v=81b39080" defer></script>
+
+</body>
+</html>
