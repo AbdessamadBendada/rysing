@@ -2080,9 +2080,14 @@ body::after {
    sphere a little of its defined silhouette — that is the trade, and it was
    made knowingly. */
 .process-orb {
-  left:-46%; bottom:calc(100% - clamp(86px,10vw,170px));
-  width:clamp(256px,32vw,474px);
+  left:-44%; bottom:calc(100% - clamp(86px,10vw,170px));
+  width:clamp(236px,29.5vw,437px);
   background-image:url("rysing-assets/pattern-red.webp");
+  /* Per-module angle, set in the markup beside --rise. The asset has one
+     prominent dark lobe, so four unrotated copies read as one stamp repeated
+     four times. Safe to use transform here: the reveal animates transform on
+     .process-step, the parent, never on the orb itself. */
+  transform:rotate(var(--spin,0deg));
   filter:blur(3px) brightness(.84) saturate(.92);
   -webkit-mask-image:radial-gradient(circle closest-side,#000 44%,rgba(0,0,0,0) 80%);
           mask-image:radial-gradient(circle closest-side,#000 44%,rgba(0,0,0,0) 80%);
@@ -2106,7 +2111,7 @@ body::after {
      disc sliced flat, which reads as a clipping bug. On the wide layout only
      01 crosses and the design draws it that way; in two columns it would
      happen to every odd module. */
-  .process-orb { left:0; width:clamp(243px,36vw,397px); }
+  .process-orb { left:0; width:clamp(224px,33vw,366px); }
 }
 @media (max-width:620px) {
   /* One up, and the climb goes flat — a stagger in a single column is just an
@@ -2120,7 +2125,7 @@ body::after {
      wider size stack into one continuous red band down the page — the
      spheres stop being four lights and the body copy has to be read on top
      of it. Alternating breaks the band and keeps one light per module. */
-  .process-orb { left:0; right:auto; width:min(66vw,294px); }
+  .process-orb { left:0; right:auto; width:min(61vw,271px); }
   .process-step:nth-child(even) .process-orb { left:auto; right:0; }
   .process-rise { text-align:left; }
 }

@@ -2197,9 +2197,16 @@ default `farthest-corner` is 1.41x larger, lands outside the artwork, and does
 nothing.
 
 The mask costs about 20% of the visible radius, so the element was scaled up
-~1.28x and `left` moved from -30% to -46% to hold the centre still. Coverage
-measured back at 12.5% against the 12.1% it had before, so the size the client
-signed off on is unchanged.
+and `left` moved from -30% to -44% to hold the centre still. Coverage measured
+back close to what it had before the mask, so the size the client signed off on
+survived the change; it was then trimmed ~8% on their instruction.
+
+**Each sphere carries a `--spin`,** set in the markup beside `--rise`. The
+asset has one prominent dark lobe, so four unrotated copies read as the same
+stamp printed four times. The angles are deliberately uneven — 0/90/180/270
+reads as a pattern rather than as chance. `transform` is free to use on the orb
+because the reveal animates transform on `.process-step`, the parent, never on
+the orb itself.
 
 **The trade is real and was made knowingly:** the hard ring is gone and the
 spheres are softer-edged for it, because that ring was also their silhouette.
