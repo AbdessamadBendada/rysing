@@ -16,8 +16,21 @@ Read this before touching anything.
 | homepage + about | `src/_marquee.html` | §22 |
 | all four | the background glows | **§25 — read this before adding one, and §26** |
 
+**The newest work is §26, the process page** — a fourth page, built from a
+client design, and the only place on the site using the brand pattern assets
+as foreground shapes. Read it before touching anything on that page; almost
+every rule in it was arrived at by getting it wrong first.
+
+**Also changed since §25, all client-instructed:**
+
+- **The team order is now Kristina, Marc, Kim, Ben** on both the homepage rail
+  and the about grid. It was Kim, Ben, Kristina, Marc. §15.
+- **The about page's courage photograph is the real one.** The cable-car
+  interview frame the design called for was supplied and is in; the
+  `work-03-clemens` stand-in and its `TODO(asset)` are gone. §22.
+
 **The about page is the live front.** §14 describes it as first built; §18–§25
-are this cycle and override §14 wherever they disagree.
+are that cycle and override §14 wherever they disagree.
 
 **The homepage is no longer untouched.** It was, up to §17. Since then §22
 moved its logo marquee into a partial (byte-identical output), §24 removed
@@ -1342,10 +1355,16 @@ tiles left anywhere on the page. The roster, in rail order after the fixed lead:
 | Who | Role as supplied | Asset | From |
 | --- | --- | --- | --- |
 | Anzhelika | Founder · The mind behind it all | `anzhelika-red-suit.webp` | 2547x3221 PNG, 7.2MB → 67KB |
-| Kim | Brand identity, design systems, and everything you see | `kim-brand-designer.webp` | unchanged |
-| Ben | Web development, SEO, and everything web-side | `abdessamad-pic.webp` | unchanged |
 | Kristina | Photographer, videographer and content creator | `kristina-verbitskaia.webp` | 1067x1600, 217KB → 92KB |
 | Marc | Partner and producer | `marc-babin.webp` | **1600x1200 landscape**, 92KB → 40KB |
+| Kim | Brand identity, design systems, and everything you see | `kim-brand-designer.webp` | unchanged |
+| Ben | Web development, SEO, and everything web-side | `abdessamad-pic.webp` | unchanged |
+
+**The order is the client's and was changed once** — it was Kim, Ben, Kristina,
+Marc. It is set in source order on both the homepage rail and the about grid,
+and the two must agree. **The `--drop` / `--rise` offsets stayed with the slot,
+not with the person:** they are the layout's zigzag rhythm, and had they
+travelled with each card the stagger would have broken on the reorder.
 
 Every slot is 4:5 at 900x1125. Kristina's crop is lifted pixel-for-pixel from
 her original with no resampling at all. **Marc's source is landscape** — the
@@ -2136,51 +2155,65 @@ for "The spotlight brand framework". Copy is transcribed from that design and
 is not ours to reword.
 
 **It is one `<section>`, not four.** The design draws a single climb under a
-single light. Four sections would each clip and mask their own glow at a
-boundary that exists only in this build — the fault §5 and §25 keep having to
-repair. One section has no seams to defend.
+single light. Four sections would each clip their own shapes at a boundary
+that exists only in this build — the fault §5 and §25 keep having to repair.
 
 ### The ascent
 
-Four modules in a grid, each lifted by `--rise` (a step count, 0–3) converted
-to `margin-top`. **Margin and not `transform`,** because `[data-stagger] > *`
-already owns `transform` for the reveal and would overwrite it the moment each
-module scrolled into view. `--rise` is bound to the slot, not to the module,
-so the rhythm survives a reorder — the same reasoning as the team rail's
-`--drop` (§15).
+Four modules in a grid. Two per-slot custom properties are set in the markup,
+not in CSS, so they sit next to each other and are obvious to edit:
 
-Two-up below 1040px, one-up below 620px where the climb goes flat.
+| | what it does |
+| --- | --- |
+| `--rise` | step count 0–3, converted to `margin-top`, which makes the ascent |
+| `--spin` | the angle of that module's sphere |
+
+**`--rise` is margin and not `transform`,** because `[data-stagger] > *` owns
+`transform` for the reveal and would overwrite it the moment each module
+scrolled into view. Both are bound to the slot rather than to the module, so
+the rhythm survives a reorder — the team rail's `--drop` reasoning (§15).
+
+**`--spin` angles are deliberately uneven** (-14°, 118°, 237°, 64°). The asset
+has one prominent dark lobe, so unrotated copies read as the same stamp printed
+four times; evenly spaced angles read as a pattern rather than as chance.
+`transform` is safe on the orb because the reveal animates `.process-step`, the
+parent, never the orb itself.
+
+The rule above each number is 88% of its column, left-anchored. At full width
+it ran edge to edge and read as a table rule. Left-anchored because the
+gradient fades rightward and the bright end belongs with its number.
+
+Two-up below 1040px, one-up below 620px where the climb goes flat and the
+spheres alternate sides — four in a single column stacked into one continuous
+red band with the body copy on top of it.
 
 ### The shapes are the brand assets. Do not draw them.
 
 `rysing-assets/pattern-red.webp` and `pattern-blue.webp` ARE the spheres the
-design draws — an irregular lit mass inside a soft circular vignette. **This
-page shipped once with hand-written radial-gradients in their place** and read
-as four fuzzy blobs. No gradient reproduces that artwork, and the time spent
-tuning gradient stops against §25 was time spent solving a problem that did
-not need to exist. If a shape is needed, place the asset. The convention is
-`.orb` in `playground/rysing-branding.html`.
+design draws. **This page shipped once with hand-written radial-gradients in
+their place** and read as four fuzzy blobs. No gradient reproduces that
+artwork, and the hours spent tuning gradient stops against §25 solved a problem
+that did not need to exist. If a shape is needed, place the asset. The
+convention is `.orb` in `playground/rysing-branding.html`.
 
-**The red and the blue are lit differently, and that is deliberate.**
+**Red and blue are lit differently, deliberately.** In the design the red
+shapes are objects with an edge and the blue is ambient light with none.
 
-- **The red spheres are placed whole, with no blend mode.** The asset is a lit
-  mass inside a dark circular vignette, and **the vignette is the only thing
-  giving it a circular silhouette.** `mix-blend-mode:screen` deletes it —
-  screening pure black is a no-op — leaving the bare orange mass, which is an
-  irregular lump and reads as one. That shipped, and the word for it was
-  "weird". The surround is #000 on a #141414 page, so it reads as a soft dark
-  disc: exactly the sphere the design draws. Blur stays small (2px) for the
-  same reason; blurring hard melts the mass into the vignette and the sphere
-  goes back to being a blob.
-- **The blue keeps `screen`, and a 46px blur.** In the design it is ambient
-  light with no edge, not an object. Placed whole it reads as a large dark
-  ball sitting in the corner, which is the opposite of light.
+- **Red:** placed whole, no blend mode, `blur(3px)`, masked (below).
+- **Blue:** `mix-blend-mode:screen` and `blur(46px)`. Placed whole it reads as
+  a large dark ball in the corner, which is the opposite of light.
 
-**The black ring around each sphere is masked off, and the cutout does not
-fix it.** The asset is a glow painted ON BLACK and that black is opaque
-artwork, not a transparent surround — verified by compositing it over a bright
-colour, where the ring stays solid. Against the `#141414` page it reads as an
-outline drawn around every sphere.
+**Warm and cool must not overlap.** The blue screens, so it adds: it was tried
+reaching up behind the climb and every red sphere over it turned **pink**. It
+is kept below the modules for that reason — a colour rule, not a composition
+preference.
+
+### The black ring, and why the cutout does not fix it
+
+The asset is a glow painted ON BLACK, and that black is opaque artwork rather
+than a transparent surround — verified by compositing it over a bright colour,
+where the ring stays solid. Against the `#141414` page it reads as an outline
+drawn around every sphere.
 
 `rysing brand assets/Pattern Assets/Brand Asset_15.png` (red) and
 `Brand Asset_11.png` (blue) are the same artwork WITH alpha — mean difference
@@ -2189,68 +2222,77 @@ flattened onto black. **Swapping them in changes nothing visible:** their alpha
 only trims the square corners outside the disc, and the ring is inside it. Do
 not spend 2.5MB an asset on it.
 
-What works is a mask: `radial-gradient(circle closest-side, …)`, fading out at
-44%→80%, which finishes before the black begins. **`closest-side` is load
-bearing** — it makes the gradient's 100% equal the element's half-width, which
-is the asset's own circle radius, so the stops are in units of that circle. The
-default `farthest-corner` is 1.41x larger, lands outside the artwork, and does
-nothing.
+What works is `mask-image: radial-gradient(circle closest-side, #000 44%,
+transparent 80%)`, which finishes before the black begins. **`closest-side` is
+load bearing** — it makes the gradient's 100% equal the element's half-width,
+which is the asset's own circle radius, so the stops are in units of that
+circle. The default `farthest-corner` is 1.41x larger, lands outside the
+artwork, and does nothing.
 
-The mask costs about 20% of the visible radius, so the element was scaled up
-and `left` moved from -30% to -44% to hold the centre still. Coverage measured
-back close to what it had before the mask, so the size the client signed off on
-survived the change; it was then trimmed ~8% on their instruction.
+The mask costs ~20% of the visible radius, so the element was scaled up and
+`left` moved from -30% to -44% to hold the centre still.
 
-**Each sphere carries a `--spin`,** set in the markup beside `--rise`. The
-asset has one prominent dark lobe, so four unrotated copies read as the same
-stamp printed four times. The angles are deliberately uneven — 0/90/180/270
-reads as a pattern rather than as chance. `transform` is free to use on the orb
-because the reveal animates transform on `.process-step`, the parent, never on
-the orb itself.
+**The trade is real and was made knowingly:** the ring is gone and the spheres
+are softer-edged for it, because that ring was also their silhouette. The fix
+with no trade-off is an asset re-exported to fade to alpha rather than to
+black. The two files above are what to ask the designer for.
 
-**The trade is real and was made knowingly:** the hard ring is gone and the
-spheres are softer-edged for it, because that ring was also their silhouette.
-The fix with no trade-off is an asset re-exported to fade to alpha rather than
-to black — the source files to ask for are the two named above.
+### The grade was measured, not judged by eye
 
-**The red is graded, and the grade was measured against the mock, not judged
-by eye — eye got it wrong three times running.** Sampling strongly-saturated
-orange pixels across the whole page:
+Eye got it wrong three times running — too fuzzy, then "weird", then "worse".
+What settled it was sampling strongly-saturated orange pixels (red > 90, blue
+< 45% of red, green < 75% of red) across the whole page:
 
 | | coverage | median R | p95 |
 | --- | --- | --- | --- |
 | client mock | 12.6% | **158** | rgb(239,65,33) |
 | first attempt | 13.0% | **209** | rgb(239,65,32) |
-| shipped | 12.1% | **162** | rgb(180,53,29) |
+| shipped | 11.3% | **151** | rgb(192,57,31) |
 
-Identical coverage and identical peak on the first attempt — **the size was
-never wrong, and neither was the brightest orange.** The fault was the
-midtone: our spheres were flat bright orange across the disc where the mock's
-hold the asset's dark internal lobe and a real falloff, which is why they read
-as solid painted rocks.
+The first attempt had **identical coverage and an identical peak** to the mock,
+so neither the size nor the brightest orange was ever wrong. The fault was the
+**midtone**: our spheres were flat bright orange across the disc where the
+mock's hold the asset's dark internal lobe and a real falloff. That is what
+made them read as solid painted rocks sitting on the page.
 
-`brightness()` fixes it. **`contrast()` is the wrong tool** — tried, measured,
-discarded: the asset's interior sits above mid-grey so contrast pushes the
-midtone *up* (186 → 209 → 230) and collapses the green channel with it, taking
-the peak to rgb(241,12,4) and breaking the hue. Blur cannot do it either; it
-only widens the orange-to-black ramp, and 20px still leaves a median of 183
-while destroying the silhouette.
+`brightness()` is the control. **`contrast()` is the wrong tool** — tried,
+measured, discarded: the asset's interior sits above mid-grey, so contrast
+pushes the midtone *up* (186 → 209 → 230) and collapses the green channel with
+it, taking the peak to rgb(241,12,4) and breaking the hue. **Blur cannot do it
+either** — it only widens the orange-to-black ramp, and 20px still leaves a
+median of 183 while destroying the silhouette.
 
-The copy sits over the spheres, as it does in the mock. That is only safe
-while the midtone stays down — if these are ever brightened, read module 01's
+The copy sits over the spheres, as it does in the mock. **That is only safe
+while the midtone stays down** — if these are ever brightened, read module 01's
 body text before shipping.
 
-Because the blue screens, **it must stay clear of the climb**: it was tried
-reaching up behind the modules and every red sphere over it turned **pink**.
+### Section mechanics
 
-Screen needs something to screen against, so for the blue's sake `.process`
-carries its own `background` and `isolation` — without them the surround
-composites toward transparency and paints a dark halo. The section clips for
-the same reason. The footer keeps its own blue, which continues this one.
+`.process` carries its own `background` and `isolation`. Both are load bearing
+and neither is decoration: the blue blends with `screen`, which only cancels
+the asset's black surround if there is something to screen *against*. Without
+them the surround composites toward transparency and paints a dark halo across
+the page. The section clips for the same reason — a shape crossing the bottom
+edge leaves that backdrop and the halo returns over the footer.
 
-§25's brown problem does not arise on this page: nothing is composited toward
-the grey `--ink`. The check here is simpler — are the shapes the assets, and
-is anything pink.
+The footer keeps its own blue, which continues the one in the climb.
+
+§25's brown problem does not arise here: nothing is composited toward the grey
+`--ink`. The checks for this page are simpler — are the shapes the assets, is
+anything pink, and does the orange still measure against the table above.
+
+### How to re-measure
+
+Headless Chrome is enough; nothing is committed, it is a few lines.
+
+- **Glow area (§25's metric):** render with text transparent and images hidden,
+  count pixels above luminance 34. Note `--force-prefers-reduced-motion`, or
+  the capture catches the reveal mid-transition and every number is halved —
+  that happened and sent one pass down a blind alley.
+- **Orange grade:** the filter above, against the mock as the reference image.
+- **Narrow widths:** headless clamps the viewport at 485px, so `--window-size=390`
+  silently renders at 485 and crops. Render the page in a 390px `<iframe>`
+  instead.
 
 ### Open
 
@@ -2259,3 +2301,8 @@ is anything pink.
   already points Services at the homepage's `#system`. A new "Process" entry
   was added to the overlay rather than repointing Services and losing that
   link. One line in `src/_header.html` if the client wants it the other way.
+- **The spheres' dark lobe is more exposed since they were rotated.** On 02 and
+  04 it now sits against open black instead of being tucked behind a neighbour.
+  Checked at full size and it reads as shading rather than as a smudge, but if
+  it is ever questioned, the fix is choosing angles that turn the lobe toward
+  the overlaps.
