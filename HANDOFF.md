@@ -8,18 +8,62 @@ Read this before touching anything.
 | Page | Source | Section |
 | --- | --- | --- |
 | `index.html` | `src/index.html` | §2, §7–§11, §15, §16 |
-| `contact.html` | `src/contact.html` | §13 |
-| `about.html` | `src/about.html` | §14, **§18–§25** |
-| `process.html` | `src/process.html` | **§26** |
-| all four | `src/_footer.html` | §17 |
-| homepage + about | `src/_testimonials.html` | §7, §23, **§24** |
+| `contact.html` | `src/contact.html` | §13, **§32** |
+| `about.html` | `src/about.html` | §14, §18–§25, **§31** |
+| `process.html` | `src/process.html` | §26 |
+| `communication-strategy.html` | `src/communication-strategy.html` | **§27, §29, §30** |
+| all five | `src/_footer.html` | §17, §27 |
+| all five | `shared.css` colour tokens | **§28** |
+| homepage + about + service | `src/_testimonials.html` | §7, §23, §24, §27 |
 | homepage + about | `src/_marquee.html` | §22 |
-| all four | the background glows | **§25 — read this before adding one, and §26** |
+| all five | the background shapes | **§27, then §29 and §33** |
 
-**The newest work is §26, the process page** — a fourth page, built from a
-client design, and the only place on the site using the brand pattern assets
-as foreground shapes. Read it before touching anything on that page; almost
-every rule in it was arrived at by getting it wrong first.
+**Three things are newer than most of this document. Read them before
+touching a background shape, a colour, or a service page.**
+
+**1. Backgrounds belong to the page, not to sections (§27).** `body` is the
+single compositing group. A section hosting a shape carries
+`position:relative` and **nothing else** — no `isolation`, no
+`overflow:clip`, no opaque `background`.
+
+That is only half of it. **The shape's own box is the other half (§29, §33).**
+A gradient paints only inside its own element, so `inset:0` on a glow is a
+cut section boundary waiting to happen — and a box that overhangs too far
+runs past the end of `body`, where there is no page fill, which is the same
+hard edge at the other end plus dead scroll. Both rules, always:
+
+> the box must contain the light's falloff on every side, **and** it must
+> not reach past the bottom of the document.
+
+**Converted so far: `communication-strategy.html` (§27), `about.html` (§31),
+`contact.html` (§32), `process.html` (§34).** **`index.html` is the only page
+still isolating and clipping per section.** `.glow-soft` is legacy and is kept
+alive for the homepage alone; delete it, and `.hero-light`, when the homepage
+comes over.
+
+**§34 also records a gap in the §29 scan.** A glow anchored off one side is
+cut across *its own* width, not the page's: the process page's boundary cut
+covered 42% of the columns and a scan thresholded at 90% called the page
+clean. Scan for a run of columns that change together, or read the geometry
+of every hit at 25%. The homepage's glows are mostly off-centre.
+
+**2. The page black is `#000000` (§28).** All four brand colours now match
+`rysing brand assets/Branding-Guidelines.pdf` §3.0 exactly. `--ink` was
+`#141414`; `--ink-deep` no longer means anything on its own, because nothing
+is darker than black. Many comments in `shared.css` still argue from
+`#141414` by name and are left standing as the record of why each mask
+exists.
+
+**3. The service page is complete at eight sections (§27, §29, §30).** It is
+the template for the service pages still to come. **Section order on those
+pages is given by the client, not derived** — see §27.
+
+**§26, the process page**, is still the reference for the brand pattern assets
+used as foreground shapes — how they are graded, masked and placed. §27 adds
+that the same asset is lit three different ways across the site *on purpose*,
+and says which and why. **§28 changes what that grading sits on**: the masks
+that hide the assets' black surround were tuned against `#141414` and the
+surround now matches the page exactly, so one of them may be removable.
 
 **Also changed since §25, all client-instructed:**
 
@@ -43,10 +87,29 @@ This was a single page until recently. `index.html` was called
 that still names `premium-direction.html` refers to it under that old name.
 Every other HTML file now lives in `playground/` as history.
 
-The chrome and the stylesheet are shared by all three, so **a change to
+The chrome and the stylesheet are shared by all five, so **a change to
 `src/_header.html`, `src/_footer.html`, `shared.css` or `shared.js` lands on
 every page at once.** After any such change, re-check the pages you did not
 mean to touch — the method and the baseline numbers are in §12.
+
+**`shared.css` fails silently on one specific mistake.** A CSS comment cannot
+contain the two characters that end one; writing that sequence inside a
+comment terminates it early and every declaration after it is dropped without
+an error. It happened three times in one cycle. The check is at the end of
+§27 — run it after editing the stylesheet.
+
+**Three checks belong to any shape or colour change, and each one exists
+because looking at the page missed the bug.** All three are cheap:
+
+| Check | Catches | Where |
+| --- | --- | --- |
+| whole-page hard-row scan | a glow cut at a section edge | §29 |
+| `scrollHeight` vs `body` bottom | a glow past the end of the page, dead scroll | §33 |
+| authored-centre assertion | a light that moved when it should not have | §33 |
+
+**Do not trust a single-boundary probe or a `fullPage` screenshot for any of
+them** — §5 and §29 both record a measurement that passed while the defect
+was plainly visible in a browser.
 
 ---
 
@@ -67,12 +130,22 @@ The job is to keep inverting that ratio back.
 
 ## 2. Current state
 
-Three pages, all on `main` and pushed: the homepage, contact (§13) and about
-(§14, §18–§21). The homepage is the one this section describes; it is also the
-one the client has signed off, so it is the one a shared-file change must not
-disturb.
+**This section describes the homepage and is kept for that. The page count
+is out of date wherever it appears below: there are five pages now** — the
+homepage, contact (§13), about (§14, §18–§25, §31), process (§26, §34) and
+communication-strategy (§27, §29, §30). Sections written when there were
+three say "all three pages"; read those as a record of what was verified at
+the time, not as a current count.
 
-**Two things now reach all three pages and are newer than most of this
+**Everything in this cycle is uncommitted.** The service page (both files),
+the `#000` black (§28) and the three backdrop conversions (§27, §31, §32) are
+all in the working tree and have not been pushed.
+
+The homepage is the one this section describes; it is also the one the client
+has signed off, so it is the one a shared-file change must not disturb — and
+it is now the last page still on the per-section backdrop model (§33).
+
+**Two things now reach every page and are newer than most of this
 document.** The footer wordmark is the last object on every page rather than
 the first thing in the footer (§17). And `shared.css` / `shared.js` are
 requested with a content-hash query, `shared.css?v=…`, filled by the build —
@@ -170,21 +243,23 @@ Unresolved: see §6.
 | File | Role |
 | --- | --- |
 | `src/index.html` | **The homepage source. Edit this, not `index.html`.** |
-| `src/contact.html` | Contact page source. §13. |
-| `src/about.html` | About page source. §14, and **§18–§21 for everything newer**. |
-| `src/process.html` | Process page source. **§26.** |
-| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes all four pages. See §12. |
-| `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage and about via `{{> testimonials}}`. **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
+| `src/contact.html` | Contact page source. §13, and **§32** for the backdrop conversion. |
+| `src/about.html` | About page source. §14, §18–§25, and **§31** for the backdrop conversion. |
+| `src/process.html` | Process page source. **§26**, and **§34** for the backdrop conversion. |
+| `src/communication-strategy.html` | The first service page and the template for the rest. **§27, §29, §30.** Eight sections; order is the client's. |
+| `src/_header.html`, `src/_footer.html`, `src/_layout.html` | The shared chrome, in one place. Changing one changes **all five pages**. See §12. `_layout.html` carries `theme-color`, which tracks `--ink` (§28). |
+| `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage, about **and the service page** via `{{> testimonials}}` (§27). **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
 | `src/_marquee.html` | The thirteen client logos and their measured `--f` fractions. Included by the homepage's `#recognition` and the about page (§22). **It carries no comment on purpose** — an HTML comment here ships into both pages and breaks the byte-identical guarantee the extraction was checked against. |
-| `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. **The glow rules are the fragile part — §25.** |
+| `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. **The glow rules are the fragile part — §25, and now §29 and §33 for how their boxes must be sized.** The colour tokens are the brand book's own values (§28). |
 | `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css` and `shared.js` — see §12, this is load bearing. |
-| `index.html`, `contact.html`, `about.html`, `process.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
+| `index.html`, `contact.html`, `about.html`, `process.html`, `communication-strategy.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
+| `rysing brand assets/Branding-Guidelines.pdf` | **The client's 18-page brand book, and the first written source this project has had.** §3.0 settles the palette (§28). Not the same file as `Guide 3.pdf` / `Source Files/Guide.pdf`, which are one flattened page. The directory is gitignored, so this is not in the repo. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
 | `playground/new-direction-2.html` | **Another agent's workspace. Never open for writing.** |
 | `playground/testimonials.html` | The three slider directions originally considered for §7. **None of them shipped** — the client asked for a conventional three-up rail instead. Kept as history; not part of the build. |
 | `playground/rysing-comments.html` | Frozen copy/structure baseline. Read-only. |
 | `playground/` (the rest) | Earlier cycles — `rysing.html`, `rysing2.html`, `rysing-v2.html`, `rysing-private.html`, `rysing-branding.html`. History only. |
-| `AGENTS.md` | Settled decisions and the local testing harness. **Its ACTIVE TRACK section is stale — it predates this cycle and still names `new-direction.html` as the build.** Read it for the settled decisions, not for which file to edit. |
+| `AGENTS.md` | Settled decisions and the local testing harness, kept current with this document. **Its ACTIVE TRACK section is stale — it predates this cycle and still names `new-direction.html` as the build.** Read it for the settled decisions, not for which file to edit. |
 | `new-direction-comments.md` | Why the previous direction was not premium. 12 ranked problems. |
 | `PREMIUM-DIRECTION-PLAN.md` | The brief this build was made against. Still calls the build `premium-direction.html`. |
 | `ASSET-SPEC.md` | Per-slot dimensions, crops, shot list. Send to the client. **Still says only three projects are active — correct before forwarding.** |
@@ -402,6 +477,30 @@ filenames once and wired up entirely the wrong asset.
 ---
 
 ## 6. Next steps
+
+**Open from this cycle** (§27–§33)
+
+- **Nothing in this cycle is committed.** The service page, the `#000` black
+  and the three backdrop conversions are all sitting in the working tree.
+- **`index.html` is the last per-section page.** Process came over in §34.
+  The homepage is the harder one and the reasons are in §32.
+- **The faint arc in two service-page mocks is not built** — the price and
+  the closing both draw one, and §27 records a thin curved line being
+  rejected on this page's hero. One answer from the client settles both. §29.
+- **Two `TODO(copy)` figures remain in `.svc-proof`** and the price section's
+  KMU.Digital line is the first money claim on the site. §29.
+- **The service page now carries two filled pills**, which breaks the "only
+  filled pill marks the ask" rule §27 recorded. §30.
+- **The brand book has 17 pages nobody has acted on** — logo spacing and
+  application, type usage, brand assets, print collateral. §28. It also
+  states the studio's numbers in writing, which is a source for the stats §6
+  lists below as unverified.
+- **`--ink-deep` is now the same black as `--ink`**, so the hero's gradient
+  ground is a flat fill painted by a gradient. If that darker ground is
+  wanted back it cannot be a darker black. §28.
+- **Three masks exist only to hide a ring that `#000` eliminated.** Two still
+  do a second job; `.process-orb`'s may be reversible, which would give the
+  process spheres their silhouette back. §28.
 
 **Blocking on the client**
 
@@ -2306,3 +2405,1089 @@ Headless Chrome is enough; nothing is committed, it is a few lines.
   Checked at full size and it reads as shading rather than as a smudge, but if
   it is ever questioned, the fix is choosing angles that turn the lobe toward
   the overlaps.
+
+---
+
+## 27. The services page, and the page-level backdrop
+
+Two things happened in this cycle and the second is the important one.
+
+1. A fifth page, `communication-strategy.html` — the first of the service
+   pages, built section by section from client mocks.
+2. **The background shapes stopped belonging to sections and started
+   belonging to the page.** This is an architectural change to `shared.css`
+   and it affects every page, not just the new one.
+
+### Why the backdrop changed
+
+The client's instruction: *"those shapes or patterns we are putting in the bg
+shouldn't be related to sections — they should be a background for the whole
+page, that way we get a more consistent design, not patterns that are cut
+out."*
+
+That is the same fault this document keeps repairing. §5 and §25 are about
+hard lines at section boundaries; §26 opens by saying the process page is
+written as *one* section precisely because "split them and every shape would
+be clipped at a boundary that exists only in this build". The client was
+asking to generalise that fix instead of repeating it per page.
+
+**The shapes being children of sections was never the problem.** Three other
+things were:
+
+- nearly every section carried `overflow:clip` — the blade doing the cutting;
+- each carried its own `isolation:isolate` plus its own `background`, making
+  it a private compositing group a shape could not exist across;
+- the clipping was load bearing, because of §26: a `screen`-blended shape
+  crossing a section edge left its isolation group, its black surround stopped
+  cancelling, and it painted a dark halo over whatever was below.
+
+**Hoisting the group to `body` removes the cause rather than the symptom.**
+With one group for the document a shape can never leave it, so the halo cannot
+return and the clipping that justified it is no longer needed.
+
+### The contract
+
+`body` carries `isolation:isolate` and the page fill. Its background paints
+first; shapes at `z-index:-1` paint on top of that fill but behind all content
+— exactly the arrangement §26 already proved for a single section, moved up
+one level.
+
+**A section that hosts a shape needs `position:relative` and nothing else.**
+No `isolation`, no `overflow:clip`, no opaque `background`. `position:relative`
+alone does not create a stacking context, so the shape stays anchored to the
+section's geometry while compositing at page level.
+
+Anchoring to the section rather than to document coordinates is deliberate:
+page coordinates break the first time a paragraph gets longer.
+
+`isolation` creates a stacking context but **not** a containing block for
+fixed positioning (only transform/filter/will-change do), so the fixed header
+is unaffected. Verified.
+
+`.site-footer` lost its `isolation` with the same change. It was a hard floor
+no shape could cross — which is what stopped §26's blue "carrying on down
+behind the footer and the wordmark, as one light". `.footer-light` keeps its
+own `overflow:hidden`; that is unrelated to section clipping and still needed,
+because those glows otherwise extend the document and add dead scroll past the
+end.
+
+**The other four pages were still on the old per-section model when this was
+written. Two have come over since** — `about.html` in §31 and `contact.html`
+in §32, both on the client's instruction and both keeping their lights in
+place. `index.html` alone still isolates and clips (§34 took process
+over): `.hero`,
+`.reel`, `.spot`, `.belong`, `.fudge`, `.closing` and `.process`.
+
+Rolling a page over is design work, not a switch: shapes that currently stop
+dead at a boundary start spilling into neighbours and need re-placing and
+re-grading. The client approved proving it one page at a time for exactly
+that reason. §31 and §32 are the worked examples, and §33 is the bug that
+comes with doing it carelessly.
+
+### Parallax
+
+Client asked for the backdrop to scroll slower than the content. A module at
+the end of `shared.js` writes `--py` on any `[data-parallax]` element; each
+shape composes that into its own transform alongside its `--spin`, so drift
+and rotation never fight over the one `transform` property. Translate before
+rotate, or the drift is applied along the rotated axis.
+
+**The offset is measured from the viewport centre, not from `scrollY`.**
+Driving it from `scrollY` is the obvious version and it is wrong: a shape two
+screens down is handed a scroll distance of thousands of pixels and translates
+clean off the document. Measured from the centre the drift is bounded by the
+viewport however long the page grows.
+
+`getBoundingClientRect` reports the box already translated, so the applied
+offset is subtracted back out before each measurement — without that, every frame
+compounds the last and the shape accelerates away.
+
+`--py` defaults to `0`, so reduced motion and a failed script both leave every
+shape exactly where CSS put it.
+
+Measured: the hero sphere drifts **80px per 400px of scroll** at its declared
+`0.2` rate, linear across four samples. The declared rates are the fraction of
+the content's scroll speed the shape gives up.
+
+### The page
+
+Six sections, `src/communication-strategy.html`:
+
+| Section | What it is |
+| --- | --- |
+| `.svc-hero` | Full-height, one red sphere low right, mixed-face headline |
+| `.svc-intro` | Claim left, argument right, three outcomes under hairlines |
+| `.svc-get` | Four lit masses with copy on them — §26's composition, flattened |
+| `.svc-process` | Six-row numbered table, one blue disc behind the left column |
+| `.svc-proof` | Three figures under hairlines — the `.svc-intro` device reused |
+| `.svc-why` | Centred ask, star mark, the page's only filled pill |
+| `#proof` | **The shared testimonial rail, `{{> testimonials}}` — §7. Last.** |
+
+**The rail is the third page to carry it** and it was included, not copied —
+§7 requires the six quotes to have exactly one home. No copy was added to the
+baseline and no CSS was written: `.band` already carries no `isolation`, no
+`overflow:clip` and no opaque fill, so it satisfies the contract above
+unaltered, and it hosts no shape of its own.
+
+**It goes after the ask, and it was built before it and moved.** The first
+placement reasoned from the homepage's order — §8's argument that proof earns
+the request that follows it — and put the rail between `.svc-proof` and
+`.svc-why`. The client's correction: *"why in the last page we were creating
+we made the testimonials before the CTA, please follow the order I am giving
+you"*.
+
+**The order of sections on a service page is given, not derived.** This page
+is built from client mocks section by section, and the same rule that makes
+the copy theirs makes the sequence theirs. A design argument for a different
+order is not a reason to build a different order — it is at most something to
+raise. Do not move it back.
+
+Verified at 1440 after the move: section order reads
+`svc-hero · svc-intro · svc-get · svc-process · svc-proof · svc-why · band`,
+the rail initialises (6 clones, 3 lit, every `[data-reveal]` at full
+opacity), the `.svc-why`/`#proof` boundary is flat black with no seam, and
+`node build.js` reported `unchanged` for the other four pages — no shared
+file was touched.
+
+**Two hairline rows now run back to back**, `.svc-proof`'s three and the
+rail's one. It reads as one device used twice rather than two devices, which
+is what §7 wanted, but nobody has looked at it next to a mock.
+
+Nothing links to it yet. The overlay's "Services" still points at
+`index.html#system`.
+
+### The spheres are lit three different ways, and each is deliberate
+
+This is the part most likely to be "tidied" into consistency by someone later.
+Do not.
+
+| Shape | Vignette | Why |
+| --- | --- | --- |
+| `.process-orb` (§26) | **masked away** | Asset's black surround met `#141414` and read as a hard ring drawn round every sphere |
+| `.svc-get-orb` | **kept** | These overlap. The dark rim is the only thing separating one disc from the next — masked, the four dissolve into a single continuous red band |
+| `.svc-process-blue` | **kept, no `screen`** | The design draws a disc whose circular edge sweeps through the rows. `screen` exists to dissolve exactly that edge |
+| `.svc-get-blue`, §26's blue | **`screen`, heavy blur** | Ambient light with no boundary |
+
+`.svc-get-orb` is also graded brighter (`brightness(.95)` against §26's `.84`)
+because the design asks for it. The body copy sits on the lit mass. **That is
+the thing to re-check if it is ever brightened further.**
+
+Below 560px `.svc-process-blue` switches back to ambient: at that width the
+whole row sits inside the disc and a hard boundary running through the
+numerals reads as a stray line.
+
+### Failures worth not repeating
+
+- **The blue flooded `.svc-get` and turned the first sphere purple.** §26 says
+  outright that `screen` adds and a red sphere over blue goes pink. It was
+  placed over sphere one anyway. It is now small, deep in the corner and well
+  below the row.
+- **The deliverables stagger was applied to the item, not the orb.** In the
+  design all four headings sit on one line and only the lights are set at
+  different heights; offsetting the item stepped the copy down the row and
+  lost that horizontal. `--lift` belongs to the orb.
+- **The orb anchor was moved to close a gap under the title.** Wrong lever —
+  it lifted every sphere clear of its heading and left the copy on bare
+  ground. The gap belonged to the list's top margin; the orb offset is what
+  sets the heading's position on the disc (~60% down, measured off the mock).
+- **A decorative arc was added to the hero and the client rejected it.** It
+  was read out of a faint curve in the mock. Removed entirely. If a thin
+  curved line ever reappears on a service page, it is a bug.
+
+### The `×`, and a CSS trap that cost three passes
+
+`6–7×` in `.svc-proof`. The didone's `×` is a hairline, far finer than the
+digits; the design's is a heavier geometric mark.
+
+**Aileron's `×` is weight-invariant.** Regular, SemiBold and Bold render
+pixel-identical marks — verified by rendering all three side by side, where
+the capital X does change and the × does not. `font-weight` can never thicken
+that glyph. The fix is `font-size:1.45em` with `vertical-align:middle`; at
+that size it already carries the design's weight and needs no outline stroke.
+
+The reason that took three passes is the trap, and it is general:
+
+> **A CSS comment cannot contain the two characters that terminate one.**
+> Writing that sequence inside a comment ends it early. Everything after it
+> until the next terminator is parsed as declarations, is invalid, and is
+> **silently dropped** — the stylesheet still parses, it just loses rules.
+
+It happened three times in this cycle, twice from pasting prose after a
+closing terminator and once from a comment that *quoted* the sequence while
+explaining the bug. Each time an entire rule block went dead with no error
+anywhere. `.svc-figure-x` was unparsed through the whole `×` investigation, so
+the × on the page was still the serif hairline and every stroke weight
+measured against it read as an improvement — a value that turned out to be a
+blunt cross once the rule actually applied.
+
+**Check after editing `shared.css`:**
+
+```sh
+node -e "const s=require('fs').readFileSync('shared.css','utf8');let i=0,c=false,l=1,b=[];
+while(i<s.length){if(s[i]==='\n')l++;
+ if(!c&&s.startsWith('/*',i)){c=true;i+=2;continue}
+ if(c&&s.startsWith('*/',i)){c=false;i+=2;continue}
+ if(!c&&s.startsWith('*/',i)){b.push(l);i+=2;continue}i++}
+console.log(b.length?'STRAY at '+b.join(','):'balanced','| unclosed:',c)"
+```
+
+### Testing: headless Chrome is not enough any more
+
+§26's harness notes still hold, plus three new ones.
+
+- **`--virtual-time-budget` fires `requestAnimationFrame` roughly once.**
+  Anything rAF-driven — the parallax, the reel aperture — appears frozen, and
+  three separate attempts to measure parallax read as a bug in the code. Drive
+  a real Chrome over CDP instead (`--remote-debugging-port`, Node 24 has a
+  global `WebSocket`, no dependencies needed).
+- **`scroll-behavior:smooth` on `html` swallows programmatic scrolling.** Set
+  `document.documentElement.style.scrollBehavior='auto'` first or `scrollTop`
+  silently stays at 0.
+- **Full-page screenshots capture everything below the fold blank**, because
+  `[data-reveal]` never intersects. Sweep the page in steps first; reveal is
+  one-way, so returning to the top keeps it visible.
+- Headless clamps the viewport near 500px, so a `--window-size=430` capture
+  renders at 500 and crops — which reads as an overflow bug that is not there.
+  §26 gives the iframe workaround; `Emulation.setDeviceMetricsOverride` over
+  CDP is better.
+
+### Verified
+
+- No horizontal overflow at 360/390/500/760/820/900/1024/1440/1920. Read that
+  as *no horizontal scrolling*, which is what matters and what was checked.
+  `main`'s `scrollWidth` is genuinely wider than the viewport — 1921 against
+  1425 at 1440px — because `.svc-hero-orb` reaches 1921 and nothing clips it
+  any more. `html { overflow-x:clip }` is the only thing holding that, and it
+  is doing so by design. The other pages report no root overflow at all, so
+  this page differing is the contract working, not a defect. Do not "fix" it
+  by putting `overflow:clip` back on a section.
+- The hero sphere crosses the section boundary — 443px past the hero's bottom
+  edge, overlapping the footer box — with no clipping.
+- Parallax linear and non-compounding across four scroll positions.
+- Before/after renders of index, about, process and contact: `about` is
+  pixel-identical; the other three differ only in animation phase (the `drift`
+  keyframes, and contact's Calendly loading dots). Spheres, blue light and
+  layout intact on all four.
+- `shared.css` comment terminators balanced — 277 open, 277 closed, none
+  stray.
+
+### Open
+
+- **Nothing links to the page.** Overlay "Services" still points at
+  `index.html#system`. Same unresolved question as §26's nav note.
+- **Two `TODO(copy)` figures in `.svc-proof`** — `[__]%` twice. The client has
+  not supplied the numbers. The second figure's own sentence says "over 50%".
+- **The page mixes first person singular and plural.** "Why work with **me**",
+  "**I** specialize", and process step 03's "**I** research competitors",
+  against "We'll identify gaps" and "When **we're** done" — the last two
+  sentences in the same section. Transcribed verbatim from the mocks; the
+  client has not been asked.
+- **Spelling mixes conventions** — "specialize" against "prioritise" and
+  "recognise". Also verbatim.
+- **Process step 05 has no closing full stop**, unlike the other five.
+- **The pill arrow is the site's star mark, not the `↗` every mock shows.**
+  Shared `.btn-pill` chrome, so changing it lands on every page. Left alone
+  and not yet decided.
+- **The hero sphere is anchored in `vh`**, so on a short laptop viewport it
+  sits higher and brighter behind the headline than the mock draws it. Raised
+  with the client, not yet actioned.
+- **`index.html` and `process.html` are the last two per-section pages.**
+  About (§31) and contact (§32) have come over. The homepage is the harder
+  one — §32 lists why, and §12's 0-of-22,821,120-pixel baseline has to be
+  re-taken rather than defended when it moves.
+
+---
+
+## 28. The brand guidelines, and the page black
+
+The client supplied `Guidelines.pdf` — an 18-page brand book, now in the repo
+as **`rysing brand assets/Branding-Guidelines.pdf`**. It is the first time
+this project has had a written source for any of this. Everything before it
+was measured off mocks.
+
+**It is not the same file as `Guide 3.pdf`.** That one, and the byte-identical
+`Source Files/Guide.pdf`, are a single 3935x2791pt page — one flattened
+poster. The guidelines are 18 A4-landscape pages with an index.
+
+What it settles, from §3.0 Color Palette:
+
+| | Guideline | Site before | |
+| --- | --- | --- | --- |
+| Paper | `#F9F9F9` | `#f9f9f9` | already exact |
+| **Black** | **`#000000`** (CMYK 75/68/67/90) | `#141414` | **changed** |
+| Blue | `#3524D5` | `#3524d5` | already exact |
+| Red | `#F04222` | `#f04222` | already exact |
+
+Three of four already matched to the byte, which is worth knowing: the
+palette was being followed correctly and the black was the single drift.
+
+### The black moved to #000000
+
+On the client's instruction to follow the document. `--ink` and `--ink-deep`
+are both `#000000`, `theme-color` tracks it, and the three hand-written
+`rgba(13,13,13,…)` scrims (the header gradient, the reel toggle, the contact
+embed well) moved to `rgba(0,0,0,…)`. A token cannot carry an alpha, which is
+why those three are literals and why they have to be found by hand.
+
+**`--ink-deep` no longer means anything on its own.** It was "darker than the
+page" — the hero's ground, which resolved into the page colour over its last
+fifth, and the menu overlay. Nothing is darker than `#000`, so the hero
+gradient is now a flat fill painted by a gradient. It is kept as a token
+rather than deleted because it still names a distinct intent and because
+collapsing ~20 call sites would have buried the colour change in noise.
+**If the hero's darker ground is wanted back, it cannot come back as a
+darker black** — it would have to be a lift above the page, which is the
+opposite gesture and a design decision nobody has made.
+
+### What this does to the shape work, which is the part to read
+
+Every brand pattern asset is artwork painted on an **opaque `#000` ground** —
+not a transparent surround; §26 verified it by compositing one over a bright
+colour, where the ring stayed solid. Against a `#141414` page that surround
+read as a ring drawn around every sphere, and **three separate masks exist
+only to hide it**: `.process-orb`'s, `.svc-get-orb`'s outer feather, and
+`.svc-process-blue`'s 93% stop.
+
+At `#000` the surround and the page are the same colour and the ring cannot
+occur. Those three masks are now solving a problem that no longer exists.
+**Do not remove them on that basis alone** — two are doing a second job that
+still matters:
+
+- `.svc-get-orb`'s feather is also what keeps four overlapping discs from
+  dissolving into one continuous red band (§27). The rim is load bearing.
+- `.svc-process-blue`'s mask also shapes the disc edge the design draws
+  sweeping through the rows.
+- `.process-orb`'s is the one that was *only* ever about the ring. §26 says
+  the vignette is what gives that shape a circular silhouette and that
+  masking it away was a trade, not a win. **At `#000` that trade may be
+  reversible** — the vignette could come back and read as a soft dark disc
+  rather than a drawn outline. It is the one worth retesting, and it is a
+  design call, so it is open rather than done.
+
+Several comments in `shared.css` still argue from `#141414` by name. They are
+left standing deliberately: they are the record of why each mask exists, and
+a comment that says "this was tuned against a page colour that has since
+changed" is more useful than one quietly rewritten to agree with the present.
+
+### Verified
+
+Before/after full sweeps of all five pages at 1440, animations pinned to
+`currentTime = 0` and videos parked per §12:
+
+- **Page heights identical on all five** — nothing reflowed.
+- Peak per-pixel delta on flat ground is **64**, which is exactly the
+  `#141414 → #000` shift (3 x 20, plus rounding) and nothing more.
+- **Under 0.05% of pixels moved by more than 70** on every page except three
+  captures, all three of which are known animation phase and not colour: the
+  homepage hero (the aperture), the showreel frame, and contact's Calendly
+  iframe finishing its load between runs (§27 already records that one).
+- The process spheres read **better** on black: their feathered edges used to
+  sit on a visibly lighter ground and now melt into the page.
+
+### A testing trap that invalidated a whole run
+
+**Chrome served the generated HTML from its own cache**, so an "after" sweep
+measured the old page and reported the change as having done nothing — max
+deltas of 5 to 9, which looks exactly like a successful no-op. It was caught
+only by probing `getComputedStyle` for `--ink` and finding `#141414` still
+live, with a stale `shared.css?v=` hash in the markup.
+
+The `?v=` hash (§12) protects a *visitor* from this; it does not protect a
+test run, because the cached HTML carries the old query string with it. When
+measuring a CSS change over CDP, send `Network.setCacheDisabled` and reload
+with `ignoreCache`, or use a fresh `--user-data-dir`. **Confirm the value you
+changed is actually live in the page before trusting any comparison.**
+
+### Open
+
+- The guidelines have **17 more pages** than the one that has been acted on —
+  logo spacing and application rules (§2.1–2.3), type usage (§4.1), brand
+  assets (§5.0) and print collateral (§6.0). None has been checked against
+  the build. §2.3's "Do not rotate / stretch / apply any effects / re-align /
+  colour" is worth reading against `--spin` on the sphere assets, though
+  those are pattern artwork rather than the logo.
+- The book's own §1.0 states the studio's numbers: "more than thirty brands",
+  "35+ websites", "over 3,000 pieces of content", "49 named client
+  testimonials", "sixteen countries", "350 students", and the HIPE award.
+  **That is a written source for the stats §6 lists as unverified and
+  contradictory between the homepage and about.** Reconciling them against
+  this document is now possible and has not been done.
+- The type page names Kinfolk and Aileron, and links Aileron to
+  open-foundry.com. It gives no download or licence for Kinfolk, so §6's
+  open licence question is unchanged.
+
+---
+
+## 29. The price section
+
+`.svc-price`, the seventh and last section of `communication-strategy.html`.
+Headline left, one plan card right, one red light behind both. Built from a
+supplied mock and transcribed from it.
+
+**It is last on the client's instruction** — given as "the next section" when
+the testimonial rail was already the final one. Same rule as the rail above
+it: sequence on this page is given, not derived (§27).
+
+**It is the first section on the site to name a figure.** €3,300 + VAT, and a
+funding claim under it. Both are the client's to stand behind.
+
+### What is in it
+
+| | |
+| --- | --- |
+| Headline | Three faces by phrase, as the hero and intro set them |
+| `.svc-plan` | Hairline card: name, note, price, four inclusions, funding line, filled pill |
+| `.svc-price-glow` | One red light, top right |
+
+The card is an `<article>` — a self-contained offer with its own name, price
+and terms, and the element most likely to be joined by siblings when the
+other service pages arrive.
+
+**The card has no fill, and that is load bearing twice over.** The mock lights
+its top right with the same light that lights the page around it, which only
+happens while the card is a hairline and nothing else. An opaque panel would
+also break §27's contract by making the card its own ground.
+
+### The measure, swept rather than chosen
+
+The design breaks the headline "Set the foundation / with a clear / message
+and brand / communication". That break holds from **11 to 12.2em** at 1680,
+1440 and 1200; `11.6em` is the midpoint. At 10em it falls to five lines with
+"Set the" hanging alone, and at 13em it collapses to three — but only at
+1680, so that end is a breakpoint-dependent edge rather than a clean limit.
+In em and never ch, for §4's reason.
+
+### The shape: built twice
+
+**First attempt used `pattern-red.webp` placed whole**, the way
+`.svc-process-blue` is, because the mock appears to draw a circular edge
+sweeping down past the card. It reproduced §27's `.svc-get` failure exactly —
+the lit mass flooded the section, the card sat inside it and the body copy
+ended up on saturated orange. The asset is a dense object; this corner wants
+light.
+
+**The second attempt reintroduced the cropped backdrop, which is the fault
+§27 exists to abolish.** It was written `inset:0` — a box exactly the size of
+`.svc-price` — with the gradient centred at `92% 2%`. The light therefore
+began at the section's top boundary and was cut flat across the full width of
+the page. The client caught it on sight, having already given the instruction
+once: *"do not put the bg patterns relative just for sections, because they
+look cropped — we want them linked with the whole page"*.
+
+**Removing `overflow:clip` was only half of §27's change. The shape's own box
+is the other half.** A gradient paints only inside its own element; nothing
+has to clip for it to be cut. §8's rule — a glow must reach transparent
+inside its own box — is usually read as being about clipping, and it is not.
+A centre at `2%` puts 98% of the light outside the element, and the element's
+edge becomes a drawn line on its own.
+
+> **`inset:0` on a decorative glow is the tell.** Size and place the element
+> by the light, not by the section.
+
+The element is now a square two-thirds wider than the viewport whose centre
+is parked on the section's top-right corner, so the falloff lands inside it
+on every side. It bleeds up through the testimonial rail and down behind the
+card, which is what makes it read as the page's light rather than this
+section's decoration — and is legal only because of §27's page-level
+compositing group.
+
+**The brand red is used directly here, and on the other glows it could not
+be.** §25's brown is an artefact of compositing red toward `#141414`, a grey,
+which raises the green channel relative to red — which is why `.closing-glow`
+has to start at `rgba(255,40,8)` rather than at `--red`. Over the `#000` page
+(§28) the composite is proportional and the hue holds. **This is the first
+new glow written since the page black changed, and it is the first evidence
+that §25's workaround is no longer needed.** The older glows have not been
+revisited.
+
+### Open: the arc in the mock is not built
+
+The mock draws a large, faint circular line sweeping from the top of the
+section down past the card. **It is deliberately not on the page.**
+
+§27 records that a decorative arc was read out of a mock once before, added
+to this page's hero, and **rejected by the client outright** — "if a thin
+curved line ever reappears on a service page, it is a bug". Reading a second
+thin curve out of a second mock is the same judgement that was already made
+and already overturned, so it is flagged rather than shipped.
+
+It needs one answer from the client, and the answer decides which way to
+build it:
+
+- if it is the **edge of a disc**, it comes back as the asset placed whole,
+  the `.svc-process-blue` treatment, and the glow is replaced;
+- if it is a **drawn line**, it is the thing that was rejected and stays off;
+- if it is **an artefact of the mock's own export**, nothing changes.
+
+### Verified
+
+- Headline breaks as the design draws it at 1680, 1440 and 1200.
+- No element of `.svc-price` overflows at 360/390/500/760/820/900/1024/1440/
+  1920, and the card fits the viewport at every one of them.
+- **No full-width hard row anywhere in the section**, by the whole-page scan
+  below. The 29 rows the scan does flag on this page are all intentional 1px
+  rules — the pillar and proof hairlines, the six step rules, the rail's rule
+  and the footer's top border — and none of them falls between 6137 and 7263,
+  which is where this section sits.
+
+### The check that failed, and the one that works
+
+**A single-boundary probe passed this bug.** §5's method — park the edge
+mid-screen, shoot the viewport, compare the row above against the row below —
+reported **3** at the rail/price boundary while a hard red line was plainly
+there in a browser. Whatever the probe sampled, it was not the thing the eye
+sees, and one measurement at one coordinate is too narrow a net for a fault
+whose whole nature is that it runs across the entire page.
+
+Scan every row instead, and judge by **how much of the width jumps at once**:
+
+1. Sweep the page so `[data-reveal]` has fired, pin animations, then capture
+   overlapping viewport screenshots down the whole document (§27: never a
+   `fullPage` stitch for measuring).
+2. For each row, sample every 8th column and count how many exceed an 8/255
+   channel jump against the row below.
+3. Report any row where that count passes half the width.
+
+A glyph edge, a photograph or a soft gradient never trips it; a drawn rule
+and a guillotined glow both do, and the two are easy to tell apart because a
+rule is one row and sits where a rule belongs. Run it after any shape change
+and diff the flagged list against the known rules.
+- The other four pages differ only in the `?v=` hashes and §28's
+  `theme-color` — no markup drift.
+- `shared.css` comment terminators balanced.
+
+### Open, for the client
+
+- **The mock's pill carries `↗`; the site's carries the brand star.** Already
+  §27's open item, unchanged — it is shared `.btn-pill` chrome, so it lands
+  on every page at once.
+- **"Save up to €1,400 with KMU.Digital financing"** is transcribed exactly
+  as supplied. KMU.Digital is an Austrian federal programme; the amount and
+  the eligibility are claims the studio is making, and this is the first
+  money claim on the site.
+- The card's right edge runs to the page gutter, where the mock leaves a
+  wider margin. The page's own container convention was kept, on the grounds
+  that every other section on this page runs to the same gutter and the mock
+  canvas carries bleed.
+
+---
+
+## 30. The closing, and the page is complete
+
+`.svc-close`, the eighth and last section of `communication-strategy.html`.
+Two sentences, one pill, centred on black, with the page's only blue arriving
+in the bottom-left corner. Built from a supplied mock.
+
+**The page is now complete at eight sections:**
+
+> hero · intro · deliverables · process · proof · **why work with me** ·
+> **testimonials** · **price** · **closing**
+
+### The headline is two block lines, not one run that wraps
+
+"Clarify your message." and "Amplify your brand." are two sentences and the
+design gives each a line. They are `display:block` spans rather than one run
+left to find its own break: a measure would put the break wherever it
+happened to fall and lose the pairing of "your message." against "your
+brand." that the two lines are built on. Each sentence still wraps inside
+itself on a narrow screen, which is what a `<br>` would not allow.
+
+### The blue
+
+Placed whole, vignette intact, `screen` deliberately not used — the mock
+draws a disc whose circular edge sweeps up out of the bottom-left corner and
+`screen` dissolves exactly that edge. Same call as `.svc-process-blue`;
+§26's table is the reference.
+
+**It reaches 600px past the section into the footer**, measured. That is the
+point: §26 wanted the blue "carrying on down behind the footer and the
+wordmark, as one light" and could not have it while `.site-footer` carried
+`isolation`. §27 removed that. This is the first shape to actually use it.
+
+**Its box is the disc, not the section** — anchored past two edges on
+purpose. §29 is the counter-example and the reason that sentence is in this
+document twice.
+
+**Sized three times before it was right**, and both failures are the same
+mistake in opposite directions:
+
+- at `112vw` it covered the headline and the section read as a blue panel
+  with type on it;
+- scaled for the phone at `135vw` it did the same thing again at 390px;
+- below the breakpoint at desktop values it collapsed to a ~250px blob
+  sitting in the corner, which is not a disc sweeping out of it.
+
+It is `63vw` capped at 900px above 620px wide, and `100vw` capped at 470px
+below — and the breakpoint is 620 rather than 760 because at 760 the phone
+values push the disc almost entirely off-canvas.
+
+### Two filled pills now
+
+§27 recorded that `.svc-why`'s pill is "the only filled pill on the page,
+which is what marks it as the ask". **That is no longer true** — this section
+carries a second one, because the mock draws it filled and because it is the
+page's actual closing. The claim in §27 stands as history; the page now has
+two filled pills and one of them is no longer unique. Worth a decision:
+either the closing is the only filled one, or the device has stopped marking
+anything.
+
+### The arc, again
+
+This mock draws the same faint curve top-right that the price mock does. Not
+built, for the reason in §29 — it is the thing that was already rejected on
+this page's hero. One answer from the client settles both sections.
+
+### Verified
+
+- Whole-page row scan at 1440: **30 full-width hard rows on the page and all
+  30 are intentional 1px rules** — the pillar hairlines, the six step rules,
+  the three proof rules, the rail's two, and the footer's top border. None in
+  `.svc-close`, none at any section boundary. Method in §29.
+- Headline sets as two lines at 1440 and 1024; wraps to four at 760 and 390,
+  one sentence per pair, which is correct.
+- The blue crosses into the footer at 1440, 760 and 390.
+- Nothing in the section overflows at
+  360/390/500/760/820/900/1024/1440/1920.
+- `shared.css` comment terminators balanced.
+
+**One known root-overflow, unchanged and by design:** `.svc-price-glow` and
+`.svc-hero-orb` both extend past the right edge of the document, so
+`document.scrollWidth` exceeds the viewport on this page. `html {
+overflow-x:clip }` is what makes that safe, and §28 explains why this page
+differs from the other four. Do not "fix" it by clipping a section.
+
+---
+
+## 31. The about page comes over to the page-level backdrop
+
+Second of the five pages converted. The client asked for it next, and asked
+that the lights stay where they are — so this is a conversion, not a
+redesign, and the proof below is that the two big lights did not move at all.
+
+### What changed
+
+| Section | Was | Now |
+| --- | --- | --- |
+| `.about-hero` | `relative; isolation; overflow:clip` | `relative` |
+| `.about-conviction` | `relative; isolation; overflow:clip` | `relative` |
+| `.about-founder` | `relative; isolation; overflow:clip` | `relative` |
+| `.about-courage` | `relative; isolation; overflow:clip` | `relative` |
+| `.about-studio` | `relative; isolation; overflow:clip` | `relative` |
+| `.about-stats` | `relative; isolation; overflow:clip` | `relative` |
+
+The three glows lost `.glow-soft` and their boxes grew. **The hero's
+`isolation` was the expensive one** — it made the hero a private compositing
+group the conviction glow below could not reach into, which is the opposite
+of what that glow is for: §25 describes it as spill from this photograph.
+Neither the photograph nor its scrim needed the clip; both are `inset:0` and
+cannot overflow.
+
+### The box transform, which is exact and height-independent
+
+Each glow was `inset:0` with `.glow-soft` hiding the cut. The element is now
+larger than its section, with the gradient remapped so the light lands in
+exactly the same place:
+
+> For a box grown with `inset:-a% 0 -b% 0` — so `(1 + a + b)` times the
+> section height — a gradient stays put when its vertical centre `p` becomes
+> `(p + a)/(1 + a + b)` and a vertical radius `r` **expressed as a share of
+> the box** becomes `r/(1 + a + b)`.
+
+Horizontal values are untouched because the element's width does not change.
+
+| Glow | Was | Box | Now |
+| --- | --- | --- | --- |
+| conviction | `34% 38% at 50% 17%` | `-25% 0 0` | `34% 30.4% at 50% 33.6%` |
+| studio | `58% 94% at 4% 30%` | `-60% 0 -20%` | `58% 52.22% at 4% 50%` |
+| stats | `44% 58% at 92% 24%` | `-35% 0 0` | `44% 42.96% at 92% 43.7%` |
+
+**The overhang is per-glow, not a constant.** This shipped first as a blanket
+`inset:-70% 0` on all three, which was right here by luck and wrong on
+contact — §33. Each `a` and `b` is now sized to that light's own falloff:
+the studio glow's vertical radius is 94% of its section, so its light reaches
+53% above and 13% below and it needs the largest box; conviction and stats
+both finish inside their own section at the bottom and take `b = 0`.
+
+### Verified by measuring the rendered light, not by looking
+
+Page height, section boundaries and all ten section positions are **byte-for-byte
+identical** before and after. Then, sampling channel spread (which isolates
+coloured light from white type and black ground) down the whole page at 1440:
+
+| Glow | Peak before | Peak after |
+| --- | --- | --- |
+| studio | y=3532, x=56, 164 | y=3532, x=56, 162 |
+| stats | y=5026, x=1320, 151 | y=5026, x=1320, 151 |
+| conviction | y=1000, x=712, 64 | y=898, x=720, 87 |
+
+Studio and stats are unmoved to the pixel. **Conviction's peak "moved" because
+`.glow-soft` had been erasing its core** — §25 warns about exactly this: "a
+core written at the edge is masked away". Its centre is at 17% of the section
+and the mask erased the top 15%, so what was visible was the shoulder of the
+light, not the light. Uncut, the core shows at its authored position and the
+glow is brighter — 87 against studio's 162 and stats' 151, so it is still
+comfortably the quietest warm on the page, which is what §25 asks of it. The
+headline sits below the core and is not lit from behind.
+
+The 93 rows whose colour changed are all within 100px of a section boundary,
+in the two places where the light now continues instead of stopping: the
+hero/conviction seam and the team/studio seam.
+
+### Also verified
+
+- **Whole-page hard-row scan (§29): 32 flagged rows, none on a section
+  boundary.** All are intentional 1px rules — the team and studio grid
+  borders, the stats grid border, the rail's two, recognition, the five
+  standard rows, and the footer's top border.
+- `document.scrollWidth` equals the viewport at
+  360/390/500/760/820/900/1024/1440/1920 — **no root overflow at any width**,
+  unlike the service page (§28), because nothing here is anchored outside
+  the viewport.
+- `index.html`, `contact.html` and `process.html` differ only in the `?v=`
+  hashes and §28's `theme-color`.
+
+### What this does to §25's rule
+
+§25 says **no two adjacent sections may carry a glow on the same side**,
+because "they clip independently, so they cannot share a gradient — they can
+only collide". That reasoning no longer applies to this page: nothing clips,
+and two neighbouring lights now blend instead of colliding. The courage
+section's glow was deleted under that rule and could in principle come back.
+
+**It has not been brought back, and the rule is left standing.** Three lights
+is what the page was signed off with, the client asked for the lights to stay
+where they are, and §6 already lists "whether three is the right number" as a
+design call nobody has made. Reopening it belongs to a design pass, not to a
+conversion.
+
+### Still open
+
+- **`index.html` and `contact.html` are the last two per-section pages.**
+  `.glow-soft` is now marked legacy in `shared.css` and is only kept alive
+  for them; delete the rule when they come over. The homepage is the
+  signed-off page and the one §12 holds at 0 differing pixels, so it wants
+  its own careful pass.
+- `.hero`, `.spot`, `.fudge`, `.closing`, `.belong` and the `.contact-*`
+  sections still carry `isolation` and `overflow:clip`.
+
+---
+
+## 32. The contact page comes over
+
+Third of five. Same transform as §31, two glows, and one trap that would
+have destroyed the light if the transform had been applied mechanically.
+
+`.contact-top` and `.contact-body` are `position:relative` and nothing else.
+Both glows went from `inset:0` + `.glow-soft` to a box sized to their own
+light, with the gradients remapped by §31's formula.
+
+`.calendly-panel` keeps its own `overflow:hidden`. That contains a
+third-party iframe inside a drawn outline and has nothing to do with section
+clipping — the same distinction as `.footer-light` in §27.
+
+### The trap: check the unit before you divide
+
+`.contact-top-glow` is two layers and **they do not transform the same way**:
+
+| Layer | Vertical radius | Transform |
+| --- | --- | --- |
+| core | `circle 30vw` | **radius unchanged**, centre remapped |
+| atmosphere | `ellipse 58% 70%` | radius ÷ 2.4, centre remapped |
+
+A `vw` radius is absolute — it does not scale with the element — so dividing
+it by 2.4 would have shrunk the core to 12.5vw and thrown away most of the
+light while the surrounding haze stayed put. §31's formula applies to radii
+expressed **as a share of the box**, and only to those. Read the unit first.
+
+| Glow | Was | Box | Now |
+| --- | --- | --- | --- |
+| top, core | `circle 30vw at 88% 42%` | `-50% 0 -35%` | `circle 30vw at 88% 49.73%` |
+| top, atmosphere | `ellipse 58% 70% at 95% 30%` | — | `ellipse 58% 37.84% at 95% 43.24%` |
+| body | `ellipse 42% 46% at 2% 74%` | `-10% 0 -28%` | `ellipse 42% 33.33% at 2% 60.87%` |
+
+(These are the corrected figures. The first pass used a blanket `-70% 0` and
+broke the footer — §33.)
+
+### Measuring this page needs Calendly blocked
+
+A before/after sweep reported the page 99px taller and every light moved by
+hundreds of pixels. None of that was real: **the Calendly iframe resolves to
+a different height between loads**, which moves everything below it, and the
+brightest thing on the lower half of this page is the footer's own glow, not
+the section's. §27 already notes contact differing by "Calendly loading
+dots"; this is the same instability with teeth.
+
+Two fixes, both worth reusing:
+
+1. `Network.setBlockedURLs(['*calendly.com*'])`, so the panel holds its fixed
+   height and the designed fallback renders. Layout is then deterministic.
+2. **Compare both formulations inside one page load** rather than across two
+   runs — set the old `inset`, `mask-image` and `background` back onto the
+   element from script, measure, restore, measure. The glows are
+   `position:absolute`, so toggling them cannot reflow anything, and every
+   other variable is held identical by construction.
+
+### Verified
+
+Measured that way at 1440, sampling channel spread:
+
+| Glow | Old formulation | New |
+| --- | --- | --- |
+| body (blue) | peak row 746, x=384, sat 206 | **identical: 746, 384, 206** |
+| top (red) | peak row 303, x=1266, sat 122 | 298, 1272, sat 122 |
+
+The blue is unmoved to the pixel. The red's 5px shift on a 719px section is
+`.glow-soft` no longer dragging the apparent peak down from a faded top
+edge: its visible extent goes from rows 39–636 to **7–646**, so it now runs
+behind the header and on down across the section join, which is the whole
+point.
+
+- **Whole-page hard-row scan: two flagged rows, 1886–1887 — the footer's top
+  border.** Nothing at the `.contact-top` / `.contact-body` boundary.
+- `document.scrollWidth` equals the viewport at
+  360/390/500/760/820/900/1024/1440/1920, with zero overflowing elements.
+- `shared.css` comment terminators balanced.
+
+### Only the homepage is left
+
+`.glow-soft` is now used by **`index.html` alone**. Delete the rule when the
+homepage comes over, along with `.hero-light`'s one-sided variant of the same
+idea.
+
+The homepage is the harder one and it is deliberately last:
+
+- it is the signed-off page, and §12 holds it at **0 of 22,821,120 differing
+  pixels** as a standing regression baseline — converting it moves that
+  baseline on purpose, so the number has to be re-taken rather than defended;
+- it carries five glows, not two;
+- `.hero`, `.reel`, `.spot`, `.belong`, `.fudge` and `.closing` all isolate
+  and clip, and **the reel's is not about shapes**: it is a 260vh sticky
+  stage with a masked aperture, so its stacking context needs checking rather
+  than assuming;
+- `.hero` also paints `linear-gradient(var(--ink-deep) 0 78%,var(--ink))`,
+  which §28 flattened to a single black — that gradient is now an opaque
+  fill doing nothing, and an opaque fill is the third thing §27's contract
+  forbids on a section hosting a shape.
+
+---
+
+## 33. The footer edge, and why a blanket overhang was wrong
+
+Reported by the client on the contact page: the footer's light stopped at a
+hard horizontal line partway down, with flat black below it and the wordmark
+running on past the edge.
+
+### What it was
+
+```
+document scrollHeight : 2610
+body bottom           : 2511   <- footer ends here
+.contact-body-glow    : bottom 2609
+```
+
+`.contact-body` is the **last section before the footer**, and §32 gave its
+glow a blanket `inset:-70% 0`. 70% of that 1112px section is 778px of
+overhang, which reached 99px past the bottom of `body`. Below `body` there is
+no page fill and no glow — only `html`'s flat black — so the light stopped
+dead at `body`'s edge, and the extra 99px became dead scroll at the end of
+the document.
+
+**This is the exact failure §27 already documents for `.footer-light`**,
+which keeps its `overflow:hidden` for this reason and no other. It was
+reintroduced one page over. `.contact-body` previously had `overflow:clip`,
+which is precisely what had been hiding it.
+
+### The rule the blanket number was missing
+
+An uncut glow needs a box bigger than its section. It also needs a box that
+**stops inside the document**. Both, not either:
+
+> 1. the box must contain the light's own falloff on every side;
+> 2. the box must not reach past the bottom of `body`.
+
+So the overhang is per-glow and asymmetric, sized from where that gradient
+actually fades out, rather than one number applied to all of them. A glow
+whose light finishes inside its own section at the bottom takes `b = 0`.
+
+All five converted glows were re-sized (§31 and §32 tables carry the
+corrected figures), and `.svc-close-blue` on the service page was caught by
+the same check: its `width` was capped at 900px but its `bottom:-42vw` was
+not, so above a 1429px viewport it kept dropping and at 1920 reached 32px
+past `body`. It is `calc(-1 * min(42vw,600px))` now — **cap both or neither.**
+
+### The check to run, which is cheap and catches all of it
+
+```js
+document.documentElement.scrollHeight === document.body.getBoundingClientRect().bottom + scrollY
+```
+
+Any gap is dead scroll and a light that stops before the page does. Run it at
+several widths — this only appeared at 1920 on the service page — and list
+any decorative element whose `bottom` exceeds `body`'s. Current state, at
+390/768/1440/1920: **zero dead scroll on all five pages, nothing past the end.**
+
+### A process mistake worth not repeating
+
+The first fix was applied with sequential string replacement on a line that
+was **identical in all five rules** (`inset:-70% 0;`). Each replacement hit
+the first remaining match in file order, not the rule intended, so the five
+boxes were scrambled across the five gradients — conviction got contact-top's
+box, studio got conviction's, and so on. The gradients were keyed on unique
+strings and went to the right places, which made the result look plausible
+and measure wrong.
+
+It was caught by asserting the authored position rather than eyeballing:
+compute where each light's centre *should* be in document coordinates, read
+where it *is*, and require the difference to be 0.
+
+| Glow | Error after the scramble | Error now |
+| --- | --- | --- |
+| conviction | −32px | **0** |
+| studio | +47px | **0** |
+| stats | +137px | **0** |
+| contact top | — | **0** |
+| contact body | — | **0** |
+
+**Edit CSS rules by selector, not by a string that repeats.** And verify a
+geometric change by asserting a number you derived independently, not by
+re-reading the file you just wrote.
+
+### Re-verified after the correction
+
+- About: page height and all ten section boundaries unchanged; studio peak
+  back to y=3528 (sampling step 4) and stats to **y=5028 exactly**, both at
+  their original intensity. Conviction still reads 896/84 against the
+  original 1000/64 — the expected §31 change, its core no longer masked.
+- Contact: both glow centres land at their authored document positions to
+  **0px**; the footer light now runs to the end of the document with no edge.
+- Zero dead scroll on every page at every width tested.
+
+---
+
+## 34. The process page comes over
+
+Fourth of five. One section, two kinds of shape, and the conversion delivered
+a thing §26 explicitly wanted and could not have.
+
+`.process` is `position:relative` and nothing else. It gave up `isolation`,
+`overflow:clip` **and** `background:var(--ink)` — all three of the things §27's
+contract forbids, and this was the only section on the site still carrying the
+full set.
+
+### The note that said all three were load bearing was right, and is now wrong
+
+§26 argued the background and the isolation could not be removed: the blue
+blends with `screen`, and screen only cancels its black surround if there is
+something to screen *against*. Without a backdrop the surround composites
+toward transparency, stays black, and paints a dark halo over the page. The
+clip followed from the same fact — a shape crossing the bottom edge leaves the
+backdrop and the halo comes back over the footer.
+
+**That was true of a page where `body` was not the compositing group.** It
+is not true now. `body` carries `isolation:isolate` and `background:var(--ink)`,
+so a shape at `z-index:-1` screens against the page's own black exactly as it
+used to screen against the section's — the arrangement `.svc-process-blue`
+already runs on. No halo appeared. The argument was sound and its premise
+expired; §27 is what expired it.
+
+### What the clip was costing
+
+The blue was being guillotined at the section/footer boundary. Measured on the
+shipped build at 1440, sampling blue excess (`B - max(R,G)`) by row:
+
+```
+row 1100 : 147     row 1120 : 0      <- the section boundary
+```
+
+Full strength to nothing in 20px, a hard row 42% of the page wide with a mean
+channel delta of **57.6**. §26 wrote that the blue was "meant to carry on down
+behind the footer and the wordmark, as one light" and that a clip "would cut it
+flat at the footer boundary". It was describing the defect the same rule had
+already shipped.
+
+After: `1100:147  1120:148  1150:148  1200:147  1300:148  1400:150`. Continuous
+across the join and on down behind the wordmark.
+
+### The light did not get brighter, it got bigger
+
+| | before | after |
+| --- | --- | --- |
+| blue peak | 148 at y=1089 | 151 at y=1358 |
+| pixels with blue excess > 18 | 117,377 | **239,991** |
+| pink-ish pixels | 448, first at y=451 | 470, first at y=451 |
+
+**Peak intensity is unchanged (148 → 151).** What doubled is extent: the disc
+was 71% hidden, so most of it is simply visible for the first time. Anyone
+reading this as "the blue was turned up" has the wrong model of the change.
+
+**§26's pink risk did not materialise.** Twenty-two pixels on a 2.6M-pixel
+page, and the first of them is at y=451 where the blue measures 27 — they are
+the red spheres' own saturated pixels, not blue contamination. The blue still
+sits below the climb; its box rises to y=680 but its light does not.
+
+### The box is capped twice, which §33 requires
+
+`bottom:-62%` was 62% of a section that is most of the page. At 1440 that put
+the box bottom at **1814 against a `body` bottom of 1799** — already 15px past
+the end of the document, and further at every wider viewport. Invisible while
+the section clipped; uncut it is §33's defect exactly.
+
+It is `bottom:calc(-1 * min(62%, 540px))` now. **Cap both or neither.** 540px
+lands the disc's centre on the section/footer join, which is what makes it read
+as one light crossing the boundary rather than two lights meeting at one.
+
+### Verified
+
+- **Zero dead scroll and nothing past `body`** at
+  360/390/500/620/760/820/900/1024/1040/1440/1680/1920.
+- **Hard-row scan at 1440: y=1120 is gone.** What remains is the header
+  border (100%), the footer top border (92%) and three display-glyph rows.
+  At 390 and 760 the only high-coverage rows are the header border, the four
+  `.process-step::before` hairlines (78%) and the footer border (89%) — all
+  intentional 1px rules.
+- **Footer text contrast over the blue: worst 9.07:1**, on "Brand, content and
+  sales for founders…" against rgb(50,34,200). Every other footer string is
+  9.4:1 or better. The blue is saturated but dark in luminance, which is why it
+  can sit under copy at all.
+- The other four pages differ **only in the `?v=` hash** — verified by
+  rebuilding against the stashed stylesheet and diffing, not by assuming.
+- `shared.css` comment terminators balanced (315 comments, 0 unterminated).
+
+### A known root overflow, invisible and left alone
+
+`document.scrollWidth` exceeds the viewport at 360/390/500/620 — 377 against
+360, and so on. It is **not** a layout fault and nothing visible crosses the
+edge: the brightest pixel in the rightmost three columns is **36, and it is the
+header's bottom border**; only 3 pixels there exceed 24 on the whole 2131px
+page.
+
+The cause is worth knowing because it will mislead the next measurement.
+`.process-orb` carries `transform:rotate(var(--spin))`, and
+`getBoundingClientRect` on a rotated element returns the **axis-aligned box of
+the rotated square** — a 219.6px square at 118° measures ~297px wide. The
+asset's disc is inscribed in that square and the `closest-side` mask erases the
+corners, so the part sticking out past the viewport carries no artwork at all.
+`overflow:clip` on the section used to absorb it.
+
+Left as is. `html { overflow-x:clip }` prevents a scrollbar, the same licence
+§28 gives the service page, and the alternative is shrinking the spheres at
+narrow widths to satisfy a number that corresponds to nothing on screen.
+**Do not "fix" it by re-clipping the section.**
+
+### A gap in the §29 scan, worth fixing before the homepage
+
+**The full-width hard-row scan would not have caught this defect.** The blue
+spans 42% of the page, so the cut at y=1120 covered 42% of the columns and a
+scan thresholded at 90% coverage reported the page clean. It showed up only
+when the threshold dropped to 25%.
+
+A glow anchored off one side is cut across its own width, not the page's. Scan
+for **a run of columns that all change together**, not for a row that changes
+everywhere — or run the scan at 25% and read the geometry of each hit. The
+homepage's five glows are mostly off-centre, so this matters there.
+
+### Only the homepage is left
+
+`.glow-soft` is used by `index.html` alone; `.hero-light` is its one-sided
+variant. Delete both when the homepage comes over. The reasons it is last are
+unchanged and listed in §32.

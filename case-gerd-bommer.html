@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Drops `no-js` before the first paint. It has to be inline and in the
+       head: `.no-js` changes the reel's layout and turns the testimonial rail
+       into a wrapped row, so clearing it from the deferred shared.js would
+       paint the no-script layout and then reflow on every load. The class sits
+       on <html> rather than <body> for the same reason — <body> does not exist
+       yet at this point. A failed shared.js therefore leaves a page that is
+       fully readable, which is the behaviour HANDOFF.md §2 requires. -->
+  <script>document.documentElement.classList.remove('no-js');</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gerd Bommer — Case study — Rysing</title>
+  <meta name="description" content="A founder-first investor, keynote speaker and hard enduro rider had no brand that could hold all three. We built one, from strategy to motorbike." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="rysing-assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rysing-assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="rysing-assets/favicon-180.png" />
+  <!-- Tracks --ink. A stale value here tints the browser chrome on mobile a
+       different black from the page it sits above. -->
+  <meta name="theme-color" content="#000000" />
+
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
+
+  <link rel="stylesheet" href="shared.css?v=65326c6d" />
+</head>
+<body>
+  <a class="skip-link" href="#case-top">Skip to content</a>
+
+  <header class="site-head">
+    <a class="wordmark" href="index.html#top" aria-label="Rysing home"><img src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" /></a>
+    <div class="head-right">
+      <a class="btn-pill btn-pill-head" href="index.html#contact">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-overlay" aria-label="Open menu"><span class="menu-toggle-lines" aria-hidden="true"></span></button>
+    </div>
+  </header>
+
+  <aside class="menu-overlay" id="menu-overlay" aria-hidden="true">
+    <button class="overlay-close" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+    <nav class="overlay-nav display" aria-label="Overlay navigation">
+      <a href="index.html#top">Home</a><a href="index.html#founder">About</a><a href="index.html#system">Services</a><a href="process.html">Process</a><a href="index.html#work">Portfolio</a><a href="/blog">Blog</a><a href="contact.html">Contact</a>
+    </nav>
+    <div class="overlay-bottom">
+      <!-- TODO(asset): real award logo files pending from client Drive -->
+      <div class="award-lockups" aria-label="Awards">
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+        <div class="award-lockup"><span class="award-mark" aria-hidden="true"></span><div><span>[ Award name ]</span><span>[ Detail ]</span></div></div>
+      </div>
+      <!-- TODO(link): final social profile URLs not supplied -->
+      <div class="social-links" aria-label="Social media">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.5-3.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v2H6v4h3v7h4v-7h3.2l.8-4h-4V9c0-.7.3-1 1-1Z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM2 9h4v13H2V9Zm7 0h4v1.8c1-1.4 2.4-2.2 4.2-2.2 4 0 4.8 2.6 4.8 6V22h-4v-6.6c0-1.6 0-3.6-2.2-3.6S13 13.5 13 15.3V22H9V9Z"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.7 3.3-3.2 16c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20 2.9c.9-.3 1.9.2 1.7.4Z"/></svg></a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="top">
+    <!-- The first case study, and the template for the ones after it. Built
+         from the client's own design export (`case-studies/gerd-bommer/
+         _originals/…zip`), which carries the full copy and the measured type
+         sizes; transcribed verbatim under the same rule the service pages
+         take.
+
+         Two deliberate departures from that export, both recorded here
+         because they are the kind of thing a later pass will otherwise
+         "restore":
+
+         1. THE MOCK DROPS THE SITE CHROME. It draws its own small wordmark
+            top-left and a bare arrow at the end instead of the shared header
+            and footer. A case study is not a different website, so this page
+            carries the normal chrome and the mock's "CASE STUDY" tag becomes
+            the hero's eyebrow. Raised with the client.
+         2. THE MOCK'S HEADLINE OVERLAPS ITS PORTRAIT at desktop widths — the
+            text column is `flex: 3 1 420px` with no measure on the <h1>, so
+            "UNTAMED" runs under the photograph. Here the two sit in a grid
+            and the headline is measured to its own column. §12's rule: a
+            mock's intent is the authority, not its layout bugs. -->
+    <section class="case-hero" id="case-top" aria-labelledby="case-title">
+      <!-- Page-level backdrop, §27. Red sphere low-right, the same asset and
+           treatment the service hero takes — same studio, same light. -->
+      <span class="case-hero-orb" data-parallax="0.2" aria-hidden="true"></span>
+
+      <div class="case-hero-grid">
+        <div class="case-hero-text">
+          <p class="label case-hero-eyebrow" data-reveal>Case study &middot; Gerd Bommer</p>
+
+          <!-- Set entirely in the didone, as the mock draws it. This is the
+               one hero on the site with no Aileron run in its headline; the
+               alternation is the direction's signature and its absence here
+               is the client's drawing, not an oversight. Flagged, not
+               changed. -->
+          <h1 class="display case-hero-title" id="case-title" data-reveal>Untamed energy</h1>
+
+          <p class="case-hero-note" data-reveal>Gerd Bommer spent 25 years building offices across Europe, the Middle East and North America. He invests in founders, speaks on stages and rides hard enduro. He had no brand that could hold all three, so we built one from strategy to motorbike.</p>
+
+          <!-- Scope, not navigation. These are pills because the mock draws
+               pills, but they are `<li>` inside a list and they carry
+               `.case-tag` rather than `.btn-pill` — the outlined pill means
+               "button" everywhere else on the site and ten of them in a block
+               would read as ten things to click. Same geometry, hairline
+               border, no hover state. -->
+          <ul class="case-tags" aria-label="What we delivered" data-reveal>
+            <li class="case-tag">Brand Strategy</li>
+            <li class="case-tag">Positioning</li>
+            <li class="case-tag">Messaging</li>
+            <li class="case-tag">Naming</li>
+            <li class="case-tag">Logo Design</li>
+            <li class="case-tag">Visual Identity</li>
+            <li class="case-tag">Website Design &amp; Development</li>
+            <li class="case-tag">LinkedIn Content</li>
+            <li class="case-tag">Stage Outfit</li>
+            <li class="case-tag">Vehicle Branding</li>
+          </ul>
+        </div>
+
+        <!-- 4/5, as the mock sets it. Not lazy: it is above the fold. -->
+        <img class="case-hero-portrait" src="case-studies/gerd-bommer/gerd-01-portrait.webp" alt="Gerd Bommer smiling and pointing at the camera" width="460" height="575" decoding="async" data-reveal />
+      </div>
+    </section>
+
+    <!-- Everything between the hero and the closing shares one measure and
+         one rhythm. The mock stacks it inside a single 1224px column with a
+         140px gap, which is what `.case-body` is. -->
+    <div class="case-body">
+
+      <section class="case-row" aria-labelledby="case-about-title">
+        <h2 class="display case-row-title" id="case-about-title" data-reveal>About</h2>
+        <div class="case-copy" data-reveal>
+          <p>Gerd Bommer is a founder-first investor, keynote speaker and strategic advisor. For more than 25 years he has helped companies enter new markets and scale across borders, working where startups, corporates, governments and capital meet. He has delivered over 500 talks and lectures.</p>
+          <p>Along the way he saw the people building the future burn out, and the most capable founders get overlooked. He decided to change how the game is played.</p>
+        </div>
+      </section>
+
+      <section class="case-row" aria-labelledby="case-brief-title">
+        <h2 class="display case-row-title" id="case-brief-title" data-reveal>The brief</h2>
+        <div class="case-copy" data-reveal>
+          <p>Gerd came with the career, the conviction and the energy, and no brand. There was nothing to refresh. Everything had to be built: the positioning, the name of each offer, the logo, the website and the content.</p>
+          <p>It also had to sound like him. An investor's brand usually whispers. Gerd does not.</p>
+        </div>
+      </section>
+
+      <section class="case-row" aria-labelledby="case-strategy-title">
+        <h2 class="display case-row-title" id="case-strategy-title" data-reveal>Strategy</h2>
+        <div class="case-copy" data-reveal>
+          <p>Investors measure cash, traction and KPIs. Gerd looks at the founder first: mindset, energy and the decisions they produce. That became the position. He is the founder-first investor, building a startup culture where &ldquo;capital follows character, purpose and profitability&rdquo;.</p>
+          <p>The website states who it is for in its first line: &ldquo;For those bold enough to build what's next.&rdquo;</p>
+        </div>
+      </section>
+
+      <!-- The brand line, at the page's largest size. A <p>, not a heading:
+           it is the client's tagline quoted, and the section's actual heading
+           is the micro-label on the row beneath it — which is how the mock
+           sets the hierarchy too. -->
+      <section class="case-block" aria-labelledby="case-line-title">
+        <p class="display case-statement" data-reveal>Mindset is capital. Energy is currency.</p>
+
+        <div class="case-row">
+          <h2 class="label case-row-label" id="case-line-title" data-reveal>The line and the G</h2>
+          <div class="case-copy" data-reveal>
+            <p>The line puts the founder's inner state into the language of finance, which is the language his audience already speaks.</p>
+            <p>Energy also names the offers, and each name ends on his initial. Keynotes are The EnerG Talks. Workshops are The SynerG Labs. Strategic advising is The StrateG Sessions. Even the news section is called EnerG News.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-block" aria-labelledby="case-logo-title">
+        <div class="case-row">
+          <h2 class="display case-row-title" id="case-logo-title" data-reveal>Logo</h2>
+          <div class="case-copy" data-reveal>
+            <p>The mark is a lightning bolt drawn as one outlined stroke. It stands beside his name in heavy capitals, where the R and the D share a stem and the B is cut open.</p>
+            <p>There are two colours, a deep royal blue and a sharp yellow, and they swap places freely. The bolt works alone as a bullet point, a favicon and a sticker.</p>
+          </div>
+        </div>
+
+        <!-- Wordmark then bolt, twice, colours swapped — which is the point
+             the copy is making, so the grid has to hold that pairing. Both
+             rows are the same height and the bolt cell is square, so the
+             wordmark cell's ratio follows from the artwork rather than being
+             asserted twice and disagreeing. The mock set `height:100%` on one
+             cell and `aspect-ratio:1` on its neighbour, and the two rows came
+             out different heights. -->
+        <ul class="case-logos" data-stagger>
+          <li><img src="case-studies/gerd-bommer/gerd-logo-yellow-on-blue.webp" alt="The Gerd Bommer wordmark in yellow on royal blue, the lightning bolt to its left" width="940" height="410" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-favicon-blue-on-yellow.webp" alt="The lightning bolt alone, blue on yellow" width="410" height="410" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-logo-blue-on-yellow.webp" alt="The same wordmark with the colours swapped, blue on yellow" width="940" height="410" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-favicon-yellow-on-blue.webp" alt="The lightning bolt alone, yellow on blue" width="410" height="410" loading="lazy" decoding="async" /></li>
+        </ul>
+      </section>
+
+      <section class="case-block" aria-labelledby="case-shirt-title">
+        <div class="case-row">
+          <h2 class="display case-row-title" id="case-shirt-title" data-reveal>Speaking T-shirts</h2>
+          <div class="case-copy" data-reveal>
+            <p>Most speakers put their message on a slide. Gerd wears his. We branded his keynote outfit with a set of T-shirts in the brand blue, each carrying one line in yellow: &ldquo;Your mindset is part of your business model.&rdquo; &ldquo;Decisions scale. Intensity doesn't.&rdquo;</p>
+            <p>The line is in every photo taken of him on stage, so the audience's pictures carry the message for him.</p>
+          </div>
+        </div>
+
+        <img class="case-shot" src="case-studies/gerd-bommer/gerd-06-speaking-tshirt.webp" alt="Gerd Bommer on stage with arms wide, wearing a blue T-shirt that reads: your mindset is part of your business model" width="2000" height="1333" loading="lazy" decoding="async" data-reveal />
+      </section>
+
+      <section class="case-block" aria-labelledby="case-bike-title">
+        <div class="case-row">
+          <h2 class="display case-row-title" id="case-bike-title" data-reveal>The bike</h2>
+          <div class="case-copy" data-reveal>
+            <p>Gerd rode Red Bull Romaniacs, the hard enduro rally in Romania. His motorbike went in brand blue with the bolt on the side panel and three lines in yellow: &ldquo;Untamed energy. Rooted in purpose.&rdquo; &ldquo;Mature minds. Young hearts.&rdquo; And on the front fender, where he sees it: &ldquo;Get ready for the grind.&rdquo;</p>
+            <p>A brand about energy should hold up in the mud.</p>
+          </div>
+        </div>
+
+        <img class="case-shot" src="case-studies/gerd-bommer/gerd-07-bike-riding.webp" alt="Gerd Bommer riding the branded enduro bike up a dirt slope in a forest" width="2000" height="1333" loading="lazy" decoding="async" data-reveal />
+
+        <!-- UNCROPPED, and that is the fix. The mock put both of these in a
+             4/3 box under `object-fit:cover`, which sliced the top line off
+             the side panel — the lettering is the entire reason these two
+             frames are on the page. They run at their own ratio instead. -->
+        <ul class="case-pair" data-stagger>
+          <li><img src="case-studies/gerd-bommer/gerd-08-bike-panel.webp" alt="The bike's side panel, lettered: untamed energy, rooted in purpose &mdash; mature minds, young hearts" width="1600" height="1200" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-09-bike-fender.webp" alt="The bike's front fender, lettered: get ready for the grind" width="1600" height="1200" loading="lazy" decoding="async" /></li>
+        </ul>
+      </section>
+
+      <section class="case-block" aria-labelledby="case-web-title">
+        <div class="case-row">
+          <h2 class="display case-row-title" id="case-web-title" data-reveal>Website</h2>
+          <div class="case-copy" data-reveal>
+            <p>The website is blue from top to bottom. It introduces Gerd in three words, Investor, Keynote Speaker, Strategic Advisor, and gives each role its own page and its own offer.</p>
+            <p>The portrait that carries the About section shows him in mid-air, in jeans and a T-shirt. The speaker page lists three keynotes, among them &ldquo;Mindset before skillset. Purpose before process.&rdquo; and &ldquo;Funding the female future.&rdquo;</p>
+          </div>
+        </div>
+
+        <ul class="case-trio" data-stagger>
+          <li><img src="case-studies/gerd-bommer/gerd-10-site-homepage.webp" alt="The Gerd Bommer homepage in royal blue and yellow" width="784" height="1200" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-11-site-keynotes.webp" alt="The speaker page for The EnerG Talks" width="784" height="1200" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-12-site-workshops.webp" alt="The workshop page for The SynerG Labs" width="784" height="1200" loading="lazy" decoding="async" /></li>
+        </ul>
+      </section>
+
+      <section class="case-block" aria-labelledby="case-social-title">
+        <div class="case-row">
+          <h2 class="display case-row-title" id="case-social-title" data-reveal>Social</h2>
+          <div class="case-copy" data-reveal>
+            <p>On LinkedIn, Gerd teaches founders what investors look for. We built a template that is recognisable before a word is read: a blue headline with one phrase swiped in yellow, and a cartoon in the middle of the page.</p>
+            <p>There are two characters. One is Gerd. The other is the founder he is talking to. Both wear the speaking T-shirt, and the shirt carries the title of the post.</p>
+          </div>
+        </div>
+
+        <ul class="case-trio" data-stagger>
+          <li><img src="case-studies/gerd-bommer/gerd-13-social-01.webp" alt="LinkedIn infographic: eight traits investors look for in a founder, with a cartoon of Gerd" width="1200" height="1698" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-14-social-02.webp" alt="LinkedIn infographic: seven everyday superpowers of great founders, with a cartoon founder" width="1200" height="1698" loading="lazy" decoding="async" /></li>
+          <li><img src="case-studies/gerd-bommer/gerd-15-social-03.webp" alt="LinkedIn infographic: six prevailing patterns of unicorn founders, with a cartoon of Gerd" width="1200" height="1698" loading="lazy" decoding="async" /></li>
+        </ul>
+      </section>
+
+      <section class="case-row" aria-labelledby="case-result-title">
+        <h2 class="display case-row-title" id="case-result-title" data-reveal>Result</h2>
+        <div class="case-copy" data-reveal>
+          <p>Gerd now has one brand for the investor, the speaker and the rider. The same blue, the same bolt and the same lines appear on his website, in his feed, on his chest and on his bike.</p>
+          <!-- TODO(copy): the client left this bracket in her own design,
+               drawn as a dashed box. It is the page's only hard outcome and
+               she has to supply the number. Kept visible on purpose — §"the
+               non-negotiables": placeholders stay visibly identified until
+               they are verified. -->
+          <p class="case-pending">[ONE RESULT: FOLLOWERS, REACH, BOOKINGS OR INBOUND SINCE LAUNCH]</p>
+        </div>
+      </section>
+
+      <!-- The client's own words about the work, so it is a <blockquote> with
+           a real <cite>, not the shared testimonial rail. The rail's six are
+           studio-wide; this one belongs to this project. -->
+      <section class="case-quote" aria-label="What Gerd says">
+        <img class="case-quote-photo" src="case-studies/gerd-bommer/gerd-16-testimonial.webp" alt="Anzhelika and Gerd Bommer together; his blue T-shirt reads: decisions scale, intensity doesn't" width="840" height="1050" loading="lazy" decoding="async" data-reveal />
+
+        <blockquote class="case-quote-body" data-reveal>
+          <p class="display case-quote-lead">&ldquo;Anzhelika has been more than a consultant; she's been a true sparring partner, and I'm grateful to have her on my team.&rdquo;</p>
+          <p>&ldquo;Six months later, we now have a complete personal brand &ndash; with a distinctive visual identity, clear positioning, and a strong vision and mission. The process was a creative journey filled with energy, positivity, and a shared commitment to excellence.&rdquo;</p>
+          <p>&ldquo;Her work ethic mirrors that: always willing to go the extra mile (even when I said we were at 99%, she pushed for refinement), always listening, and always balancing her expertise with my personal vision.&rdquo;</p>
+          <cite class="case-quote-cite">Gerd Bommer</cite>
+        </blockquote>
+      </section>
+
+    </div>
+
+    <!-- The closing ask. The mock ends on a bare arrow linking to
+         rysing.studio, which is this site — so it becomes the shared
+         `.btn-pill` pointing at the contact page, like every other closing on
+         the site. Two discs behind it, as the mock draws them. -->
+    <section class="case-close" aria-labelledby="case-close-title">
+      <span class="case-close-blue" data-parallax="0.06" aria-hidden="true"></span>
+      <span class="case-close-red" data-parallax="0.09" aria-hidden="true"></span>
+
+      <h2 class="display case-close-title" id="case-close-title" data-reveal><span class="alt">Grow your business</span> with a powerful brand</h2>
+
+      <a class="btn-pill btn-pill--solid" href="contact.html" data-reveal>Book a call <span class="arrow" aria-hidden="true"></span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="footer-light" aria-hidden="true"></span>
+    <div class="footer-grid label">
+      <p class="footer-blurb">Brand, content and sales for founders who want to become the only choice in their industry.</p>
+      <nav aria-label="Company">
+        <h3>Company</h3>
+        <a href="index.html#system">Services</a><a href="index.html#spotlight">Keynote speaking</a><a href="index.html#work">Work</a><a href="index.html#sunday-fudge">Sunday Fudge</a><a href="index.html#contact">Apply to work with us</a>
+      </nav>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:hello@rysing.agency">hello@rysing.agency</a><a href="#">rysing.agency</a><span>Vienna, Austria</span>
+      </div>
+      <!-- TODO(link): legal pages pending -->
+      <nav class="footer-legal" aria-label="Legal">
+        <a href="#">Imprint</a><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a><a href="#">Cookie Policy</a><a href="#top">Back to top ↑</a>
+      </nav>
+    </div>
+    <div class="footer-meta label">
+      <span>© 2026 Rysing, Vienna, Austria. All rights reserved.</span>
+    </div>
+    <a href="index.html#top" aria-label="Rysing, back to top"><img class="footer-mark" src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" loading="lazy" decoding="async" /></a>
+  </footer>
+
+  <script src="shared.js?v=009e4804" defer></script>
+
+</body>
+</html>

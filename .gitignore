@@ -6,3 +6,7 @@
 /rysing brand assets/
 /Rysing-showreel-original.mov
 /Rysing Studio — People Branding for Ambitious Experts.png
+
+# Case-study camera originals and designer source: delivered outside git.
+# The optimised webp beside them is what the site loads.
+case-studies/*/_originals/

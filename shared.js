@@ -574,3 +574,49 @@ if (cform && cstatus) {
     });
   });
 }
+
+/* Backdrop parallax. The page-level shapes drift slower than the content that
+   scrolls over them, which is what gives the backdrop its depth.
+
+   The offset is measured against the VIEWPORT CENTRE, not against scrollY.
+   Driving it from scrollY directly is the obvious version and it is wrong: a
+   shape two screens down the page would be handed a scroll distance of
+   thousands of pixels and translate clean off the document. Measured from the
+   centre, the drift is bounded by the viewport no matter how long the page
+   grows or where on it the shape sits.
+
+   `--py` is the only thing written. The shape's own transform composes it with
+   any `--spin` — see the parallax contract note in shared.css. Nothing is read
+   back from the element except its box, so this never fights the stylesheet
+   over placement.
+
+   Skipped entirely under reduced motion, and the shapes simply stay where CSS
+   put them. Same for a page with no shapes on it. */
+const driftShapes = document.querySelectorAll('[data-parallax]');
+if (driftShapes.length && !reduce) {
+  /* getBoundingClientRect reports the box as already translated, so the
+     current offset has to come back out of the measurement — otherwise each
+     frame compounds the last one and the shape accelerates away. */
+  const applied = new WeakMap();
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const mid = window.innerHeight / 2;
+    for (const shape of driftShapes) {
+      const rate = parseFloat(shape.dataset.parallax) || 0;
+      const was = applied.get(shape) || 0;
+      const box = shape.getBoundingClientRect();
+      /* Undo the applied offset to recover where the shape would sit at rest. */
+      const restCentre = box.top + box.height / 2 - was;
+      const py = (mid - restCentre) * rate;
+      applied.set(shape, py);
+      shape.style.setProperty('--py', py.toFixed(2) + 'px');
+    }
+  };
+
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', onScroll, { passive:true });
+  addEventListener('resize', onScroll);
+  update();
+}

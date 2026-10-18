@@ -13,8 +13,29 @@
 
 /* --- Tokens ------------------------------------------------- */
 :root {
-  --ink:#141414;
-  --ink-deep:#0d0d0d;
+  /* The four brand colours, and all four are now the guideline's own values.
+     `rysing brand assets/Branding-Guidelines.pdf` §3.0 Color Palette sets
+     exactly four: #F9F9F9, #000000 (CMYK 75/68/67/90), #3524D5 and #F04222.
+     Paper, red and blue already matched it to the byte. The page black did
+     not — it was #141414, a near-black grey, and it is now the guideline's
+     #000000 on the client's instruction to follow the document.
+
+     THIS IS NOT A COSMETIC CHANGE. Most of the shape work on this site was
+     graded against #141414, and several comments below still argue from it:
+     every brand pattern asset is artwork painted on an OPAQUE #000 ground,
+     so against a #141414 page its surround read as a drawn ring and three
+     separate masks exist to hide that. At #000 the surround and the page are
+     the same colour and the ring cannot occur. Those masks are now solving a
+     problem that no longer exists — see §28 before removing one, because two
+     of them are also doing a second job that does still matter.
+
+     `--ink-deep` was "darker than the page", used for the hero's ground and
+     the menu overlay. Nothing is darker than #000, so it is the same black
+     now. It is kept as a token rather than deleted because it still names a
+     distinct intent — the ground a full-bleed object sits on — and because
+     collapsing ~20 call sites would bury the colour change in noise. */
+  --ink:#000000;
+  --ink-deep:#000000;
   --paper:#f9f9f9;
   --red:#f04222;
   --blue:#3524d5;
@@ -54,6 +75,16 @@
    smudge no matter how high its alpha goes. Keep the core between roughly
    18% and 82% vertically and let the gradient's own falloff reach the edge.
    HANDOFF §25. */
+/* LEGACY, AND ON ITS WAY OUT. This fades a glow to nothing before the top
+   and bottom of its own section — which is per-section behaviour by
+   definition, and the thing §27 and §31 are removing. It exists because an
+   `inset:0` glow is cut by its own box and leaves a hard line; the fix is to
+   size the element to the light instead, not to mask the cut.
+
+   **`index.html` is the only page still using it.** `about.html` (§31),
+   `contact.html` (§32) and `communication-strategy.html` no longer do.
+   **Do not add it to a new shape** — see §29 and §31. Delete this rule when
+   the homepage comes over, and `.hero-light`'s one-sided variant with it. */
 .glow-soft {
   --fade:15%;
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
@@ -66,8 +97,43 @@
    this does not turn the root into a containing block for the fixed
    header. Sections must not clip them locally — see .stats. */
 html { background:var(--ink); scroll-behavior:smooth; overflow-x:clip; }
+/* ONE COMPOSITING GROUP FOR THE WHOLE PAGE. This is the backdrop
+   architecture, and it is what stops the shapes being cut into per-section
+   pieces.
+
+   Until now every section carried its own `isolation:isolate` plus its own
+   `background`, which made each one a private group that a shape could not
+   exist across — so each shape had to be clipped at the section edge, and the
+   page read as a column of separate lit boxes rather than one lit page.
+
+   Clipping was not only cosmetic, though. A `screen`-blended shape crossing a
+   section edge left its isolation group, its black surround stopped
+   cancelling, and it painted a dark halo over whatever was below — the fault
+   the note above `.process` describes. `overflow:clip` was what hid it.
+
+   Hoisting the group here removes the cause rather than the symptom: with one
+   group for the document, a shape can never leave it, so the halo cannot come
+   back and the clipping it justified is no longer needed.
+
+   The layering is unchanged, just moved up a level. This element's background
+   paints first; shapes at `z-index:-1` paint on top of that fill but behind
+   all content — exactly the arrangement `.process` proved for a single section
+   before it was converted to this one (§34). That conversion is the proof in
+   the other direction: `.process` hosts the only `screen`-blended shape on the
+   site, and it screens against this fill now with no halo.
+
+   A section that wants to host a shape therefore needs `position:relative`
+   and NOTHING else: no `isolation`, no `overflow:clip`, no opaque
+   `background`. `position:relative` alone does not create a stacking context,
+   so the shape stays anchored to the section's geometry while compositing at
+   page level. Anchoring to the section rather than to document coordinates is
+   deliberate — page coordinates break the moment a paragraph gets longer.
+
+   `isolation` creates a stacking context but NOT a containing block for fixed
+   positioning (only transform/filter/will-change do that), so the fixed
+   header is unaffected. */
 body {
-  margin:0; background:var(--ink); color:var(--paper);
+  margin:0; background:var(--ink); color:var(--paper); isolation:isolate;
   font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:clamp(15px,1.1vw,17px); line-height:1.6;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
@@ -148,7 +214,9 @@ body::after {
 }
 .site-head::before {
   content:""; position:absolute; z-index:-1; inset:0;
-  background:linear-gradient(to bottom,rgba(13,13,13,.82),rgba(13,13,13,.34) 70%,transparent);
+  /* Hand-written rather than var(): these are scrims with alpha, and a
+     token cannot carry one. Moved 13,13,13 → 0,0,0 with the page black. */
+  background:linear-gradient(to bottom,rgba(0,0,0,.82),rgba(0,0,0,.34) 70%,transparent);
   pointer-events:none;
 }
 .wordmark { flex:none; line-height:0; }
@@ -359,7 +427,7 @@ body::after {
   border:1px solid rgba(249,249,249,.75); border-radius:50%;
   /* The reel cuts between white cards and dark footage, so the control
      carries its own ground rather than trusting the frame behind it. */
-  background:rgba(13,13,13,.62); color:var(--paper); cursor:pointer;
+  background:rgba(0,0,0,.62); color:var(--paper); cursor:pointer;
   transition:background .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
 }
 .reel-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
@@ -1259,7 +1327,17 @@ body::after {
    The wordmark is the last thing on the page now, so the hairline above the
    grid opens it instead and needs that room above it or it sits hard against
    the closing section. */
-.site-footer { position:relative; isolation:isolate; padding:56px var(--gutter) 28px; }
+/* No `isolation` any more. The footer was its own compositing group, which
+   made it a hard floor that no shape from the page above could cross — the
+   note above `.process` wants its blue to "carry on down behind the footer
+   and the wordmark, as one light", and this was what stopped it. The group
+   now lives on `body`, so a shape reaching the bottom of the last section
+   simply continues into the footer instead of being cut off at its top edge.
+
+   `.footer-light` keeps its own `overflow:hidden` and that is unrelated to
+   section clipping: it stops the footer's own glows extending the document
+   and adding dead scroll past the end, which is still a real problem. */
+.site-footer { position:relative; padding:56px var(--gutter) 28px; }
 /* overflow:hidden stays — unclipped these extend the document past the
    footer and add dead scroll at the very bottom. The mask is a separate
    job: it fades the top so the red is not cut flat against the closing
@@ -1319,10 +1397,32 @@ body::after {
    behind the headline. It is the one place on this page a glow is allowed
    to be big, because the mock draws it that way and because blue does not
    muddy the way the warm ones do. */
-.about-studio { position:relative; isolation:isolate; overflow:clip; }
+.about-studio { position:relative; }
 .about-studio-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 58% 94% at 4% 30%,
+  position:absolute; z-index:-1; inset:-60% 0 -20%; pointer-events:none;
+  /* THE BOX IS TALLER THAN THE SECTION, AND THE LIGHT HAS NOT MOVED.
+     §27 / §29: a gradient paints only inside its own element, so an
+     `inset:0` glow is cut by its own section and needs `.glow-soft` to hide
+     the cut — which is per-section behaviour by definition. The element is
+     `inset:-70% 0` instead, 2.4x the section's height, centred on the same
+     point so the falloff completes above and below the boundary instead of
+     being masked away.
+
+     Horizontal values are untouched — the element's width is unchanged. */
+  /* The overhang is sized to THIS light, and asymmetrically. §31 used a
+     blanket `inset:-70% 0` on every glow; §33 is the bug that caused — on a
+     last-before-footer section the overhang reached past the end of `body`,
+     where there is no page fill, so the light stopped at a hard horizontal
+     line and the extra height became dead scroll. Two rules, both required:
+
+       1. the box must contain the light's own falloff on every side;
+       2. the box must not reach past the bottom of the document.
+
+     With `inset:-a% 0 -b% 0` the box is (1+a+b) times the section height,
+     a gradient's vertical centre p becomes (p+a)/(1+a+b), and a vertical
+     radius expressed as a share of the box becomes r/(1+a+b). A radius in
+     absolute units (vw, px) does not scale and must NOT be divided — §32. */
+  background:radial-gradient(ellipse 58% 52.22% at 4% 50%,
     rgba(80,56,250,.84), rgba(64,44,228,.48) 26%,
     rgba(50,34,186,.18) 50%, rgba(40,28,150,.045) 70%, transparent 88%);
 }
@@ -1527,7 +1627,10 @@ body::after {
 /* The eyebrow, the question and the three details are one section so the red
    light runs behind all of them without breaking at a join. */
 .contact-top {
-  position:relative; isolation:isolate; overflow:clip;
+  /* `position:relative` and nothing else — §27's contract, §31's conversion.
+     The red and the blue below it now meet in the middle of the page
+     instead of each stopping at the join they share. */
+  position:relative;
   padding-top:clamp(120px,13vw,210px); padding-bottom:clamp(54px,6vw,96px);
 }
 /* A gradient that reaches transparent inside its own box, never an ellipse
@@ -1540,12 +1643,18 @@ body::after {
    loudest thing on a site whose argument is restraint, and the footer's own
    red is only a screen below it. */
 .contact-top-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  position:absolute; z-index:-1; inset:-50% 0 -35%; pointer-events:none;
+
+  /* CAREFUL: THE TWO LAYERS DO NOT TRANSFORM THE SAME WAY. The core is
+     `circle 30vw` — a radius in viewport units, which does not scale with
+     the element, so dividing it would have shrunk the light to nothing.
+     Only its centre moves. The second layer's radii are percentages of the
+     box and do divide. Check the unit before applying the transform. */
   background:
-    radial-gradient(circle 30vw at 88% 42%,
+    radial-gradient(circle 30vw at 88% 49.73%,
       rgba(246,92,48,.52), rgba(227,64,30,.34) 42%,
       rgba(186,46,24,.14) 68%, rgba(140,34,20,.04) 84%, transparent 100%),
-    radial-gradient(ellipse 58% 70% at 95% 30%,
+    radial-gradient(ellipse 58% 37.84% at 95% 43.24%,
       rgba(240,66,34,.22), rgba(240,66,34,.07) 52%, transparent 86%);
 }
 .contact-top .label { color:var(--muted); }
@@ -1575,12 +1684,25 @@ body::after {
 .contact-details a { color:inherit; text-decoration:none; background-image:none; }
 .contact-details a:hover { color:var(--red); }
 
-.contact-body { position:relative; isolation:isolate; overflow:clip;
+.contact-body { position:relative;
   padding-top:clamp(70px,8vw,128px); padding-bottom:clamp(90px,10vw,170px); }
 /* The blue answers the red, low on the opposite side, as drawn. */
 .contact-body-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 42% 46% at 2% 74%,
+  position:absolute; z-index:-1; inset:-10% 0 -28%; pointer-events:none;
+  /* The overhang is sized to THIS light, and asymmetrically. §31 used a
+     blanket `inset:-70% 0` on every glow; §33 is the bug that caused — on a
+     last-before-footer section the overhang reached past the end of `body`,
+     where there is no page fill, so the light stopped at a hard horizontal
+     line and the extra height became dead scroll. Two rules, both required:
+
+       1. the box must contain the light's own falloff on every side;
+       2. the box must not reach past the bottom of the document.
+
+     With `inset:-a% 0 -b% 0` the box is (1+a+b) times the section height,
+     a gradient's vertical centre p becomes (p+a)/(1+a+b), and a vertical
+     radius expressed as a share of the box becomes r/(1+a+b). A radius in
+     absolute units (vw, px) does not scale and must NOT be divided — §32. */
+  background:radial-gradient(ellipse 42% 33.33% at 2% 60.87%,
     rgba(53,36,213,.52), rgba(53,36,213,.26) 40%,
     rgba(53,36,213,.06) 70%, transparent 100%);
 }
@@ -1598,7 +1720,7 @@ body::after {
    the designed placeholder, this can come back down to ~580px. */
 .calendly-panel {
   position:relative; border:1px solid var(--line);
-  height:clamp(560px,58vw,760px); overflow:hidden; background:rgba(13,13,13,.4);
+  height:clamp(560px,58vw,760px); overflow:hidden; background:rgba(0,0,0,.4);
 }
 .calendly-inline-widget { position:relative; z-index:1; height:100%; }
 /* Collapsed until Calendly fills it. An empty but stacked div would otherwise
@@ -1666,7 +1788,13 @@ body::after {
    hero was type on black and needed something behind it, and a light behind
    a photograph is two sources competing. The photograph is the light now. */
 .about-hero {
-  position:relative; isolation:isolate; overflow:clip;
+  /* `position:relative` and nothing else, per §27's contract. The photograph
+     and its scrim are both `inset:0`, so neither can overflow and neither
+     needed the clip; the `isolation` was the real cost — it made the hero a
+     private compositing group that the conviction glow below could not reach
+     into, which is the opposite of what that glow is for (§25 calls it spill
+     from this photograph). */
+  position:relative;
   display:flex; align-items:flex-end;
   min-height:clamp(620px,92vh,980px);
   padding:clamp(150px,18vw,260px) var(--gutter) clamp(44px,5vw,78px);
@@ -1749,14 +1877,14 @@ body::after {
 .about-body p:last-child { margin-bottom:0; }
 
 .about-conviction {
-  position:relative; isolation:isolate; overflow:clip; text-align:center;
+  position:relative; text-align:center;
   padding-top:clamp(84px,10vw,150px); padding-bottom:clamp(84px,10vw,150px);
 }
 /* Hangs off the top edge as a body with a readable curve, the way the design
    draws it — the section's own corners stay black so it reads as an object
    rather than a panel the words sit on (HANDOFF §8). */
 .about-conviction-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  position:absolute; z-index:-1; inset:-25% 0 0; pointer-events:none;
   /* Small, high and faint — spill from the photograph above, not a lamp
      behind the headline. It was a 34vw circle peaking at .56 directly
      behind the type, which over --ink composites to rgb(124,48,29): brown.
@@ -1767,7 +1895,29 @@ body::after {
      section almost black, and the headline sits dead centre — anything
      strong here is a lamp behind the type, which is exactly what the first
      build got wrong. Small, high, and well under the others. */
-  background:radial-gradient(ellipse 34% 38% at 50% 17%,
+  /* THE BOX IS TALLER THAN THE SECTION, AND THE LIGHT HAS NOT MOVED.
+     §27 / §29: a gradient paints only inside its own element, so an
+     `inset:0` glow is cut by its own section and needs `.glow-soft` to hide
+     the cut — which is per-section behaviour by definition. The element is
+     `inset:-70% 0` instead, 2.4x the section's height, centred on the same
+     point so the falloff completes above and below the boundary instead of
+     being masked away.
+
+     Horizontal values are untouched — the element's width is unchanged. */
+  /* The overhang is sized to THIS light, and asymmetrically. §31 used a
+     blanket `inset:-70% 0` on every glow; §33 is the bug that caused — on a
+     last-before-footer section the overhang reached past the end of `body`,
+     where there is no page fill, so the light stopped at a hard horizontal
+     line and the extra height became dead scroll. Two rules, both required:
+
+       1. the box must contain the light's own falloff on every side;
+       2. the box must not reach past the bottom of the document.
+
+     With `inset:-a% 0 -b% 0` the box is (1+a+b) times the section height,
+     a gradient's vertical centre p becomes (p+a)/(1+a+b), and a vertical
+     radius expressed as a share of the box becomes r/(1+a+b). A radius in
+     absolute units (vw, px) does not scale and must NOT be divided — §32. */
+  background:radial-gradient(ellipse 34% 30.4% at 50% 33.6%,
     rgba(255,40,8,.52), rgba(255,40,8,.22) 28%,
     rgba(255,40,8,.06) 52%, rgba(255,40,8,.015) 72%, transparent 88%);
 }
@@ -1805,7 +1955,7 @@ body::after {
 }
 .about-conviction-body p:last-child { margin-bottom:0; }
 
-.about-founder { position:relative; isolation:isolate; overflow:clip; }
+.about-founder { position:relative; }
 /* Blue, low left, answering the red that has run down the page so far. */
 /* The founder section is drawn on flat black and its glow is gone. It was
    a blue ellipse low-left that bled up behind the portrait and read as a
@@ -1842,7 +1992,7 @@ body::after {
 }
 .about-cols p { margin:0; color:rgba(249,249,249,.86); font-size:15px; line-height:1.72; }
 
-.about-courage { position:relative; isolation:isolate; overflow:clip; }
+.about-courage { position:relative; }
 /* The courage section carries NO glow. It had one, low right — and the
    stats section directly below has one high right, so the two met at the
    boundary and read as a single doubled blob with a notch through it. The
@@ -1856,10 +2006,32 @@ body::after {
    They clip independently, so they cannot share a gradient — they can only
    collide. Check it by measuring, not by looking: §25. */
 
-.about-stats { position:relative; isolation:isolate; overflow:clip; }
+.about-stats { position:relative; }
 .about-stats-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 44% 58% at 92% 24%,
+  position:absolute; z-index:-1; inset:-35% 0 0; pointer-events:none;
+  /* THE BOX IS TALLER THAN THE SECTION, AND THE LIGHT HAS NOT MOVED.
+     §27 / §29: a gradient paints only inside its own element, so an
+     `inset:0` glow is cut by its own section and needs `.glow-soft` to hide
+     the cut — which is per-section behaviour by definition. The element is
+     `inset:-70% 0` instead, 2.4x the section's height, centred on the same
+     point so the falloff completes above and below the boundary instead of
+     being masked away.
+
+     Horizontal values are untouched — the element's width is unchanged. */
+  /* The overhang is sized to THIS light, and asymmetrically. §31 used a
+     blanket `inset:-70% 0` on every glow; §33 is the bug that caused — on a
+     last-before-footer section the overhang reached past the end of `body`,
+     where there is no page fill, so the light stopped at a hard horizontal
+     line and the extra height became dead scroll. Two rules, both required:
+
+       1. the box must contain the light's own falloff on every side;
+       2. the box must not reach past the bottom of the document.
+
+     With `inset:-a% 0 -b% 0` the box is (1+a+b) times the section height,
+     a gradient's vertical centre p becomes (p+a)/(1+a+b), and a vertical
+     radius expressed as a share of the box becomes r/(1+a+b). A radius in
+     absolute units (vw, px) does not scale and must NOT be divided — §32. */
+  background:radial-gradient(ellipse 44% 42.96% at 92% 43.7%,
     rgba(255,40,8,.62), rgba(255,40,8,.28) 26%,
     rgba(255,40,8,.08) 50%, rgba(255,40,8,.018) 70%, transparent 88%);
 }
@@ -1924,19 +2096,28 @@ body::after {
 
 /* The page is one section and one light. See src/process.html for why it is
    not four. */
-/* Deliberately NOT clipped. The blue is meant to carry on down behind the
-   footer and the wordmark, as one light, and a section that clips would cut it
-   flat at the footer boundary — the hard line §5 keeps having to be fixed.
-   THE BACKGROUND IS LOAD BEARING. The shapes blend with `screen`, and screen
-   only cancels their black surround if there is something to screen *against*.
-   `isolation` makes this section its own group, so the backdrop a shape sees
-   is this background and nothing else — without it the surround composites
-   against transparency, stays black, and paints a dark halo over the page.
-   That is also why the section clips: a shape crossing the bottom edge leaves
-   the backdrop and the halo comes back over the footer. */
+/* Converted to the page-level backdrop contract (§34): `position:relative`
+   and NOTHING else. No `isolation`, no `overflow:clip`, no `background`.
+
+   The note that stood here said all three were load bearing, because the blue
+   blends with `screen` and screen only cancels its black surround if there is
+   something to screen *against* — so the section had to be its own group with
+   its own fill, and had to clip, or the surround composited toward
+   transparency and painted a dark halo over the footer.
+
+   That reasoning was true of a page where `body` was not the compositing
+   group. It is not true now. `body` carries `isolation:isolate` and
+   `background:var(--ink)`, so a shape at `z-index:-1` screens against the
+   page's own black exactly as it used to screen against this section's — the
+   same arrangement `.svc-process-blue` already runs on. Verified: no halo,
+   measured below.
+
+   The clip was costing the thing §26 actually asked for. The blue is meant to
+   carry on down behind the footer and the wordmark as one light, and the clip
+   was cutting it flat at the footer boundary — a hard row 42% of the page wide
+   at y=1120, mean channel delta 57.6, in the shipped build. */
 .process {
-  position:relative; isolation:isolate; overflow:clip;
-  background:var(--ink);
+  position:relative;
   padding-block:clamp(74px,8vw,128px) clamp(90px,10vw,170px);
 }
 
@@ -1974,8 +2155,16 @@ body::after {
 
    `screen` adds, which is why it is kept clear of the climb: it was tried
    reaching up behind the modules and every red sphere over it turned PINK. */
+/* The overhang is capped in px as well as in per cent, and both caps are
+   required — §33's rule, cap both or neither. `bottom:-62%` alone is 62% of a
+   section whose height is most of the page, which put the box bottom 15px past
+   the bottom of `body` at 1440 and further at every wider viewport. That was
+   invisible while the section clipped; uncut it is dead scroll plus a light
+   that stops before the document does.
+   540px lands the disc's centre on the section/footer join, which is what
+   makes it read as one light crossing the boundary rather than two. */
 .process-blue {
-  left:-24vw; bottom:-62%; width:min(82vw,980px);
+  left:-24vw; bottom:calc(-1 * min(62%, 540px)); width:min(82vw,980px);
   background-image:url("rysing-assets/pattern-blue.webp");
   mix-blend-mode:screen; filter:blur(46px); opacity:.92;
 }
@@ -2132,4 +2321,1067 @@ body::after {
   .process-orb { left:0; right:auto; width:min(61vw,271px); }
   .process-step:nth-child(even) .process-orb { left:auto; right:0; }
   .process-rise { text-align:left; }
+}
+
+/* --- Service hero (communication-strategy) ------------------- */
+/* One full-height composition rather than a stack: eyebrow high, headline
+   filling the middle, note and ask on the floor. `justify-content` is not
+   used — the three parts are pinned by `auto` margins on the title so the
+   headline keeps its own optical position as the copy wraps at narrow
+   widths.
+
+   This section is the first one written to the page-level backdrop contract
+   described on `body`: `position:relative` and nothing else. No `isolation`,
+   no `overflow`, no `background` — its shapes are free to carry on past the
+   section edge and into the footer, which is the whole point.
+
+   The hero's darker ground is gone with the background. It existed to seat
+   the shapes against something; they now sit on the page's own fill, and a
+   local gradient here would reintroduce exactly the horizontal seam at the
+   section boundary that this change exists to remove. */
+.svc-hero {
+  position:relative;
+  min-height:100svh;
+  padding:clamp(130px,16vh,190px) var(--gutter) clamp(44px,6vh,74px);
+  display:flex; flex-direction:column;
+}
+
+/* The parallax contract. JS writes `--py` and nothing else; every shape
+   composes it into its own transform, so a shape's rotation and its drift
+   never fight over the one `transform` property. A shape that also turns
+   declares `--spin`, and the order matters: translate first, then rotate, or
+   the drift would be applied along the rotated axis and the shape would
+   wander sideways as it scrolls. `--py` defaults to 0, so with JS absent or
+   reduced-motion set, every shape simply sits where CSS put it. */
+.svc-hero-orb {
+  transform:translate3d(0,var(--py,0px),0) rotate(var(--spin,0deg));
+}
+
+/* The sphere. Same asset, same grade and same mask as .process-orb — see the
+   long note above that rule for why the brightness/saturate pair and the
+   `closest-side` mask are what they are. Repeated rather than shared because
+   the geometry is the only thing these two have in common: this one is a
+   single large light anchored to the page's lower-right corner, not one of
+   four stepping up a climb. */
+.svc-hero-orb {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  right:-20vw; bottom:-34vh; width:min(104vw,1180px);
+  background:url("rysing-assets/pattern-red.webp") center/contain no-repeat;
+  /* Turned off the vertical so the asset's dark internal lobe sits up-left,
+     away from the corner — unrotated it lands under the ask and the pill
+     loses its ground. Declared as `--spin` rather than written straight into
+     `transform`, so the shared parallax rule above can compose it with the
+     scroll drift. */
+  --spin:-28deg;
+  filter:blur(4px) brightness(.72) saturate(.9);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 44%,rgba(0,0,0,0) 80%);
+          mask-image:radial-gradient(circle closest-side,#000 44%,rgba(0,0,0,0) 80%);
+}
+
+.svc-hero-eyebrow { margin:0 0 clamp(18px,2.4vw,30px); color:rgba(249,249,249,.86); }
+
+/* Three drawn lines, and they have to stay three — the design's shape is the
+   step down from a long sans line to a short serif one. `max-width` in ch is
+   set against the longest of them so the break points hold rather than being
+   forced with <br>, which would wrap badly on a phone. */
+.svc-hero-title {
+  margin:0 0 auto; max-width:15ch;
+  font-size:clamp(33px,7.4vw,118px); line-height:1.02; letter-spacing:-.012em;
+}
+/* The design breaks after "with", not before it, so the closing word stands
+   alone on the last line. Held by a nowrap unit rather than a wider
+   `max-width` — the three lines mix a sans and a serif at very different
+   widths, so any width that lets "with" up also lets "online" up one line
+   earlier and the shape collapses to two lines. Same device as
+   `.hero-title .keep`. */
+.svc-hero-title .keep { white-space:nowrap; }
+
+/* Note left, ask right, sharing the floor. They sit on the lit side of the
+   sphere, so the note keeps near-full opacity — the .76 used on dark ground
+   elsewhere is not legible over the orange. */
+.svc-hero-foot {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:clamp(24px,5vw,80px); margin-top:clamp(36px,6vh,72px);
+}
+.svc-hero-note {
+  margin:0; max-width:40ch;
+  color:rgba(249,249,249,.92); font-size:14.5px; line-height:1.7;
+}
+
+@media (max-width:760px) {
+  /* The ask drops under the note: side by side at this width the pill
+     squeezes the note to a four-word column. The sphere comes inboard and
+     loses its rotation offset so it stays behind the headline rather than
+     sliding off the corner. */
+  .svc-hero-foot { flex-direction:column; align-items:flex-start; }
+  /* The nowrap unit is released here. "Online presence with" is wider than a
+     phone at any size the headline is still a headline at, so holding it on
+     one line does not preserve the design's shape — it just runs the line off
+     the right edge. Below this width the three-line shape is gone anyway and
+     the copy wraps naturally. */
+  .svc-hero-title { max-width:none; }
+  .svc-hero-title .keep { white-space:normal; }
+  .svc-hero-orb { right:-28vw; bottom:-20vh; width:min(140vw,760px); }
+}
+
+/* The intro: the claim on the left, the argument on the right, and the three
+   outcomes it promises on a row beneath.
+
+   Backdrop contract again — `position:relative` only. The hero's sphere
+   finishes inside this section's top right and must not be cut at the seam. */
+.svc-intro {
+  position:relative;
+  padding:clamp(78px,10vw,150px) var(--gutter) clamp(90px,12vw,180px);
+}
+
+/* Two columns that do NOT meet in the middle. The design sets the headline
+   against roughly the left half and starts the body past the centre line, so
+   the gap between them is part of the composition rather than a gutter to be
+   minimised. */
+.svc-intro-head {
+  max-width:1680px; margin:0 auto;
+  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+  gap:clamp(30px,6vw,110px); align-items:start;
+}
+/* Sized to break into four lines as the design draws it, with "communication"
+   owning a line of its own — it is the longest word and what the section is
+   about, and "for personal" carried up onto the third line beside "strategy".
+   Measured off the mock rather than guessed: its caps run about 2.2% of the
+   page width, which is ~41px at 1440 and noticeably smaller than this headline
+   was first set. The size is what controls the break, so it is the thing to
+   get right before reaching for a nowrap unit. */
+.svc-intro-title {
+  margin:0; font-size:clamp(27px,3.05vw,46px); line-height:1.1;
+}
+/* Set slightly down from the headline's cap line. The headline is uppercase
+   and the body is not, so aligning their boxes leaves the body looking high. */
+.svc-intro-copy { margin-top:.5em; }
+.svc-intro-copy p {
+  margin:0; max-width:56ch;
+  color:rgba(249,249,249,.84); font-size:15px; line-height:1.74;
+}
+.svc-intro-copy p + p { margin-top:1.5em; }
+
+/* The three outcomes. Each is a word and its completion, under a rule.
+
+   The rules run the FULL column width and at an even weight, unlike
+   `.process-step::before` which stops at 88% and fades — there the marks are
+   rungs on a climb and the gradient points along it, here the three are equal
+   and simultaneous, so an even rule is what reads as parallel. */
+.svc-pillars {
+  list-style:none; padding:0;
+  max-width:1680px; margin:clamp(62px,9vw,140px) auto 0;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(24px,4vw,76px);
+}
+.svc-pillar::before {
+  content:""; display:block; height:1px; margin-bottom:clamp(26px,3vw,48px);
+  background:rgba(249,249,249,.3);
+}
+.svc-pillar h3 {
+  margin:0; font-weight:400; font-size:clamp(27px,3.3vw,49px); line-height:1;
+}
+/* Lower case and no leading capital: this is the back half of the sentence
+   the heading starts, not a caption under it. */
+.svc-pillar p {
+  margin:clamp(14px,1.6vw,24px) 0 0;
+  color:rgba(249,249,249,.82); font-size:14.5px; line-height:1.7;
+}
+
+@media (max-width:1000px) {
+  /* The headline stops sharing a row with the argument. Side by side below
+     this the title loses its four-line shape and the body drops under 40ch. */
+  .svc-intro-head { grid-template-columns:minmax(0,1fr); gap:clamp(26px,5vw,44px); }
+  .svc-intro-copy { margin-top:0; }
+}
+@media (max-width:760px) {
+  /* Three to one, not three to two — two columns would leave a single pillar
+     stranded on its own row, and the rules above them are what make the set
+     read as parallel. */
+  .svc-pillars { grid-template-columns:minmax(0,1fr); gap:clamp(34px,8vw,52px); }
+}
+
+/* The deliverables. Four lit masses in a row with the copy reading on top of
+   them — the process climb's composition, flattened into a row.
+
+   Backdrop contract: `position:relative` only. The spheres overlap each other
+   and run past the section on both edges, which is the design and is only
+   possible because nothing clips at this level any more. */
+.svc-get {
+  position:relative;
+  padding:clamp(70px,9vw,140px) var(--gutter) clamp(100px,13vw,200px);
+}
+
+/* THE BLUE IS LIT DIFFERENTLY FROM THE RED, ON PURPOSE — the same split the
+   process page makes. The reds are objects with an edge; the blue is ambient
+   light with none, so it keeps `screen` (which dissolves its vignette) plus a
+   heavy blur.
+
+   `screen` works here only because `body` is now the page's one isolation
+   group: the blue composites against the page's own fill, which is what makes
+   its black surround cancel. Under the old per-section groups this shape
+   would have had to live inside a section that painted its own background.
+
+   KEPT CLEAR OF THE ROW ABOVE IT, and the first attempt was not. `screen`
+   adds, so any red sphere sitting over this turns PINK — the process page
+   states that outright and this shape was placed over the first sphere
+   anyway, which flooded the lower left and dragged the whole corner purple.
+   It is now small, well below the row and deep into the corner, which is
+   where the design puts it: a wedge of cool at the bottom edge, not a wash
+   across the section. */
+.svc-get-blue {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  left:-30vw; bottom:-64%; width:min(58vw,700px);
+  background:url("rysing-assets/pattern-blue.webp") center/contain no-repeat;
+  mix-blend-mode:screen; filter:blur(46px); opacity:.72;
+  transform:translate3d(0,var(--py,0px),0);
+}
+
+.svc-get-title {
+  max-width:1680px; margin:0 auto; font-size:clamp(31px,4.4vw,66px); line-height:1;
+}
+
+.svc-get-list {
+  list-style:none; padding:0;
+  /* Set so the spheres rise to just graze the title above rather than
+     clearing it — in the design the title and the row of lights read as one
+     block, not a heading with a gap beneath it. */
+  max-width:1680px; margin:clamp(110px,13vw,200px) auto 0;
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(20px,2.6vw,52px); align-items:start;
+}
+/* THE TEXT DOES NOT STAGGER — only the lights do. In the design all four
+   headings sit on one line and it is the spheres behind them that are set at
+   different heights. Offsetting the whole item instead (the first attempt)
+   steps the copy down across the row and loses the single strong horizontal
+   the four headings make. `--lift` therefore belongs to the orb, below. */
+.svc-get-item { position:relative; }
+
+/* One light per item, sitting behind and above its copy so the heading lands
+   on the lit mass and the body text runs off its lower edge.
+
+   GRADED BRIGHTER THAN THE PROCESS SPHERES, because the design asks for it:
+   these are the page's loud moment and the mock's masses are strongly
+   saturated rather than banked down. `contrast()` is still the wrong tool for
+   it — the long note above `.process-orb` measured why: the asset's interior
+   sits above mid-grey, so contrast pushes the midtone up AND collapses the
+   green channel, taking the hue from rgb(239,65,33) to near-pure red.
+
+   The body copy reads over the lower edge of these, which is the one thing to
+   re-check if they are ever brightened further.
+
+   THE VIGNETTE IS KEPT HERE, and that is the opposite of the call made on
+   the process page. There the asset's black surround met a #141414 ground and
+   read as a hard ring drawn around every sphere, so a radial mask traded that
+   ring for a soft edge. In this design the spheres OVERLAP, and the dark rim
+   is what separates one from the next — mask it away and the four dissolve
+   into a single continuous red band with no silhouettes left. The surround is
+   doing useful work here, so it stays, and the mask only feathers the last of
+   the outer edge rather than cutting into the disc.
+
+   `--lift` is the per-slot height offset, applied here rather than to the
+   item so the headings stay on one line. Composed into the same transform as
+   the spin and the parallax drift; translate before rotate, or the offset
+   would be applied along the rotated axis. */
+.svc-get-orb {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  /* Measured off the mock: the heading lands about 60% of the way down its
+     sphere, and this offset is what sets that. Raising it to close the gap
+     under the title was the wrong lever — it lifted every sphere clear of its
+     heading and left the copy sitting on bare ground. The gap belonged to the
+     list's top margin; this controls the heading's position on the disc. */
+  left:50%; bottom:calc(100% - clamp(150px,19vw,290px));
+  width:clamp(250px,24vw,370px); margin-left:clamp(-185px,-12vw,-125px);
+  background:url("rysing-assets/pattern-red.webp") center/contain no-repeat;
+  transform:translate3d(0,calc(var(--py,0px) + var(--lift,0px)),0) rotate(var(--spin,0deg));
+  filter:blur(3px) brightness(.95) saturate(1.02);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 92%,rgba(0,0,0,0) 100%);
+          mask-image:radial-gradient(circle closest-side,#000 92%,rgba(0,0,0,0) 100%);
+}
+
+.svc-get-item h3 {
+  margin:0; font-weight:400; font-size:clamp(18px,1.72vw,27px); line-height:1.18;
+}
+.svc-get-item p {
+  margin:clamp(14px,1.5vw,22px) 0 0;
+  /* Near-full strength, unlike the .76 used on plain dark ground elsewhere:
+     this copy sits on the spheres and the dimmer value is not legible there. */
+  color:rgba(249,249,249,.93); font-size:13.5px; line-height:1.7;
+}
+
+@media (max-width:1080px) {
+  /* Two up. The lifts flatten: a stagger across two columns is an uneven gap
+     rather than a rhythm. */
+  .svc-get-list { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:clamp(120px,17vw,190px); }
+  /* No per-item offset to flatten any more; the lift lives on the orb. */
+  .svc-get-orb { --lift:0px; }
+  .svc-get-orb { width:clamp(240px,34vw,330px); }
+}
+@media (max-width:620px) {
+  /* One up, and the spheres alternate sides. Four of them centred in a single
+     column stack into one continuous red band down the page — the lights stop
+     being four and the body copy has to be read on top of all of it. The same
+     failure the process climb documents at this width, and the same fix. */
+  .svc-get-list { grid-template-columns:minmax(0,1fr); row-gap:clamp(96px,24vw,150px); }
+  .svc-get-orb { left:0; margin-left:0; width:min(68vw,300px); }
+  .svc-get-item:nth-child(even) .svc-get-orb { left:auto; right:0; }
+  .svc-get-list { margin-top:clamp(110px,28vw,190px); }
+}
+
+/* The six steps. A table, not a composition: the rows do the work and the
+   only shape is the blue disc behind the left column. */
+.svc-process {
+  position:relative;
+  padding:clamp(76px,10vw,150px) var(--gutter) clamp(90px,12vw,180px);
+}
+
+/* PLACED WHOLE, VIGNETTE INTACT — lit like the red spheres rather than like
+   the other blues on the site. The design draws a disc whose circular edge
+   sweeps down across the rows, and that edge only exists while the asset's
+   surround is left alone. `screen` is what the process page and the section
+   above use to dissolve exactly this surround, because there the blue is
+   ambient light with no boundary; using it here would delete the one feature
+   the design is asking for.
+
+   The cost of not screening is that the asset's black meets a #141414 page,
+   so the mask feathers the last few per cent of the disc to keep that from
+   reading as a drawn ring. The same trade the process spheres make. */
+.svc-process-blue {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  left:-33vw; top:-19vw; width:min(96vw,1120px);
+  background:url("rysing-assets/pattern-blue.webp") center/contain no-repeat;
+  transform:translate3d(0,var(--py,0px),0);
+  filter:blur(7px) brightness(.92) saturate(1.04);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 93%,rgba(0,0,0,0) 100%);
+          mask-image:radial-gradient(circle closest-side,#000 93%,rgba(0,0,0,0) 100%);
+}
+
+.svc-process-eyebrow { max-width:1680px; margin:0 auto; color:rgba(249,249,249,.9); }
+.svc-process-title {
+  max-width:1680px; margin:clamp(14px,1.8vw,26px) auto 0;
+  font-size:clamp(38px,5.6vw,86px); line-height:1;
+}
+
+.svc-steps {
+  list-style:none; padding:0;
+  max-width:1680px; margin:clamp(40px,5vw,78px) auto 0;
+  /* The rule under the last row. Every other rule is the next row's own top
+     border, so the set closes without a special case in the markup. */
+  border-bottom:1px solid rgba(249,249,249,.18);
+}
+/* Three columns: the numeral, what it is, and what you get. The numeral's
+   column is wide because the design sets the name well clear of it — they are
+   not a label and its value sitting together, they are two separate columns
+   of the table. */
+.svc-step {
+  border-top:1px solid rgba(249,249,249,.18);
+  padding:clamp(22px,2.8vw,40px) 0;
+  display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.38fr) minmax(0,1fr);
+  gap:clamp(16px,2.4vw,44px); align-items:center;
+}
+/* The heading spans the first two columns and lays them out itself, so the
+   number and the name stay one heading for a screen reader while still
+   sitting in separate columns visually. */
+.svc-step-h {
+  grid-column:1 / 3; margin:0; font-weight:400;
+  display:grid; grid-template-columns:subgrid; align-items:center;
+}
+/* Light, large and lining — the design's numerals are the thinnest thing on
+   the page, which is what keeps a column of six big digits from shouting
+   over the names beside them. */
+.svc-step-num {
+  font-weight:300; font-size:clamp(38px,4.7vw,72px); line-height:.94;
+  letter-spacing:-.01em; color:var(--paper);
+}
+.svc-step-name {
+  font-size:clamp(14px,1.32vw,19px); line-height:1.3;
+  text-transform:uppercase; letter-spacing:.005em;
+}
+.svc-step p {
+  margin:0; color:rgba(249,249,249,.82); font-size:13.5px; line-height:1.68;
+}
+
+@media (max-width:900px) {
+  /* Two columns, and the description drops under the name rather than beside
+     it — at this width a third column leaves both it and the name at about
+     twenty characters. The numeral keeps its own column so the rows still
+     read as a numbered table. */
+  .svc-step { grid-template-columns:minmax(0,auto) minmax(0,1fr); gap:clamp(14px,3vw,28px); align-items:start; }
+  .svc-step-h { grid-column:1 / 3; grid-template-columns:subgrid; }
+  .svc-step p { grid-column:2; margin-top:clamp(8px,1.4vw,12px); }
+  .svc-step-num { font-size:clamp(32px,7vw,48px); }
+}
+@media (max-width:560px) {
+  /* The blue stops being a disc with an edge and becomes ambient. At this
+     width the whole row sits inside it, and a defined boundary running
+     through the numerals reads as a stray line rather than as a shape. */
+  .svc-process-blue { left:-42vw; top:-30vw; width:min(150vw,620px); filter:blur(40px) brightness(.9); }
+}
+
+/* The evidence. Structurally the pillars row again — hairline, large figure,
+   supporting line — and the rule is kept at the same weight and full column
+   width on purpose, so the page reads as one device used twice. */
+.svc-proof {
+  position:relative;
+  padding:clamp(60px,8vw,120px) var(--gutter) clamp(90px,12vw,180px);
+}
+.svc-proof-eyebrow {
+  max-width:1680px; margin:0 auto clamp(18px,2.2vw,32px);
+  color:rgba(249,249,249,.9);
+}
+.svc-proof-list {
+  list-style:none; padding:0;
+  max-width:1680px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(24px,4vw,76px);
+}
+.svc-proof-item::before {
+  content:""; display:block; height:1px; margin-bottom:clamp(26px,3.2vw,52px);
+  background:rgba(249,249,249,.3);
+}
+/* Larger than the pillar words, which is the design's hierarchy: there the
+   heading is a word and here it is the number the whole section exists for.
+   `display:block` because <strong> is inline and the line beneath has to
+   start on its own row. */
+.svc-figure {
+  display:block; font-weight:400;
+  font-size:clamp(44px,5.6vw,86px); line-height:1;
+  /* The figures carry an en dash, a multiplication sign and a percent sign.
+     The didone sets those at a different optical weight to its digits, and
+     the default tracking leaves "6–7×" looking gappy at this size. */
+  letter-spacing:-.01em;
+}
+.svc-proof-item p {
+  margin:clamp(16px,1.8vw,26px) 0 0;
+  color:rgba(249,249,249,.82); font-size:14.5px; line-height:1.7;
+}
+
+@media (max-width:860px) {
+  /* Three to one. Two columns strand the third figure on a row of its own,
+     and the rules above them are what make the set read as parallel — the
+     same reasoning as the pillars. */
+  .svc-proof-list { grid-template-columns:minmax(0,1fr); gap:clamp(32px,7vw,48px); }
+}
+
+/* The multiplication sign, set in the sans. The didone's own × is a hairline
+   — far finer than the digits beside it — and against the design's heavier,
+   geometric mark it read as a stray crossing rather than as part of the
+   figure.
+
+   Aileron draws × small inside its em — about a quarter of it — so matching
+   the design's mark means setting it well ABOVE 1em and then centring it:
+   left on the baseline at a smaller size it hangs low and detaches from the
+   figure, which is what the first attempt did. `vertical-align:middle` puts
+   the glyph's centre on the parent's x-height midpoint, which is where the
+   design sits it. */
+.svc-figure-x {
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:1.45em; vertical-align:middle;
+  margin-left:.04em; line-height:0;
+  /* No `font-weight` here, and no outline stroke either — both were tried.
+     `font-weight` is inert on this glyph: Aileron draws one × and reuses it
+     across Regular, SemiBold and Bold (verified by rendering all three, where
+     the marks come out pixel-identical while the capital X does change).
+
+     A `-webkit-text-stroke` was then added to force the weight, and it was
+     unnecessary: at 1.45em the glyph already carries the design's weight.
+     The stroke only looked justified because this rule was sitting behind an
+     unbalanced comment terminator at the time, so none of it was applied —
+     the × on the page was still the serif's hairline, and every stroke value
+     measured against that read as an improvement.
+
+     (Note for whoever edits this: a CSS comment cannot contain the two
+     characters that end one, so that sequence cannot be quoted here. Writing
+     it literally terminates the comment early and silently drops every
+     declaration after it — which is the exact fault described above.) */
+}
+
+/* The ask. Centred, on flat black, with no glow — see the markup for why. */
+.svc-why {
+  position:relative;
+  padding:clamp(100px,13vw,210px) var(--gutter) clamp(110px,15vw,240px);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+}
+
+/* The brand mark, standing alone above the headline. `.mark-star` is the
+   same glyph and the same masking trick, but it is built to sit INLINE
+   before a line of type — it carries `margin-right` and a baseline shift,
+   and is sized in `em` off the headline it precedes. Here the mark is its
+   own object on its own line, so the geometry is different even though the
+   artwork is identical. Shares the `--mark` token rather than a second copy
+   of the SVG. */
+.svc-why-mark {
+  display:block; width:clamp(26px,2.6vw,40px); aspect-ratio:1;
+  margin-bottom:clamp(26px,3.4vw,52px);
+  background:var(--red);
+  -webkit-mask:var(--mark) center/contain no-repeat;
+          mask:var(--mark) center/contain no-repeat;
+}
+
+.svc-why-title {
+  margin:0; max-width:13em;
+  font-size:clamp(38px,6.4vw,100px); line-height:.96; letter-spacing:-.012em;
+}
+
+/* Centred measure. Narrower than the left-aligned body copy elsewhere on the
+   page: centred text has no common left edge to return to, so a long line is
+   markedly harder to track back from — the two paragraphs are set to break
+   into two lines each, as the design draws them. */
+.svc-why-copy {
+  margin:clamp(28px,3.6vw,54px) 0 0; max-width:62ch;
+}
+.svc-why-copy p {
+  margin:0; color:rgba(249,249,249,.88); font-size:15px; line-height:1.72;
+}
+.svc-why-copy p + p { margin-top:1.7em; }
+
+/* Solid, and this page is the exception. The note on `.closing` records that
+   the homepage's fill was removed so every pill became an outline — this
+   design asks for a filled one here, and it is the only filled pill on the
+   page, which is what marks it as the ask rather than a link. */
+.svc-why .btn-pill { margin-top:clamp(32px,4.4vw,60px); }
+
+/* --- Service page: the price -------------------------------- */
+/* Headline left, one plan card right, and the page's largest shape behind
+   both. The two columns do not meet in the middle, the same composition as
+   `.svc-intro` — the design sets the headline against the left half and the
+   card past the centre line, and the space between them is part of the
+   layout rather than a gutter to be closed. */
+.svc-price {
+  position:relative;
+  padding:clamp(84px,11vw,170px) var(--gutter) clamp(100px,13vw,200px);
+}
+.svc-price-wrap {
+  max-width:1680px; margin:0 auto;
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.82fr);
+  gap:clamp(34px,6vw,120px); align-items:start;
+}
+
+/* A GLOW, NOT THE DISC ASSET, and that is a deliberate departure from the
+   mock. Built first with `pattern-red.webp` placed whole the way
+   `.svc-process-blue` is — the mock appears to draw a circular edge sweeping
+   down past the card — and it reproduced §27's recorded `.svc-get` failure
+   exactly: the lit mass floods the section, the card sits inside it and the
+   body copy ends up on saturated orange. The asset is a dense object; this
+   corner wants light.
+
+   THE FAINT ARC IN THE MOCK IS NOT BUILT. §27: a decorative arc was read out
+   of a mock once before, added to this page's hero, and rejected by the
+   client outright — "if a thin curved line ever reappears on a service page,
+   it is a bug". A second thin curve read out of a second mock is the same
+   judgement call that was already made and already overturned, so it is
+   flagged rather than shipped. See §29.
+
+   THE BOX IS NOT THE SECTION, AND THAT IS THE WHOLE POINT. This shipped once
+   as `inset:0` — a box exactly the size of `.svc-price` — with the gradient's
+   centre near its top edge. The light therefore began AT the section
+   boundary and was cut flat across the full width of the page: the cropped
+   backdrop §27 exists to abolish, reintroduced by hand in the first new
+   shape written after it. The client caught it immediately, and had already
+   given the instruction once.
+
+   `inset:0` on a glow is the tell. The rule is §8's and it is about the box,
+   not about clipping: a gradient must reach transparent INSIDE its own
+   element. A centre at `2%` cannot — 98% of that light falls outside the box
+   and the box edge becomes a drawn line. Nothing has to clip for this to
+   happen; the background simply is not painted beyond its own element.
+
+   So the element is sized and placed by the light rather than by the
+   section. It is a square two-thirds wider than the viewport whose CENTRE is
+   parked on the section's top-right corner, which puts the full falloff
+   inside it on every side. It then bleeds up into the testimonial rail above
+   and down behind the card, which is what makes it read as the page's light
+   rather than this section's decoration. That bleed is legal only because of
+   §27's page-level compositing group — on the old per-section model it would
+   have left a halo at the boundary.
+
+   The source is `--red` itself, unlike `.closing-glow` which has to start
+   hotter. §25's brown is an artefact of compositing red toward #141414, a
+   grey, which raises the green channel relative to red. Over the #000 page
+   (§28) the composite is proportional and the hue holds, so the brand red
+   can be used directly here. */
+.svc-price-glow {
+  position:absolute; z-index:-1; pointer-events:none;
+  top:0; right:0; width:min(166vw,2100px); aspect-ratio:1;
+  /* Centre the box on the section's top-right corner, then carry it 42% of
+     its own width back to the right so the core sits where the mock puts it.
+     The parallax drift composes here rather than replacing the placement —
+     translate before anything else, as §27 requires. */
+  transform:translate3d(0,var(--py,0px),0) translate(42%,-50%);
+  background:radial-gradient(circle closest-side,
+    rgba(240,66,34,.52) 0%, rgba(240,66,34,.3) 26%,
+    rgba(240,66,34,.1) 48%, rgba(240,66,34,0) 70%);
+}
+
+/* Four lines, breaking where the design breaks them — "Set the foundation /
+   with a clear / message and brand / communication", with the longest word
+   owning the last line.
+
+   11.6em is the midpoint of the window, not a value that happened to work.
+   Swept 10 to 13em at 1680, 1440 and 1200: at 10em it falls to five lines
+   and "Set the" is left hanging alone; at 13em it collapses to three at 1680
+   only, so that end is also a breakpoint-dependent edge. 11 to 12.2em holds
+   the design's break identically at all three widths.
+
+   In em and never ch — §4. Kinfolk's zero is 0.70em against the Didot
+   fallback's 0.52em, so a ch measure here would narrow by a quarter on every
+   cold load under font-display:swap and take this to five lines. */
+.svc-price-title {
+  margin:0; max-width:11.6em;
+  font-size:clamp(32px,3.9vw,60px); line-height:1.04; letter-spacing:-.005em;
+}
+
+/* No fill. The disc behind the card has to read THROUGH it — in the mock the
+   card's top right is lit by the same light that lights the page around it,
+   which only happens while the card is a hairline and nothing else. An
+   opaque panel here would also break §27's contract by making the card its
+   own ground. */
+.svc-plan {
+  border:1px solid rgba(249,249,249,.22);
+  padding:clamp(28px,3.2vw,48px) clamp(24px,2.9vw,44px) clamp(28px,3.2vw,46px);
+}
+.svc-plan-name { margin:0; color:var(--paper); }
+.svc-plan-note {
+  margin:clamp(10px,1.1vw,16px) 0 0;
+  color:rgba(249,249,249,.78); font-size:15px; line-height:1.5;
+}
+
+/* The figure and its qualifier are one line but two objects. `+ VAT` sets
+   small and in the grotesque against the didone digits, and sits low rather
+   than on the cap line — superscripting it would read as a footnote marker
+   on a number, which is a different claim. */
+.svc-plan-price {
+  display:flex; align-items:baseline; gap:clamp(10px,1vw,16px);
+  margin:clamp(16px,1.9vw,28px) 0 clamp(22px,2.6vw,38px);
+}
+.svc-plan-figure {
+  font-size:clamp(46px,5.6vw,88px); line-height:1; letter-spacing:.005em;
+}
+/* A touch of air after the symbol, which the didone does not give it. */
+.svc-plan-cur { margin-right:.16em; }
+.svc-plan-vat {
+  font-size:12px; font-weight:600; letter-spacing:.13em; text-transform:uppercase;
+  color:rgba(249,249,249,.84);
+}
+
+/* Each inclusion stands on its own rule. The rule is the item's own top
+   border rather than a separator element, so the first one lands under the
+   price without anything extra being drawn for it. */
+.svc-plan-list { list-style:none; margin:0; padding:0; }
+.svc-plan-list li {
+  position:relative;
+  border-top:1px solid rgba(249,249,249,.15);
+  padding:clamp(16px,1.7vw,24px) 0 clamp(16px,1.7vw,24px) clamp(30px,2.4vw,38px);
+  color:rgba(249,249,249,.9); font-size:15px; line-height:1.55;
+}
+/* The bullet is the brand mark, in red — the same glyph the closing ask
+   stands under and the same masking trick, sized here to sit on the first
+   line of its item rather than to stand alone. */
+.svc-plan-list li::before {
+  content:""; position:absolute; left:0; top:calc(clamp(16px,1.7vw,24px) + .32em);
+  width:clamp(11px,.85vw,13px); aspect-ratio:1;
+  background:var(--red);
+  -webkit-mask:var(--mark) center/contain no-repeat;
+          mask:var(--mark) center/contain no-repeat;
+}
+
+/* The funding line carries its own rule and a wider gap above it, because it
+   qualifies the whole card rather than continuing the list. Full strength
+   paper, not the list's .9: it is the one line on the card that changes what
+   the figure above it costs. */
+.svc-plan-fine {
+  margin:clamp(26px,3vw,44px) 0 0;
+  padding-top:clamp(20px,2.2vw,32px);
+  border-top:1px solid rgba(249,249,249,.15);
+  color:var(--paper); font-size:13.5px; line-height:1.6;
+}
+.svc-plan .btn-pill { margin-top:clamp(20px,2.2vw,32px); }
+
+@media (max-width:1000px) {
+  /* The card stops sharing a row with the headline. Side by side below this
+     the card falls under ~300px and the four inclusions each wrap to three
+     lines, which turns the list into a paragraph. */
+  .svc-price-wrap { grid-template-columns:minmax(0,1fr); gap:clamp(40px,7vw,64px); }
+  .svc-price-title { max-width:11em; }
+  .svc-plan { max-width:560px; }
+}
+@media (max-width:560px) {
+  /* Taken down, not repositioned. On a phone the card is directly under the
+     light rather than beside it, so the same strength puts the price and the
+     first two inclusions on lit ground — the thing §27 says to re-check
+     whenever one of these is brightened. Only the stops change: the box
+     geometry is what keeps the light uncut, so it must not be touched here. */
+  .svc-price-glow {
+    background:radial-gradient(circle closest-side,
+      rgba(240,66,34,.38) 0%, rgba(240,66,34,.2) 26%,
+      rgba(240,66,34,.07) 48%, rgba(240,66,34,0) 70%);
+  }
+}
+
+/* --- Service page: the closing ------------------------------ */
+/* Two sentences and one pill, centred on black. The page's only blue, and
+   it arrives at the very bottom where the footer's own blue is already
+   waiting below it — so it reads as one light rising into the footer rather
+   than as a third colour introduced on the last screen. §26 asked for that
+   and §27's page-level group is what finally allows it. */
+.svc-close {
+  position:relative;
+  padding:clamp(110px,15vw,240px) var(--gutter) clamp(120px,16vw,260px);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+}
+
+/* PLACED WHOLE, VIGNETTE INTACT — the mock draws a disc whose circular edge
+   sweeps up out of the bottom-left corner, and that edge only survives while
+   the asset's own surround is left alone. `screen` would dissolve exactly
+   the feature being asked for. Same call as `.svc-process-blue`; §26's table
+   says which shapes take which of the two lightings.
+
+   THE BOX IS THE DISC, NOT THE SECTION. It is anchored past two edges on
+   purpose, so the shape carries off the left of the page and down behind the
+   footer as one light. That is legal because of §27 and it is the opposite
+   of what §29's glow did wrong — there the element was `inset:0`, the
+   gradient was cut by its own box and drew a line across the page. An image
+   placed `contain` cannot be cropped that way as long as its box is sized to
+   the artwork, which is what these numbers do.
+
+   No `.glow-soft`: that mask fades a glow before its own section's top and
+   bottom edges, which is precisely the per-section behaviour this shape is
+   not supposed to have. */
+.svc-close-blue {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  /* The offset is capped the same way the width is. `width` stops growing at
+     900px (viewport 1429) but a raw `-42vw` offset keeps going, so above that
+     the disc drops further for no reason — and at 1920 it reached 32px past
+     the bottom of `body`, which is §33: light past the end of the page fill,
+     plus dead scroll. Cap both or neither. */
+  left:-14vw; bottom:calc(-1 * min(42vw,600px)); width:min(63vw,900px);
+  background:url("rysing-assets/pattern-blue.webp") center/contain no-repeat;
+  transform:translate3d(0,var(--py,0px),0);
+  filter:blur(7px) brightness(.76) saturate(1.04);
+  /* Feathers only the last few per cent of the outer edge. It is not hiding
+     a ring any more — at #000 the asset's surround matches the page exactly
+     (§28) — but it still keeps the artwork's own square corners out of the
+     silhouette. */
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 95%,rgba(0,0,0,0) 100%);
+          mask-image:radial-gradient(circle closest-side,#000 95%,rgba(0,0,0,0) 100%);
+}
+
+.svc-close-title {
+  margin:0; max-width:16em;
+  font-size:clamp(34px,5.4vw,86px); line-height:1.12; letter-spacing:-.008em;
+}
+/* One sentence per line. Block rather than a <br>: the break is structural —
+   these are two sentences the design pairs — and a block span keeps each one
+   wrapping inside itself on a narrow screen instead of breaking in the same
+   place regardless of room. */
+.svc-close-line { display:block; }
+
+.svc-close .btn-pill { margin-top:clamp(34px,4.6vw,64px); }
+
+@media (max-width:620px) {
+  /* The disc is sized in vw against a desktop viewport, so on a phone the
+     same rule leaves a ~250px blob sitting in the corner rather than a light
+     sweeping out of it — the shape stops reading as a disc at all. Scaled to
+     the viewport and pushed further out, so the visible part is still an arc
+     crossing the corner and not a whole small circle. */
+  .svc-close-blue { left:-40vw; bottom:-56vw; width:min(100vw,470px); }
+}
+
+/* === Case study ================================================
+   The Gerd Bommer page, and the shape every case study after it
+   takes. Prefixed `.case-` so a second case study is a new source
+   file and no new CSS.
+
+   ONE RULE RUNS THROUGH ALL OF IT: this page shows another brand's
+   work. Royal blue and sharp yellow are Gerd's colours, not ours,
+   and they appear here as artwork — so `--photo-grade` is applied
+   to the PHOTOGRAPHS only and never to the logo lockups, the
+   website screens or the LinkedIn posts. Grading those would pull
+   the saturation out of the very thing the page is presenting as
+   evidence. See `.case-shot` against `.case-logos img`. */
+
+.case-hero {
+  position:relative;
+  padding:clamp(120px,15vh,180px) var(--gutter) clamp(80px,10vw,150px);
+}
+
+/* Same parallax contract as the service shapes: JS writes --py, the
+   shape composes it with its own --spin. */
+.case-hero-orb,
+.case-close-blue,
+.case-close-red {
+  transform:translate3d(0,var(--py,0px),0) rotate(var(--spin,0deg));
+}
+
+/* BLUE low-right, not red. The mock places its blue sphere here and
+   saves the red one for the closing — checked against the export's
+   own assets rather than guessed from the rendered page, where the
+   two read alike once they are dimmed this far. The service hero
+   uses red in the same corner; this page is the other way round on
+   purpose, and that is the client's drawing.
+
+   Page-level backdrop, §27: the shape carries down out of the hero
+   and into the section below, so this section declares
+   `position:relative` and nothing else. Placed WHOLE with the
+   vignette intact, so it keeps a circular edge. */
+.case-hero-orb {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  /* Only a corner of the disc is meant to be in frame. The mock hangs
+     it 55% of the section below the fold and 18% off the right, so
+     what reads is an arc of light in the corner — not a sphere
+     parked behind the portrait. Brightness is well under the service
+     page's because that one lights an empty corner and this one
+     lights the corner the body copy starts in. */
+  right:-20vw; bottom:calc(-1 * min(54vw,760px)); width:min(74vw,1060px);
+  background:url("rysing-assets/pattern-blue.webp") center/contain no-repeat;
+  /* Turned so the asset's bright lobe hangs below the fold and only
+     its falloff reaches up into the section. Unrotated the lobe
+     lands square behind the body copy. */
+  --spin:148deg;
+  filter:blur(8px) brightness(.34) saturate(1.04);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 92%,rgba(0,0,0,0) 100%);
+          mask-image:radial-gradient(circle closest-side,#000 92%,rgba(0,0,0,0) 100%);
+}
+
+/* THE FIX THE MOCK NEEDS. Its hero is a flex row of `3 1 420px` and
+   `2 1 300px` with no measure on the <h1>, so at desktop widths the
+   headline overruns its own column and "UNTAMED" sits under the
+   photograph. Explicit columns instead: the text column cannot
+   spill into the image's, whatever the headline says. A later case
+   study with a longer name therefore wraps instead of colliding. */
+.case-hero-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:clamp(32px,5vw,72px);
+  align-items:end;
+}
+.case-hero-text { min-width:0; }
+
+.case-hero-eyebrow { margin:0 0 clamp(20px,2.6vw,34px); color:rgba(249,249,249,.86); }
+
+/* Measured in em, never ch — §"decisions already settled" 4: ch is
+   the resolved font's zero width and Kinfolk's differs from the
+   Didot fallback's by a quarter, so a ch measure silently reflows
+   on every cold load under font-display:swap. */
+.case-hero-title {
+  margin:0; max-width:7em;
+  font-size:clamp(46px,8.2vw,132px); line-height:.89; letter-spacing:-.006em;
+}
+
+.case-hero-note {
+  margin:clamp(26px,3.4vw,40px) 0 0; max-width:34em;
+  color:rgba(249,249,249,.92);
+  font-size:clamp(15px,1.25vw,19px); line-height:1.6;
+}
+
+/* Scope, not navigation — see the markup note. Hairline rather than
+   the full-strength border `.btn-pill` carries, and no hover state,
+   so the block does not read as ten controls. */
+.case-tags {
+  list-style:none; margin:clamp(30px,3.8vw,46px) 0 0; padding:0;
+  display:flex; flex-wrap:wrap; gap:8px; max-width:46em;
+}
+.case-tag {
+  border:1px solid rgba(249,249,249,.42); border-radius:999px;
+  padding:7px 16px;
+  color:rgba(249,249,249,.88);
+  font-size:12.5px; line-height:1.05; letter-spacing:.005em;
+}
+
+.case-hero-portrait {
+  width:100%; height:auto; aspect-ratio:4/5; object-fit:cover;
+  filter:var(--photo-grade);
+}
+
+/* --- The body column ------------------------------------------ */
+/* One measure and one rhythm for everything between the hero and
+   the closing, as the mock stacks it. */
+.case-body {
+  position:relative;
+  max-width:1224px; margin:0 auto;
+  padding:0 var(--gutter) clamp(100px,13vw,200px);
+  display:flex; flex-direction:column; gap:clamp(86px,11vw,150px);
+}
+
+/* Heading left, copy right, and they do NOT meet in the middle —
+   same two-column device as the service page's intro. */
+.case-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.72fr);
+  gap:clamp(22px,4.6vw,72px);
+  align-items:start;
+}
+.case-row-title {
+  margin:0;
+  font-size:clamp(34px,4.4vw,64px); line-height:.91; letter-spacing:-.004em;
+}
+/* The micro-label standing in for a heading, where the design sets
+   the big type on the statement above instead. */
+.case-row-label { margin:0; color:rgba(249,249,249,.86); padding-top:.5em; }
+
+.case-copy { min-width:0; max-width:38em; display:flex; flex-direction:column; gap:1.1em; }
+.case-copy p { margin:0; color:rgba(249,249,249,.86); font-size:clamp(15px,1.2vw,18px); line-height:1.62; }
+
+/* A section that is a row plus its evidence beneath. */
+.case-block { display:flex; flex-direction:column; gap:clamp(34px,4.6vw,64px); }
+
+/* The brand line, the page's largest type. */
+.case-statement {
+  margin:0; max-width:13em;
+  font-size:clamp(40px,8vw,128px); line-height:.89; letter-spacing:-.008em;
+}
+
+/* --- Evidence ------------------------------------------------- */
+/* Photographs take the site grade; artwork never does. */
+.case-shot {
+  width:100%; height:auto; display:block;
+  filter:var(--photo-grade);
+}
+
+.case-pair,
+.case-trio,
+.case-logos {
+  list-style:none; margin:0; padding:0;
+  display:grid; gap:16px;
+}
+.case-pair li,
+.case-trio li,
+.case-logos li { min-width:0; }
+.case-pair img,
+.case-trio img,
+.case-logos img { width:100%; height:auto; display:block; }
+
+/* Both bike details photographs, so both graded — and both at their
+   own ratio. The mock boxed them 4/3 under `object-fit:cover` and
+   cut the top line off the side panel, which is the only thing
+   either frame is on the page for. */
+.case-pair { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.case-pair img { filter:var(--photo-grade); }
+
+/* Three screens or three posts, equal columns. UNGRADED: these are
+   Gerd's blue and yellow, and desaturating them to .62 would mute
+   the brand the section exists to show. */
+.case-trio { grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+/* Wordmark then bolt, twice, colours swapped. Both rows the same
+   height and the bolt square, so the pairing the copy describes
+   survives: the mock set `height:100%` on one cell against
+   `aspect-ratio:1` on its neighbour and the two rows came out
+   different heights. The wordmark cell's ratio follows from the
+   artwork (2.29:1) rather than being asserted a second time. */
+.case-logos { grid-template-columns:minmax(0,2.29fr) minmax(0,1fr); }
+
+/* --- Result --------------------------------------------------- */
+/* The client's own placeholder, drawn as she drew it. Dashed,
+   because a placeholder that looks finished is one that ships. */
+.case-pending {
+  border:1px dashed rgba(249,249,249,.48);
+  padding:16px 20px;
+  color:rgba(249,249,249,.72);
+  font-size:14px; line-height:1.5; letter-spacing:.02em;
+}
+
+/* --- The quote ------------------------------------------------ */
+.case-quote {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.9fr);
+  gap:clamp(32px,5vw,72px);
+  align-items:center;
+}
+.case-quote-photo {
+  width:100%; height:auto; aspect-ratio:4/5; object-fit:cover;
+  filter:var(--photo-grade);
+}
+.case-quote-body { margin:0; min-width:0; display:flex; flex-direction:column; gap:1.3em; }
+.case-quote-lead {
+  margin:0; max-width:17em;
+  font-size:clamp(24px,3.1vw,46px); line-height:1.04; letter-spacing:-.004em;
+}
+.case-quote-body p:not(.case-quote-lead) {
+  margin:0; max-width:36em;
+  color:rgba(249,249,249,.84); font-size:clamp(14.5px,1.1vw,17px); line-height:1.62;
+}
+/* Set in the grotesque, and an em dash ahead of the name as the
+   design draws it — in CSS rather than the markup, so the name is
+   what gets copied and announced. */
+.case-quote-cite { font-style:normal; font-size:clamp(16px,1.4vw,22px); color:rgba(249,249,249,.92); }
+.case-quote-cite::before { content:"\2014\00a0"; }
+
+/* --- The closing ---------------------------------------------- */
+.case-close {
+  position:relative;
+  padding:clamp(100px,13vw,200px) var(--gutter) clamp(110px,14vw,230px);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+}
+
+/* Two discs, as the mock draws them: blue up-left, red down-right.
+   Both PLACED WHOLE, vignette intact, so each keeps the circular
+   edge the design sweeps out of its corner — same call and same
+   reasoning as `.svc-close-blue`, and the same warning applies.
+
+   THE BOX IS THE DISC, NOT THE SECTION. Both offsets are capped the
+   same way their widths are, so neither drops past the bottom of
+   `body` at wide viewports — §33: light past the end of the page
+   fill is a hard edge plus dead scroll, and an uncapped vw offset
+   against a capped width is exactly how that happens. */
+.case-close-blue {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  left:-26vw; top:calc(-1 * min(44vw,620px)); width:min(68vw,960px);
+  background:url("rysing-assets/pattern-blue.webp") center/contain no-repeat;
+  --spin:-46deg;
+  filter:blur(8px) brightness(.32) saturate(1.04);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 95%,rgba(0,0,0,0) 100%);
+          mask-image:radial-gradient(circle closest-side,#000 95%,rgba(0,0,0,0) 100%);
+}
+.case-close-red {
+  position:absolute; z-index:-1; aspect-ratio:1; pointer-events:none;
+  right:-24vw; bottom:calc(-1 * min(40vw,560px)); width:min(64vw,900px);
+  background:url("rysing-assets/pattern-red.webp") center/contain no-repeat;
+  --spin:132deg;
+  filter:blur(8px) brightness(.3) saturate(.92);
+  -webkit-mask-image:radial-gradient(circle closest-side,#000 92%,rgba(0,0,0,0) 100%);
+          mask-image:radial-gradient(circle closest-side,#000 92%,rgba(0,0,0,0) 100%);
+}
+
+.case-close-title {
+  margin:0; max-width:9em;
+  font-size:clamp(38px,6.4vw,124px); line-height:.89; letter-spacing:-.008em;
+}
+.case-close .btn-pill { margin-top:clamp(36px,4.8vw,66px); }
+
+@media (max-width:980px) {
+  /* The three-up screens get too narrow to read as pages at this
+     width; two columns with the third dropping under is worse than
+     a single scanning column, so they go to two. */
+  .case-trio { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+@media (max-width:860px) {
+  /* Every two-column row stacks. The headline column is sized
+     against a desktop measure and at this width it is a narrow
+     well with four words in it. */
+  .case-hero-grid,
+  .case-row,
+  .case-quote { grid-template-columns:minmax(0,1fr); }
+  .case-hero-grid { align-items:start; }
+  /* The portrait led on the right of the hero; stacked, it reads
+     better under the copy than between the headline and the note. */
+  .case-hero-portrait { max-width:420px; }
+  .case-row-label { padding-top:0; }
+  .case-hero-title { max-width:none; }
+  .case-statement { max-width:none; }
+  .case-quote-lead { max-width:none; }
+}
+
+@media (max-width:620px) {
+  .case-pair,
+  .case-trio,
+  .case-logos { grid-template-columns:minmax(0,1fr); }
+  /* Sized in vw against a desktop viewport, these leave a small
+     whole circle sitting in the corner on a phone rather than an
+     arc sweeping out of it — the shape stops reading as a disc.
+     Same correction as `.svc-close-blue` takes. */
+  .case-hero-orb { right:-34vw; bottom:-40vw; width:min(124vw,560px); }
+  .case-close-blue { left:-38vw; top:-50vw; width:min(104vw,480px); }
+  .case-close-red { right:-38vw; bottom:-46vw; width:min(100vw,460px); }
 }

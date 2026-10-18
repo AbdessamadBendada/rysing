@@ -10,30 +10,138 @@ mass-market coaching funnel, or conventional luxury template.
 
 ## ACTIVE TRACK — read this before anything else
 
-The active build is **`new-direction.html`**. It is a ground-up rebuild against a
-new design reference and is *not* a revision of `rysing-comments.html`. Everything
-below the "Source-of-truth order" heading describes the earlier
-`rysing-comments.html` cycle and is retained as history — do not act on it unless
-the user reopens that track.
+**`HANDOFF.md` is the authority. Read it first.** This file carries project
+purpose, voice and collaboration style; `HANDOFF.md` carries the build, and it
+is current. Where the two disagree, `HANDOFF.md` wins.
+
+The active build is a **five-page static site generated from `src/`**. Every
+HTML file at the repository root is generated output — editing one is thrown
+away on the next build.
+
+```sh
+node build.js        # no dependencies, no install step
+```
 
 ### File roles for this track
 
 | File | Role |
 | --- | --- |
-| `new-direction.html` | The active build. The only file to edit. |
-| `new-direction-2.html` | **Codex's playground. Never edit or read-modify it.** The user has said this explicitly. |
-| `rysing-comments.html` | Frozen baseline for copy and section order. Read-only reference. |
-| `~/Downloads/Homepage-html/Main.dc.html` | The design reference mockup (a design-tool export). Replicate its values in our own system; never copy its markup or its `support.js`/`vendor/` runtime. |
+| `src/*.html` | The active build. **The only HTML to edit.** |
+| `src/_layout.html`, `_header.html`, `_footer.html`, `_marquee.html`, `_testimonials.html` | Shared chrome and partials — a change here lands on every page. |
+| `shared.css`, `shared.js` | Shared by all five pages. Same warning. |
+| `build.js` | Stitches `src/` into the root pages. `HANDOFF.md` §12. |
+| `index.html`, `about.html`, `process.html`, `contact.html`, `communication-strategy.html` | **Generated. Never edit.** |
+| `playground/` | Every earlier concept, kept as history. Do not edit. |
+| `playground/rysing-comments.html` | Frozen baseline for copy and section order. Read-only reference. |
+| `playground/new-direction-2.html` | **Codex's playground. Never edit or read-modify it.** The user has said this explicitly. |
+
+Anything below the "Source-of-truth order" heading describes the earlier
+`rysing-comments.html` cycle and is retained as history — do not act on it
+unless the user reopens that track. In particular it names Instrument Serif /
+Instrument Sans; the live build uses **Kinfolk and Aileron**.
+
+### The current page set
+
+`index.html` (homepage) · `about.html` · `process.html` (the Spotlight
+framework) · `contact.html` · `communication-strategy.html` (the first
+service page) · `case-gerd-bommer.html` (the first case study, newest).
+
+Case-study images live in `case-studies/<slug>/`, with the camera originals
+and the client's design export in `case-studies/<slug>/_originals/` —
+gitignored, same arrangement as `rysing brand assets/`. **The export zip is
+the copy source**: it carries a `Main.dc.html` with the full page, the
+measured type sizes and the designer's own crops. Use those crops; they are
+framed, and the raw files are not.
+
+There is NO case-study templating machinery, deliberately. The second case
+study is a copy of `src/case-gerd-bommer.html` with its content swapped — the
+decision was that a build-time template is not worth it for a concept design
+that gets rebuilt in Divi. All the layout lives in the `.case-` block at the
+end of `shared.css`, so a second case study should need no new CSS.
+
+### Backgrounds belong to the page, not to sections
+
+The newest architectural rule, and the one most likely to be broken by
+accident. `body` is the single compositing group; a section hosting a
+background shape carries `position:relative` and **nothing else** — no
+`isolation`, no `overflow:clip`, no opaque `background`, or the shape is cut
+at the section boundary again.
+
+| Page | Backdrop model |
+| --- | --- |
+| `communication-strategy.html` | page-level (§27) |
+| `about.html` | page-level (§31) |
+| `contact.html` | page-level (§32) |
+| `process.html` | page-level (§34) |
+| `index.html` | **still per-section — the last one** |
+
+`.glow-soft` is legacy, kept alive for the homepage alone. Do not add it to
+anything. **Read `HANDOFF.md` §27, §29, §33 and §34 before adding or moving
+any background shape on any page.**
+
+**Removing `overflow:clip` is only half of it. The shape's own box is the
+other half, and it is the half that keeps getting broken.** A gradient only
+paints inside its own element — nothing has to clip for it to be cut. Two
+rules, and both have already been broken once each:
+
+> **1. The box must contain the light's falloff on every side.** A glow
+> written `inset:0` has a box exactly the size of its section, so a gradient
+> centred near that box's edge begins AT the section boundary and draws a
+> hard line across the page (§29).
+>
+> **2. The box must not reach past the bottom of `body`.** There is no page
+> fill below it, so the light stops at a hard edge there too — and the
+> overhang becomes dead scroll at the end of the document (§33).
+
+So size and place the element **by the light**, per shape, asymmetrically —
+never one blanket overhang for every glow. And watch the units: a radius in
+`vw` or `px` does not scale with the box and must not be rescaled with it
+(§32). Cap an offset wherever you cap a width, or neither (§33).
+
+Three checks, all cheap, each one added because looking at the page missed
+the bug:
+
+| Check | Catches |
+| --- | --- |
+| whole-page scan for full-width hard rows | a glow cut at a section edge |
+| `scrollHeight` vs `body` bottom, at several widths | a glow past the end of the page; dead scroll |
+| assert each light's centre against its authored position | a light that moved when it should not have |
+
+A single-boundary probe and a `fullPage` screenshot have each passed a defect
+that was plainly visible in a browser. Do not rely on either.
+
+**And the hard-row scan has a blind spot (§34).** A glow anchored off one
+side is cut across *its own* width, not the page's. The process page's cut
+spanned 42% of the columns and a scan thresholded at 90% coverage reported
+the page clean. Scan for a run of columns changing together, or threshold at
+25% and read the geometry of every hit.
+
+**Edit CSS rules by selector, never by a string that repeats across rules.**
+Five glows shared one identical `inset` line; sequential replacement
+scrambled the boxes across the gradients and still looked plausible (§33).
 
 ### Non-negotiables
 
-- **Copy and section order are frozen.** Lift copy verbatim from
-  `rysing-comments.html`. Do not reword, add, or drop visible copy without asking.
+- **Copy and section order are frozen.** For the pages that came from it, lift
+  copy verbatim from `playground/rysing-comments.html`. Do not reword, add, or
+  drop visible copy without asking.
+- **Section order on a service page is given, not derived.** The client
+  supplies these pages section by section and says where each one goes. A
+  design argument for a different order — even a correct one, even one this
+  document makes elsewhere — is something to raise, never a reason to build
+  it differently. The testimonial rail was placed before the closing ask on
+  exactly that reasoning and had to be moved. `HANDOFF.md` §27.
+- **For the service pages, the client's mocks are the copy source** and the
+  same rule applies: transcribe verbatim, including inconsistencies. The
+  communication-strategy page mixes "I" and "we", mixes -ize and -ise
+  spellings, and drops a full stop in one row. All of it was left as supplied
+  and flagged to the client rather than silently corrected. See `HANDOFF.md`
+  §27 "Open".
 - **The client dislikes heavy black** in the *older* light-sectioned build. The new
   direction is deliberately black-first because the reference is — this is an
   approved exception, not a contradiction. Do not "fix" it.
 - Push directly to `main`; no feature branches on this project.
-- Nothing is committed yet for this track at time of writing.
+- Do not commit, push or deploy unless the user asks.
 
 ### The design language
 
@@ -44,16 +152,48 @@ the user reopens that track.
   headline**. `.display` is the Kinfolk default; `.display .alt` flips a run back
   to Aileron 600. This alternation is the signature of the direction.
 - `.label` is the universal micro-label (11px/600/.17em/uppercase).
-- `.btn-pill` is the only button, outlined, with the star-mark arrow.
-- Tokens: ink `#141414`, ink-deep `#0d0d0d`, paper `#f9f9f9`, red `#f04222`,
-  blue `#3524d5`. Grain is generated in CSS, not loaded (the supplied plate is
-  4.3 MB and does not tile).
+- `.btn-pill` is the only button, and it carries the star-mark arrow — the
+  mocks all draw `↗` instead, which is still undecided and is shared chrome,
+  so changing it lands everywhere at once. Outlined everywhere except on
+  `communication-strategy.html`, where the client's designs ask for filled
+  pills. **There are two of them there now** (the "why work with me" ask and
+  the closing), so "the only filled pill marks the ask" no longer holds and
+  wants a decision — `HANDOFF.md` §30.
+- **The brand pattern assets (`pattern-red.webp`, `pattern-blue.webp`) are the
+  background shapes. Do not draw them as gradients** — that shipped once and
+  read as fuzzy blobs. `HANDOFF.md` §26. The same asset is lit three different
+  ways across the site on purpose; §27 says which and why.
+  **The exception is ambient light with no edge.** Where a mock draws a wash
+  rather than a disc — the service page's price corner — the asset floods the
+  section and a gradient is correct; §29 records that attempt and why it was
+  reversed. If the design shows a circular boundary, it is the asset.
+- Tokens: ink `#000000`, ink-deep `#000000`, paper `#f9f9f9`, red `#f04222`,
+  blue `#3524d5` — all four now the brand book's own values, see
+  `rysing brand assets/Branding-Guidelines.pdf` §3.0 and `HANDOFF.md` §28.
+  The black was `#141414` until the client asked for the document to be
+  followed; `--ink-deep` was a darker tone and nothing is darker than `#000`,
+  so it is the same black and the hero's gradient ground is now flat. Grain
+  is generated in CSS, not loaded (the supplied plate is 4.3 MB and does not
+  tile).
 
 ### Section order as built
 
-Header · hero · showreel aperture · stats · services accordion · selected work ·
-manifesto · founder plate · founder copy · team roster · recognition marquee ·
-testimonials · spotlight · newsletter · final CTA · footer.
+**Homepage:** header · hero · showreel aperture · stats · services accordion ·
+selected work · manifesto · founder plate · founder copy · team roster ·
+recognition marquee · testimonials · spotlight · newsletter · final CTA ·
+footer.
+
+**`about.html`** (`HANDOFF.md` §22, §31): hero · conviction · founder · team ·
+studio · courage · stats · testimonials · recognition · the standard ·
+closing.
+
+**`communication-strategy.html`** — the service-page template, complete at
+eight sections (`HANDOFF.md` §27, §29, §30): hero · intro and three outcomes ·
+four deliverables on spheres · the six-step process table · three figures ·
+"why work with me" · **testimonials** · **price** · **closing**.
+
+That order is the client's, given section by section. The rail sits after the
+ask because she said so, not because it reads better there.
 
 ### Decisions already settled — do not silently reverse
 
@@ -128,6 +268,38 @@ testimonials · spotlight · newsletter · final CTA · footer.
 ### Next up
 
 - The user has said the header will be reworked later; it is untouched for now.
+  The client's service-page mocks show an inline nav (HOME / ABOUT / SERVICES
+  / PORTFOLIO / BLOG / CONTACT) where the live header has mark + ask + burger.
+  Not actioned — it would change every page.
+- **Nothing links to `communication-strategy.html` yet.** The overlay's
+  "Services" still points at `index.html#system`.
+- **Nothing links to `case-gerd-bommer.html` either**, and the homepage's
+  selected-work gallery is the obvious place. Not actioned.
+- The case study carries the **shared header and footer**, where the client's
+  mock drew its own small wordmark and a bare closing arrow instead. A case
+  study is not a separate website; raised with the client, not yet answered.
+- Its hero headline is **the one hero on the site with no Aileron run** —
+  the mock sets "UNTAMED ENERGY" entirely in the didone. Transcribed as
+  drawn and flagged, not corrected.
+- `case-gerd-bommer.html` **grades photographs and never artwork**. Gerd's
+  royal blue and yellow are another brand's colours, and `--photo-grade`
+  pulls saturation to .62 — running it over the logo lockups, the website
+  screens or the LinkedIn posts mutes the exact thing the page is presenting
+  as evidence. See the note at the top of the `.case-` block.
+- Its Result section still holds **the client's own bracket** —
+  `[ONE RESULT: FOLLOWERS, REACH, BOOKINGS OR INBOUND SINCE LAUNCH]`, drawn
+  dashed as she drew it. It is the page's only hard outcome and she has to
+  supply the number.
+- **`index.html` is the last per-section page.** About, contact and process
+  came over in `HANDOFF.md` §31, §32 and §34. The homepage is
+  the harder one: it is the signed-off page, §12 holds it at 0 of 22,821,120
+  differing pixels, it carries five glows, `.reel` isolates for reasons that
+  are not about shapes, and `.hero` still paints a gradient that §28 flattened
+  to a single black — an opaque fill the contract forbids.
+- More service pages are expected; this one is the template. **Their section
+  order comes from the client, section by section.**
+- **Nothing from this cycle is committed** — the service page, the `#000`
+  black and the three backdrop conversions are all in the working tree.
 - Awaiting the user's remaining round of comments. They work section by section.
 - Still carrying `TODO(link)`, `TODO(copy)` and `TODO(asset)` markers throughout.
 - Newsletter form is still a prototype with no backend.
@@ -137,8 +309,37 @@ testimonials · spotlight · newsletter · final CTA · footer.
 - Serve with a **threaded** server — the single-threaded `python3 -m http.server`
   stalls and dies on the 13 MB showreel:
   `python3 -c "from http.server import SimpleHTTPRequestHandler,ThreadingHTTPServer; ThreadingHTTPServer(('127.0.0.1',8765),SimpleHTTPRequestHandler).serve_forever()"`
-- Drive with `puppeteer-core` against the installed Chrome at
-  `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`.
+- **There is no Puppeteer or Playwright installed, and none is needed.** Drive
+  the installed Chrome at
+  `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome` directly —
+  `--headless --screenshot` for a quick look, or CDP over
+  `--remote-debugging-port` for anything that needs real frames. Node 24 has a
+  global `WebSocket`, so a CDP client is about 20 lines with no dependencies.
+- **`--virtual-time-budget` fires `requestAnimationFrame` roughly once**, so
+  anything rAF-driven (the parallax, the reel aperture) looks frozen and reads
+  as a bug that is not there. Use CDP for those.
+- **`scroll-behavior:smooth` on `html` swallows programmatic scrolling** — set
+  `scrollBehavior='auto'` first or `scrollTop` silently stays at 0.
+- **Full-page captures come out blank below the fold**, because `[data-reveal]`
+  never intersects. Sweep the page in steps first; reveal is one-way.
+- **Headless clamps the viewport near 500px.** A `--window-size=390` capture
+  renders at 500 and crops, which looks exactly like a horizontal-overflow
+  bug. Use `Emulation.setDeviceMetricsOverride` over CDP.
+- **Chrome serves the generated HTML from its own cache**, so a CSS change can
+  measure as a perfect no-op while the old page is on screen — the stale
+  `?v=` hash rides along inside the cached markup. Send
+  `Network.setCacheDisabled` and reload with `ignoreCache`, or use a fresh
+  `--user-data-dir`, and **confirm the value you changed is live in the page
+  before trusting any comparison** (`HANDOFF.md` §28).
+- **Block `*calendly.com*` when measuring the contact page.** The iframe
+  resolves to a different height between loads, which moves everything below
+  it and makes before/after numbers meaningless (§32).
+- **To compare two CSS formulations, toggle them inside one page load** rather
+  than across two runs — set the old values back onto the element from
+  script, measure, restore, measure. Decorative glows are
+  `position:absolute`, so toggling cannot reflow anything, and every other
+  variable is held identical by construction (§32).
+- Full detail and the rest of the gotchas: `HANDOFF.md` §26, §27, §29 and §33.
 - **Abort `.mp4` requests and wait on `domcontentloaded` + `document.fonts.ready`,
   not `networkidle0`** — the video otherwise times out every navigation.
 - Marquee images are lazy; set `loading='eager'` and await `decode()` before
