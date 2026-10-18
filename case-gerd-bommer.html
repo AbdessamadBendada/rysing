@@ -25,7 +25,7 @@
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
 
-  <link rel="stylesheet" href="shared.css?v=65326c6d" />
+  <link rel="stylesheet" href="shared.css?v=cfc9c829" />
 </head>
 <body>
   <a class="skip-link" href="#case-top">Skip to content</a>
@@ -130,29 +130,44 @@
          140px gap, which is what `.case-body` is. -->
     <div class="case-body">
 
-      <section class="case-row" aria-labelledby="case-about-title">
-        <h2 class="display case-row-title" id="case-about-title" data-reveal>About</h2>
-        <div class="case-copy" data-reveal>
-          <p>Gerd Bommer is a founder-first investor, keynote speaker and strategic advisor. For more than 25 years he has helped companies enter new markets and scale across borders, working where startups, corporates, governments and capital meet. He has delivered over 500 talks and lectures.</p>
-          <p>Along the way he saw the people building the future burn out, and the most capable founders get overlooked. He decided to change how the game is played.</p>
-        </div>
-      </section>
+      <!-- About, the brief and the strategy read as one three-up rather
+           than three stacked rows. They are the page's only purely verbal
+           stretch — as rows they ran to three screens of heading-left,
+           copy-right with nothing to look at, and the reader arrives at the
+           first photograph having scrolled past a wall.
 
-      <section class="case-row" aria-labelledby="case-brief-title">
-        <h2 class="display case-row-title" id="case-brief-title" data-reveal>The brief</h2>
-        <div class="case-copy" data-reveal>
-          <p>Gerd came with the career, the conviction and the energy, and no brand. There was nothing to refresh. Everything had to be built: the positioning, the name of each offer, the logo, the website and the content.</p>
-          <p>It also had to sound like him. An investor's brand usually whispers. Gerd does not.</p>
-        </div>
-      </section>
+           Set on the hairline device `.svc-pillars` already uses, so the
+           three-up reads as the same studio gesture rather than a layout
+           invented for this page. Still three real <section>s with their own
+           <h2>: the grid changes how they sit, not what they are. -->
+      <div class="case-notes">
+        <section class="case-note" aria-labelledby="case-about-title">
+          <p class="case-note-num" aria-hidden="true" data-reveal>01</p>
+          <h2 class="display case-note-title" id="case-about-title" data-reveal>About</h2>
+          <div class="case-copy" data-reveal>
+            <p>Gerd Bommer is a founder-first investor, keynote speaker and strategic advisor. For more than 25 years he has helped companies enter new markets and scale across borders, working where startups, corporates, governments and capital meet. He has delivered over 500 talks and lectures.</p>
+            <p>Along the way he saw the people building the future burn out, and the most capable founders get overlooked. He decided to change how the game is played.</p>
+          </div>
+        </section>
 
-      <section class="case-row" aria-labelledby="case-strategy-title">
-        <h2 class="display case-row-title" id="case-strategy-title" data-reveal>Strategy</h2>
-        <div class="case-copy" data-reveal>
-          <p>Investors measure cash, traction and KPIs. Gerd looks at the founder first: mindset, energy and the decisions they produce. That became the position. He is the founder-first investor, building a startup culture where &ldquo;capital follows character, purpose and profitability&rdquo;.</p>
-          <p>The website states who it is for in its first line: &ldquo;For those bold enough to build what's next.&rdquo;</p>
-        </div>
-      </section>
+        <section class="case-note" aria-labelledby="case-brief-title">
+          <p class="case-note-num" aria-hidden="true" data-reveal>02</p>
+          <h2 class="display case-note-title" id="case-brief-title" data-reveal>The brief</h2>
+          <div class="case-copy" data-reveal>
+            <p>Gerd came with the career, the conviction and the energy, and no brand. There was nothing to refresh. Everything had to be built: the positioning, the name of each offer, the logo, the website and the content.</p>
+            <p>It also had to sound like him. An investor's brand usually whispers. Gerd does not.</p>
+          </div>
+        </section>
+
+        <section class="case-note" aria-labelledby="case-strategy-title">
+          <p class="case-note-num" aria-hidden="true" data-reveal>03</p>
+          <h2 class="display case-note-title" id="case-strategy-title" data-reveal>Strategy</h2>
+          <div class="case-copy" data-reveal>
+            <p>Investors measure cash, traction and KPIs. Gerd looks at the founder first: mindset, energy and the decisions they produce. That became the position. He is the founder-first investor, building a startup culture where &ldquo;capital follows character, purpose and profitability&rdquo;.</p>
+            <p>The website states who it is for in its first line: &ldquo;For those bold enough to build what's next.&rdquo;</p>
+          </div>
+        </section>
+      </div>
 
       <!-- The brand line, at the page's largest size. A <p>, not a heading:
            it is the client's tagline quoted, and the section's actual heading
