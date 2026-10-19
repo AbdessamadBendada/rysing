@@ -3491,3 +3491,128 @@ homepage's five glows are mostly off-centre, so this matters there.
 `.glow-soft` is used by `index.html` alone; `.hero-light` is its one-sided
 variant. Delete both when the homepage comes over. The reasons it is last are
 unchanged and listed in §32.
+
+## 35. The first case study
+
+`case-gerd-bommer.html`, the sixth page and the first of a new kind. It is
+also the template: **there is deliberately no templating machinery.** A
+second case study is a copy of `src/case-gerd-bommer.html` with its content
+swapped, and all the layout lives in the `.case-` block at the end of
+`shared.css`, so it should need no new CSS. A build-time template was
+designed and rejected — this is a concept design that gets rebuilt in Divi
+once it is signed off, and a data-driven page type would be thrown away at
+that boundary. Do not add one back without being asked.
+
+### The design arrived as runnable source, not as screenshots
+
+The client supplied a folder containing 18 images, a 7-page PDF and an
+11 MB zip. **The zip is the design.** It is a design-tool export carrying
+`Main.dc.html` — the entire page, with the copy, the measured type sizes
+and the inline geometry — plus an `assets/` folder holding her own crops of
+every photograph.
+
+Two consequences, and both cost time to discover:
+
+1. **Use her crops, not the camera originals.** The raw files are 4–6 MB
+   phone and camera frames; the export's are framed for the composition.
+   Where both existed the export's won.
+2. **Transcribe from the export, not from a rendering of it.** Her hero glow
+   is the BLUE sphere and the closing takes blue and red. Lit at these
+   brightnesses the two read alike on screen, and the first pass put red in
+   the hero by eye. The asset files settle it; a screenshot does not.
+
+Assets live in `case-studies/<slug>/`, with the originals, the PDF and the
+zip under `case-studies/<slug>/_originals/` — gitignored, the same
+arrangement `rysing brand assets/` has. 17 webp at 2.9 MB are in the repo;
+107 MB are not.
+
+### Three defects in the mock that are fixed rather than reproduced
+
+**A mock's intent is the authority; its layout bugs are not.** All three
+look like design decisions until measured, which is why they are listed:
+
+| In the export | Why it is wrong | What ships |
+| --- | --- | --- |
+| Hero is `flex: 3 1 420px` + `2 1 300px`, no measure on the `<h1>` | At desktop widths "UNTAMED" runs under the portrait | Explicit grid columns; the text column cannot spill. A longer client name wraps instead of colliding |
+| Both bike details boxed `4/3` under `object-fit:cover` | Slices the top line off the side panel — the lettering is the only reason those frames exist | Uncropped, at their own ratio |
+| Logo grid sets `height:100%` on one cell against `aspect-ratio:1` on its neighbour | The two rows come out different heights, breaking the colour-swap pairing the copy describes | The bolt cell is square and the wordmark's ratio follows from the artwork (2.29:1), asserted once |
+
+**And her hero carries `overflow:hidden`**, so her glow is cut flat at the
+section seam. Ours follows §27 and runs through it. This one caused a round
+trip: the cut was reported as a defect in our build and turned out to be the
+mock on the other port. If a glow cut is reported, **confirm which page is
+on screen before changing anything** — the two are the same page at a
+glance.
+
+### Photographs take the grade; artwork never does
+
+`--photo-grade` pulls saturation to .62. That is right for the portrait, the
+stage shot, the bike and the testimonial, which come from different cameras
+and decades. It is wrong for everything else on this page: the logo
+lockups, the three website screens and the three LinkedIn posts are **Gerd's
+royal blue and sharp yellow**, and grading them mutes the exact thing the
+section exists to present as evidence.
+
+This is the first page on the site showing another brand's colours, so the
+rule is new and easy to miss. `.case-shot` and `.case-pair img` take the
+grade; `.case-trio` and `.case-logos img` must not.
+
+### The narrative three-up is a cascade, and it is the second attempt
+
+About, the brief and the strategy are the page's only purely verbal
+stretch. As three stacked heading-left rows they ran to three screens with
+nothing to look at before the first photograph.
+
+The first rebuild made them a flush three-up on the `.svc-pillars` hairline.
+**It was rejected, and the reason matters more than the verdict:** the three
+run to very different lengths, so level tops left a pit of dead air under
+the middle and right columns, and three short rules floated with nothing
+binding them.
+
+The columns now **step down** — the second by ~78px, the third by ~156px,
+scaling with the viewport. The same inequality becomes the composition: the
+block reads as a descent rather than as a grid that failed to line up. A
+ruled-column alternative (vertical hairlines, flush tops) was built
+alongside it and removed.
+
+The step is bound to the **slot**, not the item, which is the rule
+`.svc-get-list` already follows for its own `--lift`: the rhythm belongs to
+the row, so it survives the copy being reordered. Below 980px the steps come
+off with the columns — stacked, a top margin is not a cascade, it is three
+different gaps between the same three things.
+
+Numerals are **Aileron 300**, the face and weight the homepage service
+numerals take (§3 of the settled decisions); the didone never sets a numeral
+on this site. They are muted because a counter is not a heading. All three
+remain real `<section>` elements with their own `<h2>` — the grid changed
+how they sit, not what they are.
+
+**Do not flatten the steps.** Level tops is the version that was tried and
+thrown out.
+
+### Departures from the mock that are still the client's to rule on
+
+- **It carries the shared header and footer.** Her design drops the site
+  chrome for its own small wordmark and a bare closing arrow. A case study
+  is not a separate website, so the normal chrome went on and her "CASE
+  STUDY" tag became the hero eyebrow.
+- **The hero headline has no Aileron run.** "UNTAMED ENERGY" is set
+  entirely in the didone, as she draws it — the only hero on the site
+  without the alternation. Transcribed, flagged, not corrected.
+- **The tags are `.case-tag`, not `.btn-pill`.** Ten outlined pills that
+  look like buttons and are not would read as ten controls. Same geometry,
+  hairline border, no hover.
+
+### Open
+
+- **The Result section still holds her own placeholder** —
+  `[ONE RESULT: FOLLOWERS, REACH, BOOKINGS OR INBOUND SINCE LAUNCH]`, drawn
+  dashed as she drew it. It is the page's only hard outcome.
+- **Nothing links to the page.** The homepage's selected-work gallery is the
+  obvious home. Two finished pages — this and the service page — are
+  currently unreachable from the site.
+- The hero's blue lights the second and third columns of the cascade and not
+  the first. Left as is: the descent runs down into the light. Pulling the
+  orb's reach up is a two-line change if it is ever unwanted.
+- `gerd-runways-infographic.webp` is in the repo and unused — supplied, but
+  her design does not place it.

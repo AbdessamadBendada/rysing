@@ -73,6 +73,7 @@ at the section boundary again.
 | `about.html` | page-level (§31) |
 | `contact.html` | page-level (§32) |
 | `process.html` | page-level (§34) |
+| `case-gerd-bommer.html` | page-level (§35) |
 | `index.html` | **still per-section — the last one** |
 
 `.glow-soft` is legacy, kept alive for the homepage alone. Do not add it to
@@ -192,7 +193,16 @@ eight sections (`HANDOFF.md` §27, §29, §30): hero · intro and three outcomes
 four deliverables on spheres · the six-step process table · three figures ·
 "why work with me" · **testimonials** · **price** · **closing**.
 
-That order is the client's, given section by section. The rail sits after the
+That order is the client's, given section by section.
+
+**`case-gerd-bommer.html`** — the case-study template, thirteen sections
+(`HANDOFF.md` §35): hero · **about / the brief / strategy as one cascading
+three-up** · the brand line and "the line and the G" · logo · speaking
+T-shirts · the bike · website · social · result · testimonial · closing.
+
+Her design stacks the first three as separate rows; they are one three-up
+here because as rows they ran to three screens of text before the first
+photograph. That is a layout change, not a change of order or copy. The rail sits after the
 ask because she said so, not because it reads better there.
 
 ### Decisions already settled — do not silently reverse
@@ -243,6 +253,17 @@ ask because she said so, not because it reads better there.
 7. `scroll-margin-top:112px` on every `section[id]`, because the header is fixed
    at 92px.
 8. The footer carries the same drifting red/blue lights as the hero.
+9. **The case study's narrative three-up is a cascade, and the flush
+   version was already tried.** About / the brief / strategy step down by
+   ~78px and ~156px. Level tops left a pit of dead air under the middle and
+   right columns because the three run to very different lengths, and the
+   short rules floated with nothing binding them. A ruled-column variant was
+   built alongside and removed. Do not flatten the steps. `HANDOFF.md` §35.
+10. **On the case study, photographs take `--photo-grade` and artwork never
+   does.** The logo lockups, the website screens and the LinkedIn posts are
+   another brand's royal blue and yellow; the grade pulls saturation to .62
+   and mutes the thing the section exists to show. First page on the site
+   where this applies. `HANDOFF.md` §35.
 
 ### Known problems that need the client, not code
 
@@ -331,6 +352,11 @@ ask because she said so, not because it reads better there.
   `Network.setCacheDisabled` and reload with `ignoreCache`, or use a fresh
   `--user-data-dir`, and **confirm the value you changed is live in the page
   before trusting any comparison** (`HANDOFF.md` §28).
+- **Two servers means two near-identical pages.** The client's design export
+  (`case-studies/<slug>/_originals/…zip`) renders as its own page and looks
+  like our build at a glance. A glow cut reported against our page turned out
+  to be hers on the other port — her sections carry `overflow:hidden`, ours
+  do not. **Confirm which URL is on screen before changing anything.**
 - **Block `*calendly.com*` when measuring the contact page.** The iframe
   resolves to a different height between loads, which moves everything below
   it and makes before/after numbers meaningless (§32).
