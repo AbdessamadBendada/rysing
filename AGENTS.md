@@ -74,11 +74,22 @@ at the section boundary again.
 | `contact.html` | page-level (§32) |
 | `process.html` | page-level (§34) |
 | `case-gerd-bommer.html` | page-level (§35) |
-| `index.html` | **still per-section — the last one** |
+| `index.html` | page-level (§36) — the last one, now done |
 
-`.glow-soft` is legacy, kept alive for the homepage alone. Do not add it to
-anything. **Read `HANDOFF.md` §27, §29, §33 and §34 before adding or moving
+**`.glow-soft` is deleted**, and so is `.hero-light`'s one-sided variant of
+it. No section on the site isolates or clips. Do not reintroduce either rule:
+a glow that needs masking at its own edge is a glow whose box is the wrong
+size. **Read `HANDOFF.md` §27, §29, §33, §34 and §36 before adding or moving
 any background shape on any page.**
+
+**`html { overflow-x:clip }` does not stop horizontal scrolling** — it hides
+the scrollbar only. Measured (§36): `communication-strategy.html` can still
+be pushed 400px sideways into dead black, and `process.html` 17–88px at
+narrow widths. When a shape overhangs the viewport, clip the **shape
+container** on the horizontal axis alone — `overflow-x:clip;
+overflow-y:visible`, as `.hero-light` does — never the section, and never
+`overflow:hidden`, which coerces the vertical axis and puts the section cut
+straight back.
 
 **Removing `overflow:clip` is only half of it. The shape's own box is the
 other half, and it is the half that keeps getting broken.** A gradient only
@@ -155,11 +166,18 @@ scrambled the boxes across the gradients and still looked plausible (§33).
 - `.label` is the universal micro-label (11px/600/.17em/uppercase).
 - `.btn-pill` is the only button, and it carries the star-mark arrow — the
   mocks all draw `↗` instead, which is still undecided and is shared chrome,
-  so changing it lands everywhere at once. Outlined everywhere except on
-  `communication-strategy.html`, where the client's designs ask for filled
-  pills. **There are two of them there now** (the "why work with me" ask and
-  the closing), so "the only filled pill marks the ask" no longer holds and
-  wants a decision — `HANDOFF.md` §30.
+  so changing it lands everywhere at once.
+  **"The only filled pill marks the ask" has stopped being true.** There are
+  **six filled pills across four pages** — contact's submit, about's closing,
+  Gerd's closing, and three on `communication-strategy.html` alone, where all
+  four pills say "Book a call" and all four go to `contact.html`. §30 said
+  two and undercounted; the census is `HANDOFF.md` §38. A decision for the
+  client, since her mocks draw them filled — retiring the rule is as valid an
+  answer as changing the page.
+  **Two classes do this job**: `.btn-pill--solid` (two hyphens, used
+  everywhere) and `.btn-pill-solid` (one, used once on the contact form's
+  submit). Both fill; they differ only in hover border. Reach for the wrong
+  one and nothing warns you. §38.
 - **The brand pattern assets (`pattern-red.webp`, `pattern-blue.webp`) are the
   background shapes. Do not draw them as gradients** — that shipped once and
   read as fuzzy blobs. `HANDOFF.md` §26. The same asset is lit three different
@@ -292,10 +310,18 @@ ask because she said so, not because it reads better there.
   The client's service-page mocks show an inline nav (HOME / ABOUT / SERVICES
   / PORTFOLIO / BLOG / CONTACT) where the live header has mark + ask + burger.
   Not actioned — it would change every page.
-- **Nothing links to `communication-strategy.html` yet.** The overlay's
-  "Services" still points at `index.html#system`.
-- **Nothing links to `case-gerd-bommer.html` either**, and the homepage's
-  selected-work gallery is the obvious place. Not actioned.
+- ~~Nothing links to `communication-strategy.html`~~ — wired in §37. The
+  overlay's "Services" points at it, **as a stopgap**: the `#system`
+  accordion's four levels are the real services list and none of them is
+  named Communication Strategy, so this wants to become a services index the
+  moment a second service page lands.
+- ~~Nothing links to `case-gerd-bommer.html` either~~ — wired in §37 from two
+  places: its own work panel (which already drew "Learn more" and already had
+  the `TODO(link)`) and the spotlight pill, which until then pointed at
+  `playground/rysing2.html` and rendered with broken images. **`about.html`
+  turned out to be unreachable too** and was repointed with them.
+  Both homepage links now lead to the same page, which sharpens §9's note
+  that Gerd's photograph is already on the homepage twice.
 - The case study carries the **shared header and footer**, where the client's
   mock drew its own small wordmark and a bare closing arrow instead. A case
   study is not a separate website; raised with the client, not yet answered.
@@ -311,18 +337,38 @@ ask because she said so, not because it reads better there.
   `[ONE RESULT: FOLLOWERS, REACH, BOOKINGS OR INBOUND SINCE LAUNCH]`, drawn
   dashed as she drew it. It is the page's only hard outcome and she has to
   supply the number.
-- **`index.html` is the last per-section page.** About, contact and process
-  came over in `HANDOFF.md` §31, §32 and §34. The homepage is
-  the harder one: it is the signed-off page, §12 holds it at 0 of 22,821,120
-  differing pixels, it carries five glows, `.reel` isolates for reasons that
-  are not about shapes, and `.hero` still paints a gradient that §28 flattened
-  to a single black — an opaque fill the contract forbids.
+- ~~`index.html` is the last per-section page~~ — came over in `HANDOFF.md`
+  §36, and the backdrop conversion is finished. `.reel` turned out to have no
+  stacking context at all. **§12's 0-of-22,821,120-pixel baseline is void**;
+  §36 carries the new one. Two defects the mask had been hiding were fixed
+  with it: the hero's discs were offset in `vh` while sized in `vw`, so at
+  390px the blue sat entirely below the hero, and `.belong-glow` was 4.5%
+  wider than the page at the top of its breathe.
+- **The mobile hero now shows blue where the signed-off page showed none** —
+  the old mask deleted it outright at narrow widths. Worth one screenshot to
+  the client.
+- **Horizontal scrolling is still live on two pages** —
+  `communication-strategy.html` 400px, `process.html` 17–88px at 360–620.
+  Same fix as §36's.
 - More service pages are expected; this one is the template. **Their section
   order comes from the client, section by section.**
-- **Nothing from this cycle is committed** — the service page, the `#000`
-  black and the three backdrop conversions are all in the working tree.
+- **Nothing from this cycle is committed** — `HANDOFF.md` §36, §37 and §38
+  are all in the working tree. The §27–§34 work behind them has been pushed.
+- **Two `[__]%` placeholders render at display size on
+  `communication-strategy.html`** — visible copy on a finished page, not code
+  markers. Only the client can fill them: they are statistics about consumers
+  and revenue. **Do not send that page to review with the brackets in it**,
+  and do not invent the numbers — the second one's own sentence says "over
+  50%", which is a hint, not a figure. `HANDOFF.md` §38.
+- **Four things on that page want one message to the client**, listed
+  together at the end of §38: the two percentages, the €1,400 KMU.Digital
+  claim, the faint arc both mocks draw, and the three filled "Book a call"
+  pills.
 - Awaiting the user's remaining round of comments. They work section by section.
-- Still carrying `TODO(link)`, `TODO(copy)` and `TODO(asset)` markers throughout.
+- Still carrying `TODO(link)`, `TODO(copy)` and `TODO(asset)` markers
+  throughout. The ones that render to the reader rather than sitting in a
+  comment are the two `[__]%` above and the case study's
+  `[ONE RESULT: …]` bracket.
 - Newsletter form is still a prototype with no backend.
 
 ### Local testing harness

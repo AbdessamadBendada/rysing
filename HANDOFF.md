@@ -35,17 +35,33 @@ hard edge at the other end plus dead scroll. Both rules, always:
 > the box must contain the light's falloff on every side, **and** it must
 > not reach past the bottom of the document.
 
-**Converted so far: `communication-strategy.html` (§27), `about.html` (§31),
-`contact.html` (§32), `process.html` (§34).** **`index.html` is the only page
-still isolating and clipping per section.** `.glow-soft` is legacy and is kept
-alive for the homepage alone; delete it, and `.hero-light`, when the homepage
-comes over.
+**Every page is converted. The backdrop work is finished** —
+`communication-strategy.html` (§27), `about.html` (§31), `contact.html`
+(§32), `process.html` (§34), `case-gerd-bommer.html` (§35) and the homepage
+last and hardest (§36). **`.glow-soft` is deleted**, along with
+`.hero-light`'s one-sided variant. No section on the site isolates or clips
+any more. Do not reintroduce either rule; §36 says what to do instead.
+
+**Two things §36 found that apply beyond the homepage.** `html {
+overflow-x:clip }` **does not stop horizontal scrolling** — it only hides the
+scrollbar, and `communication-strategy.html` can still be pushed 400px
+sideways into dead black today. And the fix belongs on the **shape
+container**, horizontal axis only (`overflow-x:clip; overflow-y:visible`),
+never on the section.
 
 **§34 also records a gap in the §29 scan.** A glow anchored off one side is
 cut across *its own* width, not the page's: the process page's boundary cut
 covered 42% of the columns and a scan thresholded at 90% called the page
 clean. Scan for a run of columns that change together, or read the geometry
-of every hit at 25%. The homepage's glows are mostly off-centre.
+of every hit at 25%.
+
+**§36 adds two measurement traps to that**, both of which produced confident
+wrong answers. A second tab backgrounds the page under test and Chrome stops
+its `requestAnimationFrame` — any rAF-driven wait then hangs for ever, with
+no error (`Page.bringToFront` first). And a fixed header smears its own 1px
+border across a document-coordinate scan at one viewport offset per capture,
+which read as 16 full-width hard rows that were not there (hide the fixed
+chrome before scanning).
 
 **2. The page black is `#000000` (§28).** All four brand colours now match
 `rysing brand assets/Branding-Guidelines.pdf` §3.0 exactly. `--ink` was
@@ -478,19 +494,39 @@ filenames once and wired up entirely the wrong asset.
 
 ## 6. Next steps
 
-**Open from this cycle** (§27–§33)
+**Open from this cycle** (§36–§38)
 
-- **Nothing in this cycle is committed.** The service page, the `#000` black
-  and the three backdrop conversions are all sitting in the working tree.
-- **`index.html` is the last per-section page.** Process came over in §34.
-  The homepage is the harder one and the reasons are in §32.
+- **Not committed.** §36, §37 and §38 are all in the working tree, on top of
+  the §27–§34 work that has since been pushed.
+- ~~`index.html` is the last per-section page~~ — it came over in §36 and
+  **the backdrop conversion is finished on every page**. `.glow-soft` is
+  deleted.
+- **Horizontal scrolling is live on two pages** and `html{overflow-x:clip}`
+  does not stop it: `communication-strategy.html` can be pushed **400px**
+  sideways into dead black, `process.html` 17–88px at 360–620. §36 has the
+  fix and the homepage's worked example. This is the only item here that a
+  visitor can trip over today.
+- **Services points at one service page as a stopgap.** None of the `#system`
+  accordion's four levels is named Communication Strategy; this wants a
+  services index as soon as a second service page exists. §37.
+
+**Blocking on the client, service page** (§29, §30, §38)
+
+- **Two `[__]%` placeholders render at display size in `.svc-proof`.** Not
+  comments — visible copy on a finished page. Nobody can fill them but her:
+  they are statistics about consumers and revenue, and the honest options are
+  her numbers or cutting the two columns. The middle one's own sentence says
+  "over 50%", which is not a number. §38.
+- **The KMU.Digital line is the first money claim on the site** — "Save up to
+  €1,400" — transcribed exactly as supplied. She has to stand behind the
+  amount and the eligibility. §29.
 - **The faint arc in two service-page mocks is not built** — the price and
   the closing both draw one, and §27 records a thin curved line being
-  rejected on this page's hero. One answer from the client settles both. §29.
-- **Two `TODO(copy)` figures remain in `.svc-proof`** and the price section's
-  KMU.Digital line is the first money claim on the site. §29.
-- **The service page now carries two filled pills**, which breaks the "only
-  filled pill marks the ask" rule §27 recorded. §30.
+  rejected on this page's hero. One answer settles both. §29.
+- **The filled pill no longer marks anything.** Six across four pages, three
+  of them on the service page alone, all four of that page's pills saying
+  "Book a call" and going to the same place. §38 has the census; §30
+  undercounted and is corrected there.
 - **The brand book has 17 pages nobody has acted on** — logo spacing and
   application, type usage, brand assets, print collateral. §28. It also
   states the studio's numbers in writing, which is a source for the stats §6
@@ -1225,10 +1261,17 @@ attempt and cleared as soon as they are corrected. Verified: empty submit flags
 3 fields and focuses the first; a malformed address flags 1; a valid submit
 clears all and reports the pending-backend message.
 
-**The send button is the only filled pill on the site.** §11 removed the closing
-ask's red fill so every pill became an outline. The design draws this one
-filled, and a form whose commit control is as quiet as its labels reads as
-unfinished. Hover inverts it rather than brightening it.
+**The send button was the first filled pill on the site** — and when this was
+written it was the only one, which is no longer true: there are six across
+four pages now, counted in §38. §11 removed the closing ask's red fill so
+every pill became an outline. The design draws this one filled, and a form
+whose commit control is as quiet as its labels reads as unfinished. Hover
+inverts it rather than brightening it.
+
+**It is also the one that uses `.btn-pill-solid`, with one hyphen.** Every
+other filled pill on the site is `.btn-pill--solid`, with two. Both rules
+exist, both fill the pill, and they differ only in the hover border — see
+§38, because the pair is a live mistyping hazard.
 
 ### Verified
 
@@ -1946,9 +1989,10 @@ Rows align on `baseline`, not centre: the didone name and the grotesque
 description have different cap heights, and centring two faces of different
 size reads as a misalignment even when the boxes are even.
 
-**The closing CTA is the site's second filled pill.** §11 removed the
+**The closing CTA was the site's second filled pill**, and the count did not
+stop there — it is six now, across four pages (§38). §11 removed the
 homepage ask's red fill so every pill became an outline, and §13 records the
-contact form's send button as the only filled one. The design draws this one
+contact form's send button as the first filled one. The design draws this one
 filled too, and it is the page's single destination, so it takes the weight —
 flagged here rather than quietly made an outline. It points at `contact.html`;
 the header's two pills still go to the homepage's closing anchor (§6), and a
@@ -2520,7 +2564,7 @@ Six sections, `src/communication-strategy.html`:
 | `.svc-get` | Four lit masses with copy on them — §26's composition, flattened |
 | `.svc-process` | Six-row numbered table, one blue disc behind the left column |
 | `.svc-proof` | Three figures under hairlines — the `.svc-intro` device reused |
-| `.svc-why` | Centred ask, star mark, the page's only filled pill |
+| `.svc-why` | Centred ask, star mark, filled pill — the only one *at the time*; the page has three now (§38) |
 | `#proof` | **The shared testimonial rail, `{{> testimonials}}` — §7. Last.** |
 
 **The rail is the third page to carry it** and it was included, not copied —
@@ -3021,7 +3065,7 @@ It is `63vw` capped at 900px above 620px wide, and `100vw` capped at 470px
 below — and the breakpoint is 620 rather than 760 because at 760 the phone
 values push the disc almost entirely off-canvas.
 
-### Two filled pills now
+### Two filled pills now — and it is three, see §38
 
 §27 recorded that `.svc-why`'s pill is "the only filled pill on the page,
 which is what marks it as the ask". **That is no longer true** — this section
@@ -3030,6 +3074,10 @@ page's actual closing. The claim in §27 stands as history; the page now has
 two filled pills and one of them is no longer unique. Worth a decision:
 either the closing is the only filled one, or the device has stopped marking
 anything.
+
+**This heading undercounted at the time it was written and was left standing
+as the record.** `.svc-plan`'s pill (§29) was already there, so the page had
+**three**, not two. Corrected in §38 along with the site-wide count.
 
 ### The arc, again
 
@@ -3616,3 +3664,408 @@ thrown out.
   orb's reach up is a two-line change if it is ever unwanted.
 - `gerd-runways-infographic.webp` is in the repo and unused — supplied, but
   her design does not place it.
+
+---
+
+## 36. The homepage comes over, and the backdrop conversion is finished
+
+Fifth of five, last and hardest, and the reasons it was left until last
+(§32) were all real. `index.html` was the signed-off page, it carried five
+glows rather than two, `.reel` was the one stacking context nobody had
+checked, and `.hero` painted an opaque fill that §28 had already flattened to
+a single black.
+
+**`.glow-soft` is deleted.** So is `.hero-light`'s one-sided variant of it.
+No page masks a glow at its own section edge any more, and the rule is gone
+from `shared.css` rather than left standing. **Do not bring it back:** a glow
+that needs masking at its own edge is a glow whose box is the wrong size.
+
+### What changed, by section
+
+| Section | Was | Now |
+| --- | --- | --- |
+| `.hero` | `relative; isolation; overflow:hidden;` + opaque gradient | `relative` |
+| `.reel` | `relative;` + `background:var(--ink)` | `relative` |
+| `.stats` | `relative; isolation` | `relative` |
+| `.belong` | `relative; isolation; overflow:clip` | `relative` |
+| `.spot` | `relative; overflow:hidden;` + `background:var(--ink)` | `relative` |
+| `.fudge` | `relative; isolation; overflow:clip` | `relative` |
+| `.closing` | `relative; isolation; overflow:clip` | `relative` |
+
+### The hero's three forbidden things were load bearing *together*
+
+This is the part that would have gone wrong done piecemeal. `.hero` carried
+all three of the things §27's contract forbids, and **removing the isolation
+alone would have deleted the hero's lights outright.**
+
+`isolation` made `.hero` its own stacking context, which is the only reason
+its opaque background painted *under* the `z-index:-1` lights. Without it the
+lights join `body`'s stacking context and paint behind every in-flow box in
+it — `.hero`'s own background included. So the fill had to go in the same
+edit or the hero would simply have gone black. It cost nothing: it read
+`--ink-deep 0 78%, --ink 100%` and §28 resolved both tokens to `#000000`, so
+it was a flat black fill painted by a gradient.
+
+**`.reel` had to give up its `background` in the same edit, for the same
+reason at the other end.** It was `var(--ink)` — the same black `body`
+already paints — but an opaque fill on an in-flow box paints *above* a
+`z-index:-1` shape, so the moment `.hero` stopped clipping, `.reel` took over
+the cutting and the hard line stayed exactly where it was. Removing it lets
+the hero's blue run ~158px down into the top of the reel and fade out there.
+
+**And the reel's stacking context, which §32 flagged as the unknown, turns
+out not to exist.** `position:sticky` creates none without a `z-index`, and
+`.reel-stage`'s `overflow:hidden` is a non-section clip for the sticky
+aperture — the same distinction `.footer-light` keeps. Neither touches a
+child of `.hero`. The aperture, the mask and the grade are unaffected;
+verified by eye at mid-opening and by the unchanged hard-row scan.
+
+### The box transforms
+
+§31's transform, unchanged: for a box grown `inset:-a% 0 -b% 0`, a gradient
+stays put when its centre `p` becomes `(p + a)/(1 + a + b)` and a vertical
+radius **expressed as a share of the box** becomes `r/(1 + a + b)`.
+
+| Glow | Was | Reached | Box | Now |
+| --- | --- | --- | --- | --- |
+| `.fudge-glow` | `38% 58% at 96% 64%` | 122% | `0 0 -24%` | `38% 46.77% at 96% 51.61%` |
+| `.closing-glow` | `38% 42% at 10% 76%` | 118% | `0 0 -20%` | `38% 35% at 10% 63.33%` |
+| `.belong-glow` | `46% 46% at 50% 47%` | 93% | **unchanged** | **unchanged** |
+
+**`.belong-glow` needed no box change and that is worth knowing**, because it
+is the only glow on the site that was already built to §29's rule: 46%
+centred at 47% reaches 1%–93% of its own box, so the light finished inside
+the element and nothing was ever cutting it. Only `.glow-soft` was, at its
+outer shoulders.
+
+`.closing` is the last section before the footer, which is where §33's
+dead-scroll bug lives. Checked rather than assumed: 20% of a 737px section is
+147px, the footer below it is 679px, so the box ends 532px inside the
+document — and that margin holds at every width because both terms scale
+together.
+
+### Two defects the conversion exposed rather than caused
+
+Both were hidden by the mask, and both are the same shape of bug: **a value
+capped on one axis and not the other.**
+
+**1. The hero's discs were offset from the viewport height and sized from the
+viewport width.** `width:min(72vw,1020px)` against `top:-24vh`;
+`min(62vw,860px)` against `bottom:-30vh`. Those do not scale together, so at
+a narrow viewport the offset stays large while the disc shrinks and the light
+walks off the section: **at 390px the blue sat entirely below the hero**, a
+242px ball floating in the top of the showreel. The mobile hero had shipped
+with no blue at all, because the one-sided mask reached zero at the hero's
+bottom edge and deleted it. Neither state is the composition the design
+draws.
+
+Each offset is now capped against the disc's own diameter, held in `--d`:
+`top:calc(-1 * min(24vh, var(--d) * .212))` and
+`bottom:calc(-1 * min(30vh, var(--d) * .314))`. **The multipliers are read
+off the authored desktop values, not chosen** — at 1440x900, 24vh/1020px =
+.212 and 30vh/860px = .314 — so wherever the viewport is tall enough for the
+vh term to win, which is every desktop and laptop size, the result is
+identical to the pixel. The cap only engages where the disc has shrunk, which
+is where it was broken. §33 names the general form: **cap both or neither.**
+
+**2. `.belong-glow` was 4.5% wider than the page at the top of its breathe.**
+`inset:0` plus `scale(1.045)`. While `.belong` clipped, that was contained;
+uncut it became 8px of real horizontal scroll at 1440. The box is inset
+2.153% each side now — 95.694% x 1.045 = 100.0% exactly — and the horizontal
+radius re-expressed as a share of the narrower box, 46 / 0.95694 = 48.07%, so
+the light is the same size at rest and at full breath alike. The vertical
+radius is untouched; only left and right were inset.
+
+### `html { overflow-x:clip }` does not stop horizontal scrolling
+
+**§27's verification of the service page says "no horizontal overflow… read
+that as *no horizontal scrolling*, which is what matters and what was
+checked". That does not survive measurement.** On
+`communication-strategy.html` today, `window.scrollTo(400,0)` lands at
+**scrollX = 400**: the page really can be pushed sideways into dead black
+with a trackpad. `overflow-x:clip` suppresses the scrollbar; it does not
+suppress the scroll.
+
+The homepage's own version of this was 204px at 1440, from the uncut hero
+discs. It is fixed **on the shape container, not on the section** —
+`.hero-light` takes `overflow-x:clip; overflow-y:visible`, which is the same
+licence `.footer-light` has to clip for its own reason. `clip` is the one
+overflow value that does not coerce the other axis, so the blue still reaches
+down into `.reel`; **`overflow:hidden` here would put the cut straight back.**
+The cut lands exactly where the viewport already cuts, this element being
+`inset:0` on a full-width section, so nothing visible changes.
+
+`index.html` is now the only converted page with **no root overflow at all**.
+`communication-strategy.html` still scrolls 400px sideways and
+`process.html` 17–88px at 360–620. Not actioned — flagged below.
+
+### Verified
+
+Measured at 1440 against the shipped build, with the fixed header hidden for
+the pixel sweep (see the harness note below):
+
+- **Page height, `body` bottom and all sixteen section boundaries are
+  byte-for-byte identical.** 14985 → 14985.
+- **All eight authored light centres land at their original document
+  positions, to 0px** — §33's assertion, computed from each box and its
+  `at X% Y%` rather than read off the file that was just written:
+  hero red (1132,294), hero blue (171,740), belong (720,11720), fudge
+  (1382,13322), closing (144,14129), both footer lights, and the spot scrim.
+- **Hard-row scan at 25% coverage: 162 rows before, 162 after, the same set,
+  no new ones.** The only hit on a section boundary is y=3240, which is the
+  reel poster's own image edge and predates this work.
+- **Only 810 of 14,985 rows changed colour at all**, in exactly three runs,
+  and every one is a boundary where light now continues instead of stopping:
+  634–1169 (hero→reel, the big one, +32.9), 13477–13613 (fudge→closing,
+  +3.1), 14203–14339 (closing→footer, +4.2).
+- **Zero dead scroll, nothing past `body`, and `scrollWidth` equal to the
+  viewport** at 360/390/500/620/760/820/900/1024/1280/1440/1680/1920.
+- **`about.html` is pixel-identical** — zero rows differing in mean colour —
+  with page height and sections unchanged, measured by stashing the cycle,
+  rebuilding and re-measuring rather than by assuming. The other four pages
+  differ only in the `?v=` hash. No other page uses the bare `.hero`,
+  `.reel`, `.stats`, `.belong`, `.spot`, `.fudge` or `.closing` selectors;
+  they are all prefixed (`about-hero`, `svc-hero`, `case-hero`).
+- `shared.css` comment terminators balanced, 355 open and 355 closed.
+
+Three light peaks rose, all for §31's conviction reason — the mask had been
+erasing their cores, so they now read at the strength they were authored at:
+hero blue 126 → 142, closing red 86 → **123** (§11 wrote that this glow sat
+at 98% and was "buried under the bottom fade"; it was moved to 74% to escape
+that mask, and now the mask is gone), belong 92 → 99. Hero red, fudge blue
+and the footer are unchanged to within 1.
+
+### A harness trap that cost two dead runs
+
+**Opening a second tab backgrounds the first, and Chrome throttles
+`requestAnimationFrame` to nothing in a background tab.** The pixel decoder
+is its own target, so the page under test stopped getting frames and the
+reveal sweep's `await requestAnimationFrame` never resolved — the run hung
+with no output and no error. A smoke test passed because it happened to
+create the decoder *after* the sweep.
+
+`Page.bringToFront` before any rAF work or any capture is the fix; racing
+every frame wait against a timeout is the belt to its braces. Worth knowing
+because every measurement in §31–§34 used a single tab.
+
+**And the fixed header smears across a document-coordinate scan.** Viewport
+captures translated to document coordinates paint the header's 1px bottom
+border at the same viewport offset every time, so the hard-row scan reported
+**16 full-width phantom rows at y ≡ 91 (mod 900)** — 199 hits dropping to 162
+once `.site-head`, `.skip-link` and `.menu-overlay` were hidden for the sweep.
+§5 records the same artifact from the other direction, a `fullPage` stitch
+painting the skip-link back in. Hide the fixed chrome before scanning; it
+hosts no shape.
+
+### Open
+
+- **`communication-strategy.html` scrolls 400px horizontally**, and
+  `process.html` 17–88px at 360–620. Same fix as the hero's — clip the shape
+  container on the horizontal axis only, never the section. Not done here
+  because this cycle was the homepage.
+- **The mobile hero now shows blue where the signed-off page showed none.**
+  The cap puts it where the design draws it, but the client has only ever
+  seen the masked version on a phone. Worth one screenshot to her.
+- **§12's regression baseline is void.** It held `index.html` at 0 of
+  22,821,120 differing pixels; this cycle moves it on purpose. The numbers
+  above are the new baseline and were taken the same way.
+- **`.hero-light` is now the only element on the site with `overflow-x:clip`
+  and `overflow-y:visible`.** If anyone "tidies" that to `overflow:hidden`
+  the hero's blue is cut at the reel boundary again and the whole conversion
+  is undone at its most visible point.
+
+---
+
+## 37. The orphan pages get wired up, and two more turn up
+
+The open item was "nothing links to `communication-strategy.html` or
+`case-gerd-bommer.html`". Auditing every local href across the six built
+pages found that **`about.html` was unreachable too** — a finished page, the
+one §2 calls "the live front", linked from nowhere on the site — and that the
+homepage was **linking into `playground/`**.
+
+Every local destination now resolves. `/blog` is the only 404 left and is a
+pre-existing open item.
+
+### What was wired
+
+| Link | Was | Now |
+| --- | --- | --- |
+| Overlay nav, About | `{{home}}#founder` | `about.html` |
+| Overlay nav, Services | `{{home}}#system` | `communication-strategy.html` |
+| Work panel, Gerd Bommer | no `href` | `case-gerd-bommer.html` |
+| Spotlight pill | `playground/rysing2.html` | `case-gerd-bommer.html` |
+
+**The case-study panel was a one-attribute change and nothing else.** It
+already drew "Learn more →" and already carried `TODO(link): case study page
+does not exist yet`. `.work-item:focus-visible` rules were already written in
+`shared.css` and could never fire, because an `<a>` with no `href` is not
+focusable — the wiring was designed and left unfinished, not invented here.
+
+### About and Services were a missed step, not a decision
+
+§6 records that when `contact.html` was built "the nav Contact link was
+repointed". The same was never done for About or Services. The evidence that
+this was an oversight rather than intent is in `shared.css`:
+`.overlay-nav a[aria-current="page"]` underlines the current page, `build.js`
+applies that attribute by matching the href against the page being built, and
+on `about.html` it **could not match**, because the link pointed at a
+homepage anchor. The mechanism existed and two of the seven items never
+reached it. Both underline correctly now.
+
+**Services is a stopgap and should not be left as one.** The `#system`
+accordion's four levels — Brand Building, Design & Websites, LinkedIn &
+Instagram Marketing, Thought Leadership — are the real services list, and
+**none of them is named Communication Strategy**. A nav item called Services
+that jumps to one service page is wrong the moment the second service page
+lands. It wants a services index; it has a reachable page in the meantime.
+Raised and chosen deliberately, not derived.
+
+### The homepage was linking into the archive
+
+`.spot-copy`'s pill pointed at `playground/rysing2.html`. Every file in
+`playground/` resolves its assets as `rysing-assets/…` **relative to the
+repository root**, which does not work from one directory down — the 136
+broken references §3 describes. So the live homepage was sending visitors to
+an archived concept that renders with broken images.
+
+It goes to the case study now. The section is headed "For keynote speakers"
+and already carries Gerd's photograph, so it is the same subject, but **this
+is a client's case study standing in for a service page** and the original
+`TODO(link)` is kept on that basis: the section arguably wants a keynote
+landing page, which does not exist.
+
+**A consequence worth seeing before the client does.** §9 already flags that
+`Gerd-Hero-Section-image.webp` appears twice on the homepage, in the
+spotlight and in the case-study row. Those two places now also lead to the
+same destination. If the repeat was tolerable as a repeated image, it is
+weaker as a repeated image *and* a repeated link — §9's cheap fix, swapping
+the row's first panel to Michael Diewald, would fix both at once.
+
+### Verified
+
+- **Every nav item clicked, from the homepage and from a sub-page**, not just
+  fetched: all six land on the right document, the overlay closes, the
+  `body` scroll lock is released, and `aria-current` lands on the right item.
+  A 200 from `fetch` would not have caught a click handler swallowing the
+  navigation — the overlay binds a listener to every `a` in it. It only calls
+  `closeMenu()`, with no `preventDefault`, so navigation proceeds.
+- Both content links clicked through to `case-gerd-bommer.html`, **no broken
+  images** on arrival.
+- Every local href on all six pages resolves 200, `/blog` excepted.
+  `playground/` is no longer referenced from any built page.
+- The five pages that were not the subject of this change differ only in the
+  nav line, the partial's comment and the `?v=` hash.
+
+**`src/_header.html` ships into all six pages, so its comments ship six
+times.** The reasoning above is deliberately here rather than in that file,
+which carries a five-line pointer. Same discipline `_marquee.html` keeps,
+for the same reason.
+
+### Still open
+
+- **Services wants a services index**, not the one service page. See above.
+- **The header's two "Apply to work with us" pills still point at
+  `{{home}}#contact`**, the homepage's closing section, not at
+  `contact.html`. §6 records that this was left deliberately because moving
+  them changes the homepage's behaviour. Unchanged here; it is now the only
+  chrome link still aimed at an anchor where a page exists.
+- **The nav's Blog link still points at `/blog`**, which 404s on every page.
+- **Four work panels still have no `href`** — OPS Detox, Finer Things,
+  U4Success and Finance Consultancy — each with a `TODO(link)` saying the
+  case study does not exist. They are the next case studies.
+- **`#founder` and `#system` have lost their nav entries.** Both are still
+  real section ids and still carry `scroll-margin-top`; nothing else links to
+  them.
+
+---
+
+## 38. The filled-pill census, and what is actually left on the service page
+
+No code changed in this entry. It exists because "clear the service page's
+remaining markers" turned out to describe two unrelated things, one of which
+nobody here can do, and because the running count of filled pills that §13,
+§24 and §30 each added to had drifted from the page.
+
+### The two `[__]%` are visible copy, not code markers
+
+This is the part worth being plain about. `.svc-proof` sets three figures at
+display size and **two of them render as literal `[__]%`** to anyone who
+opens the page. They are not HTML comments and not a build-time token — the
+build would fail on an unresolved `{{token}}` (§12); it has no opinion about
+a bracket someone typed.
+
+| Figure | State |
+| --- | --- |
+| `6–7×` | real, with its own `.svc-figure-x` story in §27 |
+| `[__]%` | placeholder. Line beside it: "Over 50% of consumers recognise AI-written texts…" |
+| `[__]%` | placeholder. Line beside it: "increase in revenue thanks to consistent brand presentation…" |
+
+**Neither can be filled from this side.** They are statistics about consumer
+behaviour and revenue on a studio's own marketing page; inventing either is
+fabricating a claim the client would be standing behind. The second one's
+supporting sentence already says "over 50%", which reads like a hint and is
+not a number — do not round it into the bracket.
+
+The honest options are her figures, or cutting those two columns and letting
+`6–7×` stand alone. **Do not ship the brackets to a client review**; they are
+the most visible unfinished thing on the site.
+
+The third `TODO(copy)` on the page, `.svc-plan`'s "Save up to €1,400 with
+KMU.Digital financing", is different in kind: it is transcribed exactly as
+supplied and needs confirming, not writing. It is still the first financial
+claim anywhere on the site.
+
+### The filled pill has stopped marking the ask
+
+§27 set the rule — one filled pill, and it marks the ask. The count has been
+added to three times since, each time correctly and each time locally, and
+nobody has stood back and counted. **Six, across four pages:**
+
+| Page | Pill | Class |
+| --- | --- | --- |
+| `contact.html` | Send message (form submit) | `.btn-pill-solid` |
+| `about.html` | Apply to work with us | `.btn-pill--solid` |
+| `communication-strategy.html` | Book a call — `.svc-why` | `.btn-pill--solid` |
+| `communication-strategy.html` | Book a call — `.svc-plan` | `.btn-pill--solid` |
+| `communication-strategy.html` | Book a call — `.svc-close` | `.btn-pill--solid` |
+| `case-gerd-bommer.html` | Book a call | `.btn-pill--solid` |
+
+**§30's "two filled pills now" undercounted at the time it was written** —
+`.svc-plan`'s pill from §29 was already on the page, making it three. That
+heading is left standing with the correction beside it.
+
+The service page is the sharp end: **four pills, three of them filled, all
+four captioned "Book a call" and all four pointing at `contact.html`.** A
+device used on three of four controls is not marking one of them.
+
+This is a design decision and it is the client's, because her mocks draw them
+filled — "fix" may well mean retiring the rule rather than changing the page.
+Raised, not actioned.
+
+### `.btn-pill-solid` and `.btn-pill--solid` both exist
+
+One hyphen and two. Both fill the pill; they differ only in the hover border
+— `rgba(249,249,249,.4)` on the double, `var(--paper)` on the single — and
+the single also sets `cursor` and `font-family`, because it dresses a
+`<button>` rather than an `<a>`.
+
+`.btn-pill-solid` is used once, on the contact form's submit. Everything else
+uses the double. **Nothing warns you if you reach for the wrong one**: the
+pill still fills, and the only symptom is the wrong hover a few months later.
+Worth collapsing into one rule plus a `button` selector next time this
+corner is open — not done here, because it touches a signed-off form on a
+page this cycle had no other reason to open.
+
+### What the client needs to be asked, in one message
+
+These four have been accumulating across §29, §30 and this entry, and each is
+cheap to answer and blocking on its own:
+
+1. The two `.svc-proof` percentages — or permission to cut those columns.
+2. The €1,400 KMU.Digital claim — confirm amount and eligibility.
+3. The faint arc the price and closing mocks both draw — one answer settles
+   both sections, and a thin curved line was already rejected on this page's
+   hero (§27).
+4. Three filled "Book a call" pills on one page — keep, or let the closing be
+   the only one.
