@@ -25,7 +25,7 @@
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
 
-  <link rel="stylesheet" href="shared.css?v=cfc9c829" />
+  <link rel="stylesheet" href="shared.css?v=ad2c6013" />
 </head>
 <body>
   <a class="skip-link" href="#case-top">Skip to content</a>
@@ -41,7 +41,12 @@
   <aside class="menu-overlay" id="menu-overlay" aria-hidden="true">
     <button class="overlay-close" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
     <nav class="overlay-nav display" aria-label="Overlay navigation">
-      <a href="index.html#top">Home</a><a href="index.html#founder">About</a><a href="index.html#system">Services</a><a href="process.html">Process</a><a href="index.html#work">Portfolio</a><a href="/blog">Blog</a><a href="contact.html">Contact</a>
+      <!-- Anything here ships into all six pages, so the reasoning lives in
+           HANDOFF.md §37 rather than in this file. Short version: About and
+           Services are real pages now, not homepage anchors, and no `index.html`
+           prefix belongs on a real page. Services wants to become an index
+           when the second service page lands. -->
+      <a href="index.html#top">Home</a><a href="about.html">About</a><a href="communication-strategy.html">Services</a><a href="process.html">Process</a><a href="index.html#work">Portfolio</a><a href="/blog">Blog</a><a href="contact.html">Contact</a>
     </nav>
     <div class="overlay-bottom">
       <!-- TODO(asset): real award logo files pending from client Drive -->

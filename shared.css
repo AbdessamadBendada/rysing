@@ -57,39 +57,25 @@
   --mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 269.87 273.69'%3E%3Cpath d='M262.42,136.55c-12.82-.17-25.39-1.76-37.88-4.67l-20.93-5.54-13.69-5c-13.95-5.97-25.03-14.22-33.04-27.25-5.44-8.83-9.03-18.37-11.98-28.3l-5.16-20.33c-1.87-8.29-3.28-16.58-3.96-25v-.36c-.1-1.23-.19-2.45-.27-3.68-.07-1.32-.12-2.64-.15-3.97l-.24-10.68V.33s-.01-.05-.04-.09V0s-.08.01-.15.08c-.07-.06-.13-.11-.13-.08v.23s-.06.07-.06.09v1.46s-.23,10.68-.23,10.68c-.03,1.33-.08,2.65-.15,3.97-.08,1.23-.17,2.45-.27,3.68v.36c-.68,8.41-2.09,16.7-3.96,25l-5.16,20.33c-2.96,9.93-6.55,19.47-11.98,28.3-8.02,13.02-19.09,21.27-33.04,27.25l-13.69,5-20.93,5.54c-12.49,2.91-25.07,4.5-37.88,4.67l-7.45.25c.53.22,1.11.32,1.62.33l5.98.13c12.33.26,24.47,1.65,36.53,4.4l20.86,5.41,13.65,4.84c14.67,6.08,26.28,14.51,34.61,28.21,5.62,9.24,9.23,19.23,12.23,29.61l4.5,17.88c2.54,11.12,4.08,22.23,4.52,33.63l.23,10.21v1.66c0,.06.02.19.04.28,0,.13.03.33.07.3l.09-.09.09.09s.06-.17.07-.3c.03-.09.04-.22.04-.28v-1.66l.23-10.21c.44-11.4,1.99-22.51,4.52-33.63l4.5-17.88c3-10.37,6.61-20.37,12.23-29.61,8.32-13.7,19.93-22.14,34.61-28.21l13.65-4.84,20.86-5.41c12.05-2.75,24.19-4.15,36.53-4.4l5.98-.13c.51-.01,1.09-.11,1.62-.33l-7.45-.25Z'/%3E%3C/svg%3E");
 }
 
-/* Every decorative glow on the page fades to nothing before it reaches the
-   top and bottom of its own section. Without this a glow is simply cut by
-   the section box and leaves a hard horizontal line the full width of the
-   page — the sections stop being one surface and start looking glued
-   together. Only the vertical axis is faded: left and right are clipped at
-   the viewport edge, where a cut is invisible.
+/* `.glow-soft` IS GONE, and so is `.hero-light`'s one-sided variant of it.
+   It faded every glow to nothing before the top and bottom of its own
+   section, which is per-section behaviour by definition — it hid the cut
+   instead of removing it, and §27's contract removes the cut. The homepage
+   was its last user and came over in §36; about (§31), contact (§32),
+   process (§34) and the service page had already stopped using it.
 
-   Masking rather than resizing each gradient to fit, because the glows are
-   deliberately placed off-centre and near their edges; shrinking them to
-   fit would move the light away from where the design puts it.
+   Do not bring it back. A glow that needs masking at its own edge is a glow
+   whose box is the wrong size: give the element a box that contains the
+   light's falloff and remap the gradient into it (§31's transform), keeping
+   the box inside the bottom of `body` (§33). Both rules, always.
 
-   THE TRAP: this erases the top and bottom 15% of every glow it is applied
-   to. A gradient core placed at `at 90% -6%` or `at 2% 100%` — which is the
-   natural way to write "light entering from the corner" — lands inside the
-   fade and is almost entirely masked away, so the glow reads as a faint
-   smudge no matter how high its alpha goes. Keep the core between roughly
-   18% and 82% vertically and let the gradient's own falloff reach the edge.
-   HANDOFF §25. */
-/* LEGACY, AND ON ITS WAY OUT. This fades a glow to nothing before the top
-   and bottom of its own section — which is per-section behaviour by
-   definition, and the thing §27 and §31 are removing. It exists because an
-   `inset:0` glow is cut by its own box and leaves a hard line; the fix is to
-   size the element to the light instead, not to mask the cut.
-
-   **`index.html` is the only page still using it.** `about.html` (§31),
-   `contact.html` (§32) and `communication-strategy.html` no longer do.
-   **Do not add it to a new shape** — see §29 and §31. Delete this rule when
-   the homepage comes over, and `.hero-light`'s one-sided variant with it. */
-.glow-soft {
-  --fade:15%;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
-          mask-image:linear-gradient(to bottom,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
-}
+   Worth keeping from the old note, because it is why several glows on this
+   site are written the way they are: the mask erased the top and bottom 15%
+   of whatever it was applied to, so a core placed near its box's edge — the
+   natural way to write "light entering from the corner" — was almost
+   entirely masked away and read as a faint smudge however high its alpha
+   went. Three glows were authored against that distortion and got brighter,
+   not different, when it was lifted. HANDOFF §25, §31, §36. */
 
 * { box-sizing:border-box; }
 /* clip, not hidden: the drifting glows are allowed to bleed off the
@@ -326,32 +312,93 @@ body::after {
 /* No video here — it moves to the section below. The ground is black with
    two large out-of-focus lights bleeding in from opposing corners, which is
    the identity's own banner composition. */
+/* §27's contract: a section hosting a shape is `position:relative` and
+   NOTHING else. All three of the forbidden things were here, and on this
+   section they were load bearing together — removing the isolation alone
+   would have deleted the hero's lights outright.
+
+   `isolation` made .hero its own stacking context, which is the only reason
+   its opaque background painted UNDER the z-index:-1 lights. Without it the
+   lights join `body`'s stacking context and paint behind every in-flow box
+   in it, .hero's own background included — so the fill had to go in the same
+   edit or the hero would have gone black. It cost nothing: it read
+   `--ink-deep 0 78%, --ink 100%` and §28 resolved both tokens to #000000, so
+   it was a flat black fill painted by a gradient.
+
+   `overflow:hidden` was cutting the blue disc, which reaches ~158px below
+   this section. That cut is the thing the client asked us to stop doing. */
 .hero {
-  position:relative; isolation:isolate; overflow:hidden;
+  position:relative;
   min-height:100svh; padding:clamp(140px,17vh,210px) var(--gutter) clamp(48px,6vh,80px);
   display:flex; flex-direction:column; justify-content:flex-end;
-  /* The hero's ground is darker than the page. Left as a flat fill it put a
-     second hard line at exactly the same place as the cut glow; it now
-     resolves into the page colour over the last fifth. */
-  background:linear-gradient(to bottom,var(--ink-deep) 0 78%,var(--ink) 100%);
 }
-/* The lights bleed in from below the fold, so only the bottom needs
-   fading — the top edge is the top of the page. */
+/* No mask. This was `.glow-soft`'s one-sided variant — it faded the whole
+   light layer out across the hero's bottom 30%, which is per-section
+   behaviour by definition and was erasing most of the blue.
+
+   The box stays `inset:0` because it is only a positioning container: it
+   paints nothing itself, and each disc below is a radial gradient that
+   reaches transparent well inside its own circular box, so §29's rule is
+   satisfied per shape rather than by this element. */
 .hero-light {
   position:absolute; z-index:-1; inset:0; pointer-events:none;
-  -webkit-mask-image:linear-gradient(to bottom,#000 0 70%,transparent 100%);
-          mask-image:linear-gradient(to bottom,#000 0 70%,transparent 100%);
+  /* Horizontal only, and it is NOT the section clip §27 forbids. The two
+     discs are anchored off both sides (`right:-14vw`, `left:-18vw`), so
+     uncut they push the root's scrollWidth to 1644 at a 1440 viewport — and
+     `html{overflow-x:clip}` does not actually hold that: measured,
+     `scrollTo(400,0)` still lands at scrollX=204, so the page can be pushed
+     sideways with a trackpad into dead black. (The service page ships that
+     today at scrollX=400; §27 recorded it as "no horizontal scrolling",
+     which does not survive measurement. Flagged, not changed here.)
+
+     Clipping the SHAPE CONTAINER rather than the section is the same
+     distinction `.footer-light` keeps (§27): it is a clip for its own
+     reason, not a section boundary. The cut lands exactly where the
+     viewport already cuts — this element is `inset:0` on a full-width
+     section — so nothing visible changes, which is §4's long-standing rule
+     that a left/right cut at the viewport edge is invisible.
+
+     `overflow-y` stays `visible` on purpose and must not become `hidden`:
+     `clip` is the one value that does not coerce the other axis, and the
+     blue disc reaching ~158px down into `.reel` is the whole point of the
+     conversion. Setting `overflow:hidden` here puts the cut back. */
+  overflow-x:clip; overflow-y:visible;
 }
+/* THE OFFSETS ARE CAPPED AGAINST THE DISC, AND THAT IS §33'S RULE AGAIN.
+   Each disc is sized from the viewport WIDTH (`min(72vw,1020px)`) and was
+   offset from the viewport HEIGHT (`top:-24vh`, `bottom:-30vh`). Those two
+   do not scale together, so at a narrow viewport the offset stays large
+   while the disc gets small, and the light walks clean off the section: at
+   390px the blue sits ENTIRELY below the hero, a 242px ball floating in the
+   top of the showreel.
+
+   That was invisible until now only because the old one-sided mask reached
+   zero at the hero's bottom edge and deleted it — the mobile hero shipped
+   with no blue at all, which is not the composition the design draws either.
+   Uncut, the misplacement is what you see. §33 names the general form of
+   this: cap both or neither.
+
+   So each offset is capped against the disc's own diameter, held in `--d`.
+   The multipliers are read off the authored desktop values rather than
+   chosen — at 1440x900, 24vh/1020px = .212 and 30vh/860px = .314 — so where
+   the viewport is tall enough for the vh term to win, which is every desktop
+   and laptop size, the result is EXACTLY what it was. The cap only engages
+   where the disc has shrunk, which is where it was broken. Verified
+   unchanged to 0px at 1440 and 1920, and the light back inside the hero's
+   lower-left corner at 360 and 390. */
 .hero-light::before,.hero-light::after {
   content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+  width:var(--d);
 }
 .hero-light::before {
-  width:min(72vw,1020px); top:-24vh; right:-14vw;
+  --d:min(72vw,1020px);
+  top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
   background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
   animation:driftA 28s var(--ease) infinite alternate;
 }
 .hero-light::after {
-  width:min(62vw,860px); bottom:-30vh; left:-18vw;
+  --d:min(62vw,860px);
+  bottom:calc(-1 * min(30vh, var(--d) * .314)); left:-18vw;
   background:radial-gradient(circle at 50% 50%,rgba(53,36,213,.95),rgba(53,36,213,.5) 38%,rgba(53,36,213,.08) 62%,transparent 74%);
   animation:driftB 35s var(--ease) -11s infinite alternate;
 }
@@ -380,7 +427,20 @@ body::after {
    which scales up on scroll until it fills the frame. Driven by scroll
    position through a CSS variable rather than by scrubbing playback —
    seeking on every frame stutters badly on mid-range machines. */
-.reel { position:relative; height:260vh; background:var(--ink); }
+/* No `background` any more. It was `var(--ink)` — the same black `body`
+   already paints — but an opaque fill on an in-flow box paints ABOVE a
+   z-index:-1 shape, so it was guillotining the hero's blue disc flat at this
+   section's top edge the moment .hero stopped clipping it. The blue now runs
+   ~158px down into the top of this section and fades out there, which is
+   §34's "one light crossing the boundary" rather than two lights meeting at
+   one.
+   .reel does not isolate and must not start: it is the section whose
+   stacking context §32 flagged as the unknown in this conversion, and the
+   answer is that it has none. `position:sticky` on .reel-stage creates no
+   stacking context without a z-index, and the stage's own `overflow:hidden`
+   is a non-section clip for the sticky aperture — the same distinction
+   `.footer-light` keeps (§27). Neither touches a child of .hero. */
+.reel { position:relative; height:260vh; }
 .reel-stage {
   position:sticky; top:0; height:100svh; overflow:hidden;
   display:grid; place-items:center;
@@ -456,8 +516,12 @@ body::after {
 .stats {
   /* No overflow:hidden — clipping a soft glow leaves a hard edge at the
      section boundary. The page is one continuous black, so the light is
-     allowed to bleed past the section the way the reference's does. */
-  position:relative; isolation:isolate;
+     allowed to bleed past the section the way the reference's does.
+     No `isolation` either (§27): this section hosts no shape of its own —
+     `.stats-light` is `display:none` — but an isolating box is a floor that
+     a neighbour's light cannot be composited across, and the point of the
+     conversion is that the page has exactly one compositing group. */
+  position:relative;
   padding:clamp(80px,8.5vw,160px) var(--gutter) clamp(110px,12.5vw,230px);
 }
 /* The stats glow is gone. Red and blue were appearing as large blurred
@@ -1127,7 +1191,7 @@ body::after {
    in space is the whole design; anything else added here would give the
    eye somewhere to go other than the line. */
 .belong {
-  position:relative; isolation:isolate; overflow:clip;
+  position:relative;
   padding-inline:var(--gutter); padding-block:clamp(120px,15vw,260px);
   display:flex; flex-direction:column; align-items:center; text-align:center;
   gap:clamp(26px,3.4vw,52px);
@@ -1148,9 +1212,31 @@ body::after {
    and it would still be ringing when the red closing ask arrives a screen
    later. It has to read as light behind the words, never as a panel they
    sit on — so the corners of the section stay black. */
+/* This is the one glow on the page that needed no box change, because it was
+   already built to §29's rule: 46% vertical radius centred at 47% reaches
+   from 1% to 93% of its own box, so the light finishes inside the element and
+   nothing was ever cutting it. Only `.glow-soft` was — its 15% top and bottom
+   fades were erasing the gradient's outer shoulders, which is why this glow
+   now reads slightly fuller at the same position and the same peak. */
+/* THE SIDE INSETS ABSORB THE BREATHE, AND THE LIGHT IS UNCHANGED.
+   `inset:0` plus `scale(1.045)` makes this element 4.5% wider than the page
+   at the top of its cycle. While `.belong` clipped, that was contained; once
+   it stopped, those 8px at a 1440 viewport became real horizontal scroll —
+   dead black, since the gradient is already transparent out there (measured:
+   brightest pixel in the overflowing columns is 10/255 and nothing exceeds
+   24), but scrollable, which the page was not before.
+
+   So the box is inset by 2.153% each side: 95.694% × 1.045 = 100.0%, exactly
+   the viewport at full breath. The horizontal radius is then re-expressed as
+   a share of the narrower box — 46 / 0.95694 = 48.07% — so the light is the
+   same size it always was, at rest and at full scale alike, because both
+   states scale by the same factor. The vertical radius is untouched: the box
+   height does not change, and only left/right were inset.
+   The centre stays 50% 47%, which is what the authored-centre assertion
+   checks, so a mistake here shows up as a moved light rather than hiding. */
 .belong-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 46% 46% at 50% 47%,
+  position:absolute; z-index:-1; inset:0 2.153%; pointer-events:none;
+  background:radial-gradient(ellipse 48.07% 46% at 50% 47%,
     rgba(53,36,213,.60) 0%, rgba(53,36,213,.38) 30%,
     rgba(53,36,213,.14) 54%, rgba(53,36,213,.04) 74%, transparent 100%);
   /* Scale only. A translating drift would walk the faded edge back into the
@@ -1185,7 +1271,14 @@ body::after {
    design draws it. This was split into three panels once and has been put
    back; the three keynote case studies still exist further down the page,
    standing on their own without this head. */
-.spot { position:relative; overflow:hidden; background:var(--ink); }
+/* Hosts no shape, but it carried two of the three things §27's contract
+   forbids and both were doing nothing. The `background:var(--ink)` was the
+   same black `body` paints, and because .spot does not isolate it painted
+   ABOVE any z-index:-1 light reaching this far down the page — a latent
+   version of the cut `.reel` was actually shipping. `overflow:hidden` had
+   nothing to clip either: the photograph is in flow, the scrim is `inset:0`,
+   and `.spot-copy` is inset on all four sides. */
+.spot { position:relative; }
 /* Every photograph on the page carries the same grade; the stage shot's
    LED wash was the one image still running at full saturation. */
 .spot img {
@@ -1222,15 +1315,31 @@ body::after {
    This is the one headline below the fold allowed to alternate faces. It
    is also the page's last ask before the closing, and the alternation is
    what distinguishes it from the three section heads around it. */
-.fudge { position:relative; isolation:isolate; overflow:clip; text-align:center; }
+.fudge { position:relative; text-align:center; }
 /* The blue returns at the right edge as the page approaches the footer,
    where it is already waiting behind the wordmark — read as the footer's
    light rising rather than a fourth use of the colour. Painted as a
    gradient that reaches transparent inside its own box: an oversized shape
    under overflow:clip gets guillotined into a rectangle. */
+/* The box is 24% taller than the section at the bottom, and the gradient is
+   remapped so the light does not move. This glow genuinely overran `inset:0`:
+   a 58% vertical radius centred at 64% reaches 122% of the section, so 22% of
+   it was being cut — the hard edge `.glow-soft` was hiding rather than fixing.
+
+   §31's transform, for a box grown `inset:-a% 0 -b% 0`: the centre `p`
+   becomes `(p + a)/(1 + a + b)` and a vertical radius expressed as a SHARE OF
+   THE BOX becomes `r/(1 + a + b)`. Here a=0, b=24, so the divisor is 1.24:
+   64 → 51.61 and 58 → 46.77. The light now reaches 4.84%–98.38% of its box,
+   inside on both sides. Horizontal values are untouched because the
+   element's width does not change (§31), and the right-hand cut at the
+   viewport edge is the established exception (§4).
+
+   §33's second rule holds: 24% of a 685px section is 164px of overhang, and
+   `.closing` plus the footer sit below it, so the box stops 1252px short of
+   the bottom of `body`. */
 .fudge-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
-  background:radial-gradient(ellipse 38% 58% at 96% 64%,
+  position:absolute; z-index:-1; inset:0 0 -24% 0; pointer-events:none;
+  background:radial-gradient(ellipse 38% 46.77% at 96% 51.61%,
     rgba(53,36,213,.52), rgba(53,36,213,.30) 34%,
     rgba(53,36,213,.10) 58%, rgba(53,36,213,.02) 76%, transparent 100%);
 }
@@ -1277,7 +1386,7 @@ body::after {
    should feel inevitable rather than repeated. Centred, and nothing in it
    but the question and the answer. */
 .closing {
-  position:relative; isolation:isolate; overflow:clip;
+  position:relative;
   padding-block:clamp(132px,15.5vw,290px);
   display:flex; flex-direction:column; align-items:center; text-align:center;
 }
@@ -1289,7 +1398,7 @@ body::after {
    The red sat at 98%, which put almost all of it under the bottom fade of
    .glow-soft; raised to 74% it reads properly and still clears the fade. */
 .closing-glow {
-  position:absolute; z-index:-1; inset:0; pointer-events:none;
+  position:absolute; z-index:-1; inset:0 0 -20% 0; pointer-events:none;
   /* The source is rgba(255,40,8), not --red. Dimming a colour toward
      --ink (#141414, a grey rather than black) raises its green channel
      relative to red, and that is what turns a warm glow brown: --red at
@@ -1302,7 +1411,20 @@ body::after {
      curve composites to rgb(77,32,24) over --ink — brown. Brighter core,
      faster falloff, same position and the same read of "one red light, low
      left" that §11 asks for. */
-  background:radial-gradient(ellipse 38% 42% at 10% 76%,
+  /* Box 20% taller at the bottom, gradient remapped by §31's transform so the
+     light stays where §11 put it: divisor 1.20, so 76 → 63.33 and 42 → 35.
+     A 42% radius centred at 76% reached 118% of the section, so 18% of this
+     glow was being cut at the footer boundary.
+
+     §33 is about THIS section specifically — it is the last one before the
+     footer, which is where a blanket overhang shipped a light that stopped
+     dead at the bottom of `body` and left dead scroll behind it. Checked
+     rather than assumed: 20% of a 737px section is 147px, and the footer
+     below it is 679px tall, so the box ends 532px inside the document. The
+     overhang is expressed in % so it scales with the section; the footer
+     scales with it, so the margin holds at every width — verified at
+     360–1920 rather than argued. */
+  background:radial-gradient(ellipse 38% 35% at 10% 63.33%,
     rgba(255,40,8,.56), rgba(255,40,8,.25) 26%,
     rgba(255,40,8,.07) 50%, rgba(255,40,8,.015) 70%, transparent 86%);
 }

@@ -208,8 +208,16 @@
           <p class="label">For keynote speakers</p>
           <h2 class="display" id="spotlight-title"><span class="alt">We bring company founders into the</span> <mark>spotlight</mark></h2>
           <p>Build your speaker brand and rise into thought leadership.</p>
-          <!-- TODO(link): still points into the archive; wants a keynote page. -->
-          <a class="btn-pill" href="playground/rysing2.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
+          <!-- Was `playground/rysing2.html` — an archived concept, and one
+               whose image paths resolve from the repository root, so the
+               homepage was sending visitors to a page that renders with
+               broken images. This section is headed "For keynote speakers"
+               and already carries Gerd's photograph, so the case study is
+               the same subject and a real destination.
+               TODO(link): still not the keynote landing page the section
+               arguably wants — one client's case study is standing in for a
+               service. Revisit if that page is ever built. -->
+          <a class="btn-pill" href="case-gerd-bommer.html">Learn more <span class="arrow" aria-hidden="true"></span></a>
         </div>
       </div>
     </section>
@@ -301,7 +309,7 @@
          the earlier baselines. Sits between the proof and the ask on purpose —
          see the note on .belong. -->
     <section class="belong" id="belong" aria-labelledby="belong-title">
-      <div class="belong-glow glow-soft" aria-hidden="true"></div>
+      <div class="belong-glow" aria-hidden="true"></div>
       <span class="belong-mark" data-reveal aria-hidden="true"></span>
       <h2 class="display" data-reveal id="belong-title">
         <span class="alt">If you feel like you and your brand are meant for</span> something bigger,
@@ -315,8 +323,11 @@
          Work's rows end at 06 and this row carries the last three. -->
     <section class="band" aria-label="Keynote speaker case studies">
       <div class="work-row work-row--c" data-stagger>
-        <!-- TODO(link): case study page does not exist yet -->
-        <a class="work-item">
+        <!-- The first case study to exist, and the first work panel on the
+             site that goes to one. The panel already drew "Learn more" and
+             already carried a TODO(link) waiting for the page, so this is an
+             href and nothing else — no copy, no markup, no new affordance. -->
+        <a class="work-item" href="case-gerd-bommer.html">
           <span class="shot"><img style="--pos:center 32%" src="rysing-assets/Gerd-Hero-Section-image.webp" alt="Gerd Bommer speaking on stage, wearing a headset microphone" loading="lazy" decoding="async" /></span>
           <span class="shot-title"><b class="name">Gerd Bommer</b> Keynote Speaker and Founder-First Investor</span>
           <span class="shot-more is-standing">Learn more →</span>
@@ -341,7 +352,7 @@
          "Fudge for founders." and "People branding. Without the fluff." — all
          baseline copy, so this is a deliberate removal and not an oversight. -->
     <section class="band fudge" id="sunday-fudge" aria-labelledby="fudge-title">
-      <div class="fudge-glow glow-soft" aria-hidden="true"></div>
+      <div class="fudge-glow" aria-hidden="true"></div>
       <div class="fudge-copy">
         <p class="label" data-reveal>Newsletter — Sunday Fudge</p>
         <!-- The hyphen is a legal break point; holding the compound together
@@ -371,7 +382,7 @@
          baseline copy. "Ready to build a legacy?" is new, and it answers the
          manifesto's "build a legacy" at the other end of the page. -->
     <section class="band closing" id="contact" aria-labelledby="contact-title">
-      <div class="closing-glow glow-soft" aria-hidden="true"></div>
+      <div class="closing-glow" aria-hidden="true"></div>
       <h2 data-reveal class="display" id="contact-title"><span class="alt">Ready to build a</span> legacy?</h2>
       <a class="btn-pill" data-reveal href="mailto:hello@rysing.agency">Apply to work with us <span class="arrow" aria-hidden="true"></span></a>
     </section>
