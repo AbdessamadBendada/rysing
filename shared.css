@@ -628,6 +628,52 @@ body::after {
 .system-symbol::after { transform:rotate(90deg); }
 .system-item.is-open .system-symbol::after { transform:rotate(0); }
 
+/* The open row stands on brand blue, on client instruction. Three things
+   make it read as a band of the page rather than a card that appeared:
+
+   1. It FULL-BLEEDS. The fill is a pseudo-element pulled out to the viewport
+      edges past the section gutter, so the colour runs edge to edge and the
+      row looks like a stripe through the list. Boxed inside the gutter it
+      read as a panel floating on black.
+   2. It WIPES, it does not fade. scaleY from the top origin on the same
+      duration and curve as the panel's own growth, so one gesture: the
+      ground arrives under the detail at exactly the speed the detail opens.
+      A cross-fade here looked like a hover state misfiring.
+   3. It carries NO radius and NO shadow. The row hairlines stay the only
+      edges in the section.
+
+   Closing one row while opening another runs a scale-out against a
+   scale-in, which reads as the blue handing off down the list. That is why
+   the fill is per-row and not one shared element that travels. */
+.system-item::before,
+.system-item::after {
+  content:""; position:absolute; z-index:0;
+  top:0; bottom:0; left:calc(var(--gutter) * -1); right:calc(var(--gutter) * -1);
+  background:var(--blue); pointer-events:none;
+  transform:scaleY(0); transform-origin:top;
+}
+.system-item::before { opacity:0; }
+/* Closed rows get the same colour at a whisper on hover — the fill then
+   looks like it was already there waiting, rather than switched on. */
+.system-item::after {
+  opacity:0;
+  transition:opacity var(--t-detail) var(--ease-detail),transform var(--t-detail) var(--ease-detail);
+}
+.system-item:hover::after { opacity:.09; transform:scaleY(1); }
+.system-item.is-open::after { opacity:0; }
+.system-item.is-open::before { opacity:1; transform:scaleY(1); }
+/* Content has to sit above the fill. The numeral and body are the row's only
+   two children — see the grid above. */
+.system-num,.system-body { position:relative; z-index:1; }
+
+/* On blue, the paper-alpha hairlines and the grey label go muddy, which
+   makes the open row look lower-contrast than the closed ones above it. The
+   open row should be the loudest thing in the section, so lift them. */
+.system-item.is-open .system-tags li { border-color:rgba(249,249,249,.52); }
+.system-item.is-open .system-outcome span { color:rgba(249,249,249,.78); }
+.system-item.is-open .system-for::before { border-color:rgba(249,249,249,.85); }
+.system-item.is-open .system-symbol { border-color:rgba(249,249,249,.6); }
+
 .system-panel { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s var(--ease); }
 .system-item.is-open .system-panel { grid-template-rows:1fr; }
 .system-panel > div { overflow:hidden; }
@@ -655,7 +701,14 @@ body::after {
   .system-item { grid-template-columns:1fr; gap:14px; }
   .system-num { font-size:clamp(84px,24vw,150px); }
 }
-@media (prefers-reduced-motion:reduce) { .system-panel { transition:none; } }
+@media (prefers-reduced-motion:reduce) {
+  .system-panel { transition:none; }
+  /* The fill still has to appear — it is state, not decoration — so the
+     wipe is dropped and the colour is simply there. */
+  .system-item::before,.system-item::after { transition:none; transform:scaleY(1); }
+  .system-item::before { opacity:0; }
+  .system-item.is-open::before { opacity:1; }
+}
 
 
 /* --- Shared editorial primitives ---------------------------- */
@@ -725,6 +778,11 @@ body::after {
   --t-detail:.22s;
 }
 .system-panel { transition:grid-template-rows var(--t-weight) var(--ease-weight); }
+/* The blue fill is weight, not detail — it moves with the panel it grounds.
+   Opacity is deliberately shorter than the transform: the colour is fully
+   present early and the wipe finishes under it, so the row never looks like
+   it is still deciding. */
+.system-item::before { transition:transform var(--t-weight) var(--ease-weight),opacity .3s var(--ease-detail); }
 .system-name { transition:font-size var(--t-weight) var(--ease-weight),letter-spacing var(--t-weight) var(--ease-weight); }
 .btn-pill { transition:background var(--t-detail) var(--ease-detail),color var(--t-detail) var(--ease-detail),border-color var(--t-detail) var(--ease-detail); }
 .btn-pill .arrow { transition:transform var(--t-detail) var(--ease-detail); }
