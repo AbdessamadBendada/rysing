@@ -1,0 +1,12 @@
+{
+  "name": "rysing-divi-verify",
+  "private": true,
+  "description": "Fidelity gate for the Divi port. From this folder: npm install && npx playwright install chromium, then node compare.js",
+  "scripts": {
+    "verify": "node compare.js",
+    "verify:shots": "node compare.js --shots"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

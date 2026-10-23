@@ -2,6 +2,12 @@
 
 Read this before touching anything.
 
+**There is a second track.** The site is being ported to WordPress / Divi 5 in
+`wordpress/`, and **`wordpress/HANDOFF.md` is the authority for it**. This
+document and `src/` remain the design source of truth: the port consumes them
+and never feeds back. Fix a design problem here and re-port — never by editing
+the Divi page, which a generator will overwrite.
+
 **Every page at the root is generated. Do not edit one — edit `src/` and run
 `node build.js`.** The build system is §12.
 
@@ -4069,3 +4075,217 @@ cheap to answer and blocking on its own:
    hero (§27).
 4. Three filled "Book a call" pills on one page — keep, or let the closing be
    the only one.
+---
+
+## 39. The holding page
+
+A one-screen page served **at** the domain **instead of** the site, while the
+site is finished. `src/coming-soon.html`, built to `coming-soon.html`. It is
+linked from nowhere and must not be: it is not a page of the site.
+
+**It is the only page here with no header and no footer**, and the only one
+that does not scroll.
+
+**Three were built and one was chosen.** This section describes the one that
+shipped; §41 records the two that were deleted, because two of the lessons
+they produced are about this page's own lights and curves.
+
+### What it is
+
+The star climbs into frame from below, decelerating hard, and the wordmark is
+uncovered by an edge travelling **upward** behind it — so the name is lit
+from underneath as the star passes rather than appearing in place. The
+studio's own verb, performed by its own mark. One gesture, once, then
+stillness. ~4.3s.
+
+**The order is causal and the timings exist to keep it that way.** The sweep
+starts only once the star has climbed past the wordmark's line. Run them
+together and they read as two animations that happen to overlap, which is
+the difference between a logo revealed *by* something and a logo that merely
+faded in near it.
+
+**All of it is CSS. No script runs the sequence**, so it plays with
+JavaScript off and cannot half-start — which matters more here than anywhere
+else on the site, because on a holding page the animation *is* the page.
+`prefers-reduced-motion` gets the settled frame outright, wordmark unmasked,
+rather than a degraded version of the opening.
+
+### Why it is allowed to be nothing
+
+§1's thesis is that the work this borrows from spends most of its length
+near-silent so a few moments can detonate. Every other page has to earn its
+silence against content it owes the reader. **This page owes nothing**, so it
+can be entirely silence — and the risk inverts. With nothing to hide behind,
+one object too many and it reads as a parked domain.
+
+**There is deliberately no countdown, no percentage bar and no social row.**
+That trio is most of what `new-direction-comments.md` ranked as the reason
+the previous direction read as a very good template. A studio selling 20–30k
+engagements does not put a progress bar on its own launch.
+
+### `chrome: none` — a front-matter key added for this page
+
+`_layout.html` hardcoded `{{header}}` and `{{footer}}` into every page.
+`build.js` now takes `chrome:` (`full` by default, or `none`), and a `none`
+page gets neither, and is not required to declare `home` or `skip` — only the
+header and footer ever read those, so a bare page declaring a skip target
+nothing points at would be dead front matter.
+
+**Anything other than those two values is a hard failure.** `chrome: non`
+silently shipping a full header is the class of bug the unresolved-`{{token}}`
+check exists to stop.
+
+**This is the only legitimate use of it.** A page that is part of the site
+carries the site's chrome; `aria-current` and the skip-link both stop working
+without it. It is justified here only because the page replaces the site.
+
+### The sweep moves a mask, it does not redraw one
+
+The mask is 3× the wordmark's height and its **position** is animated, which
+walks the gradient's edge up through the box. Done this way rather than by
+animating the gradient's own colour stops: `mask-image` is not interpolable
+in every engine that supports masks at all, but `mask-position` always is.
+Same reason the marquee translates a track instead of restating its
+background.
+
+Reading the positions: the gradient runs black at its bottom to transparent
+at its top. At `0 0%` the box sees the mask's top third and the wordmark is
+hidden; at `0 100%` it sees the bottom third and the wordmark is solid. So
+`0% -> 100%` walks the lit edge upward.
+
+**The soft band is 18%–42%, not 34%–66%.** At the wider setting the fade was
+most of the mask's height, so the whole wordmark lightened at once and the
+sweep read as a dissolve. A tighter band keeps a travelling **edge**, which
+is the thing that reads as a rise.
+
+The wordmark also travels 18px as it is uncovered. Without it the letters
+light up in a box that is plainly standing still, and the sweep reads as a
+gradient passing over a logo rather than a logo rising into light.
+
+### Two things were built wrong first
+
+**1. The headline was removed.** Built with "Something is rysing" set large
+above the lockup, and the two fought — that line is the loudest thing on any
+page it appears on, so the wordmark it was meant to introduce became a
+caption under it. The brief is *the logo revealed*, so the logo is the only
+thing at size.
+
+**2. The light was a fog.** `min(104vw,1180px)` anchored at the bottom put a
+1180px disc with its centre two thirds up the screen — not light rising but
+a red-brown haze over everything, with the star floating in it. Same failure
+as the deleted still version's first build and the same rule from §8: spread
+wide enough, a glow stops being an object. It is pushed most of the way off
+the bottom (`bottom:-34vh`) and blurred hard (44px) now, so what lights the
+page is the disc's **top arc** and never its circumference. **If it ever
+reads as a disc with an edge, it has drifted.**
+
+### Verified
+
+- **One screen, both axes, at twelve sizes** — 360/390/500/620/768/1024/
+  1280/1440/1680/1920 plus 1440x700 and 900x480 (landscape phone).
+  `scrollWidth == innerWidth` and `scrollHeight == innerHeight` at every one;
+  `scrollTo(9999,9999)` lands at 0,0. **Zero dead scroll.** Probed with
+  `Emulation.setDeviceMetricsOverride`, not `--window-size` — headless clamps
+  near 500px and a 390 capture renders at 500 and crops, which looks exactly
+  like horizontal overflow.
+- **The sequence was read at fixed timestamps, not caught in flight.** §5's
+  technique: pause every animation via `getAnimations()` and set an explicit
+  `currentTime`, then capture. A round trip is 300ms–1s, so "screenshot
+  during the animation" returns near-arbitrary frames. `Page.bringToFront`
+  first, per §36.
+- **The six site pages are untouched**: zero changed lines that are not the
+  `?v=` hash. `shared.js` is **byte-identical to HEAD**, and `shared.css` is
+  a pure append (0 deleted) whose only other hunks are §37's nav stagger and
+  the fudge-button font, both of which predate this work.
+- `shared.css` comment terminators balanced, 369 open and 369 closed;
+  `node --check shared.js` passes.
+
+### Open
+
+- **All the copy is placeholder and the client writes it.** One line:
+  "Something is rysing — coming soon". Provisional, compositionally correct,
+  and **not approved copy**. Deliberately plausible rather than bracketed —
+  §38 records two `[__]%` rendering at display size on a finished page, and
+  the lesson is that a visible bracket is the most damaging thing on a page
+  a client is looking at.
+- **This page captures nothing.** It is a sign, not a list. The deleted still
+  version carried an email field; this one does not, and that was the
+  trade-off in choosing it. If capture matters, the field has to be added —
+  and the newsletter's missing backend (§6) would have to be wired first,
+  because a holding page that reports a false success is worse than one that
+  collects nothing.
+- **The wordmark's white orb artifact is worst on this page of anywhere on
+  the site.** The lockup is the hero at up to 356px and the blob sits
+  directly left of the star. It is in the supplied artwork
+  (`rysing-logo-lockup-light.webp`), not a rendering fault — §6. It was
+  deliberately **not** cropped out: it is the client's logo, and a crop
+  guessed from a pixel profile risks clipping the star's own left arm. Clean
+  artwork is the fix and this page is the strongest argument for it.
+- **The page is unlinked by design** and `build.js` will keep emitting it. It
+  must not be added to the nav, and whoever points the domain at it should
+  know the rest of the site stays reachable by filename.
+
+---
+
+## 41. The two holding pages that were deleted
+
+Three were built so the choice could be made by looking. One shipped (§39);
+these two were **deleted outright at the client's instruction** — sources,
+generated pages, CSS and the one JS handler. They are not in `playground/`
+and they are not in git. This section is all that remains of them, and it
+exists because three of the lessons are not about those pages.
+
+| Deleted | What it was |
+| --- | --- |
+| the still | Star held shut, one line, an email field. The quiet extreme. |
+| the aperture | The showreel aperture played on a timer until the footage filled the screen. |
+
+### What is worth keeping from them
+
+**1. The lights were built at the hero's strength and it was wrong — twice.**
+Both deleted pages and the first build of the one that shipped made the same
+mistake: the hero's own ramp (`.95` core on a ~900px disc) produced a red
+and blue wash with almost no black left, on pages whose whole argument is a
+black ground. §8 names it — spread wide enough and a glow stops being an
+object and becomes a panel the words sit on.
+
+**It is worse on a holding page than anywhere else for a structural
+reason.** On the homepage the hero's lights are read against fourteen more
+screens of near-black below them, so the page corrects them. A holding page
+is one screen: **whatever the lights do IS the page**, with nothing after it
+to restore the ratio. That finding is why §39's light is where it is.
+
+**2. A grade cannot be centred on the element when the thing it grades
+moves.** The aperture's footage was darkened by a radial vignette centred on
+the element — the viewport — while the star came to rest off-centre at 66%.
+So the one object that had to stay legible sat in the darkest part of its own
+grade and read as a hole rather than as footage. A **flat** scrim fixed it.
+Any mask whose position is animated has the same trap.
+
+**3. `mask-size` in per cent resolves against the element's WIDTH, so a
+constant breaks both ends at once on a phone.** A 15% rest is 216px at 1440
+and 58px at 390 — too small to read as having footage in it — and the same
+constant at the other end did not cover a frame 2.2× taller than it is wide.
+The fix was to author one number and make every other stop a fixed multiple
+of it, so a media query moves the whole curve together and cannot put it out
+of proportion. **Also §7 again:** `mask-size` interpolates linearly and the
+star stops being star-shaped at ~250%, so the stops have to multiply, not
+add, or the mark is a star for the first 1.5% of the opening and crawls
+invisibly for the rest.
+
+### Why the aperture version was not chosen
+
+Worth recording, because it will be proposed again. The move itself — the
+site's signature aperture driven by time instead of scroll — was the
+strongest thing in any of the three. **The footage is what sank it.**
+
+AGENTS.md has flagged the reel as off-brand since before these pages existed.
+At full bleed the end frame was a screen recording of a browser window on
+bright yellow, showing another client's website, under a Rysing wordmark. On
+the homepage the aperture opens and the reader scrolls on; on a holding page
+the opened frame is the **terminal state** and the page rests on it for as
+long as anyone looks. It also loaded **13MB** of video on the first thing
+anyone sees.
+
+**If the reel is ever re-cut, this idea is worth rebuilding.** It is not a
+rejected design; it is a design waiting on an asset.

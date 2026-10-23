@@ -1,0 +1,47 @@
+/* ============================================================
+   Divi adapter — homepage
+   ============================================================
+
+   Scoped to body.page-home. Rules here exist because a specific homepage
+   section does not survive Divi's box tree, and they are added only after the
+   difference has been MEASURED on the rendered page — not anticipated.
+
+   divi.css handles what every page needs. This file is for what only the
+   homepage needs: the reel aperture, the two drifting rails, the work grid
+   proportions, the marquee, and the fixed backdrop layers.
+
+   Empty is the correct state until the page has been rendered and compared.
+   Each rule below should name the section it rescues and the symptom it fixes,
+   so that a later Divi upgrade can retire it when the underlying default
+   changes.
+   ============================================================ */
+
+/* --- measured corrections begin here --- */
+
+
+/* Sunday Fudge: the newsletter lead paragraph.
+ *
+ * base.css styles it as `.fudge-copy > p` — a child combinator, chosen so it
+ * does NOT reach the .fudge-note inside the form below it.
+ *
+ * .fudge-copy is a Divi column here and the paragraph lives inside a Text
+ * module, so its real DOM parent is .et_pb_text_inner and the source selector
+ * no longer matches. Measured symptom: the lead ran the full column width at
+ * body size instead of 58ch at 15px.
+ *
+ * The work rows solved the same problem by moving the container into one Code
+ * module. That is not done here on purpose — this heading and lead are prime
+ * client-editable copy, and keeping them as separate Text modules is worth one
+ * adapter rule.
+ *
+ * .et_pb_text / .et_pb_text_inner are stable Divi class names, not the
+ * generated per-instance ones (.et_pb_text_0) the skill forbids targeting. The
+ * child combinators are preserved all the way down so .fudge-note stays
+ * untouched, exactly as the source intends. */
+body.page-home .fudge-copy > .et_pb_text > .et_pb_text_inner > p {
+  margin: 0;
+  max-width: 58ch;
+  color: rgba(249, 249, 249, .85);
+  font-size: 15px;
+  line-height: 1.75;
+}

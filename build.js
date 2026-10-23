@@ -20,6 +20,17 @@
            `#work` stays a same-page scroll; `index.html` on every sub-page so
            the same link navigates home and then scrolls.
     skip   target of the skip-link, which has to be a real id on this page.
+    chrome `full` (the default) or `none`. A `none` page gets no header and no
+           footer — it is a standalone document, not a page of the site.
+
+  `chrome: none` exists for the holding page, which is served AT the domain
+  INSTEAD of the site: a nav into pages the visitor cannot reach yet, and a
+  footer of legal links and socials, would both be lies. It is the only
+  legitimate reason to drop the chrome — a page that is part of the site
+  carries the site's chrome, and `aria-current` and the skip-link both stop
+  working without it. `home` and `skip` are not required on such a page
+  because only the header and footer ever read them; a bare page declaring a
+  skip target that no skip-link points at would be dead front matter.
 
 
   Unresolved `{{token}}` or a missing required key is a hard failure. A page
@@ -122,8 +133,18 @@ for (const file of pages) {
   for (const key of ['title', 'description']) {
     if (!meta[key]) throw new Error(`${file}: front matter is missing ${key}`);
   }
-  if (meta.home === undefined) throw new Error(`${file}: front matter is missing home`);
-  if (!meta.skip) throw new Error(`${file}: front matter is missing skip`);
+
+  /* Anything other than these two is a typo, and a typo must not silently
+     fall through to the default — `chrome: non` shipping a full header is
+     exactly the class of failure the unresolved-token check exists to stop. */
+  const chromeMode = meta.chrome === undefined ? 'full' : meta.chrome;
+  if (chromeMode !== 'full' && chromeMode !== 'none') {
+    throw new Error(`${file}: chrome must be "full" or "none", got "${meta.chrome}"`);
+  }
+  const bare = chromeMode === 'none';
+
+  if (!bare && meta.home === undefined) throw new Error(`${file}: front matter is missing home`);
+  if (!bare && !meta.skip) throw new Error(`${file}: front matter is missing skip`);
 
   /* Marks the nav link that points at this very page, so the current section
      is indicated without each page having to hand-edit a copy of the nav.
@@ -143,8 +164,8 @@ for (const file of pages) {
       ...OPTIONAL,
       ...VERSIONS,
       ...meta,
-      header: indent(markCurrent(fill(header, chrome, '_header.html')), '  '),
-      footer: indent(markCurrent(fill(footer, chrome, '_footer.html')), '  '),
+      header: bare ? '' : indent(markCurrent(fill(header, chrome, '_header.html')), '  '),
+      footer: bare ? '' : indent(markCurrent(fill(footer, chrome, '_footer.html')), '  '),
       main: indent(expandIncludes(body, file), ''),
     },
     file,

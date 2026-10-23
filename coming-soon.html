@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Drops `no-js` before the first paint. It has to be inline and in the
+       head: `.no-js` changes the reel's layout and turns the testimonial rail
+       into a wrapped row, so clearing it from the deferred shared.js would
+       paint the no-script layout and then reflow on every load. The class sits
+       on <html> rather than <body> for the same reason — <body> does not exist
+       yet at this point. A failed shared.js therefore leaves a page that is
+       fully readable, which is the behaviour HANDOFF.md §2 requires. -->
+  <script>document.documentElement.classList.remove('no-js');</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>rysing — something is rysing</title>
+  <meta name="description" content="Rysing is a branding and visibility studio in Vienna. The new site is on its way." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="rysing-assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="rysing-assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="rysing-assets/favicon-180.png" />
+  <!-- Tracks --ink. A stale value here tints the browser chrome on mobile a
+       different black from the page it sits above. -->
+  <meta name="theme-color" content="#000000" />
+
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
+
+  <link rel="stylesheet" href="shared.css?v=9772e5a5" />
+</head>
+<body>
+
+
+  <main id="top">
+    <!-- THE HOLDING PAGE: THE STAR RISES AND THE NAME LIGHTS UP.
+         Served AT the domain INSTEAD of the site, which is why it is the only
+         page carrying `chrome: none` (build.js) — a nav into pages nobody can
+         reach yet and a footer of legal links would both be lies on a page
+         that replaces the site. It is linked from nowhere, deliberately.
+
+         Chosen from three. The other two — a still version holding the star
+         shut, and one that played the showreel aperture to full bleed — were
+         built, compared and deleted. `HANDOFF.md` §41 records what they were
+         and what was learned from them, because two of those lessons are
+         about this page's own lights and curves.
+
+         No footage, no full-bleed payoff — one gesture, once, then stillness.
+
+         THE LOGO IS THE SUBJECT HERE, not a headline. Built first with
+         "Something is rysing" set large above the lockup and the two fought:
+         the line is the loudest thing on any page it appears on, so the
+         wordmark it was supposed to introduce became a caption under it. The
+         brief is the logo revealed, so the logo is the only thing at size and
+         the rest of the page gets out of its way.
+
+         THE REVEAL IS NOT A FADE AND NOT A WIPE. The star climbs in from
+         below, decelerating hard as it settles, and the wordmark is
+         uncovered by an edge travelling UPWARD behind it — so the name is
+         lit from underneath as the star passes rather than appearing in
+         place. The studio's own verb, performed by its own mark.
+
+         The order is causal and the timings exist to keep it that way: the
+         sweep begins only once the star has climbed past the wordmark's
+         line. Run them together and they stop reading as one event — they
+         become two animations that happen to overlap, which is the
+         difference between a logo revealed BY something and a logo that
+         merely faded in near it.
+
+         All CSS, so it plays with JavaScript off. -->
+    <section class="rise">
+      <span class="rise-light" aria-hidden="true"></span>
+
+      <div class="rise-core">
+        <!-- The flare is a child, not a pseudo-element: .rise-star's own box
+             is spoken for by the star mask, so a ::before would be masked to
+             the star's shape along with it, and the flare has to be round
+             and larger than the mark it comes out of. -->
+        <span class="rise-star" aria-hidden="true"><i></i></span>
+
+        <div class="rise-wordwrap">
+          <img class="rise-word" src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1376" height="292" decoding="async" />
+        </div>
+
+        <!-- TODO(copy): the client's to write. HANDOFF §41. -->
+        <p class="rise-note label">Something is rysing &mdash; coming soon</p>
+      </div>
+    </section>
+  </main>
+
+
+
+  <script src="shared.js?v=009e4804" defer></script>
+
+</body>
+</html>

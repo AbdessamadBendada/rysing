@@ -1,0 +1,1770 @@
+{
+  "390": {
+    "static": {
+      "docHeight": 17315,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 367,
+        "system": 1524,
+        "work-row--a": 1429,
+        "work-row--b": 1648,
+        "manifesto": 699,
+        "spot": 495,
+        "team": 1158,
+        "duo": 692,
+        "marquee": 94,
+        "treel-wrap": 364,
+        "belong": 479,
+        "work-row--c": 1564,
+        "fudge-copy": 584,
+        "closing-glow": 585
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            161,
+            161,
+            161,
+            161
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            346,
+            346,
+            346
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            346,
+            346,
+            346
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            346,
+            346,
+            346
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            346,
+            346,
+            346,
+            346
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            346,
+            346,
+            346
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 17315,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 367,
+        "system": 1524,
+        "work-row--a": 1429,
+        "work-row--b": 1648,
+        "manifesto": 699,
+        "spot": 495,
+        "team": 1158,
+        "duo": 692,
+        "marquee": 94,
+        "treel-wrap": 364,
+        "belong": 479,
+        "work-row--c": 1564,
+        "fudge-copy": 584,
+        "closing-glow": 585
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            161,
+            161,
+            161,
+            161
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            346,
+            346,
+            346
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            346,
+            346,
+            346
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            346,
+            346,
+            346
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            346,
+            346,
+            346,
+            346
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346,
+            346
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            346,
+            346,
+            346
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "620": {
+    "static": {
+      "docHeight": 18633,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 370,
+        "system": 1584,
+        "work-row--a": 2077,
+        "work-row--b": 2470,
+        "manifesto": 549,
+        "spot": 519,
+        "team": 1075,
+        "duo": 499,
+        "marquee": 94,
+        "treel-wrap": 387,
+        "belong": 386,
+        "work-row--c": 2386,
+        "fudge-copy": 382,
+        "closing-glow": 531
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            273,
+            273,
+            273,
+            273
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            570,
+            570,
+            570
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            570,
+            570,
+            570
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            570,
+            570,
+            570
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            570,
+            570,
+            570,
+            570
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            278,
+            278,
+            278,
+            278,
+            278,
+            278,
+            278,
+            278
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            269,
+            269,
+            269
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 18633,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 370,
+        "system": 1584,
+        "work-row--a": 2077,
+        "work-row--b": 2470,
+        "manifesto": 549,
+        "spot": 519,
+        "team": 1075,
+        "duo": 499,
+        "marquee": 94,
+        "treel-wrap": 387,
+        "belong": 386,
+        "work-row--c": 2386,
+        "fudge-copy": 382,
+        "closing-glow": 531
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            273,
+            273,
+            273,
+            273
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            570,
+            570,
+            570
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            570,
+            570,
+            570
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            570,
+            570,
+            570
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            570,
+            570,
+            570,
+            570
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            278,
+            278,
+            278,
+            278,
+            278,
+            278,
+            278,
+            278
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276,
+            276
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            269,
+            269,
+            269
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "760": {
+    "static": {
+      "docHeight": 20125,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 379,
+        "system": 1546,
+        "work-row--a": 2472,
+        "work-row--b": 2953,
+        "manifesto": 561,
+        "spot": 584,
+        "team": 1162,
+        "duo": 451,
+        "marquee": 94,
+        "treel-wrap": 364,
+        "belong": 401,
+        "work-row--c": 2869,
+        "fudge-copy": 387,
+        "closing-glow": 552
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            334,
+            334,
+            334,
+            334
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            699,
+            699,
+            699
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            699,
+            699,
+            699
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            699,
+            699,
+            699
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            699,
+            699,
+            699,
+            699
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            343,
+            343,
+            343,
+            343,
+            343,
+            343,
+            343,
+            343
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            334,
+            334,
+            334
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 20125,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 379,
+        "system": 1546,
+        "work-row--a": 2472,
+        "work-row--b": 2953,
+        "manifesto": 561,
+        "spot": 584,
+        "team": 1162,
+        "duo": 451,
+        "marquee": 94,
+        "treel-wrap": 364,
+        "belong": 401,
+        "work-row--c": 2869,
+        "fudge-copy": 387,
+        "closing-glow": 552
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            334,
+            334,
+            334,
+            334
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            699,
+            699,
+            699
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            699,
+            699,
+            699
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            699,
+            699,
+            699
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            699,
+            699,
+            699,
+            699
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            343,
+            343,
+            343,
+            343,
+            343,
+            343,
+            343,
+            343
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341,
+            341
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            334,
+            334,
+            334
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "860": {
+    "static": {
+      "docHeight": 12635,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 395,
+        "system": 1196,
+        "work-row--a": 406,
+        "work-row--b": 458,
+        "manifesto": 587,
+        "spot": 396,
+        "team": 1226,
+        "duo": 400,
+        "marquee": 94,
+        "treel-wrap": 366,
+        "belong": 437,
+        "work-row--c": 392,
+        "fudge-copy": 395,
+        "closing-glow": 571
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            378,
+            378,
+            378,
+            378
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            183,
+            352,
+            216
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            284,
+            174,
+            293
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            360,
+            216,
+            175
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            791,
+            791,
+            791,
+            791
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            388,
+            388,
+            388,
+            388,
+            388,
+            388,
+            388,
+            388
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            380,
+            380,
+            380
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 12635,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 395,
+        "system": 1196,
+        "work-row--a": 406,
+        "work-row--b": 458,
+        "manifesto": 587,
+        "spot": 396,
+        "team": 1226,
+        "duo": 400,
+        "marquee": 94,
+        "treel-wrap": 366,
+        "belong": 437,
+        "work-row--c": 392,
+        "fudge-copy": 395,
+        "closing-glow": 571
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            378,
+            378,
+            378,
+            378
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            183,
+            352,
+            216
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            284,
+            174,
+            293
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            360,
+            216,
+            175
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            791,
+            791,
+            791,
+            791
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            388,
+            388,
+            388,
+            388,
+            388,
+            388,
+            388,
+            388
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386,
+            386
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            380,
+            380,
+            380
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "980": {
+    "static": {
+      "docHeight": 13210,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 298,
+        "system": 1267,
+        "work-row--a": 442,
+        "work-row--b": 507,
+        "manifesto": 647,
+        "spot": 451,
+        "team": 1303,
+        "duo": 410,
+        "marquee": 95,
+        "treel-wrap": 354,
+        "belong": 497,
+        "work-row--c": 435,
+        "fudge-copy": 417,
+        "closing-glow": 636
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            196,
+            196,
+            196,
+            196
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            208,
+            401,
+            246
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            323,
+            198,
+            334
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            410,
+            246,
+            199
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            902,
+            902,
+            902,
+            902
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            442,
+            442,
+            442,
+            442,
+            442,
+            442,
+            442,
+            442
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            435,
+            435,
+            435
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 13210,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 298,
+        "system": 1267,
+        "work-row--a": 442,
+        "work-row--b": 507,
+        "manifesto": 647,
+        "spot": 451,
+        "team": 1303,
+        "duo": 410,
+        "marquee": 95,
+        "treel-wrap": 354,
+        "belong": 497,
+        "work-row--c": 435,
+        "fudge-copy": 417,
+        "closing-glow": 636
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            196,
+            196,
+            196,
+            196
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            208,
+            401,
+            246
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            323,
+            198,
+            334
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            410,
+            246,
+            199
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            902,
+            902,
+            902,
+            902
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            442,
+            442,
+            442,
+            442,
+            442,
+            442,
+            442,
+            442
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440,
+            440
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            435,
+            435,
+            435
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "1080": {
+    "static": {
+      "docHeight": 12875,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 325,
+        "system": 1355,
+        "work-row--a": 461,
+        "work-row--b": 529,
+        "manifesto": 700,
+        "spot": 497,
+        "team": 506,
+        "duo": 417,
+        "marquee": 99,
+        "treel-wrap": 410,
+        "belong": 547,
+        "work-row--c": 472,
+        "fudge-copy": 436,
+        "closing-glow": 691
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            216,
+            216,
+            216,
+            216
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            230,
+            441,
+            271
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            356,
+            218,
+            368
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            452,
+            271,
+            219
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            994,
+            994,
+            994,
+            994
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            211,
+            211,
+            211,
+            211,
+            211,
+            211,
+            211,
+            211
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            224,
+            224,
+            224
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 12875,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 325,
+        "system": 1355,
+        "work-row--a": 461,
+        "work-row--b": 529,
+        "manifesto": 700,
+        "spot": 497,
+        "team": 506,
+        "duo": 417,
+        "marquee": 99,
+        "treel-wrap": 410,
+        "belong": 547,
+        "work-row--c": 472,
+        "fudge-copy": 436,
+        "closing-glow": 691
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            216,
+            216,
+            216,
+            216
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            230,
+            441,
+            271
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            356,
+            218,
+            368
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            452,
+            271,
+            219
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            994,
+            994,
+            994,
+            994
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            211,
+            211,
+            211,
+            211,
+            211,
+            211,
+            211,
+            211
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315,
+            315
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            224,
+            224,
+            224
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "1280": {
+    "static": {
+      "docHeight": 14030,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 379,
+        "system": 1491,
+        "work-row--a": 526,
+        "work-row--b": 610,
+        "manifesto": 807,
+        "spot": 589,
+        "team": 563,
+        "duo": 390,
+        "marquee": 108,
+        "treel-wrap": 427,
+        "belong": 647,
+        "work-row--c": 525,
+        "fudge-copy": 475,
+        "closing-glow": 798
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            256,
+            256,
+            256,
+            256
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            272,
+            523,
+            321
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            422,
+            259,
+            436
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            535,
+            321,
+            260
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            1178,
+            1178,
+            1178,
+            1178
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            270,
+            270,
+            270
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 14030,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 379,
+        "system": 1491,
+        "work-row--a": 526,
+        "work-row--b": 610,
+        "manifesto": 807,
+        "spot": 589,
+        "team": 563,
+        "duo": 390,
+        "marquee": 108,
+        "treel-wrap": 427,
+        "belong": 647,
+        "work-row--c": 525,
+        "fudge-copy": 475,
+        "closing-glow": 798
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            256,
+            256,
+            256,
+            256
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            272,
+            523,
+            321
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            422,
+            259,
+            436
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            535,
+            321,
+            260
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            1178,
+            1178,
+            1178,
+            1178
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250,
+            250
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374,
+            374
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            270,
+            270,
+            270
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  },
+  "1440": {
+    "static": {
+      "docHeight": 14985,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 426,
+        "system": 1636,
+        "work-row--a": 559,
+        "work-row--b": 676,
+        "manifesto": 892,
+        "spot": 662,
+        "team": 609,
+        "duo": 363,
+        "marquee": 110,
+        "treel-wrap": 459,
+        "belong": 725,
+        "work-row--c": 583,
+        "fudge-copy": 490,
+        "closing-glow": 884
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            288,
+            288,
+            288,
+            288
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            306,
+            589,
+            361
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            475,
+            291,
+            490
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            602,
+            361,
+            292
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            1325,
+            1325,
+            1325,
+            1325
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            281,
+            281,
+            281,
+            281,
+            281,
+            281,
+            281,
+            281
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            307,
+            307,
+            307
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "divi": {
+      "docHeight": 14985,
+      "overflow": 0,
+      "sections": {
+        "hero": 900,
+        "reel": 2340,
+        "stats": 426,
+        "system": 1636,
+        "work-row--a": 559,
+        "work-row--b": 676,
+        "manifesto": 892,
+        "spot": 662,
+        "team": 609,
+        "duo": 363,
+        "marquee": 110,
+        "treel-wrap": 459,
+        "belong": 725,
+        "work-row--c": 583,
+        "fudge-copy": 490,
+        "closing-glow": 884
+      },
+      "items": {
+        "stats-grid": {
+          "count": 4,
+          "widths": [
+            288,
+            288,
+            288,
+            288
+          ]
+        },
+        "work-row--a": {
+          "count": 3,
+          "widths": [
+            306,
+            589,
+            361
+          ]
+        },
+        "work-row--b": {
+          "count": 3,
+          "widths": [
+            475,
+            291,
+            490
+          ]
+        },
+        "work-row--c": {
+          "count": 3,
+          "widths": [
+            602,
+            361,
+            292
+          ]
+        },
+        "system-list": {
+          "count": 4,
+          "widths": [
+            1325,
+            1325,
+            1325,
+            1325
+          ]
+        },
+        "team-track": {
+          "count": 8,
+          "widths": [
+            281,
+            281,
+            281,
+            281,
+            281,
+            281,
+            281,
+            281
+          ]
+        },
+        "treel-track": {
+          "count": 12,
+          "widths": [
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420,
+            420
+          ]
+        },
+        "footer-grid": {
+          "count": 4,
+          "widths": [
+            185,
+            307,
+            307,
+            307
+          ]
+        }
+      },
+      "paint": {
+        "sections": [],
+        "headings": []
+      }
+    },
+    "errors": []
+  }
+}

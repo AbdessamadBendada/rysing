@@ -10,3 +10,9 @@
 # Case-study camera originals and designer source: delivered outside git.
 # The optimised webp beside them is what the site loads.
 case-studies/*/_originals/
+
+# Playwright, needed only by wordpress/verify/compare.js. AGENTS.md's harness
+# notes say no browser driver is installed and none is needed — that holds for
+# the static build, which is driven through CDP, but the port's fidelity gate
+# imports playwright directly. Installed on demand; never committed.
+node_modules/

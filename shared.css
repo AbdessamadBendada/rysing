@@ -259,8 +259,22 @@ body::after {
    build to whichever link points at the current file, so a new page never has
    to hand-edit a copy of the nav. */
 .overlay-nav a[aria-current="page"] { text-decoration:underline; text-underline-offset:.14em; text-decoration-thickness:1px; }
+/* The stagger index. This list must cover every link in the nav, and it did
+   not: it stopped at 6 while the nav has 7 items, so Contact fell through to
+   `var(--i,0)` and animated in the FIRST slot, simultaneously with Home. It
+   still faded in — it was simply at the top of the queue instead of the end
+   of it, which against a stagger reads as the link already being there.
+
+   That is the failure mode to recognise: an uncovered item does not fail to
+   animate, it animates too early, which looks like no animation at all.
+
+   Deliberately run well past the current count. A services index is expected
+   (`HANDOFF.md` §37), which makes 8 items, and the nav is shared chrome —
+   adding a link should not require anyone to remember this list exists. */
 .overlay-nav a:nth-child(1){--i:0}.overlay-nav a:nth-child(2){--i:1}.overlay-nav a:nth-child(3){--i:2}
 .overlay-nav a:nth-child(4){--i:3}.overlay-nav a:nth-child(5){--i:4}.overlay-nav a:nth-child(6){--i:5}
+.overlay-nav a:nth-child(7){--i:6}.overlay-nav a:nth-child(8){--i:7}.overlay-nav a:nth-child(9){--i:8}
+.overlay-nav a:nth-child(10){--i:9}
 /* The links arrive one after another rather than together — the one place
    a stagger is allowed to be noticeable, because the panel is otherwise
    empty while it travels. */
@@ -1433,6 +1447,14 @@ body::after {
 .fudge-field button {
   flex:none; min-height:56px; padding:0; border:0; background:none; color:inherit; cursor:pointer;
   display:inline-flex; align-items:center; gap:8px;
+  /* A <button> does not inherit font-family, and this one never declared it:
+     the label shipped in the UA default — Arial — set at 11px uppercase on
+     .14em tracking, directly beside an input that names Aileron explicitly
+     two rules above. Caught by diffing computed styles against the Divi port,
+     which inherits the family through its own wrapper reset and was therefore
+     the more correct of the two. Every other property here was already set;
+     only the family was missed. */
+  font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
   transition:color var(--t-detail) var(--ease-detail);
 }
@@ -3639,4 +3661,149 @@ body::after {
   .case-hero-orb { right:-34vw; bottom:-40vw; width:min(124vw,560px); }
   .case-close-blue { left:-38vw; top:-50vw; width:min(104vw,480px); }
   .case-close-red { right:-38vw; bottom:-46vw; width:min(100vw,460px); }
+}
+
+/* --- Holding page: the star rises -------------------------- */
+/* One gesture, once, then stillness. No footage and no full-bleed payoff.
+
+   THE REVEAL IS NOT A FADE AND NOT A WIPE. The star climbs in from below and
+   the wordmark is uncovered by an edge travelling UPWARD behind it, so the
+   name is lit from underneath as the star passes rather than appearing in
+   place. The studio's own verb, performed by its own mark.
+
+   THE ORDER IS CAUSAL AND THE TIMINGS EXIST TO KEEP IT THAT WAY. The sweep
+   starts only once the star has climbed past the wordmark's line. Run them
+   together and they stop reading as one event — they become two animations
+   that happen to overlap, which is the difference between a logo revealed BY
+   something and a logo that merely faded in near it. */
+.rise {
+  position:relative; min-height:100dvh;
+  display:grid; place-items:center;
+  padding:clamp(30px,5vh,58px) clamp(20px,5vw,64px);
+  text-align:center; overflow:hidden;
+}
+
+/* THE LIGHT IS SMALL AND LOW, AND IT TOOK TWO GOES. Built first at
+   min(104vw,1180px) anchored to the bottom, which put a 1180px disc with its
+   centre two thirds up the screen: not light rising behind a mark but a
+   red-brown fog over the whole page, with the star floating in the middle of
+   it. Same failure as the first build of version 1 and the same rule from
+   §8 — spread wide enough, a glow stops being an object.
+
+   It is the glow the mark carries up with it, so it is barely wider than the
+   wordmark and it stays low. The top of the screen never lights at all. */
+/* Pushed most of the way off the bottom and blurred hard, so what lights the
+   page is the TOP ARC of the disc and never its circumference. At
+   `bottom:-14vh` with a 22px blur the whole circle sat on screen and read as
+   a ball of light under the wordmark with a visible edge — §26's note from
+   the other direction: a shape with an edge is an object, and this one is
+   meant to be ambient. */
+.rise-light {
+  position:absolute; z-index:-1; left:50%; bottom:-34vh;
+  width:min(76vw,760px); aspect-ratio:1; translate:-50% 0;
+  background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.44),rgba(240,66,34,.17) 36%,rgba(240,66,34,.03) 62%,transparent 76%);
+  filter:blur(44px); opacity:0; pointer-events:none;
+  animation:riseLight 3.1s var(--ease-weight) forwards;
+}
+@keyframes riseLight {
+  0%   { opacity:0; transform:translateY(34vh) scale(.5); }
+  55%  { opacity:1; }
+  100% { opacity:.8; transform:translateY(0) scale(1); }
+}
+
+.rise-core { display:flex; flex-direction:column; align-items:center; width:100%; max-width:660px; }
+
+/* The climb. Decelerating hard — a rise that arrives, rather than a tween
+   that stops. The overshoot in the curve is small on purpose: enough that
+   the star settles INTO its position, not so much that it bounces, which
+   would turn the brand mark into a UI element. */
+.rise-star {
+  position:relative; flex:none;
+  width:clamp(54px,6.2vw,92px); aspect-ratio:1;
+  margin-bottom:clamp(34px,5vh,60px);
+  background:var(--red);
+  -webkit-mask:var(--mark) center/contain no-repeat; mask:var(--mark) center/contain no-repeat;
+  opacity:0; animation:riseStar 2.6s cubic-bezier(.17,.92,.26,1) forwards;
+}
+@keyframes riseStar {
+  0%   { opacity:0; transform:translateY(46vh) scale(.3) rotate(-24deg); }
+  20%  { opacity:1; }
+  100% { opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
+}
+
+/* One bloom at the top of the climb, which is what makes the landing read as
+   an arrival rather than a stop. */
+.rise-star i {
+  position:absolute; left:50%; top:50%; translate:-50% -50%;
+  width:460%; aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.8),rgba(240,66,34,.24) 32%,transparent 66%);
+  filter:blur(13px); opacity:0; pointer-events:none;
+  animation:riseFlare 1.4s var(--ease) 2.1s forwards;
+}
+@keyframes riseFlare {
+  0%   { opacity:0; transform:scale(.3); }
+  24%  { opacity:.9; transform:scale(1); }
+  100% { opacity:0; transform:scale(1.45); }
+}
+
+/* THE SWEEP. The mask is three times the height of the wordmark and its
+   POSITION is animated, which walks the gradient's edge up through the box.
+   Done this way rather than by animating the gradient's own colour stops:
+   `mask-image` is not interpolable in every engine that supports masks at
+   all, but `mask-position` always is, so the edge is moved rather than
+   redrawn. Same reason the marquee translates a track instead of restating
+   its background.
+
+   Reading the positions: the gradient runs black at its bottom to
+   transparent at its top. At `0 0%` the box sees the mask's top third and
+   the wordmark is hidden; at `0 100%` it sees the bottom third and the
+   wordmark is solid. So 0% -> 100% walks the lit edge upward.
+
+   The soft edge is 18%–42% of the mask rather than 34%–66%. At the wider
+   setting the fade was most of the mask's height, so the whole wordmark
+   lightened at once and the sweep read as a dissolve. A tighter band keeps a
+   travelling EDGE, which is the thing that reads as a rise. */
+.rise-wordwrap { width:100%; display:flex; justify-content:center; }
+.rise-word {
+  width:clamp(188px,25vw,356px); height:auto;
+  -webkit-mask-image:linear-gradient(to top,#000 0 18%,rgba(0,0,0,0) 42%);
+          mask-image:linear-gradient(to top,#000 0 18%,rgba(0,0,0,0) 42%);
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-size:100% 300%; mask-size:100% 300%;
+  -webkit-mask-position:0 0%; mask-position:0 0%;
+  animation:riseSweep 1.7s var(--ease-weight) 1.45s forwards,
+            riseLift   1.7s var(--ease-weight) 1.45s forwards;
+}
+@keyframes riseSweep {
+  to { -webkit-mask-position:0 100%; mask-position:0 100%; }
+}
+/* The wordmark travels a little as it is uncovered. Without it the letters
+   light up in a box that is plainly standing still, and the sweep reads as a
+   gradient passing over a logo rather than the logo rising into light. */
+@keyframes riseLift {
+  from { transform:translateY(18px); }
+  to   { transform:translateY(0); }
+}
+
+.rise-note {
+  margin:clamp(30px,4.2vh,46px) 0 0; color:rgba(249,249,249,.58);
+  opacity:0; animation:riseFade 1s var(--ease) 3.25s forwards;
+}
+@keyframes riseFade { from { opacity:0; transform:translateY(10px); }
+                      to   { opacity:1; transform:translateY(0); } }
+
+@media (max-height:680px) {
+  .rise-star { width:clamp(44px,5vw,68px); margin-bottom:clamp(20px,3.4vh,32px); }
+  .rise-word { width:clamp(160px,21vw,260px); }
+  .rise-note { margin-top:22px; }
+}
+
+/* Reduced motion gets the settled frame: everything in place, nothing moves,
+   and the wordmark is unmasked outright rather than left mid-sweep. */
+@media (prefers-reduced-motion:reduce) {
+  .rise-light { animation:none; opacity:.8; transform:none; }
+  .rise-star { animation:none; opacity:1; transform:none; }
+  .rise-star i { animation:none; opacity:0; }
+  .rise-note { animation:none; opacity:1; transform:none; }
+  .rise-word { animation:none; -webkit-mask-image:none; mask-image:none; transform:none; }
 }

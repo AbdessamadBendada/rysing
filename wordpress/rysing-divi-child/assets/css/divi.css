@@ -1,0 +1,916 @@
+/* ============================================================
+   Divi adapter — global
+   ============================================================
+
+   base.css is the static design system, copied verbatim. It assumes the box
+   tree of the static HTML: a <section> is a direct child of <body>, and its
+   own padding is the only thing between the page edge and the content.
+
+   Divi does not give it that. Every module is wrapped in a section/row/column
+   tree that paints its own background, sets its own padding and widths, and
+   repaints inherited colour. This file undoes exactly those defaults and
+   nothing else. Rules that belong to the design itself go in base.css; rules
+   that exist only because Divi is in the way go here.
+
+   Everything is scoped to body.rysing so a page the client authors later in
+   the Visual Builder still gets stock Divi.
+
+   ---------------------------------------------------------------
+   WHY ALMOST EVERY RESET IS WRAPPED IN :where()
+   ---------------------------------------------------------------
+   The source classes land on the same elements as Divi's. A section generated
+   with class="band" renders as <section class="et_pb_section band">, and
+   base.css styles it through `.band` — specificity (0,1,0).
+
+   Written the obvious way, `body.rysing .et_pb_section { padding: 0 }` scores
+   (0,2,1) and beats it. The adapter would then strip the padding off all
+   fifteen sections and the whole page would collapse to one dense column —
+   and because the adapter loads after base.css it would look like base.css had
+   simply failed to apply.
+
+   :where() contributes ZERO specificity, so `:where(body.rysing .et_pb_section)`
+   scores (0,0,0). It still only matches inside our pages, but any source class
+   — any real selector at all — outranks it. That is exactly the relationship
+   an adapter should have with the design: present when nothing else speaks,
+   silent the moment the design does.
+
+   Full specificity is used deliberately in three places below, each marked:
+   where Divi ships !important of its own, where a pseudo-element must be
+   removed outright, and where Divi chrome must stay hidden.
+
+   Verified against Divi 5.0.1.
+   ============================================================ */
+
+
+/* --- The builder shell ------------------------------------- */
+
+/* Divi 5 wraps page content in .et-l--body > .et_builder_inner_content, and
+   Theme Builder header/footer in .et-l--header / .et-l--footer. None of the
+   three may introduce a width, a background or padding: the source sections
+   are full-bleed and manage their own inset through --gutter. */
+:where(body.rysing) :where(.et-l, .et_builder_inner_content, #et-boc, #et-main-area) {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+/* line-height has to be reset separately, at real specificity, because Divi
+   declares it in `em` on the builder wrapper. An em line-height computes to a
+   fixed LENGTH at that element and then inherits as that length, so it ignores
+   the font-size of whatever it lands on. base.css sets a unitless 1.6 on body,
+   which is the opposite: it re-resolves per element.
+ *
+ * Measured: `.eyebrow.label` is 11px text and should get 17.6px of leading. It
+ * inherited Divi's 26.9px instead, so every small-caps label on the page sat in
+ * a line box half again too tall. Restoring inheritance lets the design's
+ * unitless value flow through again. */
+body.rysing .et-l,
+body.rysing .et_builder_inner_content,
+body.rysing #et-boc,
+body.rysing #et-main-area {
+  line-height: inherit;
+}
+
+/* Divi pads #page-container for its own header. Ours is fixed, and the source
+   compensates for it with scroll-margin-top rather than document padding.
+   Divi sets this inline from the Customizer, so it needs real specificity. */
+body.rysing #page-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+
+/* --- Transparent wrappers: the load-bearing rule ------------ */
+
+/*
+   THE structural problem of this port, and the one thing everything else
+   depends on.
+
+   The source styles direct-child relationships. .hero is a flex column in
+   which `.hero-eyebrow { margin: 0 0 auto }` pushes itself to the top and the
+   headline settles at the bottom. .stats-grid is `grid-template-columns:
+   repeat(4,1fr)` over four .stat children. .band-head is a flex row that
+   space-betweens a heading against a pill. .work-row is a grid of three
+   panels with hand-set proportions.
+
+   Every one of those needs the styled elements to be ACTUAL CHILDREN of the
+   styled container. Divi puts four wrappers in between:
+
+       .et_pb_section.hero
+         └ .et_pb_row
+             └ .et_pb_column
+                 └ .et_pb_text
+                     └ .et_pb_text_inner
+                         └ <p class="hero-eyebrow">
+
+   .hero now has exactly one flex child — a row — so justify-content and the
+   auto margin both resolve against the wrong box and do nothing. The grid
+   sections collapse to a single column. None of this reports an error; the
+   page simply lays out as one narrow stack, and because base.css is plainly
+   loaded it reads like a CSS bug rather than a DOM-shape one.
+
+   `display: contents` removes a box from the tree while keeping its children,
+   so the wrappers stop existing for layout and <p class="hero-eyebrow"> becomes
+   a real child of .hero again. The source box tree is restored exactly, rather
+   than re-approximated with new Divi-specific layout rules — which is why this
+   single rule replaces what would otherwise be a per-section adapter for all
+   fifteen sections.
+
+   Two scoping decisions:
+
+   - `body:not(.et-fb)` keeps this OFF inside the Visual Builder. Divi's editor
+     needs real boxes to hit-test against for hover outlines, drag handles and
+     the Layers panel; dissolving them makes modules unselectable and the page
+     effectively uneditable — exactly what this conversion is meant to deliver.
+     The builder therefore shows Divi's own stacked layout, and the frontend
+     shows the design.
+
+   - Sections are NOT included. .et_pb_section carries the source section class
+     (.hero, .band, .stats) and is a real box doing real work.
+
+   A row or column that must stay a REAL box — because a source class turns it
+   into the grid or flex container itself (.stats-grid, .work-row, .spot,
+   .duo, .fudge-copy) — carries .rysing-box and is excluded here with :not().
+
+   It is excluded rather than given `display: block`, and that distinction
+   cost a full measurement cycle. `body.rysing:not(.et-fb) .et_pb_row.rysing-box
+   { display: block }` scores (0,3,1) and beats base.css's `.stats-grid
+   { display: grid }` at (0,1,0) — so the opt-out silently flattened every grid
+   section back to a stacked column. The page still rendered, every class was
+   present, and nothing was missing; it was just 50-60% taller at every desktop
+   width because each grid had become a single column. Withholding the
+   declaration leaves the source's own `display` untouched, which is the only
+   correct behaviour for an adapter.
+*/
+body.rysing:not(.et-fb) .et_pb_row:not(.rysing-box),
+body.rysing:not(.et-fb) .et_pb_row_inner:not(.rysing-box),
+body.rysing:not(.et-fb) .et_pb_column:not(.rysing-box),
+body.rysing:not(.et-fb) .et_pb_column_inner:not(.rysing-box),
+body.rysing:not(.et-fb) .et_pb_module.rysing-passthrough,
+body.rysing:not(.et-fb) .rysing-passthrough > .et_pb_text_inner,
+body.rysing:not(.et-fb) .rysing-passthrough > .et_pb_code_inner,
+body.rysing:not(.et-fb) .rysing-passthrough > .et_pb_image_wrap {
+  display: contents;
+}
+
+
+/* --- Painted defaults -------------------------------------- */
+
+/* THE one that hides itself.
+
+   .et_pb_section carries a WHITE background plus 54px of block padding. On a
+   #000 page that paints an opaque white plate behind the content, and since
+   nearly every headline here is --paper (#f9f9f9), the result is white text on
+   a white card: the copy does not render as "wrong colour", it disappears, and
+   what you see is a gap where a section used to be.
+
+   The padding reset matters just as much. .band sets its own padding-block via
+   clamp(); Divi's 54px on top of it would add ~108px to every one of fifteen
+   sections. At zero specificity .band still wins, and sections with no source
+   class correctly collapse to nothing. */
+/* background at FULL specificity — this is the trap that hides itself.
+   Divi declares `.et_pb_section { background-color: #fff }` at (0,1,0), which a
+   :where() reset cannot beat. No section class in base.css declares a
+   background at all, so nothing in the design competes and full specificity is
+   safe here.
+
+   Measured before the fix: the page rendered as white plates behind every
+   section, with Divi's #333 heading colour on top. Because the GEOMETRY was
+   already pixel-exact, every structural measurement passed — section heights,
+   grid tracks and element positions all matched the source to the pixel. Only
+   a screenshot showed it. This is exactly why visual fidelity and structural
+   fidelity have to be checked separately.
+
+   :not(.menu-overlay) is required. The full-stop menu overlay is the ONE
+   section the design paints itself — `.menu-overlay { background: var(--ink-deep) }`
+   — and at (0,1,0) it already beats Divi's `.et_pb_section` white by load
+   order, so it needs no help. This reset at (0,2,1) was beating it instead,
+   and the overlay opened fully transparent with the hero reading straight
+   through the navigation.
+
+   If another section is ever given a background in shared.css, add it here.
+   An audit that greps for `background` on one line will miss it — this one
+   is declared on its own line inside a multi-line rule, which is exactly how
+   it was missed the first time. */
+body.rysing .et_pb_section:not(.menu-overlay) {
+  background-color: transparent;
+  background-image: none;
+}
+
+/* padding/margin stay at zero specificity so .band and friends still win. */
+:where(body.rysing .et_pb_section) {
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+/* ZERO SPECIFICITY LOSES TO DIVI, NOT JUST TO US, AND ONE SECTION PAID FOR IT.
+   The reset above is deliberately :where() — (0,0,0) — so that .band and the
+   other authored sections keep the padding they declare. But Divi's own
+   `.et_pb_section { padding: 4% 0 }` scores (0,1,0), so it beats the reset
+   too. Every other section is saved by accident: each declares its own
+   padding at (0,1,0) in base.css, and base.css is enqueued before this file
+   only for *this* file's sake — against Divi's stylesheet the authored rule
+   wins on order.
+
+   `.reel` is the one section on the homepage that declares NO padding of its
+   own (`position:relative; height:260vh` and nothing else), so nothing was
+   overriding Divi and it took 57px top and bottom at 1440, 50px below 981.
+
+   IT WAS INVISIBLE TO EVERY EXISTING GATE, which is the part worth keeping.
+   `.reel` has a FIXED height, so the padding was absorbed rather than added:
+   the section measured 2340px on both sides and compare.js passed at 0px
+   delta across all eight viewports. What actually moved was the contents —
+   `.reel-stage` is `position:sticky; top:0`, so it began 57px below the
+   section top and lost 57px of sticky travel, which is the scroll distance
+   the showreel aperture opens over.
+
+   Fixed by name rather than by raising the reset's specificity: (0,2,0) here
+   beats Divi's (0,1,0) without touching any section that sets its own
+   padding. A section added later that declares no padding will have the same
+   bug — verify/section-padding.js is the check. */
+body.rysing .reel {
+  padding: 0;
+}
+
+/* Rows default to a fixed max-width (1080px) with 27px of block padding and an
+   auto horizontal margin. The source has no such container — .band sets
+   padding-inline:var(--gutter) and runs edge to edge.
+
+   WIDTH IS SPLIT OUT AT FULL SPECIFICITY, and this is the counterpart to the
+   :where() note at the top of the file. :where() is right wherever the source
+   competes for a property. Nothing in base.css sets width or max-width on
+   these rows — only Divi does — so a zero-specificity reset simply loses to
+   Divi's own `.et_pb_row { max-width: 1080px }` at (0,1,0).
+
+   That is not hypothetical: it measured as every content container rendering at
+   1080px instead of 1325px at a 1440 viewport, which read as a type-scale or
+   gutter problem rather than a row-width one. The giveaway was .system-list
+   measuring exactly 1080.
+
+   Padding and margin are here for the same reason, and both were measured:
+
+     .et_block_row { padding: 2% 0 }   added 26.48px top and bottom to every
+                                       boxed row — ~53px per row, which is most
+                                       of the residual height the port carried
+     .et_pb_row:not([class*="et_flex_column"]) { margin: 0 auto }
+                                       at (0,1,1), which outranks any source
+                                       class outright
+
+   .et_block_row is named explicitly: it is a SECOND class Divi puts on the
+   same element, so resetting .et_pb_row alone leaves the padding in place.
+
+   This is safe only because no design class lands on a row any more. Single
+   child containers carry their class on the column instead (see r_grid() in
+   lib/blocks.php), and the two that must stay on a row — .spot and .duo —
+   declare neither padding nor margin.
+
+   Divi declares `width: var(--content-width)` (80%) here, so the reset has to
+   replace it. `auto` is correct — but it only works once the column float
+   below is cleared. While that float stood, `auto` on the grid rows resolved
+   against an indefinite width and collapsed every track to 0; `width: 100%`
+   masked the symptom without fixing the cause. Clearing the float is the fix,
+   and `auto` is then the right reset. */
+body.rysing .et_pb_row,
+body.rysing .et_pb_row_inner,
+body.rysing .et_block_row {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Columns carry a percentage width and a 5.5% right margin to build Divi's own
+   grid. The source builds its grids in base.css with CSS Grid and flex, so the
+   column is only ever a passthrough. */
+/* Same split as the row above: Divi gives columns a percentage width and a
+   5.5% right margin to build its own grid, and no source rule competes for
+   either, so both need real specificity to come off.
+
+   FLOAT IS THE IMPORTANT ONE, and it was the most expensive bug in the port.
+
+   Divi declares `.et_pb_column { float: left }` at (0,1,0), so a reset at
+   :where()'s zero specificity never removed it. The column is also
+   display:contents (see the transparent-wrappers note above), and per spec
+   float does not apply to a display:contents box — but Chromium still sizes
+   the dissolved subtree shrink-to-fit.
+
+   Every `fr` track underneath therefore resolved against an indefinite width
+   and collapsed to ZERO. .work-row's three panels and .duo's two columns all
+   computed `grid-template-columns: 0px 0px 0px`, images with aspect-ratio
+   became 0x0, and text wrapped to roughly one character per line. One section
+   measured 15,063px tall against the source's 363px.
+
+   It never looked like a float problem. The grids were present, their classes
+   were right, their child counts were right, and the only visible symptom was
+   wildly wrong heights — which reads as a spacing or image-sizing bug and sends
+   you to the wrong file. Clearing the float restores the source's tracks to the
+   thousandth of a pixel (306.078 / 588.609 / 361.016, matching the static page
+   exactly).
+
+   NOTE there is no `max-width` reset here. Divi declares only `width` on
+   columns — never max-width — so resetting it fixed nothing and silently
+   destroyed `.fudge-copy { max-width: 1150px }`, letting the newsletter column
+   run the full measure. Reset what Divi actually sets, and nothing else. */
+body.rysing .et_pb_column,
+body.rysing .et_pb_column_inner {
+  width: auto;
+  margin-right: 0;
+  float: none;
+  clear: none;
+}
+
+/* THE WIDTH RESET ABOVE IS ONE SPECIFICITY POINT SHORT, AND IT SHOWS ON
+   EXACTLY ONE KIND OF ELEMENT.
+
+   Divi also ships `.et_pb_gutters3 .et_block_row .et_pb_column_4_4
+   { width: 100% }` at (0,3,0), which beats `body.rysing .et_pb_column` at
+   (0,2,0). For a column in normal flow that changes nothing — `width:auto`
+   on a block fills its container, so auto and 100% land in the same place,
+   which is why this sat here undetected and why every gate passed.
+
+   It is not harmless for an ABSOLUTELY POSITIONED column. `.spot-copy` is
+   the spotlight's copy block, anchored `left:clamp(20px,4vw,56px);
+   right:clamp(...)` with no width of its own — so its width is supposed to
+   be derived from both insets. Forced to `width:100%` the right inset is
+   ignored: the box came out 112px wider than the source at 1440 and
+   overhung its own row by 56px.
+
+   Nothing visible moved, because every child of it is left-aligned and sized
+   by its own measure — eyebrow, headline, lead and pill all verified
+   pixel-identical to the static page. So this is a latent divergence rather
+   than a visible defect today, and it is fixed because the next absolutely
+   positioned element to be ported would not be so lucky.
+
+   SCOPED BY NAME TO THE ONE ABSOLUTELY POSITIONED ELEMENT, and the two
+   wider fixes were both tried and both rejected by measurement:
+
+   - `body.rysing .et_pb_gutters3 ... { width:auto }` silently matched
+     NOTHING. Divi puts `et_pb_gutters3` on BODY, not on the section or the
+     row, so a descendant combinator after `body.rysing` can never reach it.
+     The rule deployed, parsed and never applied — a mis-scoped rule looks
+     identical to a working one in the file, and only
+     `CSS.getMatchedStylesForNode` declining to list it gave it away.
+   - `body.rysing .et_block_row .et_pb_column { width:auto }` matched, fixed
+     this, and BROKE THE FOUNDER SECTION: `.founder-title` came out 35px
+     narrower and its headline took an extra line (+43px). `width:auto` is
+     only equivalent to `100%` for a block in normal flow; where Divi's
+     column sits in a shrink-to-fit context it is not, and this reset is
+     exactly as load bearing as the `max-width` note above warns.
+
+   So: by name. `.spot-copy` is the only absolutely positioned authored
+   element in the port today. When a second one is ported it will need
+   adding here — section-padding.js's sibling symptom is that the element is
+   wider than its insets allow, so check any new `position:absolute` element
+   against the static page rather than assuming. */
+body.rysing .et_block_row .spot-copy {
+  width: auto;
+}
+
+:where(body.rysing .et_pb_column) {
+  margin: 0;
+  padding: 0;
+  float: none;
+  z-index: auto;
+}
+
+/* Divi forces `margin-right: 0 !important` on every .et-last-child column
+   (`.et_pb_row .et_pb_column.et-last-child`). The newsletter column is the one
+   place the design centres itself with `margin-inline: auto`, so that
+   !important killed only its right margin: margin-left took the entire 175px
+   of slack and the block sat hard against the right edge — 87px off centre,
+   with its width still correct at 1150px, which is why no height measurement
+   caught it.
+
+   Matching the !important is the only way past Divi's own. Scoped to the single
+   class that needs it rather than to .rysing-box, because every other design
+   column does want margin-right: 0. */
+body.rysing .et_pb_row .et_pb_column.fudge-copy {
+  margin-right: auto !important;
+}
+
+/* FULL SPECIFICITY, deliberately. Divi's row clearfix pseudo-elements become
+   real grid/flex items the moment a row is laid out as grid or flex, and show
+   up as unexplained empty cells. No source rule competes for these, and they
+   must not survive.
+
+   "NO SOURCE RULE COMPETES FOR THESE" WAS WRONG, AND IT COST THE SPOTLIGHT
+   ITS SCRIM. When an authored class lands on a Divi row, the authored
+   pseudo-element and Divi's clearfix are THE SAME PSEUDO-ELEMENT — an
+   element has only one `::after`. `.spot` is a row, so this rule deleted
+   `.spot::after`: the gradient that darkens the lower half of the spotlight
+   photograph so the white copy over it holds. The background-image still
+   computed; with `content: none` no box is ever generated, so nothing
+   painted.
+
+   IT WAS INVISIBLE TO EVERY GATE. The scrim is `position:absolute; inset:0`
+   and paints nothing but a gradient, so no geometry moved — compare.js
+   passed at 0px across eight viewports and an element-by-element audit found
+   332 of 332 boxes identical. The only symptom was the photograph reading
+   brighter and the copy on it losing contrast, which is exactly the kind of
+   thing a measurement gate cannot have an opinion about.
+
+   `.spot::after` is spared by name. `::before` is still killed on
+   everything — `.spot` has no authored `::before`, verified.
+
+   ADDING A SECOND ONE: any authored `::before`/`::after` whose class is
+   passed to `r_grid()` / `r_plain()` as a ROW or COLUMN class needs the same
+   exemption. `verify/pseudo-elements.js` checks every authored one against
+   the static page and names any that stopped being generated. */
+body.rysing .et_pb_row::before,
+body.rysing .et_pb_row:not(.spot)::after,
+body.rysing .et_pb_column::before,
+body.rysing .et_pb_column:not(.spot)::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* RESTORING `content` WAS ONLY HALF OF IT. Divi's clearfix is the classic
+   five-declaration one —
+       content:""; display:block; clear:both; visibility:hidden;
+       height:0; line-height:0
+   — and it is declared at (0,1,1), the same specificity as base.css's
+   `.spot::after`. base.css loads later so it wins the properties it names
+   (content, position, inset, background), but it never names `visibility`,
+   `height` or `line-height`, so Divi's values survive untouched.
+
+   The result was a scrim that existed, had the right gradient and the right
+   `inset:0`, and painted nothing: `visibility:hidden` and `height:0`. The
+   computed style reads almost entirely correct, which is what made this the
+   second pass rather than the first — `content` had been fixed and the
+   pixels had not moved.
+
+   Only the properties Divi adds and the source does not. `width` is in the
+   list because Divi zeroes that as well — restoring `visibility` and
+   `height` alone left the scrim 0px wide and still painting nothing, which
+   was a third pass. Check the computed BOX, not just `content`. */
+body.rysing .et_pb_row.spot::after {
+  visibility: visible !important;
+  width: auto !important;
+  height: auto !important;
+  line-height: normal !important;
+  clear: none !important;
+}
+
+/* .et_pb_text paints #333 rather than inheriting. Every headline on this site
+   inherits --paper from body; without this they all go dark grey, and the ones
+   sitting over photographs become unreadable rather than obviously broken.
+
+   Inheriting is used instead of naming a colour: the source has light-on-dark
+   plus a few dark-on-light inversions (.spot-copy over a photo, the paper-ground
+   panels), and those already resolve correctly through normal inheritance in
+   base.css. Pinning --paper here would break them. */
+:where(body.rysing) :where(.et_pb_text, .et_pb_text_inner, .et_pb_code, .et_pb_code_inner) {
+  color: inherit;
+  font-family: inherit;
+}
+
+/* font-size and line-height need real specificity, for the em-inheritance
+   reason described at the builder shell above. Divi declares
+   `.et_pb_text { line-height: 1.7em }` at (0,1,0), which resolves to a fixed
+   length on the module wrapper and then inherits as that length into
+   everything below it, ignoring each element's own font-size.
+ *
+ * Measured: the 11px .eyebrow label inherited 26.928px of leading instead of
+ * 17.6px, and .btn-pill's text took 18.7px instead of 17.6px. Nothing in the
+ * design competes for these two properties on a Divi wrapper, so full
+ * specificity is safe and restores the source's unitless inheritance. */
+body.rysing .et_pb_text,
+body.rysing .et_pb_text_inner,
+body.rysing .et_pb_code,
+body.rysing .et_pb_code_inner {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Restore the browser's default paragraph margin.
+ *
+ * shared.css never resets <p> margins globally — it only sets box-sizing — so
+ * the static page relies on the UA default `p { margin: 1em 0 }` wherever the
+ * design does not override it. Divi's reset zeroes margin on a long element
+ * list that includes <p>, so every such paragraph loses its spacing.
+ *
+ * Specificity is deliberate: :where() contributes nothing, leaving `p` at
+ * (0,0,1) — exactly Divi's reset — so this wins on load order while any real
+ * design rule (`.fudge-copy > p { margin: 0 }`, `.system-for`, and the rest)
+ * still outranks it. That reproduces the static cascade rather than inventing
+ * a new one.
+ *
+ * Measured: `.band-note` is styled only for width, colour and type, so its
+ * 14px top and bottom margins came from the UA default alone. Losing them made
+ * the team section exactly 28px short at every viewport. */
+:where(body.rysing) p {
+  margin-block: 1em;
+}
+
+/* Divi adds padding-bottom to paragraphs while the source spaces prose with
+   p + p margins; left alone the two stack and every paragraph gap doubles. */
+:where(body.rysing) :where(.et_pb_text_inner, .et_pb_code_inner) :where(p) { padding-bottom: 0; }
+
+/* There is deliberately NO first-child/last-child margin reset here.
+ *
+ * The usual adapter trims the first and last child's margins so they do not
+ * escape the module box. That is correct when .et_pb_text_inner is a real box —
+ * and wrong here, because every module this generator emits is
+ * rysing-passthrough and therefore display:contents. With no box to escape, the
+ * source's own margins are exactly what should apply.
+ *
+ * Measured cost of getting this wrong: `.band-note` carries `margin: 14px 0`
+ * in base.css and is the only child of its Text module, so it matched both the
+ * :first-child and :last-child resets and lost all 28px. The team section came
+ * out 28px short at every single viewport — a constant offset that looked like
+ * section padding rather than a paragraph margin. */
+
+/* Never set height:100% on .et_pb_text_inner to equalise cards — Divi stretches
+   the wrapper and distributes paragraphs down it. Stated here so the next
+   session does not reach for it. */
+:where(body.rysing) :where(.et_pb_text_inner, .et_pb_code_inner) { height: auto; }
+
+/* Divi gives every list inside a builder area its own padding and line-height:
+ *
+ *     #left-area ul, .entry-content ul, .et-l--body ul,
+ *     .et-l--footer ul, .et-l--header ul
+ *       { list-style-type: disc; padding: 0 0 23px 1em; line-height: 26px }
+ *
+ * at specificity (0,1,1). The design already declares exactly the right values
+ * — `.system-tags { margin: 0; padding: 0; list-style: none }` — but at (0,1,0)
+ * it loses, whatever the load order.
+ *
+ * So this matches DIVI's selectors rather than restating the design's values.
+ * It only unsets what Divi set; the padding and margin it writes are the same
+ * zeroes base.css already asks for, and line-height goes back to inheriting so
+ * the source's own type scale applies.
+ *
+ * Measured symptom, which pointed nowhere near lists: .system-tags rendered
+ * 71px against the source's 38px and .fudge-points gained the same 33px,
+ * because a 26px line-height on 10px tag text inflated every pill from 38px to
+ * 48px and wrapped one row onto two. It read as a vertical-rhythm drift in two
+ * unrelated sections.
+ *
+ * li is deliberately NOT given a padding reset here. `.system-tags li` sets
+ * `padding: 10px 17px` at (0,1,1), and a reset at this specificity would
+ * silently flatten every tag pill. */
+body.rysing :is(.et-l--body, .et-l--header, .et-l--footer, .entry-content, #left-area) :is(ul, ol) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+}
+
+body.rysing :is(.et-l--body, .et-l--header, .et-l--footer, .entry-content, #left-area) :is(ul, ol) li {
+  list-style: none;
+  line-height: inherit;
+}
+
+
+/* NOT scoped to bare blockquote, on purpose. Divi paints every blockquote with
+   border-left:5px solid #2ea3f2 — its brand blue — plus 20px of padding, so the
+   testimonial cards grow a blue bar and lose 20px of measure. The testimonials
+   are the only blockquotes on this page, so the reset names them; a blanket
+   rule would silently kill a deliberate pull-quote border if one is ever added
+   to a case study.
+ *
+ * Note the :where() wraps only body.rysing, leaving `.tquote blockquote` at a
+ * real (0,1,1) — matching Divi's own selector and winning on load order. The
+ * first attempt wrapped the whole thing, which scored (0,0,0) and lost: the
+ * padding survived, the quote measure narrowed by 20px, and each testimonial
+ * wrapped onto an extra line, making the rail 28px taller. A reset scoped to
+ * the right element is still useless at the wrong specificity. */
+:where(body.rysing) .tquote blockquote {
+  border-left: 0;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* Divi's reset gives every heading `padding-bottom: 10px` (together with a
+   #333 colour and a 1em line-height) via a bare `h1, h2, h3, h4, h5, h6`
+   selector. The design sets no padding on headings at all, so the 10px simply
+   accumulated: every h1/h2/h3 on the page measured exactly 10px taller than
+   the source, which across the hero, five band headings, the accordion and the
+   footer added up while looking like nothing in particular. */
+/* :where(body.rysing) contributes nothing and :is(h1..h6) contributes (0,0,1)
+   — exactly Divi's own `h1, h2, h3, h4, h5, h6` selector. Equal specificity,
+   and this file loads later, so it wins against Divi while still losing to any
+   real design rule. That matters: `.footer-grid h3` sets its own colour at
+   (0,1,1) and must keep it.
+
+   Divi's declaration is `color: #333; padding-bottom: 10px; line-height: 1em;
+   font-weight: 500`. The colour is the dangerous one — it turned every
+   headline on this black page dark grey. */
+:where(body.rysing) :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+  padding-bottom: 0;
+  line-height: inherit;
+  font-weight: inherit;
+}
+
+/* Divi's customizer emits an inline `body { font-weight: 500 }`. The source
+   sets 400, and every piece of body copy that does not declare its own weight
+   inherits straight through it — measured 30 rendered text runs a full step
+   heavier on the port than in the source: the stat captions, all four
+   `.system-for` lines, `.band-note` and the service outcome lines.
+
+   Headings are not affected (shared.css gives them explicit weights) which is
+   why this reads as "the small print looks slightly bold" rather than as an
+   obviously broken page — and why `compare.js` passed it: 400 vs 500 in
+   Aileron does not move a section boundary, so a geometry gate cannot see it.
+   The same blind spot as the pills; see §6.
+
+   Inline styles beat an external sheet on origin, not specificity, so this
+   needs !important — the one place in this file where that is true of a
+   plain element selector. */
+body.rysing {
+  font-weight: 400 !important;
+}
+
+/* Divi sets text-align on the module itself, so centring a column does not
+   reach the text. The source centres .hero, .belong and .closing. */
+:where(body.rysing) :where(.hero, .belong, .closing) :where(.et_pb_text, .et_pb_text_inner) {
+  text-align: inherit;
+}
+
+
+/* --- wpautop ----------------------------------------------- */
+
+/* wpautop merges consecutive non-block siblings into one unclassed <p>. Its
+   block list contains neither <label> nor <button>, so the newsletter form's
+   label and submit button get wrapped together — the flex row loses a child and
+   the gap between them vanishes. It reads as a spacing regression; it is a
+   structural one. <div> IS in the block list, which is why sibling divs survive
+   and only these containers are affected.
+
+   display:contents dissolves the injected wrapper and restores the original box
+   tree exactly, rather than papering over it with a margin.
+
+   The generator also emits every Text module on a single line, which prevents
+   the OTHER wpautop failure — <br> injected at each newline becoming a grid
+   item. Single-line emission does not prevent the merge above; both defences
+   are needed. */
+:where(body.rysing) :where(
+  .fudge-field, .stats-grid, .system-tags, .fudge-points,
+  .work-row, .team-track, .treel-track, .marquee-track,
+  .footer-grid, .tattrib, .band-head, .treel-foot
+) > :where(p:not([class])) {
+  display: contents;
+}
+
+
+/* --- Modules that must not impose a box --------------------- */
+
+/* The Image module wraps every image in .et_pb_image_wrap and makes the module
+   a block with its own margin. The source sizes images through .shot and figure
+   rules that expect the <img> itself to be the element being sized. */
+:where(body.rysing) :where(.et_pb_image, .et_pb_image .et_pb_image_wrap) {
+  display: block;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  line-height: 0;
+}
+
+:where(body.rysing .et_pb_image img) {
+  display: block;
+  max-width: 100%;
+}
+
+/* Divi's button is a heavily painted component: its own border, radius,
+   font-size, padding and an ::after arrow glyph from the ETModules icon font.
+ *
+ * :not(.btn-pill) is the important part, and getting it wrong cost real
+ * fidelity. Divi declares `.et_pb_button { font-size: 20px; padding: .3em 1em }`
+ * at plain (0,1,0) and WITHOUT !important, and base.css loads after Divi's
+ * stylesheet — so `.btn-pill` already wins on its own merits and needs no help.
+ *
+ * Blanket-resetting with `font-size: inherit !important` therefore did not
+ * strip Divi's styling, it stripped the DESIGN's: .btn-pill's 11px uppercase
+ * text at .14em tracking fell back to inherited body type, and every pill
+ * measured 152px wide against the source's 233px. An adapter that overrides
+ * the thing it is adapting for is worse than no adapter.
+ *
+ * Buttons the client adds later in the Visual Builder carry no .btn-pill, so
+ * they keep stock Divi styling, which is what they should have. */
+body.rysing .et_pb_button:not(.btn-pill),
+body.rysing a.et_pb_button:not(.btn-pill) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  letter-spacing: inherit !important;
+  line-height: inherit !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+  transition: none !important;
+}
+
+body.rysing .et_pb_button:not(.btn-pill)::after,
+body.rysing .et_pb_button::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* The CTA arrow.
+
+   In the source a pill is `<a class="btn-pill">Text <span class="arrow"></span></a>`
+   and base.css masks that span with var(--mark) — the Rysing star — then
+   rotates and scales it on hover.
+
+   Divi's Button module stores a plain string, so it cannot carry a child
+   element. Rather than drop the pills to Text modules and lose native editing
+   of the one thing clients actually change (button text and destination), the
+   arrow is rebuilt as ::after with the same declarations base.css gives
+   .btn-pill .arrow.
+
+   Scoped to .et_pb_button.btn-pill so it only applies to Button modules. The
+   header and footer pills are real anchors that still carry a real .arrow
+   span; if this matched them too they would render two arrows. */
+body.rysing .et_pb_button.btn-pill::after {
+  content: "" !important;
+  display: block !important;
+  /* position:static is required, not cosmetic. Divi positions its own button
+     glyph absolutely and slides it in on hover, and an absolutely positioned
+     pseudo-element is out of flow — so it contributes no width to the flex
+     line. The arrow rendered at the right size and was simply not laid out:
+     every pill measured 210px against the source's 233px, exactly the 11px
+     glyph plus the 12px flex gap. */
+  position: static !important;
+  inset: auto !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  /* Divi centres its absolutely positioned glyph with
+     `.et_pb_button::after { top:50%; transform:translateY(-50%) }` at (0,1,0).
+     Resetting `top` is not enough: the transform is a separate declaration and
+     survives on its own, so the star rode 5.5px high — exactly half its 11px
+     height — against text it is supposed to sit on the optical centre of.
+     Geometry measurement cannot see this: a transform does not change the
+     layout box, so the pill still measured 153.56x44 and compare.js passed.
+
+     Deliberately NOT !important. The hover rule below is (0,4,1) against this
+     block's (0,3,1) and must keep winning; marking this important would pin
+     the star upright and kill the rotate-and-scale. */
+  transform: none;
+  flex: 0 0 auto;
+  width: 11px;
+  height: 11px;
+  background: currentColor;
+  -webkit-mask: var(--mark) center/contain no-repeat;
+  mask: var(--mark) center/contain no-repeat;
+  transition: transform var(--t-detail, .35s) var(--ease-detail, var(--ease));
+}
+
+body.rysing .et_pb_button.btn-pill:hover::after {
+  transform: rotate(90deg) scale(1.2);
+}
+
+/* Same em-inheritance trap as .et_pb_text, but this is one of the few places
+   Divi genuinely ships !important of its own:
+   `.et_pb_button { line-height: 1.7em !important }`. base.css does not declare
+   a line-height on .btn-pill, so nothing without !important can take it back,
+   and the pill's 11px text rendered with 18.7px of leading instead of 17.6px.
+   Matching the !important is the only option here. */
+body.rysing .et_pb_button.btn-pill {
+  line-height: inherit !important;
+}
+
+/* Divi's brand blue on the pills, and the star with it.
+
+   base.css never declares a colour on .btn-pill — it inherits --paper from
+   body, the same way every other light-on-dark element here does. That works
+   against Divi's bare `a { color:#2ea3f2 }`, because base.css loads after the
+   parent stylesheet and `a { color:inherit }` wins the tie on order.
+
+   It does not survive the Button module, which adds two more classes:
+   `.et_pb_bg_layout_light.et_pb_module.et_pb_button { color:#2ea3f2 }` is
+   (0,3,0) and beats a bare element selector outright. So every Button-module
+   pill rendered in Divi blue — and the star with it, because the ::after above
+   is `background: currentColor` and faithfully took the same wrong colour.
+   The header and footer pills were unaffected: they are real anchors in the
+   Theme Builder, not Button modules, so they never matched the (0,3,0) rule.
+
+   Restoring inheritance rather than naming --paper, for the reason given at
+   .et_pb_text above: the source has dark-on-light inversions that resolve
+   correctly through normal inheritance and would break if a colour were pinned.
+
+   The hover and --solid rules below are not belt-and-braces. `inherit` at
+   (0,3,1) also outranks base.css's own `.btn-pill:hover { color:var(--ink) }`
+   at (0,2,0), so without them the pill would fill paper-on-paper on hover and
+   the label would vanish. Order matters within the same specificity: --solid
+   must follow the base rule, and each :hover its own resting state.
+
+   The hover fill is the same story one rule along, and it was already broken
+   before the colour was: Divi ships
+   `.et_pb_button:hover { background-color: rgba(0,0,0,.05); border-color: transparent }`,
+   which outranks base.css's `.btn-pill:hover` at (0,2,0). The pill therefore
+   never filled paper on hover. It went unnoticed while the label was blue;
+   with the label correctly black it would have been black-on-black. Fixing
+   the colour without the fill would have been a worse bug than the one
+   reported, so both are restored here from base.css's own values. */
+body.rysing .et_pb_button.btn-pill { color: inherit; }
+body.rysing .et_pb_button.btn-pill--solid {
+  color: var(--ink);
+  background-color: var(--paper);
+  border-color: var(--paper);
+}
+body.rysing .et_pb_button.btn-pill:hover {
+  color: var(--ink);
+  background-color: var(--paper);
+  /* The shorthand, not border-color: Divi also takes the pill from a 1px
+     border to 2px on hover, and because the button is shrink-to-fit under
+     border-box that is 2px of real width appearing under the cursor. It
+     survived a border-color-only override and showed up as the last 2px of
+     the shrink described below. base.css draws the pill at 1px. */
+  border: 1px solid var(--paper);
+  /* Divi reshapes the pill on hover to open a gap for its own sliding glyph:
+     `.et_pb_button:hover { padding: .3em 2em .3em .7em }`. At the pill's 11px
+     that computes to 3.3px 22px 3.3px 7.7px — the left padding collapses from
+     22px to 7.7px and the button visibly narrows by 12.3px under the cursor
+     (measured 153.56 -> 141.25). The right side only looks untouched because
+     2em at 11px happens to equal the design's own 22px; that is a coincidence
+     of this font size, not agreement.
+
+     base.css declares the pill's padding once, as `0 22px`, and nowhere
+     overrides it per page — so restating it here is safe and is the same thing
+     the ::after block above does with the star's 11px. If base.css's
+     .btn-pill padding ever changes, this has to change with it. */
+  padding: 0 22px;
+}
+body.rysing .et_pb_button.btn-pill--solid:hover {
+  color: var(--paper);
+  background-color: transparent;
+  border: 1px solid rgba(249, 249, 249, .4);
+  padding: 0 22px;
+}
+
+
+/* --- Positioning -------------------------------------------- */
+
+/* A position:fixed element is trapped by any ancestor carrying a transform,
+   filter, perspective or containment — each creates a containing block, and
+   Divi sets them on module wrappers during its own animations. The fixed
+   layers here are the header, the menu overlay, the skip link and the page
+   backdrop; all four must resolve against the viewport or they get clipped to
+   a section box and render as a sliced band.
+
+   The header and skip link are emitted outside the builder wrapper by
+   functions.php, so this covers the two that are not. */
+:where(body.rysing) :where(.et_pb_section, .et_pb_row, .et_pb_column) {
+  transform: none;
+  filter: none;
+  perspective: none;
+  contain: none;
+}
+
+
+/* --- Divi's own chrome we do not use ------------------------ */
+
+/* FULL SPECIFICITY, deliberately. These are Divi's stock header, footer and
+   back-to-top button. The design supplies all three itself; leaving Divi's in
+   place would double them. */
+body.rysing #main-header,
+body.rysing #top-header,
+body.rysing #main-footer,
+body.rysing .et_pb_scroll_top,
+body.rysing .et_builder_inner_content > .et_pb_section.et_pb_fullwidth_header {
+  display: none !important;
+}
+
+
+/* --- Responsive column margins ------------------------------ */
+
+/* Below 981px Divi stacks its own columns and declares
+ *
+ *     @media (max-width: 980px) { .et_block_row .et_pb_column { margin-bottom: 30px } }
+ *
+ * at (0,2,0), with a further rule that zeroes it outright. The design's section
+ * heads are columns now (see r_grid() in lib/blocks.php) and declare their own
+ * margins at (0,1,0) — `.band-head` and `.system-head` — so below 981px they
+ * lose and the gap under every section heading collapses to nothing. Above
+ * 981px there is no such Divi rule and the design wins unaided, which is why
+ * this was visible only at 980 and under.
+ *
+ * THESE TWO VALUES ARE DUPLICATED FROM base.css, and that is a real cost worth
+ * stating plainly. No cascade trick avoids it: the design's selectors are
+ * (0,1,0), Divi's are (0,2,0), and specificity cannot be lowered — the only
+ * alternatives were to restate the values here or to collapse both section
+ * heads into Code modules, which would cost the client native editing of every
+ * section heading and the Selected Work CTA. Editability won.
+ *
+ * If `.band-head` or `.system-head` margins change in shared.css, change them
+ * here too. Nothing enforces that automatically. */
+@media (max-width: 980px) {
+  body.rysing .et_block_row .et_pb_column {
+    margin-bottom: 0;
+  }
+
+  body.rysing .et_pb_column.band-head {
+    margin-bottom: clamp(28px, 4vh, 40px);
+  }
+
+  body.rysing .et_pb_column.system-head {
+    margin-bottom: clamp(44px, 6vh, 80px);
+  }
+}

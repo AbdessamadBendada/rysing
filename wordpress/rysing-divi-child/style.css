@@ -1,0 +1,17 @@
+/*
+Theme Name: Rysing Divi
+Theme URI: https://rysing.agency
+Description: Divi 5 child theme for rysing.agency. Carries the studio design system, the self-hosted Kinfolk and Aileron faces, the page interactions, and the adapter rules that reconcile Divi's module wrappers with the static source.
+Author: Rysing Studio
+Template: Divi
+Version: 1.0.0
+Text Domain: rysing-divi
+*/
+
+/* Intentionally empty.
+
+   Nothing is authored here. The parent stylesheet is enqueued by handle in
+   functions.php rather than @import-ed, and every rule this theme adds lives
+   in assets/css/ so that base.css can stay byte-comparable with the static
+   shared.css it is derived from. Putting rules in this file would be the one
+   place a diff against the static source could not see them. */

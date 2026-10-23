@@ -1,0 +1,34 @@
+#!/bin/sh
+# WP-CLI against the Local site "rysing".
+#
+# Local does not put php, mysql or wp on PATH, so this wrapper supplies all
+# three pieces: Local's bundled PHP, the site's own php.ini, and a cached
+# wp-cli.phar.
+#
+# The php.ini is not optional. wp-config.php says DB_HOST=localhost, and MySQL
+# here grants root on localhost only — a TCP connect to the site's port is
+# refused outright. Local's per-site ini sets mysqli.default_socket to this
+# site's socket, which is the only reason "localhost" resolves at all.
+#
+# Usage:
+#   wordpress/wp option get siteurl
+#   wordpress/wp eval-file wordpress/create-home-page.php
+
+set -eu
+
+SITE_ID="mDtIZHnnu"
+PHP="/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin-arm64/bin/php"
+INI="$HOME/Library/Application Support/Local/run/$SITE_ID/conf/php/php.ini"
+WP_PATH="$HOME/Local Sites/rysing/app/public"
+PHAR="${WP_CLI_PHAR:-$HOME/.wp-cli/wp-cli.phar}"
+
+[ -x "$PHP" ] || { echo "Local PHP not found at $PHP" >&2; exit 1; }
+[ -f "$INI" ] || { echo "Site php.ini not found — is the rysing site running in Local?" >&2; exit 1; }
+
+if [ ! -f "$PHAR" ]; then
+	echo "Fetching wp-cli.phar to $PHAR" >&2
+	mkdir -p "$(dirname "$PHAR")"
+	curl -sSL -o "$PHAR" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+fi
+
+exec "$PHP" -c "$INI" "$PHAR" --path="$WP_PATH" "$@"
