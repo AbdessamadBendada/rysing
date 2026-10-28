@@ -436,62 +436,68 @@ body::after {
 }
 .hero-title em { font-style:normal; }
 
-/* --- Showreel aperture -------------------------------------- */
-/* The brand mark opens to reveal the work: the video plays inside the star,
-   which scales up on scroll until it fills the frame. Driven by scroll
-   position through a CSS variable rather than by scrubbing playback —
-   seeking on every frame stutters badly on mid-range machines. */
-/* No `background` any more. It was `var(--ink)` — the same black `body`
-   already paints — but an opaque fill on an in-flow box paints ABOVE a
-   z-index:-1 shape, so it was guillotining the hero's blue disc flat at this
-   section's top edge the moment .hero stopped clipping it. The blue now runs
-   ~158px down into the top of this section and fades out there, which is
-   §34's "one light crossing the boundary" rather than two lights meeting at
-   one.
-   .reel does not isolate and must not start: it is the section whose
-   stacking context §32 flagged as the unknown in this conversion, and the
-   answer is that it has none. `position:sticky` on .reel-stage creates no
-   stacking context without a z-index, and the stage's own `overflow:hidden`
-   is a non-section clip for the sticky aperture — the same distinction
-   `.footer-light` keeps (§27). Neither touches a child of .hero. */
-.reel { position:relative; height:260vh; }
-.reel-stage {
-  position:sticky; top:0; height:100svh; overflow:hidden;
-  display:grid; place-items:center;
+/* --- Showreel ----------------------------------------------- */
+/* A contained player in normal document flow, on client instruction, after
+   the reference they sent.
+
+   THE STAR STAYS, AND SO DOES SCROLL DRIVING IT. What went is only the
+   scroll-jacking: the reel used to be a 260vh section with a sticky
+   full-viewport stage, which held the viewport for two and a half screens.
+   That pin is what the client asked to lose — not the opening, and not the
+   scroll link.
+
+   The two were never actually joined. The pin existed to MANUFACTURE scroll
+   distance, but the frame already travels a screen's worth on its own just
+   by rising through the viewport, and that travel is the progress source
+   now. The page scrolls at its natural speed and the star opens as the
+   frame comes up. Same mark, same 27%->620% range, same `1-(1-p)^2.6` curve
+   as the original, same grade riding along.
+
+   The frame around it is contained now, after the reference the client sent:
+   inset from the page, 16:9, soft corners. The star opens INSIDE that frame
+   rather than across the whole viewport. */
+.reel {
+  position:relative;
+  /* Inset well past the page gutter — the whole point of the change is that
+     it reads as an object ON the page rather than a full-bleed backdrop.
+     The max-width then stops it growing back to near-full-bleed on very wide
+     screens, where a vw inset alone keeps a constant ratio and the frame
+     creeps wider in absolute terms than anything else on the site. */
+  padding:clamp(34px,5vh,70px) clamp(20px,12vw,300px) clamp(56px,7vh,110px);
 }
+.reel-stage { position:relative; max-width:1340px; margin-inline:auto; }
+/* No `overflow:hidden` on the section and none on the stage. The hero's blue
+   disc reaches ~158px down into the top of this section and fades out there
+   — see the hero notes above — and a clip at this boundary cuts it flat. The
+   rounded corners are clipped on the frame itself, which the disc is behind
+   and never enters. */
 .reel-frame {
-  position:absolute; inset:0;
-  -webkit-mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
-          mask:var(--mark) center / calc(var(--aperture,18) * 1%) no-repeat;
+  position:relative; overflow:hidden;
+  aspect-ratio:16 / 9;
+  border-radius:clamp(9px,.9vw,17px);
+  /* MIN is 27 — raised from 16, then 22, on instruction, purely as a size
+     decision. It is the starting value here too, so the star is already the
+     right size before any scroll handler has run. */
+  -webkit-mask:var(--mark) center / calc(var(--aperture,27) * 1%) no-repeat;
+          mask:var(--mark) center / calc(var(--aperture,27) * 1%) no-repeat;
 }
-/* The star is see-through from the first frame, on instruction.
-
-   It used to open as a solid --paper fill that crossfaded to the footage.
-   The reason was real: at 16% the star was ~230px and showed a 230px crop
-   of a 1440px frame, so whatever sat mid-screen became the mark, and the
-   reel opens on black brush lettering over white which cut a gash through
-   it. MIN is 27 now, ~450px at 1440.
-
-   A bigger aperture does NOT fix that -- measured, it enlarges it. The
-   lettering spans the whole frame, so a wider crop simply shows more of
-   the same thing. MIN is a size decision, not a mitigation. The only real
-   fix is to stop the reel opening on a title card; see HANDOFF section 16. */
 /* Once the star has opened past the frame the mask and the grade are both
-   no-ops, but the compositor still re-rasterises a full-viewport masked,
-   filtered video on every scroll frame — which cost the reel about a fifth
-   of its playback rate. Dropping both in the revealed state is visually
-   identical and hands the frames back to decoding. */
+   no-ops, but the compositor still re-rasterises a masked, filtered video on
+   every frame of playback — which cost the reel about a fifth of its
+   playback rate when this was full-viewport. Shedding both is identical to
+   look at and hands the frames back to decoding. */
 .reel.is-revealed .reel-frame { -webkit-mask:none; mask:none; }
 .reel.is-revealed .reel-frame video { filter:none; }
 .reel-frame video {
-  width:100%; height:100%; object-fit:cover;
+  display:block; width:100%; height:100%; object-fit:cover;
   /* A light hold on the footage through the middle of the opening, gone by
-     the time the reel is the only thing on screen. */
+     the time the star is no longer the subject. Driven by the same scroll
+     progress, and clearing well ahead of the aperture — see the handler. */
   filter:brightness(calc(.72 + .28 * var(--reel-progress,0)))
          saturate(calc(.6 + .4 * var(--reel-progress,0)));
 }
 .reel-bar {
-  position:absolute; z-index:2; inset:auto clamp(22px,4vw,74px) clamp(26px,4vh,40px);
+  position:absolute; z-index:2; inset:auto clamp(16px,2vw,30px) clamp(16px,2vw,28px);
   display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
   pointer-events:none;
 }
@@ -507,19 +513,23 @@ body::after {
 .reel-toggle:hover { background:var(--paper); border-color:var(--paper); color:var(--ink); }
 .reel-toggle svg { width:15px; height:15px; fill:currentColor; }
 
+/* The frame is tall at phone widths once it is inset and 16:9, so the inset
+   drops back to roughly the page gutter there. */
+@media (max-width:640px) {
+  .reel { padding-inline:var(--gutter); }
+  .reel-bar { inset:auto 14px 14px; }
+}
+
+/* Both of these must switch the mask off explicitly. The frame HOLDS at the
+   small star by default and only the animation opens it, so anywhere the
+   animation does not run the reel would otherwise sit as a 27% star forever
+   — the failure mode is the whole video missing, not a missing flourish. */
 @media (prefers-reduced-motion:reduce) {
-  .reel { height:auto; }
-  .reel-stage { position:static; height:auto; }
-  .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
-  /* Nothing drives --reel-progress or --reel-reveal here, so the grade and
-     the solid mark must both be switched off explicitly — left alone the
-     overlay stays fully opaque and covers the reel with a blank panel. */
+  .reel-frame { -webkit-mask:none; mask:none; }
   .reel-frame video { filter:none; }
   .hero-light::before,.hero-light::after { animation:none; }
 }
-.no-js .reel { height:auto; }
-.no-js .reel-stage { position:static; height:auto; }
-.no-js .reel-frame { position:relative; height:min(78svh,640px); -webkit-mask:none; mask:none; }
+.no-js .reel-frame { -webkit-mask:none; mask:none; }
 .no-js .reel-frame video { filter:none; }
 
 /* --- Stats ------------------------------------------------- */

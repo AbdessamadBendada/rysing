@@ -377,35 +377,85 @@ if (menuToggle && menu) {
   });
 }
 
-/* Aperture: map the reel section's scroll progress onto the mask size, so the
-   mark opens from a small star to a frame-filling shape. Written to a custom
-   property inside rAF; the browser then does the compositing. The same
-   progress drives the footage grade, so the mark stays legible while small. */
+/* Aperture: map the reel frame's own travel through the viewport onto the
+   mask size, so the mark opens from a small star to a frame-filling shape as
+   you scroll past. Written to a custom property inside rAF; the browser then
+   does the compositing.
+
+   Scroll-driven, as it always was. What changed is only where the scroll
+   distance comes from. The old version built its own — a 260vh section with
+   a sticky stage, which pinned the viewport for two and a half screens — and
+   that pin is what the client asked to lose. It was never needed: the frame
+   already crosses most of a screen on its own just by being scrolled past,
+   which is plenty to open a mask over, and it costs the reader nothing. */
 const reel = document.querySelector('.reel');
-if (reel && !reduce) {
-  /* MIN was 16, then 22, now 27 — ~450px at 1440. Raised on instruction,
-     purely as a size decision. It does not mitigate the title-card gash
-     the old solid fill existed for: that lettering spans the frame, so a
-     wider crop shows more of it, not less. See HANDOFF section 16. */
+const reelFrame = document.querySelector('.reel-frame');
+if (reel && reelFrame && !reduce) {
+  /* MIN was 16, then 22, now 27 — ~300px at 1440. Raised on instruction,
+     purely as a size decision. It does not mitigate the title-card gash the
+     old solid fill existed for: that lettering spans the frame, so a wider
+     crop shows more of it, not less. See HANDOFF section 16. */
   const MIN = 27, MAX = 620;
+  /* The window the opening runs across, measured on the frame's CENTRE
+     against the viewport, in fractions of viewport height.
+
+     THE CENTRE IS THE POINT, and getting this wrong is what made the star
+     invisible once already: anchored to the frame's TOP starting a hair
+     below the fold, the whole opening ran while the frame was still mostly
+     under the bottom edge, so by the time the reel was properly on screen
+     the mark had already blown past frame-filling. All you ever saw was a
+     star tip rising past the bottom of the window.
+
+     The mark is centred in the frame, so the frame's centre is where the
+     star actually IS. That is also why the window starts at 0.82 rather
+     than at the bottom edge: anchored at 1.02 the opening is on screen, but
+     its FIRST third still is not — the small star is the thing sitting on
+     the bottom edge, and the smallest sizes are exactly the ones worth
+     seeing. Starting once the centre is a fifth of the way up the screen
+     puts the whole 27%->620% range in front of the reader, and it finishes
+     with the reel centred, which is where the eye already is.
+
+     USE THE WHOLE TRAVEL. A first pass ran 0.82 -> 0.32, half a screen, and
+     measured against a real wheel that is about five notches: correct at
+     every sampled point and still too fast to read as an opening. The frame
+     crosses roughly 1.5 screens in total, so the span was the thing to
+     spend, not economise. 0.98 -> 0.12 is ~775px at 1440x900 and keeps the
+     star's centre inside the viewport at both ends. */
+  const START = 0.98, END = 0.12;
   let ticking = false;
   let isRevealed = false;
   const update = () => {
     ticking = false;
-    const r = reel.getBoundingClientRect();
-    const span = r.height - window.innerHeight;
-    const p = Math.min(1, Math.max(0, -r.top / (span || 1)));
-    /* Ease out so the opening decelerates as it fills rather than snapping. */
-    const eased = 1 - Math.pow(1 - p, 2.6);
-    reel.style.setProperty('--aperture', (MIN + (MAX - MIN) * eased).toFixed(2));
+    const vh = window.innerHeight;
+    const r = reelFrame.getBoundingClientRect();
+    const centre = r.top + r.height / 2;
+    const span = (START - END) * vh;
+    const p = Math.min(1, Math.max(0, (START * vh - centre) / (span || 1)));
+    /* NOT the original `1-(1-p)^2.6`. That curve is heavily front-loaded —
+       83% open at the halfway point — and it only read as an opening because
+       the pin gave it 260vh to spend: its first third alone was two screens
+       of scrolling. Against the frame's own ~0.9 screen of travel the same
+       shape is already frame-filling by 30% of the way past, so the star is
+       gone before the reel is properly on screen. Measured, not assumed.
+
+       Smoothstep holds the mark small and legible through the first half,
+       then blooms. It keeps smoothstep's ease-out at the top, so it settles
+       rather than snapping — the one thing the old curve got right.
+
+       The bias went 1.35 -> 1.8 for the same reason the span was widened:
+       what matters is how long the mark is still READABLE AS A STAR, and it
+       stops being star-shaped somewhere around 250% (§41 measured this).
+       At 1.8 it stays under that until roughly halfway, so the star holds
+       for ~390px of scroll instead of ~120px. */
+    const ss = p * p * (3 - 2 * p);
+    const eased = Math.pow(ss, 1.8);
+    reelFrame.style.setProperty('--aperture', (MIN + (MAX - MIN) * eased).toFixed(2));
     /* The grade should clear well before the aperture finishes, or the reel
-       still looks muddy once it is the only thing on screen. */
-    reel.style.setProperty('--reel-progress', Math.min(1, eased * 1.6).toFixed(3));
-    /* No --reel-reveal any more: the star is see-through from the first
-       frame on instruction, so there is no solid fill left to crossfade. */
+       still looks muddy once the star is no longer the subject. */
+    reelFrame.style.setProperty('--reel-progress', Math.min(1, eased * 1.6).toFixed(3));
     /* Past this point the star already covers the frame and the grade has
-       already resolved to identity, so shedding both is invisible. Toggled
-       only on change — writing a class every frame is its own cost. */
+       resolved to identity, so shedding both is invisible. Toggled only on
+       change — writing a class every frame is its own cost. */
     const revealed = eased >= 0.92;
     if (revealed !== isRevealed) {
       isRevealed = revealed;
@@ -474,15 +524,15 @@ if (video && reelToggle) {
   });
   sync();
 
-  /* Watch the section, not the video. The video lives inside the sticky
-     stage, so its box leaves the viewport the instant the stage releases at
-     the end of the section — which put the pause/play boundary exactly
-     where the reader is still scrolling, and nudging across it stopped and
-     started the reel over and over.
-
-     Observing the 260vh section with a full viewport of margin on each side
-     means it only stops once the reel is comfortably away, and a small
-     scroll near the edge never touches it. */
+  /* Watch the section, not the video, and keep a viewport of margin on each
+     side. The original reason was the sticky stage — the video's box left
+     the viewport the instant the stage released, putting the pause boundary
+     exactly where the reader was still scrolling, so nudging across it
+     stopped and started the reel repeatedly. The stage is gone, but the
+     margin is still what stops a small scroll at the section edge from
+     toggling playback, and it now also covers the reveal: the frame starts
+     translated and only settles once it is in, which is movement across the
+     same boundary. */
   if ('IntersectionObserver' in window) {
     new IntersectionObserver((entries) => entries.forEach((entry) => {
       inView = entry.isIntersecting;

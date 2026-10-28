@@ -255,7 +255,8 @@ scrambled the boxes across the gradients and still looked plausible (§33).
 
 ### Section order as built
 
-**Homepage:** header · hero · showreel aperture · stats · services accordion ·
+**Homepage:** header · hero · showreel (contained frame, star aperture) · stats ·
+services accordion ·
 selected work · manifesto · founder plate · founder copy · team roster ·
 recognition marquee · testimonials · spotlight · newsletter · final CTA ·
 footer.
@@ -283,19 +284,33 @@ ask because she said so, not because it reads better there.
 
 ### Decisions already settled — do not silently reverse
 
-1. **The showreel aperture stays.** A 260vh sticky section where the brand star
-   opens on scroll (`--aperture`) to full bleed. It was once removed for being
-   off-brand and the user asked for it back; that was the agent's mistake, not a
-   design change. The star begins as a solid paper mark and crossfades to footage
-   via `--reel-reveal`, because the reel's opening second inverts to near-white
-   and a small mask was filling with a white blob. `--reel-progress` drives a
-   grade that clears before the reel fills the frame.
+1. **The showreel aperture stays, and it stays SCROLL-DRIVEN.** The brand star
+   opens on scroll via `--aperture`, with `--reel-progress` driving a grade that
+   clears before the mark fills the frame. **It has now been removed twice by
+   agents and asked back both times** — once for being off-brand, once on a
+   misreading of "no stop scrolling". Both were the agent's mistake, not a design
+   change. A third removal is not a judgement call.
+1b. **What DID change, on instruction (HANDOFF §43): the 260vh pin and the full
+   bleed.** The section is an ordinary ~724px block now and the frame is a
+   contained 16/9 box at 76% of viewport width. The pin and the scroll link were
+   never the same thing — the pin only manufactured scroll distance, and the
+   frame's own travel supplies it. **The star is no longer solid-then-crossfade:**
+   `.reel-frame::after` and `--reel-reveal` are deleted (§16), it is see-through
+   from the first frame.
+1c. **Three measured traps if you ever retune the opening.** The original
+   `1-(1-p)^2.6` easing is 83% open at halfway and only worked because the pin
+   gave it 260vh — over any shorter span it is a flash. Progress must be anchored
+   on the frame's **centre**, because that is where the mark sits; anchored on the
+   top edge the entire opening happens below the fold. And **`scrollTo` sampling
+   cannot tell you whether it reads** — drive it with `mouse.wheel` and count
+   notches.
 2. `reel-03.jpg` is the poster — the only dark frame in the set.
 2b. **The reel must keep playing.** Two things were stopping it. The
-   IntersectionObserver watched the *video*, whose box sits inside the sticky
-   stage and therefore leaves the viewport the moment the stage releases — so
+   IntersectionObserver watched the *video*, whose box sat inside the then-sticky
+   stage and therefore left the viewport the moment the stage released — so
    the pause boundary landed mid-scroll and nudging across it stopped and
-   started the reel repeatedly. It now watches the `.reel` section with
+   started the reel repeatedly. The stage is gone, but the margin still does the
+   same job at the section edges. It watches the `.reel` section with
    `rootMargin:'100% 0px'`, so it only stops a full viewport clear of the
    section. Separately, compositing a full-viewport masked *and* filtered video
    every scroll frame cost ~22% of playback rate; `.reel.is-revealed` drops the
@@ -350,7 +365,10 @@ ask because she said so, not because it reads better there.
   marquee size.
 - **The showreel footage is off-brand** — brush-script and neon cards, unrelated
   to the restrained black/Kinfolk page. Framing it contained the damage; it needs
-  a re-cut or re-grade.
+  a re-cut or re-grade. **This is now the reel's only real problem.** The star
+  aperture is a see-through crop, so the frame behind it is arbitrary and the
+  weakest one — the "SHOWREEL" title card — is the one everybody gets on a cold
+  load. HANDOFF §16 has the sampled playthrough. `MIN` does not fix it, measured.
 - **Work gallery image quality is uneven**, and this is the biggest remaining
   weakness on the page. `project-01-bommer.webp` holds the lead panel and is a
   blurry phone snapshot of a banner on asphalt with a shoe in frame. `05` and
