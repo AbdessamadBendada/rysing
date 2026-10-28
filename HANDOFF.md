@@ -4908,6 +4908,13 @@ animated with the behaviour in CodePen **`rkgttr/pen/ZGZzJG`**, which they
 sent. The layout question (lattice vs scatter) was put to them and they chose
 a **jittered grid**.
 
+Looked at on the page the lockup read small against the field and they asked
+for it bigger, so the value is **`min(54vw,760px)`** rather than the
+`min(44vw,620px)` that half the footer measure works out to. It stays a
+viewport measure: the clear space is read from this element's rendered box,
+so a logo that stopped scaling would eat a different fraction of the pattern
+at every width.
+
 ### The reference, since CodePen will not serve it to a fetch
 
 `codepen.io/...` returns 403 behind Cloudflare. **`cdpn.io`'s fullpage mirror
