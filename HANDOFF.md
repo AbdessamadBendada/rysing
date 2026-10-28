@@ -38,6 +38,14 @@ the cursor. **§44's rules do not bind it** — those are about a continuous
 field of light, and these are discrete marks with homes to return to. Read
 §46 before assuming otherwise.
 
+**§47 adds variants D and E and settles the question §44 left open.** They
+run the same lattice and the same physics, differing only in what the marks
+are — stars in D, and in E the hero's orange glow rebuilt out of movable
+parts. **E produces §44's donut, measured**: the cursor clears the centre by
+57 levels and brightens a ring 240px out by up to 12. **The lattice does not
+repeal the donut; only not being a cloud does.** Do not propose rebuilding
+the hero's glow out of particles again — it is now tested, not argued.
+
 **Three things are newer than most of this document. Read them before
 touching a background shape, a colour, or a service page.**
 
@@ -5080,3 +5088,161 @@ triggers.
 
 The client has not seen it. **It has not been checked in Safari**, which is
 §45's open item and the same gap — there is still no Safari in the harness.
+
+
+---
+
+## 47. Variants D and E: the same repulsion, pointed at the orange
+
+**Nothing in this section is part of the site.** Two more sections on the
+scratch page (§44), below §46's. No page of the site changed.
+
+### Why there are two
+
+The client asked for §46's behaviour applied to the orange. "The orange
+pattern" has two readings — orange *marks*, or the hero's orange *light* —
+and they are different builds, so both were made as a pair. **D is the
+control and E is the experiment**, the same arrangement as variant A against
+variant B (§44).
+
+**They share code, not a copy of it.** `pattern-stars.js` was rewritten to
+drive every `[data-stars-section]` on the page, each with its own lattice,
+pointer and knobs, so the force law, the pointer filter and the spring are
+one implementation. That is the only way the comparison means anything, and
+it is the thing §44 lost when early variants each grew their own slightly
+different handler.
+
+### The result: §44 was right, and now it is measured
+
+**Variant E produces the donut.** Cursor parked at the centre of the glow,
+mean luminance by radius, at rest against pushed:
+
+| radius | rest | pushed | delta |
+| --- | --- | --- | --- |
+| 0 | 97.7 | 40.3 | **−57.5** |
+| 120 | 81.6 | 61.7 | −19.9 |
+| 220 | 61.2 | 60.0 | −1.2 |
+| 280 | 47.3 | 53.8 | **+6.5** |
+| 340 | 33.9 | 45.9 | **+12.1** |
+
+A cleared centre and a brighter rim, growing with radius. §44's sentence —
+*"whatever is not cleared stays exactly as bright as it was, so a cleared
+centre is a donut by construction"* — survives being made out of movable
+parts, because **moving the parts out of the middle puts them somewhere, and
+that somewhere is the rim.** Variant D, the same physics on star marks, has
+no ring at all: 33 marks near the cursor fall to 3, maximum displacement
+124px, and the surrounding lattice is unchanged.
+
+**So the lattice is not what saves §46.** Not being a cloud is. This is now
+tested rather than argued, and it closes the question §44 opened: do not
+propose rebuilding the hero's glow out of particles again.
+
+### E has to be the hero's glow or it proves nothing
+
+**A glow that is merely orange is not a test.** E is calibrated against
+`.pp-oglow`'s own CSS gradient by screenshot — hide the field, capture, show
+it, capture, difference — and swept. The first build was **out by a factor
+of 2.4 on brightness**, which no amount of looking would have revealed,
+because a too-dark orange cloud looks like an orange cloud. Final:
+**mean delta 3.9, worst 20, 8% of pixels over 10** (1.50 before the move to
+a canvas; §45 quotes 1.24 for the shader).
+
+`GAIN` is by far the most sensitive of the five knobs and its curve is
+flat-bottomed around **2.4–2.6**, climbing fast outside it — 1.2 reads 15.6
+and 3.6 reads 11.0. Sweep it first if the glow is ever rebuilt.
+
+### A CONTINUOUS GLOW MADE OF MOVABLE PARTS CANNOT BE DOM
+
+The most expensive thing learned here. E's marks are six gaps wide
+overlapping four or five deep; as elements that is several hundred
+composited layers each the size of a small window, and the overdraw is
+quadratic in the mark size.
+
+> **183ms a frame** at 1440×900 — eleven frames' budget — against **16.7ms**
+> for the same physics driving star marks. Halving both the blob and the
+> count only reached 67ms. **The DOM is not the wrong tool by a constant.**
+
+It is one canvas now, one pre-rendered sprite, a `drawImage` per mark, at
+half resolution because the result is blurred anyway. **The physics is
+untouched** — `step` updates the same positions in the same loop and only
+the final write differs, which is what keeps D and E a fair comparison.
+
+Two bugs came in with the canvas and both were silent:
+
+- **`createRadialGradient` has no farthest-corner default.** The DOM blob it
+  replaced was a CSS `radial-gradient(circle at 50% 50%, …)`, whose stops are
+  percentages of `halfWidth × √2` — §44's very first technical finding, hit
+  again from the other side. Asking the canvas for a radius of `half` renders
+  a markedly harder, smaller blob: **mean delta 15.6 against 1.5**, on its
+  own.
+- **`clearRect` goes through the current transform.** Clearing
+  `canvas.width` under a scale of S wipes only S of the canvas. Invisible at
+  S = 0.5, where the remainder happened to be off screen, and obvious at
+  0.33. Clear in device space.
+
+### `will-change:transform` WAS COSTING HALF THE FRAME BUDGET
+
+It reads as the obvious optimisation for an element whose transform changes
+every frame. At this scale it is the opposite: it forces a composited layer
+per mark *permanently*, and with three lattices there are over a thousand of
+them. **Taking it off moved variant C from 33.3ms to 16.7ms.** The browser
+promotes a transforming element on its own and un-promotes it when it stops.
+§46's earlier A/B had called this a wash; it was measured with one lattice on
+the page, and it is not a wash with three.
+
+### A unit mismatch worth knowing before changing any DENSITY
+
+**`STRENGTH` and `SOFT` are in PIXELS while `RANGE` is in GAPS**, so changing
+the density silently changes how strong the repulsion looks. D was first
+built in a section taller than C's, which at C's own `DENSITY` of 340 gave a
+gap of 76px against C's 49 — and the same force then cleared far less of the
+lattice (17 marks near the cursor fell to 14, where C's go 33 to 3). D's
+`DENSITY` is set to put its gap back at C's. If the force law is ever
+re-expressed in gaps, that number returns to 340 and the coupling disappears;
+C is signed off on the px law, so it stays.
+
+**D's section is 100svh and not E's height**, for the same reason in
+reverse: matching the pair on height costs 700 marks instead of 520 and
+33.3ms instead of 16.7, and the comparison is about physics, not size.
+
+### Every lattice is gated on visibility
+
+§46 fixed this for `pattern-shark.js` and three lattices on one page is
+exactly the case that made it general. Without it, scrolling to E leaves C
+and D writing a transform per mark per frame for marks nobody can see. **No
+`rootMargin`** — §46's reason: these sections are adjacent, so a margin keeps
+every one of them running the whole time.
+
+### Numbers
+
+Median frame time under continuous pointer motion, by viewport:
+
+| | 390 | 768 | 1440 | 1920 |
+| --- | --- | --- | --- | --- |
+| C | 16.7 | 16.7 | 16.7 | 16.8 |
+| D | 16.7 | 16.7 | 16.7 | 16.7 |
+| E | 16.7 | 33.3 | 50.0 | 66.7 |
+
+**C and D are locked at 60fps everywhere. E is not, and that is honest
+rather than fixable** — it is overdraw-bound and scales with pixels. These
+are headless Chromium numbers and a real GPU will do better, but E is an
+experiment that has answered its question, not a candidate.
+
+Zero horizontal scroll and zero dead scroll at all four.
+
+### Tuning
+
+`STARS.c`, `STARS.d`, `STARS.e`, read fresh every frame. Physics knobs take
+effect immediately; the geometry ones — `DENSITY`, `SIZE`, `JITTER`, `GAIN`,
+`BLUR`, `SCALE` — need `STARS.e.rebuild()`.
+
+```js
+STARS.e.GAIN = 2.5      // brightness; sweep this first, 2.4-2.6 is the floor
+STARS.e.SIZE = 6        // blob width in gaps; overdraw is quadratic in it
+STARS.e.SCALE = 0.5     // canvas resolution
+STARS.d.GAIN = 1.7      // brand red on black reads brown below about 1.5 (§25)
+```
+
+### Open
+
+The client has not seen either. **Still no Safari in the harness** (§45, §46).

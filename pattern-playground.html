@@ -275,7 +275,14 @@
          and the twinkle are on the inner `<b>`, so the thing written three
          hundred times a frame is one short transform and nothing else needs
          rebuilding to go with it. */
-      .pp-star { position:absolute; will-change:transform; }
+      /* NO `will-change`. It reads as the obvious optimisation for an
+         element whose transform changes every frame, and at this scale it is
+         the opposite: it forces a composited layer per mark permanently, and
+         with three lattices on the page that is well over a thousand of
+         them. Measured at 1440x900, taking it off moved variant C from
+         33.3ms a frame to 16.7. The browser promotes a transforming element
+         on its own and un-promotes it when it stops. */
+      .pp-star { position:absolute; }
       .pp-star > b {
         display:block; width:100%; height:100%;
         background:rgba(249,249,249,.9);
@@ -320,6 +327,70 @@
       @media (prefers-reduced-motion:reduce) {
         .pp-star > b { animation:none; }
       }
+
+      /* --- Variants D and E: the same lattice, carrying the orange -------- */
+      /* THE PAIR EXISTS SO THAT THE ONLY VARIABLE IS WHAT THE MARKS ARE.
+         Both sections run the same `pattern-stars.js`, the same force law,
+         the same pointer filter and the same spring; D's marks are brand
+         stars and E's are soft orange blobs dense enough to sum into the
+         hero's glow. §44's donut is a claim about a CONTINUOUS field of
+         light, so it should bite E and not D — and that is a prediction this
+         page is here to test rather than a rule to design around.
+
+         Variant A is the control for the hero pair (§44). D is the control
+         for E. */
+      .pp-orange {
+        position:relative;
+        /* Tall enough to contain the disc at its authored size rather than
+           clipping it: §33's rule, applied to a section instead of to the
+           page. `min(72vw,1020px)` is 1020 at desktop, which is taller than
+           a 900px viewport. */
+        min-height:max(100svh, min(72vw,1020px) + 180px);
+        display:flex; align-items:center; justify-content:center;
+      }
+      /* THE DISC IS THE GEOMETRY ANCHOR AND THE FALLBACK, BOTH — §45's
+         arrangement. The script reads this element's rendered box for the
+         lattice's centre and radius, and reads the gradient's authored stops
+         nowhere: they are restated in `profile()` because a shader (or here,
+         a per-mark opacity) cannot sample a CSS gradient. If the stops below
+         change, change them there too; it is the one duplicated geometry in
+         the file and it is duplicated because there is no way not to.
+
+         Centred with margins rather than a transform, so the rect the script
+         reads is the layout box and there is no second coordinate system to
+         get wrong (§45's mirrored-field bug was exactly that).
+
+         NO DRIFT ANIMATION. The hero's disc drifts under a 28s keyframe; a
+         moving anchor would mean the lattice is laid out against a box that
+         has since moved. §46's measuring note says to pause the drift before
+         any before/after pair for the same reason. */
+      .pp-oglow {
+        --d:min(72vw,1020px);
+        position:absolute; left:50%; top:50%;
+        margin-left:calc(var(--d) / -2); margin-top:calc(var(--d) / -2);
+        width:var(--d); aspect-ratio:1; border-radius:50%; filter:blur(30px);
+        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+      }
+      .pp-orange.is-stars .pp-oglow { opacity:0; }
+
+      /* THE BLOB MARK. No mask, because there is no shape to read — the
+         point of E is that the marks disappear into each other. Soft to 72%
+         of their own box so the lattice has nothing hard in it, and the
+         brightness on each one is the COMPOSITING ROOT of the target alpha,
+         not the target: `n` layers at `o` leave `1-(1-o)^n`, and writing the
+         target directly is how the cloud blows out to white. The script
+         works that root out; this rule just carries it.
+
+         No twinkle. A continuous cloud whose parts fade independently is a
+         cloud that boils. */
+      /* THE BLOB FIELD IS ONE CANVAS, NOT HUNDREDS OF ELEMENTS. It was
+         built as elements first — the gradient above is the sprite the
+         canvas now draws, kept here as the record of what it is — and the
+         overdraw of several hundred overlapping layers six gaps wide cost
+         183ms a frame against 16.7 for the star marks. The physics is
+         unchanged and shared; only the write differs. `pattern-stars.js`
+         says why at the `ring` branch of `build`. */
+      .pp-blobs { position:absolute; left:0; top:0; }
     </style>
 
     <p class="pp-note">Pattern playground · hero lights · not a page of the site</p>
@@ -382,9 +453,86 @@
          until the image has a box, so a lazy load would leave the section
          empty until it scrolled into view and then build the pattern in
          front of the viewer. -->
-    <section class="pp-stars" data-stars-section aria-label="Star pattern, cursor repulsion">
+    <section class="pp-stars" data-stars-section data-stars-id="c" aria-label="Star pattern, cursor repulsion">
       <div class="pp-starfield" data-stars aria-hidden="true"></div>
       <img class="pp-starlogo" data-stars-logo src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" decoding="async" />
+    </section>
+
+    <p class="pp-note">Variant D · the same lattice, in brand red · the control for E</p>
+
+    <!-- VARIANT D — variant C's lattice with nothing else in it.
+         No lockup, so no hole; `RED:1` makes every mark brand red rather
+         than one in seven. Identical physics to C and E. This is the control:
+         it shows what the repulsion looks like when the marks stay marks.
+
+         `GAIN:1.7` because C's opacity range was tuned for PAPER marks. The
+         same range on brand red over black reads brown rather than red,
+         which is §25's finding about the glows arriving brown — the colour
+         is right and the luminance is not.
+
+         `DENSITY:520` IS NOT A LOOK, IT IS A UNIT MISMATCH. `STRENGTH` and
+         `SOFT` are in PIXELS and `RANGE` is in GAPS, so changing the density
+         silently changes how strong the repulsion appears: this section is
+         taller than C's, and at C's own DENSITY of 340 the gap came out at
+         76px against C's 49, which made the same force clear far less of the
+         lattice (17 marks near the cursor fell to 14, where C's go 21 to 4).
+         520 puts the gap back at C's. If the force law is ever re-expressed
+         in gaps rather than px, this number goes back to 340 and the
+         coupling disappears — but C is signed off on the px law, so it
+         stays.
+
+         THE SECTION IS 100svh AND NOT E'S HEIGHT. It was E's at first, to
+         make the pair the same size, and that is 1200px at desktop — which
+         at the gap above is 700 marks rather than 520, and 33ms a frame
+         rather than 16.7. D and E are matched on PHYSICS, which is what the
+         comparison is about; matching them on height costs half the frame
+         budget and buys nothing. -->
+    <section class="pp-stars" data-stars-section data-stars-id="d"
+             data-stars-opts='{"DENSITY":520,"RED":1,"GAIN":1.7}'
+             aria-label="Orange star pattern, cursor repulsion">
+      <div class="pp-starfield" data-stars aria-hidden="true"></div>
+    </section>
+
+    <p class="pp-note">Variant E · the hero's orange glow, built from the same lattice · watch for a ring</p>
+
+    <!-- VARIANT E — THE EXPERIMENT. The hero's orange disc rebuilt as a
+         lattice of soft blobs, so the repulsion that works on marks can be
+         pointed at a continuous field of light.
+
+         §44 predicts this fails in a specific way: "removing light from the
+         middle of a radial glow always leaves a ring", because whatever is
+         not cleared stays exactly as bright as it was. A lattice does not
+         repeal that — it only changes what the light is made of. D and E run
+         the same code so that the difference, if there is one, is the marks
+         and nothing else.
+
+         The div below is the authored disc. It is the lattice's geometry
+         anchor AND the fallback if the script never runs, which is §45's
+         arrangement: the section only hides it once the field is built.
+
+         THE NUMBERS BELOW WERE MEASURED, NOT CHOSEN. The blob field is
+         compared against this element's own CSS gradient by screenshot —
+         hide the field, capture, show it, capture, difference — and swept.
+         `GAIN` is by far the dominant term and the first build was out by a
+         factor of 2.4, which no amount of looking at it would have told you,
+         because a dark orange cloud looks like a dark orange cloud. At
+         SIZE 6 / DENSITY 560 / GAIN 2.4 / BLUR 30: MEAN DELTA 1.50, WORST
+         10, 0% OF PIXELS OVER 10 as DOM elements, and MEAN 3.9, WORST 20,
+         8% over 10 after the move to a canvas — §45 quotes 1.24 for the
+         shader, so this is the same glow to within a few levels either way.
+         Anything else and E is not a test of the donut, it is a test of a
+         different glow.
+
+         GAIN is by far the most sensitive of the five and the curve is
+         flat-bottomed around 2.4-2.6 and climbs fast outside it: 1.2 reads
+         15.6 and 3.6 reads 11.0. Sweep it first if the glow is ever
+         rebuilt. -->
+    <section class="pp-stars pp-orange" data-stars-section data-stars-id="e"
+             data-stars-mark="blob"
+             data-stars-opts='{"DENSITY":560,"SIZE":6,"GAIN":2.5,"BLUR":30,"SCALE":0.5,"JITTER":0.75,"STRENGTH":3200,"SOFT":70,"RANGE":1.6}'
+             aria-label="Orange glow as a lattice, cursor repulsion">
+      <div class="pp-starfield" data-stars aria-hidden="true"></div>
+      <div class="pp-oglow" data-stars-disc aria-hidden="true"></div>
     </section>
 
     <div class="pp-runout" aria-hidden="true"></div>
