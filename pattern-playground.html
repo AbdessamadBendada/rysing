@@ -291,25 +291,31 @@
       .pp-star > b.is-red { background:var(--red); }
       @keyframes ppTwinkle { to { opacity:calc(var(--o) * .42); } }
 
-      /* THE FOOTER'S LOCKUP AT EXACTLY THE FOOTER'S SIZE. The brief started
-         at "half as big as the footer" (`min(44vw,620px)`), went to
-         `min(54vw,760px)`, and is now the real thing.
+      /* THREE QUARTERS OF THE FOOTER'S LOCKUP. The brief walked up from "half
+         as big as the footer" (`min(44vw,620px)`) through `min(54vw,760px)`
+         to the footer's exact size, and then back down one step to here.
 
-         `width:100%` IS THAT SIZE, AND IT IS NOT A COINCIDENCE. `.footer-mark`
-         is `width:100%` of the footer shell, which is the page gutter on
-         each side — so the measure is `100vw - 2 * var(--gutter)`. This
-         section carries the same `var(--gutter)` padding, so 100% of its
-         content box is the same number by construction: measured, 346 at
-         390, 1324.8 at 1440 and 1772 at 1920, identical to the footer at
-         each. DO NOT WRITE THE NUMBER OUT. A px or vw value that happens to
-         match today stops matching the moment `--gutter`'s clamp is touched.
+         THE PERCENTAGE IS OF THE FOOTER MEASURE, NOT OF THE VIEWPORT, and
+         that is the whole reason it is written this way. `.footer-mark` is
+         `width:100%` of the footer shell, which is the page gutter on each
+         side — so the measure is `100vw - 2 * var(--gutter)`. This section
+         carries the same `var(--gutter)` padding, so a percentage of its
+         content box is a percentage of the footer's lockup by construction,
+         at every width and with no number to keep in step. `width:100%` was
+         measured against the real footer at 390, 768, 1440 and 1920 and
+         matched to the tenth of a pixel at each.
+
+         DO NOT REWRITE THIS AS A VW VALUE. 75vw is a different size — wider
+         than this at every width, and wider than the FOOTER below about
+         1850px — and it stops tracking the moment `--gutter`'s clamp is
+         touched.
 
          `flex:none` because the section is a flex container and a flex item
-         at exactly the content width is one rounding error away from being
-         shrunk below it. */
+         sized off the content width is one rounding error from being shrunk
+         below it. */
       .pp-starlogo {
         position:relative; z-index:1; flex:none;
-        display:block; width:100%; height:auto;
+        display:block; width:75%; height:auto;
       }
       @media (prefers-reduced-motion:reduce) {
         .pp-star > b { animation:none; }

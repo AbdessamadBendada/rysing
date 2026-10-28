@@ -4908,15 +4908,21 @@ animated with the behaviour in CodePen **`rkgttr/pen/ZGZzJG`**, which they
 sent. The layout question (lattice vs scatter) was put to them and they chose
 a **jittered grid**.
 
-**The lockup is now the footer's size exactly**, in two steps: half the
-footer measure read small, then `min(54vw,760px)` did too, and the client
-asked for the full thing. `width:100%` IS that size and not by coincidence —
+**The lockup is 75% of the footer's, and the percentage is OF THE FOOTER
+MEASURE.** It walked up from half the footer measure (`min(44vw,620px)`)
+through `min(54vw,760px)` to the footer's exact size, and then back down one
+step. `width:100%` was that exact size and not by coincidence —
 `.footer-mark` is `width:100%` of the footer shell, so the measure is
 `100vw - 2 * var(--gutter)`, and this section carries the same gutter
-padding. Measured against the real footer: **346 / 706.6 / 1324.8 / 1772 at
-390 / 768 / 1440 / 1920**, identical at each. **Do not write the number
-out** — a px or vw value that matches today stops matching the moment
-`--gutter`'s clamp is touched.
+padding. Measured against the real footer at 100%: **346 / 706.6 / 1324.8 /
+1772 at 390 / 768 / 1440 / 1920**, identical at each; at 75%: **259.5 /
+529.9 / 993.6 / 1329**.
+
+**Do not rewrite it as a vw value.** `75vw` is a different size — wider than
+this at every width, and wider than the footer itself below about 1850px —
+and it stops tracking the moment `--gutter`'s clamp is touched. A percentage
+of this section's content box is a percentage of the footer's lockup by
+construction, with no number to keep in step.
 
 Two things followed from the logo growing, and both are worth knowing before
 the next size change:
@@ -4929,7 +4935,8 @@ the next size change:
   lightly padded rect; the ellipse is bigger everywhere else, so it still
   sets the silhouette and the hole does not read as a card.
 - **The field thinned as the logo grew**, 356 → 267 at 1440, which is
-  backwards. See the `DENSITY` note below.
+  backwards. See the `DENSITY` note below. Both fixes hold at any size the
+  lockup is given; the count is 337–356 across all seven widths at 75%.
 
 ### The reference, since CodePen will not serve it to a fetch
 
@@ -4989,7 +4996,7 @@ applied where it does not belong and cost a day.
 - **THE GAP IS DERIVED FROM A COUNT, NOT WRITTEN AS A LENGTH.** A fixed px
   gap gives ~90 stars on a phone and ~900 on a 27" display. `DENSITY` is a
   target count and the gap is solved to hit it: measured, **325–360 across
-  360, 390, 768, 1024, 1440, 1680 and 1920** with the lockup at full width.
+  360, 390, 768, 1024, 1440, 1680 and 1920** at any lockup size tried.
   The star is then sized as a *fraction of the gap*, which is §44's last
   technical finding in different clothes — so a larger logo yields a finer
   pattern, not a sparser one. Turn `DENSITY` down if that reads as too fine.
