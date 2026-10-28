@@ -656,6 +656,11 @@ void main(){
   let measureAt = 0;
 
   function frame(now) {
+    /* Off screen: drop the loop entirely rather than skipping the draw, so
+       the hero costs nothing at all while another variant is being looked
+       at. The observer below restarts it. */
+    if (!visible) return;
+
     /* Clamped: a backgrounded tab resumes with a dt of several seconds,
        which would decay the field to nothing and relocate the pointer in one
        step. §36 records the other half of this — a backgrounded tab stops
@@ -748,6 +753,31 @@ void main(){
 
   resize();
   new ResizeObserver(resize).observe(canvas);
+
+  /* THE SIMULATION STOPS WHEN ITS HERO IS OFF SCREEN, and that is a
+     playground fix rather than a change to the effect. The page now carries
+     a third variant (the star field) below this one, and measured at 1440x900
+     with this canvas left running under it that section's frame time went
+     from a locked 16.7ms to a median of 116.7ms — the star field itself costs
+     nothing, but it was about to be judged as a stutter that belongs to this
+     file. §44's closing note is that an attempt handed over with a known
+     shortcoming attached is not a handover.
+
+     `last` is reset on resume so the loop does not come back to a dt of
+     several seconds, which is the same hazard the clamp in `frame` exists
+     for. Nothing about the shader, the field or the tuning changes.
+
+     NO `rootMargin`. A margin here keeps the simulation running while the
+     hero sits just off screen, which is exactly the case this exists to
+     stop: the star field begins where this hero ends, so a 120px margin
+     left the canvas grinding through the whole of the section below it and
+     the frame time stayed at 83ms. Restarting costs one frame. */
+  let visible = true;
+  new IntersectionObserver((entries) => {
+    const now = entries[entries.length - 1].isIntersecting;
+    if (now && !visible) { last = performance.now(); requestAnimationFrame(frame); }
+    visible = now;
+  }, { rootMargin: '0px' }).observe(hero);
   /* Marks the hero as running, which is what hides the CSS gradient. Done
      from here and not in the stylesheet so that every early return above
      leaves the authored light on the page. */

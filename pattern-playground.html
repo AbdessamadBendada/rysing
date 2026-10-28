@@ -233,6 +233,75 @@
          page, so a disc overhanging the hero's bottom edge has room to be
          seen rather than being cut by the end of the document (§33). */
       .pp-runout { min-height:70svh; }
+
+      /* --- Variant C: the star field parts for the cursor -------- */
+      /* The reference the client sent is CodePen `rkgttr/pen/ZGZzJG`,
+         "Particles repulsion" — a lattice of dots, each pushed away from the
+         cursor and sprung back to its home position. `pattern-stars.js` is
+         that behaviour with four changes, each argued in the file: the force
+         law is softened so it cannot diverge under the cursor, the per-frame
+         write is a compositor translate rather than an SVG attribute, the
+         pointer runs through a filter, and the lattice has a hole in it for
+         the wordmark.
+
+         THIS IS NOT A SIXTH ATTEMPT AT THE HERO AND §44'S RULES DO NOT BIND
+         IT. Those are about a continuous field of light, where clearing the
+         middle of a radial gradient always leaves a ring. These are discrete
+         marks on a lattice, each with a home to return to — there is nothing
+         to sum into a cloud, so there is no donut to avoid.
+
+         `position:relative` and nothing else, which is §27's contract: no
+         `isolation`, no `overflow:clip`, no opaque background. The section
+         hosts no glow of its own, so there is also nothing here for §29 or
+         §33 to cut. */
+      .pp-stars {
+        position:relative;
+        min-height:100svh; padding:clamp(80px,12vh,140px) var(--gutter);
+        display:flex; align-items:center; justify-content:center;
+      }
+      /* `inset:0` is safe for the same reason it is on `.pp-light`: this
+         element paints nothing itself. Every star is its own small box well
+         inside it, so there is no gradient here to be cut at the edge.
+
+         `pointer-events:none` IS LOAD BEARING AND THE SCRIPT DEPENDS ON IT —
+         §44's sixth finding is that a listener bound to a shape layer here
+         receives nothing at all and throws no error. The listeners are on
+         the SECTION. */
+      .pp-starfield {
+        position:absolute; inset:0; z-index:0; pointer-events:none;
+        overflow:hidden;
+      }
+      /* The outer box carries ONLY the per-frame translate. Scale, rotation
+         and the twinkle are on the inner `<b>`, so the thing written three
+         hundred times a frame is one short transform and nothing else needs
+         rebuilding to go with it. */
+      .pp-star { position:absolute; will-change:transform; }
+      .pp-star > b {
+        display:block; width:100%; height:100%;
+        background:rgba(249,249,249,.9);
+        -webkit-mask:var(--mark) center/contain no-repeat;
+                mask:var(--mark) center/contain no-repeat;
+        opacity:var(--o);
+        animation-name:ppTwinkle; animation-iteration-count:infinite;
+        animation-timing-function:var(--ease); animation-direction:alternate;
+      }
+      /* Red is SCARCE here, roughly one star in seven — §11's rule about the
+         red being rationed applies to a pattern more than to anything else,
+         because a pattern repeats whatever it is given. */
+      .pp-star > b.is-red { background:var(--red); }
+      @keyframes ppTwinkle { to { opacity:calc(var(--o) * .42); } }
+
+      /* HALF THE FOOTER'S LOCKUP, which is what the client asked for. The
+         footer mark is `width:100%` of the footer shell, so "half as big" is
+         about half the content measure — not half of some absolute px size
+         that would stop meaning anything at 390. */
+      .pp-starlogo {
+        position:relative; z-index:1;
+        display:block; width:min(44vw,620px); height:auto;
+      }
+      @media (prefers-reduced-motion:reduce) {
+        .pp-star > b { animation:none; }
+      }
     </style>
 
     <p class="pp-note">Pattern playground · hero lights · not a page of the site</p>
@@ -279,12 +348,33 @@
       </h1>
     </section>
 
+    <p class="pp-note">Variant C · the star pattern parts · move the cursor through the field</p>
+
+    <!-- VARIANT C — the brand mark as a pattern, repelled by the cursor.
+
+         The field is built by `pattern-stars.js` from the lattice geometry,
+         not written out here: the gap is solved from the section's area so
+         the star count stays roughly constant from 390 to 1920, and the
+         clear space around the wordmark is read from the lockup's RENDERED
+         box rather than derived a second time (§33's rule about a geometry
+         restated in two places).
+
+         The lockup is the footer's, at about half its size. `fetchpriority`
+         rather than `loading="lazy"`: the script cannot lay the field out
+         until the image has a box, so a lazy load would leave the section
+         empty until it scrolled into view and then build the pattern in
+         front of the viewer. -->
+    <section class="pp-stars" data-stars-section aria-label="Star pattern, cursor repulsion">
+      <div class="pp-starfield" data-stars aria-hidden="true"></div>
+      <img class="pp-starlogo" data-stars-logo src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" decoding="async" />
+    </section>
+
     <div class="pp-runout" aria-hidden="true"></div>
   </main>
 
 
 
   <script src="shared.js?v=59df1949" defer></script>
-<script src="pattern-shark.js" defer></script>
+<script src="pattern-shark.js" defer></script><script src="pattern-stars.js" defer></script>
 </body>
 </html>

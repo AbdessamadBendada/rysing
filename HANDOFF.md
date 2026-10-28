@@ -32,6 +32,12 @@ rejected and the findings they produced; **§45** is the fifth, which is the
 one currently on the page. **It is broken in Safari** — read §45 before
 touching it, and do not judge it in Safari.
 
+**§46 adds a third variant to the same page and it is a different problem.**
+It is the brand mark repeated as a pattern around the wordmark, repelled by
+the cursor. **§44's rules do not bind it** — those are about a continuous
+field of light, and these are discrete marks with homes to return to. Read
+§46 before assuming otherwise.
+
 **Three things are newer than most of this document. Read them before
 touching a background shape, a colour, or a service page.**
 
@@ -4885,3 +4891,152 @@ And the backups were deleted in the same tidy-up — the exact thing §44's
 closing rule warns about, one message after it mattered. The values were
 reconstructible only because they were all in the edit history of the
 session. **Commit the scratch work; that is why it is committed now.**
+
+---
+
+## 46. Variant C: the brand mark as a pattern, repelled by the cursor
+
+**Nothing in this section is part of the site.** It is a third section on the
+scratch page (§44), below the two heroes, and no page of the site changed for
+it. `pattern-stars.js` is the whole of it.
+
+### What the client asked for
+
+The footer's logo lockup, **at about half the footer's size**, with the brand
+star repeated around it as a pattern — "a lot of them in a very nice way" —
+animated with the behaviour in CodePen **`rkgttr/pen/ZGZzJG`**, which they
+sent. The layout question (lattice vs scatter) was put to them and they chose
+a **jittered grid**.
+
+### The reference, since CodePen will not serve it to a fetch
+
+`codepen.io/...` returns 403 behind Cloudflare. **`cdpn.io`'s fullpage mirror
+does serve it** — `https://cdpn.io/<user>/fullpage/<slug>` — with the pen's
+real source inside the `srcdoc` attribute of the result iframe. That is how
+to read a pen the client sends.
+
+It is called *"Particles repulsion"*: a 10×10 grid of SVG `<circle>`s; each
+frame every dot is pushed directly away from the cursor by `strength / dist`,
+then pulled back toward its home by 10%. Twenty-five lines, no library.
+
+### Why this one is worth copying, in this document's terms
+
+**Every point carries its own `x` and `y` forward and is only ever nudged.**
+§44's post-mortem blames all three hand-written stutters on recomputing a
+*shape* every frame from the cursor's current position with no memory of the
+frame before; this has that memory structurally, the same property advection
+gave the fluid.
+
+### §44's RULES DO NOT BIND THIS SECTION, and the distinction matters
+
+§44 and §45 are about the hero's **glow** — a continuous field of light, where
+the governing fact is that clearing the middle of a radial gradient always
+leaves a ring. **That is a fact about deletion from a cloud.** These are
+discrete marks on a lattice, each with a home. A hole in a lattice of marks
+reads as marks getting out of the way, because nothing sums into a cloud.
+There is no donut here to design around, and no need for the analytic warp
+§45 exists to provide. Do not import those constraints into this file; §45's
+own closing lesson is that a rule inferred from an earlier attempt can be
+applied where it does not belong and cost a day.
+
+### Four changes to the pen, each of which it needs to survive being scaled up
+
+- **`strength / dist` diverges at the cursor.** At `dist → 0` the push is
+  unbounded, so a star passed over directly is thrown hundreds of px in one
+  frame and snaps back over the next ten. On the pen's hundred dots that
+  reads as liveliness; at this density it is a visible flick.
+  `STRENGTH / (dist + SOFT)` is the same curve everywhere that matters and
+  simply tops out underneath the cursor. There are **three limits, not one**,
+  because each catches a different gesture: `SOFT` for hovering, `MAXPUSH`
+  for a flick between two frames, `RANGE` for a sustained shove.
+- **`setAttribute('cx', …)` per element per frame is layout work.** The write
+  path here is a `translate3d` on an outer box, with scale, rotation and the
+  twinkle parked on an inner `<b>` so the per-frame write is one short string
+  and nothing else has to be rebuilt to go with it.
+- **The pointer runs through an exponential filter** — §45's "smoothness is
+  not a tuning problem". The pen has this fault and gets away with it because
+  its dots are tiny and its spring is slack.
+- **The lattice has a hole in it for the wordmark**, read from the lockup's
+  *rendered* box rather than derived a second time (§33), and an ellipse
+  rather than a rect — a rectangular gap in a star field reads as a card
+  sitting on top of the pattern.
+
+### Two things that are not obvious and are not taste
+
+- **THE GAP IS DERIVED FROM AN AREA, NOT WRITTEN AS A LENGTH.** A fixed px
+  gap gives ~90 stars on a phone and ~900 on a 27" display. Solving
+  `gap = sqrt(area / DENSITY)` holds the count roughly constant: measured,
+  **386 at 390×844 and 357 at 1920×1080**. The star is then sized as a
+  *fraction of the gap*, which is §44's last technical finding in different
+  clothes.
+- **The jitter is a third of a gap and that is a ceiling, not a default.**
+  What the eye reads during repulsion is a *regular* spacing being deformed.
+  Push the jitter past about half a gap and the lattice stops being legible,
+  and the cursor is just moving some dots around.
+
+### THE REAL FINDING: the new section was about to be blamed for §45's cost
+
+Measured at 1440×900 with everything on the page running, the star section's
+frame time was a **median of 116.7ms**. Isolating it showed the star field
+costs *nothing* — removing `pattern-shark.js`'s canvas alone took it to a
+locked 16.7ms, and turning off the twinkle, the masks and finally every star
+changed nothing further.
+
+**A WebGL simulation two sections up was consuming the whole frame budget of
+a section it is not visible in.** `pattern-shark.js` now drops its rAF loop
+when its hero leaves the viewport, and `last` is reset on resume so it does
+not come back to a dt of several seconds. Nothing about the shader, the field
+or the tuning changed.
+
+> **No `rootMargin` on that observer.** 120px looks like a courtesy against a
+> restart hitch and is the bug: the star section begins exactly where the
+> shark hero ends, so the margin kept the canvas grinding through the whole
+> of the section below it and the frame time stayed at 83ms. The restart
+> costs one frame.
+
+**This is the §44 process rule, not a performance note.** Variant C would
+have been judged as stuttering, and the stutter was not in it.
+
+### Numbers
+
+Stars section, continuous pointer motion, after the gate: **median 16.7ms at
+390, 768, 1440 and 1920**, zero frames over 32ms at 390 and 768; zero
+horizontal scroll and zero dead scroll at all four. Orbiting at 1440, **4
+stars remain within 160px of the cursor** — against a lattice gap of 62,
+which puts about twenty there at rest — with a maximum displacement of
+**109px** against a `RANGE` ceiling of 148.
+
+### Measuring it
+
+The first capture showed **no repulsion at all** and the effect looked dead.
+The cursor had been parked at 30% of the section's width, which is inside the
+wordmark's clear space — there are no stars there to move. Sample in open
+field, and freeze the twinkle before any before/after pair so the two frames
+differ only by displacement.
+
+§45's other two measurement rules carry over unchanged: drive the pointer
+from a loop that keeps running while the screenshot is taken, because a
+capture round trip is longer than the relaxation; and orbit rather than
+sweep, so the cursor has real speed and is still at the sample point when the
+frame lands.
+
+### Tuning
+
+`window.STARS`, read fresh every frame, same arrangement as §45's `SHARK`:
+
+```js
+STARS.DENSITY  = 340   // target star count; the gap is solved from it
+STARS.STRENGTH = 2600  // push     <- the big one
+STARS.SOFT     = 54    // px; force peaks at STRENGTH/SOFT
+STARS.RANGE    = 2.4   // how far a star may be driven from home, in gaps
+STARS.EASE     = 0.10  // return per 60Hz frame — the pen's own value
+STARS.RED      = 7     // one star in RED is brand red (§11: red is scarce)
+```
+
+`DENSITY` and `RED` only take effect on the next rebuild, which a resize
+triggers.
+
+### Open
+
+The client has not seen it. **It has not been checked in Safari**, which is
+§45's open item and the same gap — there is still no Safari in the harness.
