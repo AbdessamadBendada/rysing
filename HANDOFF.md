@@ -4908,12 +4908,28 @@ animated with the behaviour in CodePen **`rkgttr/pen/ZGZzJG`**, which they
 sent. The layout question (lattice vs scatter) was put to them and they chose
 a **jittered grid**.
 
-Looked at on the page the lockup read small against the field and they asked
-for it bigger, so the value is **`min(54vw,760px)`** rather than the
-`min(44vw,620px)` that half the footer measure works out to. It stays a
-viewport measure: the clear space is read from this element's rendered box,
-so a logo that stopped scaling would eat a different fraction of the pattern
-at every width.
+**The lockup is now the footer's size exactly**, in two steps: half the
+footer measure read small, then `min(54vw,760px)` did too, and the client
+asked for the full thing. `width:100%` IS that size and not by coincidence —
+`.footer-mark` is `width:100%` of the footer shell, so the measure is
+`100vw - 2 * var(--gutter)`, and this section carries the same gutter
+padding. Measured against the real footer: **346 / 706.6 / 1324.8 / 1772 at
+390 / 768 / 1440 / 1920**, identical at each. **Do not write the number
+out** — a px or vw value that matches today stops matching the moment
+`--gutter`'s clamp is touched.
+
+Two things followed from the logo growing, and both are worth knowing before
+the next size change:
+
+- **The ellipse stopped being enough.** A wide, short lockup has corners that
+  fall outside an ellipse drawn through its sides — at the full measure the
+  rect is 1325×281 against an ellipse of 727×223 — and stars started landing
+  inside the artwork (three at 1440, six at 1920). They were in empty margin
+  that time, which is luck. The clear space is now the ellipse **or** a
+  lightly padded rect; the ellipse is bigger everywhere else, so it still
+  sets the silhouette and the hole does not read as a card.
+- **The field thinned as the logo grew**, 356 → 267 at 1440, which is
+  backwards. See the `DENSITY` note below.
 
 ### The reference, since CodePen will not serve it to a fetch
 
@@ -4970,12 +4986,21 @@ applied where it does not belong and cost a day.
 
 ### Two things that are not obvious and are not taste
 
-- **THE GAP IS DERIVED FROM AN AREA, NOT WRITTEN AS A LENGTH.** A fixed px
-  gap gives ~90 stars on a phone and ~900 on a 27" display. Solving
-  `gap = sqrt(area / DENSITY)` holds the count roughly constant: measured,
-  **386 at 390×844 and 357 at 1920×1080**. The star is then sized as a
-  *fraction of the gap*, which is §44's last technical finding in different
-  clothes.
+- **THE GAP IS DERIVED FROM A COUNT, NOT WRITTEN AS A LENGTH.** A fixed px
+  gap gives ~90 stars on a phone and ~900 on a 27" display. `DENSITY` is a
+  target count and the gap is solved to hit it: measured, **325–360 across
+  360, 390, 768, 1024, 1440, 1680 and 1920** with the lockup at full width.
+  The star is then sized as a *fraction of the gap*, which is §44's last
+  technical finding in different clothes — so a larger logo yields a finer
+  pattern, not a sparser one. Turn `DENSITY` down if that reads as too fine.
+
+  **SOLVING IT FROM AN AREA DOES NOT WORK**, and that is the obvious fix and
+  was built first. The hole's padding is a multiple of the gap, so each
+  depends on the other and a fixed number of passes leaves them out of step;
+  and the lattice runs a row and a column past every edge, so it covers more
+  than `w × h` to begin with. Modelled that way the count came out at **416
+  against a target of 340**. The lattice is laid out and counted instead —
+  no DOM, a few hundred points, three passes at worst.
 - **The jitter is a third of a gap and that is a ceiling, not a default.**
   What the eye reads during repulsion is a *regular* spacing being deformed.
   Push the jitter past about half a gap and the lattice stops being legible,
@@ -5007,8 +5032,9 @@ have been judged as stuttering, and the stutter was not in it.
 ### Numbers
 
 Stars section, continuous pointer motion, after the gate: **median 16.7ms at
-390, 768, 1440 and 1920**, zero frames over 32ms at 390 and 768; zero
-horizontal scroll and zero dead scroll at all four. Orbiting at 1440, **4
+360, 390, 768, 1024, 1440, 1680 and 1920**, with zero frames over 32ms at
+everything up to 1440; zero horizontal scroll, zero dead scroll and **zero
+stars overlapping the lockup's box** at all seven. Orbiting at 1440, **4
 stars remain within 160px of the cursor** — against a lattice gap of 62,
 which puts about twenty there at rest — with a maximum displacement of
 **109px** against a `RANGE` ceiling of 148.

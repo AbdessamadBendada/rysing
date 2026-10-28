@@ -78,23 +78,10 @@
      than in px, which is §44's last technical finding wearing different
      clothes — there, a px particle size packed four times as densely at 390
      and blew the additive core out to white. */
-  function build() {
-    var w = section.clientWidth;
-    var h = section.clientHeight;
-    if (!w || !h) return;
-
-    gap = Math.sqrt((w * h) / K.DENSITY);
-
-    /* THE HOLE IS READ FROM THE LOGO'S RENDERED BOX, not computed from the
-       same clamps a second time. §33 is the precedent: a geometry restated in
-       two places drifts, and here the drift would be stars landing on the
-       wordmark. An ellipse rather than the rect, because a rectangular gap in
-       a star field reads as a card sitting on top of the pattern — which is
-       the eclipse problem of §45 in plan view. */
-    var sr = section.getBoundingClientRect();
-    var lr = logo.getBoundingClientRect();
-    hole.cx = lr.left - sr.left + lr.width / 2;
-    hole.cy = lr.top  - sr.top  + lr.height / 2;
+  /* LAYING THE LATTICE OUT IS SEPARATE FROM BUILDING THE DOM, so the count
+     can be solved by trying a gap and counting what survives the hole. No
+     elements are made here and nothing is measured. */
+  function plan(w, h, lr) {
     hole.rx = lr.width  / 2 + gap * 1.05;
     hole.ry = lr.height / 2 + gap * 1.35;
 
@@ -102,12 +89,9 @@
     var rows = Math.ceil(h / gap) + 1;
     var ox = (w - (cols - 1) * gap) / 2;
     var oy = (h - (rows - 1) * gap) / 2;
+    var out = [];
 
-    var frag = document.createDocumentFragment();
-    var next = [];
-    var size = gap * K.SIZE;
-    var n = 0;
-
+    reseed();
     for (var r = 0; r < rows; r++) {
       for (var c = 0; c < cols; c++) {
         /* THE JITTER IS WHAT MAKES IT A PATTERN RATHER THAN GRAPH PAPER, and
@@ -119,35 +103,104 @@
         var x = ox + c * gap + (rnd() - 0.5) * gap * 0.34;
         var y = oy + r * gap + (rnd() - 0.5) * gap * 0.34;
 
+        /* THE CLEAR SPACE IS THE ELLIPSE **OR** THE PADDED RECT, and the
+           second half is not redundant. A wide, short lockup has corners
+           that fall OUTSIDE an ellipse drawn through its sides — at the
+           footer's full measure the rect is 1325x281 against an ellipse of
+           727x223, and three stars landed inside the artwork at 1440 and six
+           at 1920. They were in empty margin that time. That is luck, not a
+           property.
+
+           The ellipse still sets the silhouette, because it is wider and
+           taller than the rect everywhere except the corners, so the hole
+           does not read as the card §45's eclipse warning is about. */
         var dx = (x - hole.cx) / hole.rx;
         var dy = (y - hole.cy) / hole.ry;
-        if (dx * dx + dy * dy < 1) continue;          // the logo's clear space
+        if (dx * dx + dy * dy < 1) continue;
+        if (Math.abs(x - hole.cx) < lr.width  / 2 + gap * 0.3 &&
+            Math.abs(y - hole.cy) < lr.height / 2 + gap * 0.3) continue;
 
-        var el = document.createElement('i');
-        el.className = 'pp-star';
-        var inner = document.createElement('b');
-        /* Scale, rotation and the twinkle live on the INNER element and the
-           translate on the outer one. One element cannot carry both without
-           rebuilding the whole transform string every frame, and splitting
-           them means the per-frame write is a single short translate — which
-           is the difference between a compositor update and a string
-           allocation per star per frame. */
-        inner.style.cssText =
-          'transform:rotate(' + (rnd() * 90 | 0) + 'deg) scale(' + (0.66 + rnd() * 0.78).toFixed(3) + ');' +
-          '--o:' + (0.26 + rnd() * 0.5).toFixed(3) + ';' +
-          'animation-duration:' + (6 + rnd() * 7).toFixed(2) + 's;' +
-          'animation-delay:-' + (rnd() * 12).toFixed(2) + 's;';
-        if (n % K.RED === (K.RED >> 1)) inner.className = 'is-red';
-        el.appendChild(inner);
-
-        el.style.width = el.style.height = size.toFixed(2) + 'px';
-        el.style.left = (x - size / 2).toFixed(2) + 'px';
-        el.style.top  = (y - size / 2).toFixed(2) + 'px';
-
-        frag.appendChild(el);
-        next.push({ el: el, ox: x, oy: y, x: x, y: y });
-        n++;
+        out.push(x, y);
       }
+    }
+    return out;
+  }
+
+  function build() {
+    var w = section.clientWidth;
+    var h = section.clientHeight;
+    if (!w || !h) return;
+
+    /* THE HOLE IS READ FROM THE LOGO'S RENDERED BOX, not computed from the
+       same clamps a second time. §33 is the precedent: a geometry restated in
+       two places drifts, and here the drift would be stars landing on the
+       wordmark. An ellipse rather than the rect, because a rectangular gap in
+       a star field reads as a card sitting on top of the pattern — which is
+       the eclipse problem of §45 in plan view. */
+    var sr = section.getBoundingClientRect();
+    var lr = logo.getBoundingClientRect();
+    hole.cx = lr.left - sr.left + lr.width / 2;
+    hole.cy = lr.top  - sr.top  + lr.height / 2;
+
+    /* DENSITY COUNTS THE STARS YOU SEE, NOT THE ONES THE LATTICE WOULD HAVE
+       HAD, and it is solved BY COUNTING rather than from an area.
+
+       Without some correction the field thins as the logo grows, which is
+       backwards: the lockup went from half the footer's measure to all of it
+       over two requests and the count fell from 356 to 267 at 1440 — the
+       knob stopped meaning anything exactly when the composition changed
+       enough to need it.
+
+       SUBTRACTING THE HOLE'S AREA DOES NOT WORK AND IT IS WORTH SAYING WHY,
+       because it is the obvious fix and it was built first. Two things are
+       wrong with it at once. The hole's padding is a multiple of the gap, so
+       the gap and the hole each depend on the other and a fixed number of
+       passes leaves the two out of step. And the lattice deliberately runs a
+       row and a column past every edge, so the points it lays down cover
+       rather more than `w * h` to begin with. Modelled that way the count
+       came out at 416 against a target of 340.
+
+       Counting has neither problem, and it is cheap: a loop over a few
+       hundred points with no DOM in it, four times at the very worst. */
+    gap = Math.sqrt((w * h) / K.DENSITY);
+    var layout = plan(w, h, lr);
+    for (var pass = 0; pass < 3; pass++) {
+      var count = layout.length / 2;
+      if (!count || Math.abs(count - K.DENSITY) < K.DENSITY * 0.06) break;
+      gap *= Math.sqrt(count / K.DENSITY);
+      layout = plan(w, h, lr);
+    }
+
+    var frag = document.createDocumentFragment();
+    var next = [];
+    var size = gap * K.SIZE;
+
+    for (var i = 0; i < layout.length; i += 2) {
+      var x = layout[i], y = layout[i + 1];
+
+      var el = document.createElement('i');
+      el.className = 'pp-star';
+      var inner = document.createElement('b');
+      /* Scale, rotation and the twinkle live on the INNER element and the
+         translate on the outer one. One element cannot carry both without
+         rebuilding the whole transform string every frame, and splitting
+         them means the per-frame write is a single short translate — which
+         is the difference between a compositor update and a string
+         allocation per star per frame. */
+      inner.style.cssText =
+        'transform:rotate(' + (rnd() * 90 | 0) + 'deg) scale(' + (0.66 + rnd() * 0.78).toFixed(3) + ');' +
+        '--o:' + (0.26 + rnd() * 0.5).toFixed(3) + ';' +
+        'animation-duration:' + (6 + rnd() * 7).toFixed(2) + 's;' +
+        'animation-delay:-' + (rnd() * 12).toFixed(2) + 's;';
+      if ((i >> 1) % K.RED === (K.RED >> 1)) inner.className = 'is-red';
+      el.appendChild(inner);
+
+      el.style.width = el.style.height = size.toFixed(2) + 'px';
+      el.style.left = (x - size / 2).toFixed(2) + 'px';
+      el.style.top  = (y - size / 2).toFixed(2) + 'px';
+
+      frag.appendChild(el);
+      next.push({ el: el, ox: x, oy: y, x: x, y: y });
     }
 
     field.textContent = '';

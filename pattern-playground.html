@@ -291,21 +291,25 @@
       .pp-star > b.is-red { background:var(--red); }
       @keyframes ppTwinkle { to { opacity:calc(var(--o) * .42); } }
 
-      /* THE FOOTER'S LOCKUP, A LITTLE OVER HALF ITS SIZE. The brief was "half
-         as big as the footer" and that is where this started — the footer
-         mark is `width:100%` of the footer shell, so half the content
-         measure, which was `min(44vw,620px)`. Looked at on the page it read
-         small against the field, and the client asked for more; 54vw/760px
-         is the value now.
+      /* THE FOOTER'S LOCKUP AT EXACTLY THE FOOTER'S SIZE. The brief started
+         at "half as big as the footer" (`min(44vw,620px)`), went to
+         `min(54vw,760px)`, and is now the real thing.
 
-         IT IS A VIEWPORT MEASURE AND NOT A PX SIZE on purpose. The lattice
-         gap is solved from the section's area and the clear space around the
-         wordmark is read from this element's RENDERED box, so a logo that
-         stops scaling is a logo that eats a different fraction of the
-         pattern at every width. Change the number, not the unit. */
+         `width:100%` IS THAT SIZE, AND IT IS NOT A COINCIDENCE. `.footer-mark`
+         is `width:100%` of the footer shell, which is the page gutter on
+         each side — so the measure is `100vw - 2 * var(--gutter)`. This
+         section carries the same `var(--gutter)` padding, so 100% of its
+         content box is the same number by construction: measured, 346 at
+         390, 1324.8 at 1440 and 1772 at 1920, identical to the footer at
+         each. DO NOT WRITE THE NUMBER OUT. A px or vw value that happens to
+         match today stops matching the moment `--gutter`'s clamp is touched.
+
+         `flex:none` because the section is a flex container and a flex item
+         at exactly the content width is one rounding error away from being
+         shrunk below it. */
       .pp-starlogo {
-        position:relative; z-index:1;
-        display:block; width:min(54vw,760px); height:auto;
+        position:relative; z-index:1; flex:none;
+        display:block; width:100%; height:auto;
       }
       @media (prefers-reduced-motion:reduce) {
         .pp-star > b { animation:none; }
