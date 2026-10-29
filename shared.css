@@ -458,7 +458,8 @@ body::after {
   --d:min(72vw,1020px);
   top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
   background:radial-gradient(circle at 50% 50%,rgba(240,66,34,1),rgba(240,66,34,.98) 18%,rgba(240,66,34,.62) 40%,rgba(240,66,34,.12) 64%,transparent 76%);
-  animation:driftA 28s var(--ease) infinite alternate;
+  animation:driftA 28s var(--ease) infinite alternate,
+            heroBreathe 13s var(--ease) infinite;
 }
 /* Hidden only once the field is built and painted, which is §45's
    arrangement: every early return in the script leaves the authored gradient
@@ -473,6 +474,51 @@ body::after {
 }
 @keyframes driftA { to { transform:translate3d(-3%,4%,0) scale(1.08); } }
 @keyframes driftB { to { transform:translate3d(4%,-3%,0) scale(1.07); } }
+
+/* ===========================================================================
+   THE HERO'S BREATH — §53
+
+   The client asked for the orange to "move a tiny bit, smoothly". It already
+   did: `driftA` has translated and scaled this glow by a few per cent for
+   twenty-eight seconds since long before she asked. MEASURED, THAT MOTION
+   CHANGES AT MOST 2 LEVELS OF PIXEL OVER EIGHT SECONDS
+   (`tools/probe-drift.js`), which is not a subtle effect — it is an absent
+   one.
+
+   THE REASON IS THE SHAPE, NOT THE AMOUNT, and it generalises to every glow
+   on this site: A BLURRED RADIAL FIELD HAS NO EDGE TO TRACK. Sliding a
+   featureless gradient sideways moves almost no pixel anywhere, because
+   every pixel's neighbour is nearly the same colour. Displacement is the
+   wrong lever for soft light. LUMINANCE IS THE RIGHT ONE — the eye reads a
+   large field getting brighter and dimmer immediately, which is the same
+   sensitivity §50 ran into from the other side when 85% brightness was
+   reported as "the wrong colour".
+
+   So the breath is opacity, on its own clock, running alongside the drift
+   rather than replacing it. Two animations on one element is fine here
+   BECAUSE THEY TOUCH DIFFERENT PROPERTIES — `transform` and `opacity`
+   compose; two keyframes both writing `transform` would not, the last would
+   simply win.
+
+   IT ONLY EVER DIMS. §50 spent a cycle getting this core to the brand's own
+   240, so the keyframe holds 1 at both ends and takes the trough down,
+   never up: the authored peak is still the brightest this glow ever gets,
+   and `--breathe` is the one number to tune. Measured peak-to-trough across
+   the hero with `tools/probe-drift.js`, drift held still:
+
+     1    0 levels   0% of the hero     (no breath — the state before §53)
+     .97  4 levels   13%
+     .95  5 levels   27%
+     .93  6 levels   33%   <- shipped
+     .90  8 levels   40%
+
+   .93 is a sixth of a level per second. It is chosen over .95 only because
+   the last two rounds of this work shipped changes the client could not
+   see; past .90 it starts to read as a pulse rather than a breath.
+
+   BOTH THE CANVAS AND THE FALLBACK DISC CARRY IT, so the hero breathes
+   identically whether or not the lattice built. */
+@keyframes heroBreathe { 0%,100% { opacity:1; } 50% { opacity:var(--breathe,.93); } }
 
 /* ===========================================================================
    THE LATTICE THAT PARTS FOR THE CURSOR — §48
@@ -560,13 +606,30 @@ body::after {
    this is still the hero's light. */
 .rs-blobs { position:absolute; left:0; top:0; }
 .hero .rs-blobs { animation:driftA 28s var(--ease) infinite alternate; }
+/* The breath sits on the FIELD rather than the canvas so that one rule
+   covers the whole layer whatever the marks are — §53.
+
+   A COST ARGUMENT WAS WRITTEN HERE AND THE MEASUREMENT KILLED IT, which is
+   worth leaving in place. The hero runs `BLUR:30` as `filter:blur(30px)` on
+   this element, and animating opacity on the canvas INSIDE it looked like
+   it had to re-run that blur every frame — the acceptance run had just
+   printed 16.7ms at 1920 against §50's 11.3, which fitted perfectly.
+
+   It was not true. `tools/ab-breathe.js` turns the breath off and leaves
+   `driftA` running: 16.80ms with it and 16.81ms without, and at 1440 the
+   OFF case measured HIGHER than the ON case. The breath is free in either
+   position, and the gap against §50 is this harness on this day, not a
+   regression. §50's numbers came from another session and are not a
+   baseline you can diff against — measure the same page both ways instead,
+   which costs one minute. */
+.hero .rs-field { animation:heroBreathe 13s var(--ease) infinite; }
 /* NO CSS BLUR HERE. `BLUR` is applied by the script to the FIELD, one layer
    up, so it blurs the composed cloud rather than each sprite. */
 /* The script does not start its loop at all under reduced motion, so the
    lattice is laid out and left still; these two are the decorative layers on
    top of that. */
 @media (prefers-reduced-motion:reduce) {
-  .rs-star > b,.hero .rs-blobs { animation:none; }
+  .rs-star > b,.hero .rs-blobs,.hero .rs-field { animation:none; }
 }
 
 .hero-eyebrow { margin:0 0 auto; text-align:right; }
@@ -677,7 +740,12 @@ body::after {
 @media (prefers-reduced-motion:reduce) {
   .reel-frame { -webkit-mask:none; mask:none; }
   .reel-frame video { filter:none; }
-  .hero-light::before,.hero-light::after { animation:none; }
+  /* `.hero-light::before` USED TO BE THE ORANGE AND IS NOT THE ORANGE ANY
+     MORE — it is a real element, `.hero-disc--orange`, so this rule had
+     stopped covering it and the glow kept drifting and now breathing under
+     reduced motion. It only showed when the lattice did NOT build, since
+     `.hero .rs-blobs` is covered separately, which is why it survived. */
+  .hero-disc--orange,.hero-light::after { animation:none; }
 }
 .no-js .reel-frame { -webkit-mask:none; mask:none; }
 .no-js .reel-frame video { filter:none; }

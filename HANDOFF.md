@@ -5911,3 +5911,102 @@ occurrence on the site.
 whole geometry depends on which row is open. It reads the row count off the
 page now. 35 states, all clean: cut 1px off the rule at every width, no
 overflow, no console errors.
+
+---
+
+## 53. The hero breathes, and the drift it already had was invisible
+
+The client asked for the orange to "move a tiny bit, smoothly". **It already
+did.** `driftA` has translated and scaled that glow by a few per cent on a
+28s loop since long before she asked, the canvas inherits it (§48), and
+`point()` already inverts the transform so the physics underneath stays
+aligned. Option C of the four that were put up was, it turned out, shipped.
+
+**Measured, that motion changes at most 2 levels of pixel over eight
+seconds.** Not a subtle effect — an absent one.
+
+### A BLURRED RADIAL FIELD HAS NO EDGE TO TRACK, AND THAT GENERALISES
+
+This is the finding worth keeping, and it applies to every glow on this
+site. **Sliding a soft gradient sideways moves almost no pixel anywhere**,
+because every pixel's neighbour is nearly the same colour. Displacement is
+the wrong lever for soft light however far you push it — and pushing it far
+enough to see would read as a zoom, which is the cheap register.
+
+**Luminance is the right lever.** The eye reads a large field getting
+brighter and dimmer immediately. That is §50's finding approached from the
+other side: there, 85% brightness was reported by the client as *the wrong
+colour*, which is how sensitive this is.
+
+So the breath is `opacity`, on its own 13s clock, running **alongside**
+`driftA` rather than replacing it. Two animations on one element compose
+here only because they touch different properties; two keyframes both
+writing `transform` would not, the last would simply win. The two periods
+are incommensurate (28 and 13), so the combined pattern does not visibly
+repeat.
+
+**It only ever dims.** §50 spent a cycle getting this core to the brand's
+240, so the keyframe holds 1 at both ends and takes the trough down, never
+up. `--breathe` is the single number, measured peak-to-trough across the
+hero:
+
+| `--breathe` | levels | % of hero that moves |
+| --- | --- | --- |
+| 1 (before §53) | 0 | 0% |
+| .97 | 4 | 13% |
+| .95 | 5 | 27% |
+| **.93 — shipped** | **6** | **33%** |
+| .90 | 8 | 40% |
+
+### THREE MEASUREMENTS IN A ROW WERE WRONG, ALL THE SAME WAY
+
+Every one of them was confidently wrong before being caught, and the pattern
+is the same each time: **the probe was measuring something other than the
+thing being tuned.**
+
+1. **Sampling real elapsed time.** Differencing frames N seconds apart put
+   every row of the amplitude sweep on a different part of a 13s cycle; .95
+   came back quieter than .97.
+2. **`animation-delay` does not seek.** Pausing with `animation-play-state`
+   and changing the delay left the two "phases" a fortieth of a cycle apart
+   — 0.963 and 0.987 for shots meant to be 1.0 and 0.93. **Use
+   `getAnimations()` and set `currentTime`.**
+3. **Seeking both animations at once.** With one delay for both, `driftA`
+   moved too, and its own 23-level swing buried the breath completely —
+   every amplitude from 1 to .90 landed within a level of the others.
+
+### AND A COST FINDING THAT WAS ALSO WRONG
+
+The acceptance run printed **16.7ms at 1920 against §50's 11.3**, and there
+was a clean story for it: the hero runs `BLUR:30` as a filter on
+`.rs-field`, so animating opacity on the canvas *inside* that should force
+the blur to re-render every frame. It fitted perfectly and it was false.
+
+`tools/ab-breathe.js` turns the breath off and leaves `driftA` running:
+**16.80ms with it, 16.81ms without**, and at 1440 the OFF case measured
+*higher* than the ON case. **The breath is free, and the gap against §50 is
+this harness on this day.** §50's numbers came from another session and are
+not a baseline anything can be diffed against — measure the same page both
+ways instead, which costs a minute.
+
+**Idle cost is still zero blob draws in 2s with no pointer**, which was the
+whole reason option C was chosen over moving the blobs themselves.
+
+### A reduced-motion bug found next door, and one introduced
+
+`@media (prefers-reduced-motion:reduce)` still named **`.hero-light::before`**,
+which has not been the orange since the disc became a real element. The glow
+kept drifting under reduced motion and was about to start breathing too. It
+only showed when the lattice did *not* build, since `.hero .rs-blobs` is
+covered separately — which is why it survived this long.
+
+Then the breath moved from the canvas to the field mid-cycle and **the
+reduced-motion rule did not follow it**. `tools/check-breathe.js` now checks
+every layer that could carry an animation rather than the one that happens
+to today, and also fails if the breath is not running at all.
+
+### Open
+
+The client has not seen it. If it still reads as static, `--breathe` is the
+dial and .90 is the measured next step; past that it is a pulse, not a
+breath.
