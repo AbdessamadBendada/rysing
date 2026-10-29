@@ -298,8 +298,9 @@ Unresolved: see §6.
 | `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css` and `shared.js` — see §12, this is load bearing. |
 | `index.html`, `contact.html`, `about.html`, `process.html`, `communication-strategy.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
 | `rysing brand assets/Branding-Guidelines.pdf` | **The client's 18-page brand book, and the first written source this project has had.** §3.0 settles the palette (§28). Not the same file as `Guide 3.pdf` / `Source Files/Guide.pdf`, which are one flattened page. The directory is gitignored, so this is not in the repo. |
-| `src/pattern-playground.html` | **A scratch page, not part of the site.** `chrome: none`, no nav points at it. Variant A is the shipped hero as a control; variant B is whatever is being tried. **§44, §45.** |
-| `pattern-shark.js` | **The current variant B** — the hero's gradient restated in a shader and warped away from the cursor. The knobs are the `K` block at the top and are live on `window.SHARK`. **Broken in Safari (§45).** |
+| `src/pattern-playground.html` | **A scratch page, not part of the site.** `chrome: none`, no nav points at it. **Five sections now: A** is the shipped hero as a control, **B** is the shader warp, **C** is the lockup in a star lattice, **D** is that lattice in brand red, **E** is the hero's glow rebuilt out of movable parts. **§44, §45, §46, §47.** |
+| `pattern-shark.js` | **Variant B** — the hero's gradient restated in a shader and warped away from the cursor. The knobs are the `K` block at the top and are live on `window.SHARK`. **Broken in Safari (§45).** Gated on visibility since §46: it was eating 100ms a frame in sections it is not visible in. |
+| `pattern-stars.js` | **Variants C, D and E** — a lattice of marks that parts for the cursor, after the client's CodePen. Drives every `[data-stars-section]` on the page from one implementation, which is what makes D and E comparable. Knobs are per section on `window.STARS.c` / `.d` / `.e`; geometry ones need `.rebuild()`. **§46, §47.** |
 | `pattern-fluid.js` | Configuration for the fluid simulation — the knobs. Retune here, never in the vendored file. §44. |
 | `vendor-webgl-fluid.js` | **Vendored and modified**: Pavel Dobryakov's WebGL-Fluid-Simulation (MIT), with five changes marked `Rysing` and listed in its header. Re-download and re-apply them if upstream moves; do not hand-edit it to change the look. §44. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
@@ -4646,10 +4647,14 @@ its header. Do not hand-edit it to retune the look; the knobs are in
 
 ### Where it stands
 
-Everything is **untracked and uncommitted**; `git stash` or deleting the four
-files returns the repo to where it was. The client is currently choosing from
-a researched list of reference effects rather than from another attempt, which
-is the right order and should have happened first:
+**This paragraph described four untracked files and is kept for the table
+below it.** The scratch work is committed now and has been since §45, which
+closes with why. The client did choose from the list below — "Fleeing crowd",
+in the form of the CodePen in §46 — and §46 and §47 are what came of it.
+
+The list was researched after four rejections rather than before the first
+attempt, which is the wrong order and is the process failure recorded at the
+end of this section:
 
 | Family | What it does | Reference |
 | --- | --- | --- |
@@ -5049,7 +5054,11 @@ have been judged as stuttering, and the stutter was not in it.
 Stars section, continuous pointer motion, after the gate: **median 16.7ms at
 360, 390, 768, 1024, 1440, 1680 and 1920**, with zero frames over 32ms at
 everything up to 1440; zero horizontal scroll, zero dead scroll and **zero
-stars overlapping the lockup's box** at all seven. Orbiting at 1440, **4
+stars overlapping the lockup's box** at all seven.
+
+**These were taken with this as the only lattice on the page.** §47 adds two
+more and removes `will-change`, and its table is the current one — the
+geometry numbers above still hold, the frame times are superseded. Orbiting at 1440, **4
 stars remain within 160px of the cursor** — against a lattice gap of 62,
 which puts about twenty there at rest — with a maximum displacement of
 **109px** against a `RANGE` ceiling of 148.
@@ -5070,19 +5079,21 @@ frame lands.
 
 ### Tuning
 
-`window.STARS`, read fresh every frame, same arrangement as §45's `SHARK`:
+`window.STARS`, read fresh every frame, same arrangement as §45's `SHARK`.
+**§47 made it a map keyed by section** — this variant is `STARS.c`, and a
+bare `STARS.DENSITY` does nothing now:
 
 ```js
-STARS.DENSITY  = 340   // target star count; the gap is solved from it
-STARS.STRENGTH = 2600  // push     <- the big one
-STARS.SOFT     = 54    // px; force peaks at STRENGTH/SOFT
-STARS.RANGE    = 2.4   // how far a star may be driven from home, in gaps
-STARS.EASE     = 0.10  // return per 60Hz frame — the pen's own value
-STARS.RED      = 7     // one star in RED is brand red (§11: red is scarce)
+STARS.c.DENSITY  = 340   // target star count; the gap is solved from it
+STARS.c.STRENGTH = 2600  // push     <- the big one
+STARS.c.SOFT     = 54    // px; force peaks at STRENGTH/SOFT
+STARS.c.RANGE    = 2.4   // how far a star may be driven from home, in gaps
+STARS.c.EASE     = 0.10  // return per 60Hz frame — the pen's own value
+STARS.c.RED      = 7     // one star in RED is brand red (§11: red is scarce)
 ```
 
-`DENSITY` and `RED` only take effect on the next rebuild, which a resize
-triggers.
+The geometry knobs — `DENSITY`, `SIZE`, `JITTER` and `RED` — only take
+effect on a rebuild: `STARS.c.rebuild()`, or a resize.
 
 ### Open
 
@@ -5187,8 +5198,9 @@ every frame. At this scale it is the opposite: it forces a composited layer
 per mark *permanently*, and with three lattices there are over a thousand of
 them. **Taking it off moved variant C from 33.3ms to 16.7ms.** The browser
 promotes a transforming element on its own and un-promotes it when it stops.
-§46's earlier A/B had called this a wash; it was measured with one lattice on
-the page, and it is not a wash with three.
+An A/B during §46 had called it a wash and it was not recorded for that
+reason; that was measured with one lattice on the page, and it is not a wash
+with three.
 
 ### A unit mismatch worth knowing before changing any DENSITY
 
