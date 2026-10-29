@@ -5815,3 +5815,59 @@ nothing visible at 1440 said it was wrong.
 Final, all 28 states clean: overhang 52/72/86px, tightest numeral clearance
 **18px at 1024**, name clearance 10px stacked, no overflow, no console
 errors.
+
+### 51c. It was a CLIP all along
+
+Three rounds of this were read as a size problem. It is not one, and the
+client's third reference — a tight crop of 02 / 03 / 04 — makes it
+unambiguous: **the lower part of every numeral is not drawn.** The row ends
+and the digit ends with it, sliced mid-stroke on the rule. *"We want half of
+the number to be hiding."*
+
+Everything in §51–§51b tried to make the glyph **reach further** — bigger,
+tighter to the rule, hanging past it. The answer was no every time, because
+the glyph is not supposed to travel at all. **The box is shortened and the
+rest is thrown away.**
+
+```
+--cut:.46em;  height:var(--cut);  overflow:hidden;  align-self:end;
+```
+
+`--cut` is the visible slice as a fraction of the .72em line box, so it
+scales with the type and is the single number to tune. The row carries no
+bottom padding — the numeral has to reach the rule to be cut by it — and the
+name's clearance moved to `.system-body`.
+
+### THE CLIP CANNOT GO ON THE ROW, WHICH IS THE ONE REAL CONSTRAINT
+
+`.system-item` paints §42's blue fill from a pseudo-element pulled out past
+the gutter to the viewport edges. **`overflow` on the row would cut that
+back to the row's own width** and the open stage would stop full-bleeding.
+There is no vertical-only escape either: a `hidden` value on one axis forces
+the other to `auto`. Clipping the numeral's own box is what keeps the blue
+running edge to edge.
+
+**The open row shows its numeral whole** — as the reference has it, and as
+it must: its detail makes that row several times taller than the numeral, so
+a cut at the rule would slice the digit in mid-air. **No cut stacked below
+820** either, where the numeral sits above its own name and nowhere near a
+rule.
+
+### The check had to be rewritten twice, and both bugs were the same bug
+
+The §51b assertion tested that numerals *cross* their rule. That is now
+exactly backwards, so it asserts the slice instead: on a shut row the
+numeral's box must end **on** the rule (±2px) and must actually be clipping
+at least 20px.
+
+Then every state failed on glyph clearance — a reported 27px overlap between
+numerals that are each cut off long before they could reach one another.
+**Font metrics describe the glyph that was asked for, not the pixels that
+survive `overflow:hidden`.** The ink bottom is clamped to the box when the
+box clips. This is the third time in §51 that measuring type went wrong in a
+way that looked authoritative: the element box is shorter than the ink, a
+Range rect is taller than it, and canvas ink ignores the clip.
+
+Measured: cut lands **1px** off the rule at every width, removing 62 / 86 /
+101px at 1024 / 1440 / 1920; clearance 44 / 60 / 74px; no cut below 820; no
+overflow; no console errors; 28 states clean.

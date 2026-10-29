@@ -758,15 +758,11 @@ body::after {
   display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
   gap:clamp(20px,4vw,70px);
   align-items:end;
-  /* Top padding is deliberately generous and is NOT decoration — it is the
-     landing room for the overhang of the numeral in the row above. Cut it
-     and the two glyphs meet. See the arithmetic at `.system-num`.
-
-     NO BOTTOM PADDING ON THE ROW. The numeral has to reach the rule to hang
-     past it, so the gap the name needs is carried by `.system-body` instead
-     — otherwise one value has to be both the name's breathing room and the
-     numeral's overhang, and they pull opposite ways. */
-  padding:clamp(48px,6.2vw,112px) 0 0;
+  /* NO BOTTOM PADDING ON THE ROW. The numeral is cut off BY the rule, so it
+     has to reach it; the gap the name needs is carried by `.system-body`
+     instead. One value cannot be both the name's breathing room and the
+     numeral's reach to the rule — they pull opposite ways. */
+  padding:clamp(34px,3.6vw,64px) 0 0;
   /* The whole row toggles, numeral included — see the click handler. */
   cursor:pointer;
 }
@@ -813,31 +809,31 @@ body::after {
      the proportion, then check it at the width in use, not at the cap. */
   font-size:clamp(118px,21vw,356px); line-height:.72; letter-spacing:-.04em;
 
-  /* THE OVERHANG, which is the thing the client asked for twice. The numeral
-     crosses its own bottom hairline and hangs into the row below.
+  /* THE NUMERAL IS CUT OFF BY THE ROW RULE. The lower part of every glyph
+     is not drawn — the row ends and the numeral ends with it, mid-stroke.
+     This is the effect, and it is the one thing the client was asking for
+     through three rounds of it being read as "make them bigger".
 
-     It only works DOWNWARD, and that is forced, not chosen. An upward bleed
-     puts the glyph into the space occupied by the bottom of the numeral
-     ABOVE it — tried at -.26em and every consecutive pair overlapped by
-     43px. Downward, the overhang lands in the next row's top padding, which
-     is empty.
+     IT IS A CLIP, NOT AN OVERFLOW. Everything before this tried to make the
+     glyph reach further — past the rule, into the next row — and the answer
+     was always no. The glyph does not travel at all: the BOX is shortened
+     to `--cut` and `overflow:hidden` throws the rest away, so the bottom of
+     the box lands on the rule and the digit is sliced there.
 
-     IT IS A TRANSFORM OFF THE RULE, NOT A NEGATIVE MARGIN OFF THE ROW, and
-     that is the second thing that had to be got right. A margin makes the
-     overhang depend on how tall the row happens to be, and row 03's name
-     wraps to three lines: that row grew past its numeral and stopped
-     overhanging at all. Measured at 2px at 1024 and 5px at 1440 — a bleed
-     on three rows and not the fourth, which is worse than none.
+     THE CLIP CANNOT GO ON THE ROW. `.system-item` paints §42's blue fill
+     from a pseudo-element pulled out past the gutter to the viewport edges,
+     and `overflow` on the row would cut that back to the row's own width —
+     a hidden value on one axis forces the other to `auto`, so there is no
+     "vertical only". Clipping the numeral itself is what keeps the blue
+     full-bleed.
 
-     Bottom-anchored plus `translateY` instead, the overhang is a constant
-     .22em off the rule whatever the row does, and the clearance to the next
-     numeral is (row height - glyph height), which the row's own top padding
-     guarantees. CHANGING THE TRANSFORM CHANGES HOW FAR IT HANGS; cutting
-     `padding-top` on the row is what makes the glyphs touch. Re-run
-     `tools/check-system-rows.js` after either — it fails both on a negative
-     clearance and on an overhang that has gone missing. */
+     `--cut` is the visible slice as a fraction of the line box, so it
+     scales with the type and is the one number to tune. The line box is
+     .72em, so .46em shows about two-thirds of the digit. */
+  --cut:.46em;
   align-self:end;
-  margin:0; transform:translateY(.22em);
+  height:var(--cut); overflow:hidden;
+  margin:0;
 }
 /* A shut row carries its name at display size — it is the headline of that
    stage. Opening it demotes the name to a label so the detail underneath
@@ -853,12 +849,12 @@ body::after {
 .system-body { padding-bottom:clamp(12px,1.3vw,22px); }
 .system-item.is-open { align-items:start; }
 .system-item.is-open .system-body { padding-bottom:clamp(30px,3.2vw,56px); }
-/* The open row does NOT overhang. Its ground is the full-bleed blue of §42,
-   so a glyph hanging past the row's bottom leaves its tail sitting on the
-   black below the band — nothing to crop against, and it reads as a
-   clipping fault rather than a crop, which is the trap §44's note records.
-   The overhang is a black-on-black gesture; the blue row is a panel. */
-.system-item.is-open .system-num { align-self:start; transform:none; }
+/* THE OPEN ROW SHOWS ITS NUMERAL WHOLE, which is how the client's reference
+   has it: the cut rows are the shut ones, and the open stage is complete.
+   It also has to be — the open row's cut would land nowhere near its own
+   rule, because the detail makes that row several times taller than the
+   numeral, so the digit would be sliced in mid-air. */
+.system-item.is-open .system-num { align-self:start; height:auto; overflow:visible; }
 .system-item.is-open .system-name { font-size:clamp(21px,2.3vw,34px); letter-spacing:-.012em; }
 .system-symbol {
   position:relative; flex:none; width:38px; height:38px; margin-top:6px;
@@ -954,9 +950,13 @@ body::after {
   /* No bottom pull here. Beside the name it buys tightness against the row
      rule; above the name it eats the gap instead — measured at 0px clear at
      620 and 768, where the name was touching the numeral's descender line. */
-  /* No overhang stacked: the numeral sits above its own name, so hanging it
-     down crosses into the name rather than into empty rule. */
-  .system-num { font-size:clamp(96px,27vw,170px); align-self:start; transform:none; margin:-.14em 0 0; }
+  /* NO CUT STACKED. The numeral sits above its own name, nowhere near the
+     row rule, so there is no edge for it to be cut against — sliced there
+     it reads as a rendering fault rather than a crop. */
+  .system-num {
+    font-size:clamp(96px,27vw,170px);
+    align-self:start; height:auto; overflow:visible; margin:-.14em 0 0;
+  }
 }
 @media (prefers-reduced-motion:reduce) {
   .system-panel { transition:none; }

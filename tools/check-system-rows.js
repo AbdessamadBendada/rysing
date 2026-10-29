@@ -48,21 +48,33 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
           const lh = parseFloat(cs.lineHeight);
           const half = (lh - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2;
           const baseline = box.top + half + m.fontBoundingBoxAscent;
+          /* A CLIPPED NUMERAL'S INK STOPS AT ITS BOX. Font metrics describe
+             the glyph that was asked for, not the pixels that survive
+             `overflow:hidden` — leaving them unclamped reported a 27px
+             overlap between numerals that are each cut off well before they
+             could reach one another. */
+          const cut = getComputedStyle(n).overflowY === 'hidden';
           return {
             top: baseline - m.actualBoundingBoxAscent,
-            bottom: baseline + m.actualBoundingBoxDescent,
-            left: box.left, right: box.right,
+            bottom: cut ? Math.min(baseline + m.actualBoundingBoxDescent, box.bottom)
+                        : baseline + m.actualBoundingBoxDescent,
+            natural: baseline + m.actualBoundingBoxDescent,
+            cut, left: box.left, right: box.right,
           };
         });
-        /* THE OVERHANG ITSELF. Clearance being positive only proves the
-           glyphs do not touch — it is equally happy with no bleed at all,
-           which is the state the client rejected twice. Assert the crossing
-           as well: a shut row's numeral must hang PAST its own bottom rule. */
+        /* THE CUT ITSELF. Clearance between glyphs proves only that they do
+           not touch — it is equally satisfied by a numeral sitting politely
+           inside its row, which is the state the client rejected three
+           times. Assert the slice: on a shut row the numeral's box must end
+           ON the rule (so the digit is cut there) and must actually be
+           clipping something. */
         const items = [...document.querySelectorAll('.system-item')];
-        let cross = Infinity;
+        let offRule = 0, clipped = Infinity;
         items.forEach((el, i) => {
           if (el.classList.contains('is-open')) return;
-          cross = Math.min(cross, ink[i].bottom - el.getBoundingClientRect().bottom);
+          const n = els[i], b = n.getBoundingClientRect();
+          offRule = Math.max(offRule, Math.abs(b.bottom - el.getBoundingClientRect().bottom));
+          clipped = Math.min(clipped, ink[i].cut ? Math.round(ink[i].natural - b.bottom) : 0);
         });
         let worst = Infinity;
         for (let i = 1; i < ink.length; i++) worst = Math.min(worst, ink[i].top - ink[i - 1].bottom);
@@ -83,7 +95,8 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
         const size = parseFloat(getComputedStyle(els[0]).fontSize);
         return {
           size: Math.round(size),
-          cross: Math.round(cross),
+          offRule: Math.round(offRule),
+          clipped: clipped === Infinity ? null : clipped,
           gap: Math.round(worst),
           nameGap: nameGap === Infinity ? null : Math.round(nameGap),
           overflow: Math.round(document.documentElement.scrollWidth - document.documentElement.clientWidth),
@@ -97,13 +110,16 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
         ? Math.min(170, Math.max(96, width * 0.27))
         : Math.min(356, Math.max(118, width * 0.21));
       const sizeBad = Math.abs(r.size - expected) > 2;
-      /* Below 820 the numeral sits above its name and must NOT overhang. */
-      const wantCross = width > 820;
-      const crossBad = wantCross ? r.cross < 8 : r.cross > 0;
+      /* Below 820 the numeral sits above its name, nowhere near a rule, and
+         must NOT be cut. */
+      const wantCut = width > 820;
+      const crossBad = wantCut
+        ? (r.offRule > 2 || r.clipped < 20)
+        : r.clipped > 0;
       const fail = sizeBad || crossBad || r.gap < 0 || r.overflow > 0 || (r.nameGap !== null && r.nameGap < 0) || errors.length;
       if (fail) bad++;
       if (errors.length) console.log(`console @${width}:`, [...new Set(errors)].join(' | '));
-      rows.push({ width, open: open + 1, 'num px': r.size, 'want px': Math.round(expected), 'over rule': r.cross, 'num gap': r.gap, 'name gap': r.nameGap, 'overflow px': r.overflow, errors: errors.length, ok: fail ? 'FAIL' : '' });
+      rows.push({ width, open: open + 1, 'num px': r.size, 'want px': Math.round(expected), 'off rule': r.offRule, 'cut px': r.clipped, 'num gap': r.gap, 'name gap': r.nameGap, 'overflow px': r.overflow, errors: errors.length, ok: fail ? 'FAIL' : '' });
     }
     await page.close();
   }
