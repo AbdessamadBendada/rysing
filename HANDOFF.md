@@ -5727,3 +5727,37 @@ console errors.
 ### Open
 
 The client has not seen it. Nothing else on the site changed.
+
+### 51a. "Where is the change?" — two faults, and one of them was invisible
+
+**The size was measured at the cap and shipped at the coefficient.** The
+first pass used `15.5vw`. At 1920 that is the 268px cap and looked right in
+the screenshots; the client was on a **1000px window**, where it is 155px
+against the old 115px — a 35% bump that reads as nothing. The reference's
+own proportion is **15.3% of page width** (185px of ink on 1210px), which
+is `~21vw`, and that is what ships: `clamp(118px,21vw,356px)`.
+
+> Check a `vw` value at the width in use, not at the clamp's cap. The cap
+> is the one width where a wrong coefficient still looks correct.
+
+**Then the fix silently did nothing, and §27's check said the file was
+fine.** The new comment's text landed *outside* the comment — the block
+already closed with `*/` above it — so a paragraph of prose sat in the
+declaration list and **every declaration after it was dropped**. The
+numerals fell back to 16px.
+
+This is §27's hazard with the polarity reversed, and the existing check
+cannot see it: **the comments were balanced.** Nothing is unterminated,
+nothing errors, and a byte-count or balance scan passes while the rule is
+dead. Only the rendered value knows.
+
+`tools/check-system-rows.js` now carries an **authored-value assertion** —
+it reads the computed `font-size` of `.system-num` at every width and fails
+unless it matches the clamp. It takes **two** expectations, because the
+stacked layout below 820 authors its own; hard-coding the wide one reported
+a failure at every narrow width on a layout that was correct.
+
+After: 97 / 105 / 167 / 170 / 215 / 302 / 356px at 360 / 390 / 620 / 768 /
+1024 / 1440 / 1920, all matching the authored clamps. Tightest numeral
+clearance 9px at 1024, name clearance 10px at 620/768, no overflow, no
+console errors.

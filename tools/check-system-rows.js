@@ -64,17 +64,32 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
             nameGap = Math.min(nameGap, names[i].top - ink[i].bottom);
           }
         }
+        /* AUTHORED-VALUE ASSERTION. A stray line of prose landing outside a
+           CSS comment does not unbalance the comments and does not raise an
+           error — it just drops the declarations after it, and the numerals
+           silently fell back to 16px. Balance-checking the comments passed
+           while the rule was dead. Check the number that is supposed to be
+           there instead. */
+        const size = parseFloat(getComputedStyle(els[0]).fontSize);
         return {
+          size: Math.round(size),
           gap: Math.round(worst),
           nameGap: nameGap === Infinity ? null : Math.round(nameGap),
           overflow: Math.round(document.documentElement.scrollWidth - document.documentElement.clientWidth),
           numRight: Math.round(Math.max(...nums.map(n => n.right))),
         };
       });
-      const fail = r.gap < 0 || r.overflow > 0 || (r.nameGap !== null && r.nameGap < 0) || errors.length;
+      /* Two authored clamps, not one: the stacked layout below 820 sets its
+         own. Hard-coding the wide one here reported a failure at every
+         narrow width on a layout that was correct. */
+      const expected = width <= 820
+        ? Math.min(170, Math.max(96, width * 0.27))
+        : Math.min(356, Math.max(118, width * 0.21));
+      const sizeBad = Math.abs(r.size - expected) > 2;
+      const fail = sizeBad || r.gap < 0 || r.overflow > 0 || (r.nameGap !== null && r.nameGap < 0) || errors.length;
       if (fail) bad++;
       if (errors.length) console.log(`console @${width}:`, [...new Set(errors)].join(' | '));
-      rows.push({ width, open: open + 1, 'num gap': r.gap, 'name gap': r.nameGap, 'overflow px': r.overflow, errors: errors.length, ok: fail ? 'FAIL' : '' });
+      rows.push({ width, open: open + 1, 'num px': r.size, 'want px': Math.round(expected), 'num gap': r.gap, 'name gap': r.nameGap, 'overflow px': r.overflow, errors: errors.length, ok: fail ? 'FAIL' : '' });
     }
     await page.close();
   }

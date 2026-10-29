@@ -802,8 +802,16 @@ body::after {
      contained and simply sit tight on their rule.
 
      Weight stays Light on instruction: the reference is thinner than this
-     and the client does not want it thinner. */
-  font-size:clamp(104px,15.5vw,268px); line-height:.72; letter-spacing:-.04em;
+     and the client does not want it thinner.
+
+     THE COEFFICIENT IS MEASURED OFF THE REFERENCE, not chosen. A shut
+     numeral there is 185px of ink on a 1210px page — 15.3% of the width,
+     which is a ~21vw type size. The first pass used 15.5vw and the client's
+     answer was "where is the change?", from a 1000px window where that is
+     155px against the old 115px. At the cap it looked right; at the width
+     she was actually using it was a 35% bump and read as nothing. Measure
+     the proportion, then check it at the width in use, not at the cap. */
+  font-size:clamp(118px,21vw,356px); line-height:.72; letter-spacing:-.04em;
   margin-top:-.12em; margin-bottom:-.06em;
 }
 /* A shut row carries its name at display size — it is the headline of that
