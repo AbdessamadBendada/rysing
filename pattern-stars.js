@@ -74,6 +74,8 @@
     SOFT:     54,    // px. The softening radius: force peaks at STRENGTH/SOFT
     MAXPUSH:  34,    // px per 60Hz frame, a hard ceiling on the spike
     RANGE:    2.4,   // how far a mark may be driven from home, in gaps
+    REACH:    0,     // px the cursor reaches; 0 means use REACHGAPS — §50
+    REACHGAPS: 6,    // the same, in lattice gaps, which is how it reads
     EASE:     0.10,  // return toward home per 60Hz frame — the pen's value
     TAU:      0.045, // seconds. Pointer smoothing time constant
     SIZE:     0.30,  // mark size as a fraction of the lattice gap
@@ -152,19 +154,33 @@
       return ((seed >>> 0) % 100000) / 100000;
     }
 
-    /* THE HERO'S AUTHORED ALPHA PROFILE, for the `blob` mark only.
-       `rgba(…,.95) → .5 at 38% → .08 at 62% → transparent at 74%`, read
-       straight off `.pp-disc--orange`. §44's first technical finding is that
-       those stops are percentages of `halfWidth × √2` and NOT of the radius,
-       because a `radial-gradient(circle at …)` with no size keyword is
-       FARTHEST-CORNER — reading them as the half-width draws the glow at
-       about a third of its real size. `t` below is already divided by √2 by
-       the caller for that reason. */
+    /* THE HERO'S AUTHORED ALPHA PROFILE, for the `blob` mark only, READ
+       STRAIGHT OFF `.hero-disc--orange` IN `shared.css` — §50's stops. A
+       canvas cannot sample a CSS gradient, so this table is the one place
+       the authored light is restated and it must track that rule exactly.
+       THE PLAYGROUND'S `.pp-oglow` IS THE THIRD COPY. Change the stops in
+       one and change all three, then re-run `tools/measure-fidelity.js`.
+
+       §44's first technical finding is that these offsets are percentages of
+       `halfWidth × √2` and NOT of the radius, because a `radial-gradient(
+       circle at …)` with no size keyword is FARTHEST-CORNER — reading them
+       as the half-width draws the glow at about a third of its real size.
+       `t` below is already divided by √2 by the caller for that reason.
+
+       Written as a table and walked, rather than as the hand-unrolled
+       if-ladder it was: §50 added a stop and the ladder had to be rewritten
+       to take it, which is a transcription error waiting to happen in the
+       one function whose job is to be an exact copy of something else. */
+    var STOPS = [[0, 1], [0.18, 0.98], [0.40, 0.62], [0.64, 0.12], [0.76, 0]];
+
     function profile(t) {
-      if (t >= 0.74) return 0;
-      if (t < 0.38) return 0.95 + (0.5 - 0.95) * (t / 0.38);
-      if (t < 0.62) return 0.5 + (0.08 - 0.5) * ((t - 0.38) / 0.24);
-      return 0.08 + (0 - 0.08) * ((t - 0.62) / 0.12);
+      for (var s = 1; s < STOPS.length; s++) {
+        if (t < STOPS[s][0]) {
+          var a0 = STOPS[s - 1], a1 = STOPS[s];
+          return a0[1] + (a1[1] - a0[1]) * ((t - a0[0]) / (a1[0] - a0[0]));
+        }
+      }
+      return 0;
     }
 
     /* LAYING THE LATTICE OUT IS SEPARATE FROM BUILDING THE DOM, so the count
@@ -624,6 +640,10 @@
       var ease = 1 - Math.pow(1 - K.EASE, k);
       var limit = gap * K.RANGE;
       var maxp = K.MAXPUSH * k;
+      /* In px if given outright, otherwise in GAPS — the force law's other
+         terms are in px (§47's note on DENSITY), but "how far the cursor
+         reaches" is the one quantity that reads in lattice spacings. */
+      var reach = K.REACH > 0 ? K.REACH : gap * K.REACHGAPS;
 
       for (var i = 0; i < marks.length; i++) {
         var p = marks[i];
@@ -631,8 +651,29 @@
         if (has) {
           var dx = p.x - mx, dy = p.y - my;
           var d = Math.sqrt(dx * dx + dy * dy);
-          if (d > 0.001 && d < 900) {
-            var push = (K.STRENGTH / (d + K.SOFT)) * k;
+          if (d > 0.001 && d < reach) {
+            /* THE WINDOW IS WHY THE FIELD DOES NOT BREATHE FROM ACROSS THE
+               PAGE, and leaving it out was a real defect rather than a
+               setting — §50.
+
+               `STRENGTH / (d + SOFT)` has no range. It only halves each time
+               the distance doubles, so it was still pushing hard at the old
+               900px cutoff, and THE SPRING MULTIPLIES WHAT IS LEFT: a mark
+               settles where the push balances the return, at `push / EASE`,
+               so a tenth of a pixel per frame becomes a pixel of standing
+               displacement. Measured at the shipped values, a cursor 800px
+               away — most of a screen from the glow — held every blob 37px
+               off its home. The whole field leaned at the cursor from
+               anywhere on the page.
+
+               `(1 - (d/R)²)²` reaches zero AT R AND SO DOES ITS SLOPE, which
+               is what keeps the edge from being a line the marks visibly
+               cross. A plain `1 - d/R` cuts off while the force is still
+               changing and you can see the boundary sweep through the
+               lattice. */
+            var t = d / reach;
+            var w = 1 - t * t;
+            var push = (K.STRENGTH / (d + K.SOFT)) * w * w * k;
             if (push > maxp) push = maxp;
             p.x += (dx / d) * push;
             p.y += (dy / d) * push;

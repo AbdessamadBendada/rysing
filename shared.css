@@ -432,10 +432,32 @@ body::after {
   position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
   width:var(--d);
 }
+/* THE STOPS CARRY THE BRAND ORANGE AT FULL STRENGTH — §50.
+   The client read this glow as "a dull orange, not her brand orange". It was
+   never the wrong colour: measured at the core it ran #cc361a against the
+   brand's #f04222 — hue 9.4deg against 9.3, saturation 87% against 86%, and
+   a PEAK CHANNEL OF 204 AGAINST 240. Identical hue, 85% of the brightness.
+   That is §25's finding a third time: the colour is right and the luminance
+   is not, and the eye reports the shortfall as the wrong colour.
+
+   Two things were taking it down and both are in this one declaration. The
+   core was authored at `.95` alpha over black, which is 228 before anything
+   else happens; and the old stops began falling IMMEDIATELY from the centre,
+   so the 30px blur had no plateau to work with and pulled the peak down
+   again to 204. The stops below hold full strength across the middle fifth
+   and then fall, which gives the blur something flat to spread and lands the
+   core on the brand value.
+
+   THE SAME STOPS ARE RESTATED IN `pattern-stars.js`'s `profile()` and in the
+   playground's `.pp-oglow`. A canvas cannot sample a CSS gradient, so there
+   is no way to have one copy; §48 flagged it as the one duplicated geometry
+   in this effect. CHANGE ONE AND CHANGE ALL THREE, then re-run
+   `tools/measure-fidelity.js` — the blob field is calibrated against this
+   gradient and silently stops matching it otherwise. */
 .hero-disc--orange {
   --d:min(72vw,1020px);
   top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
-  background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+  background:radial-gradient(circle at 50% 50%,rgba(240,66,34,1),rgba(240,66,34,.98) 18%,rgba(240,66,34,.62) 40%,rgba(240,66,34,.12) 64%,transparent 76%);
   animation:driftA 28s var(--ease) infinite alternate;
 }
 /* Hidden only once the field is built and painted, which is §45's

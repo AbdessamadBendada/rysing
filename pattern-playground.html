@@ -25,7 +25,7 @@
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
 
-  <link rel="stylesheet" href="shared.css?v=9197c5d7" />
+  <link rel="stylesheet" href="shared.css?v=ef3fc9da" />
 </head>
 <body>
 
@@ -91,11 +91,16 @@
         content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
         width:var(--d);
       }
-      /* Orange, top right. */
+      /* Orange, top right. THE STOPS ARE §50's and all three copies on this
+         page were changed with `shared.css` — variant A is the control for
+         the shipped hero and variant E's `.pp-oglow` is the TARGET the blob
+         field is calibrated against. Either one left on the old stops stops
+         describing what ships, silently, and the fidelity number keeps
+         printing happily while measuring the wrong glow. */
       .pp-light::before {
         --d:min(72vw,1020px);
         top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
-        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,1),rgba(240,66,34,.98) 18%,rgba(240,66,34,.62) 40%,rgba(240,66,34,.12) 64%,transparent 76%);
         animation:ppDriftA 28s var(--ease) infinite alternate;
       }
       /* Blue, bottom left. Reaches ~158px below the section on purpose. */
@@ -138,7 +143,7 @@
       .pp-disc--orange {
         --d:min(72vw,1020px);
         top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
-        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,1),rgba(240,66,34,.98) 18%,rgba(240,66,34,.62) 40%,rgba(240,66,34,.12) 64%,transparent 76%);
         animation:ppDriftA 28s var(--ease) infinite alternate;
       }
       .pp-disc--blue {
@@ -360,7 +365,7 @@
         position:absolute; left:50%; top:50%;
         margin-left:calc(var(--d) / -2); margin-top:calc(var(--d) / -2);
         width:var(--d); aspect-ratio:1; border-radius:50%; filter:blur(30px);
-        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
+        background:radial-gradient(circle at 50% 50%,rgba(240,66,34,1),rgba(240,66,34,.98) 18%,rgba(240,66,34,.62) 40%,rgba(240,66,34,.12) 64%,transparent 76%);
       }
       .pp-orange.is-stars .pp-oglow { opacity:0; }
 
@@ -544,7 +549,7 @@
        is listed for `chrome: none` pages too — the playground declares it in
        `pagescripts` and would otherwise load it twice, so that declaration
        comes out there. -->
-  <script src="pattern-stars.js?v=4a840640" defer></script>
+  <script src="pattern-stars.js?v=a7b4f384" defer></script>
 <script src="pattern-shark.js" defer></script>
 </body>
 </html>

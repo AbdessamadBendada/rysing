@@ -5510,3 +5510,120 @@ Re-measured after the change — footer work per frame 2.3 / 3.3 / 6.0 / 10.4ms
 across 390/768/1440/1920 against the 16.7 budget, no mark on the artwork at
 any width, no new overflow, no console errors on any page. The hero is
 untouched.
+
+---
+
+## 50. The cursor stops reaching across the page, and the orange gets its brightness back
+
+Two client notes on the shipped hero, one a real defect and one a diagnosis
+that was wrong in an instructive way.
+
+### THE FORCE LAW HAD NO RANGE, AND THE SPRING MULTIPLIED WHAT WAS LEFT
+
+*"Even when I move the cursor very far from it, it still moves a bit."*
+
+She was right, and it was not a tuning value. `STRENGTH / (d + SOFT)` only
+halves each time the distance doubles, so at the old `d < 900` cutoff it was
+still pushing meaningfully — and **the spring turns a small push into a large
+standing displacement**. A mark settles where the push balances the return,
+at `push / EASE`, and `EASE` is 0.10. So a push of a third of a pixel per
+frame parks the mark three pixels from home, permanently, for as long as the
+cursor sits there.
+
+At the shipped values a cursor **800px away** — most of a screen from the
+glow — held every blob **37px** off its home. The whole field leaned toward
+the cursor from anywhere on the page, which is exactly what she saw.
+
+**The fix is a window, not a smaller `STRENGTH`.** Lowering the strength
+weakens the effect where it is wanted and still never reaches zero.
+`(1 - (d/R)²)²` reaches zero **at R and so does its slope**, which matters:
+a plain `1 - d/R` cuts off while the force is still changing and you can
+watch the boundary sweep through the lattice as the cursor moves. `REACH` is
+in px, `REACHGAPS` in lattice gaps and the default — "how far the cursor
+reaches" is the one quantity in this file that reads in spacings rather than
+pixels, and 6 gaps is about 195px on the hero.
+
+Measured with `tools/probe-reach.js`, which parks the cursor at a distance,
+lets the field settle and differences it against the untouched rest state.
+Worst-pixel change:
+
+| cursor from glow centre | before | after |
+| --- | --- | --- |
+| 60px (inside the glow) | 79 | 79 |
+| 250px | 54 | 54 |
+| 400px | 29 | 26 |
+| 600px | 20 | **3** |
+| 800px | 19 | **3** |
+
+Three is the rounding noise of the blur. **The response inside the glow is
+untouched and the response outside it is gone**, which was the requirement.
+
+### THE ORANGE WAS NEVER THE WRONG COLOUR. IT WAS 85% OF THE RIGHT ONE
+
+*"Make the colour the orange of her brand, not this dull orange."*
+
+Measured at the core before the change, against `--red` `#f04222`:
+
+| | hex | hue | saturation | peak channel |
+| --- | --- | --- | --- | --- |
+| brand `--red` | `#f04222` | 9.3° | 86% | 240 |
+| hero glow | `#cc361a` | 9.4° | 87% | **204** |
+
+**Identical hue, identical saturation, 85% of the brightness.** This is §25's
+finding for the third time — *the colour is right and the luminance is not* —
+and the useful part is what it does to a viewer: a brand colour rendered dim
+is not reported as "too dark", it is reported as **the wrong colour**. Take
+that complaint as a luminance measurement before touching a hue.
+
+Two things were holding it down, both in one declaration. The core was
+authored at `.95` alpha over black, which is 228 before anything else
+happens; and the stops began falling immediately from the centre, so the 30px
+blur had no plateau to spread and pulled the peak down again to 204. The new
+stops hold full strength across the middle fifth and then fall:
+
+```
+rgba(240,66,34,1), .98 at 18%, .62 at 40%, .12 at 64%, transparent 76%
+```
+
+After: the authored gradient reads `#ed4222` at peak 237 and the lattice
+`#ee401f` at 238, against the brand's 240. **The glow is now the brand colour
+rather than a dark version of it**, and the lattice still matches the
+gradient it is calibrated against.
+
+### THE STOPS NOW LIVE IN THREE PLACES AND THAT IS NOT FIXABLE
+
+`shared.css`'s `.hero-disc--orange`, `pattern-stars.js`'s `STOPS`, and the
+playground's `.pp-oglow` (plus its two hero copies). A canvas cannot sample a
+CSS gradient, so there is no way to have one copy — §48 flagged it and §50
+is the first time it was actually exercised. **Change one and change all
+three, then re-run `tools/measure-fidelity.js`**: the blob field is
+calibrated against that gradient and a stale copy leaves the fidelity number
+printing happily while measuring the wrong target. `.pp-oglow` is the one
+that bites, because it is the rig itself.
+
+`profile()` is a table walked in a loop now rather than the hand-unrolled
+if-ladder it was. Adding a stop meant rewriting the ladder, which is a
+transcription error waiting to happen in the one function whose entire job is
+to be an exact copy of something else.
+
+### Numbers after both changes
+
+Renderer work per frame, budget 16.7, floor 1.2:
+
+| | 390 | 768 | 1440 | 1920 |
+| --- | --- | --- | --- | --- |
+| hero orange | 4.4 | 6.4 | 10.8 | 11.3 |
+| footer lockup | 2.2 | 3.0 | 6.7 | 8.6 |
+
+The hero is up about a millisecond: the brighter gradient keeps more blobs
+above the `alpha <= 0.004` cull, so there are slightly more of them. Fidelity
+against the new gradient is **mean 1.40, worst 6, 0% of pixels over 10**, with
+`GAIN` still at 2.5 — re-swept, and still the optimum.
+
+Every page clean at 390 and 1440, no mark on the artwork, no new overflow, no
+console errors, fallback intact.
+
+### Open
+
+Unchanged from §48 and §49: **the client has not seen any of it**, and there
+is **still no Safari in the harness**.
