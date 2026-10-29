@@ -2,7 +2,7 @@
   title: Pattern playground — Rysing
   description: Internal scratch page for experimenting with the hero's light shapes. Not part of the site.
   chrome: none
-  pagescripts: <script src="pattern-shark.js" defer></script><script src="pattern-stars.js" defer></script>
+  pagescripts: <script src="pattern-shark.js" defer></script>
 -->
     <!-- PATTERN PLAYGROUND — internal, not a page of the site.
          `chrome: none`, so no header, no footer and no nav anywhere points
@@ -240,36 +240,27 @@
          §44's sixth finding is that a listener bound to a shape layer here
          receives nothing at all and throws no error. The listeners are on
          the SECTION. */
-      .pp-starfield {
-        position:absolute; inset:0; z-index:0; pointer-events:none;
-        overflow:hidden;
-      }
-      /* The outer box carries ONLY the per-frame translate. Scale, rotation
-         and the twinkle are on the inner `<b>`, so the thing written three
-         hundred times a frame is one short transform and nothing else needs
-         rebuilding to go with it. */
-      /* NO `will-change`. It reads as the obvious optimisation for an
-         element whose transform changes every frame, and at this scale it is
-         the opposite: it forces a composited layer per mark permanently, and
-         with three lattices on the page that is well over a thousand of
-         them. Measured at 1440x900, taking it off moved variant C from
-         33.3ms a frame to 16.7. The browser promotes a transforming element
-         on its own and un-promotes it when it stops. */
-      .pp-star { position:absolute; }
-      .pp-star > b {
-        display:block; width:100%; height:100%;
-        background:rgba(249,249,249,.9);
-        -webkit-mask:var(--mark) center/contain no-repeat;
-                mask:var(--mark) center/contain no-repeat;
-        opacity:var(--o);
-        animation-name:ppTwinkle; animation-iteration-count:infinite;
-        animation-timing-function:var(--ease); animation-direction:alternate;
-      }
-      /* Red is SCARCE here, roughly one star in seven — §11's rule about the
-         red being rationed applies to a pattern more than to anything else,
-         because a pattern repeats whatever it is given. */
-      .pp-star > b.is-red { background:var(--red); }
-      @keyframes ppTwinkle { to { opacity:calc(var(--o) * .42); } }
+      /* THIS RULE IS NOW `.rs-field` IN `shared.css` and the markup below
+         uses that class directly (§48). */
+      /* THE MARK AND BLOB RULES HAVE MOVED TO `shared.css` AS `.rs-*`, and
+         that is §48 rather than tidying. Variants C and E ship — C around
+         the footer lockup on every page, E as the homepage hero's orange —
+         so the script now emits `.rs-star` and `.rs-blobs`, which are
+         defined once in `shared.css` and read by three documents.
+
+         The copies that were here are deleted rather than kept alongside.
+         Two definitions of the mark is exactly how the playground's early
+         variants each grew their own slightly different handler, which is
+         the mistake §44 paid for.
+
+         WHAT STAYS LOCAL IS EVERYTHING ABOVE: the `.pp-*` hero copies exist
+         so that experimenting on the hero's SHAPES cannot reach the
+         signed-off homepage, and that reason is unchanged. The lattice is
+         not a hero shape.
+
+         The drift is scoped to `.hero` in `shared.css` and must stay there:
+         variant E below is the calibration rig for the hero's glow and §47's
+         measuring note requires the drift paused for a before/after pair. */
 
       /* THREE QUARTERS OF THE FOOTER'S LOCKUP. The brief walked up from "half
          as big as the footer" (`min(44vw,620px)`) through `min(54vw,760px)`
@@ -363,7 +354,9 @@
          183ms a frame against 16.7 for the star marks. The physics is
          unchanged and shared; only the write differs. `pattern-stars.js`
          says why at the `ring` branch of `build`. */
-      .pp-blobs { position:absolute; left:0; top:0; }
+      /* The canvas's own rule is `.rs-blobs` in `shared.css` now (§48). The
+         hero's drift is scoped to `.hero` there, so variant E below is still
+         motionless and still a valid calibration rig. */
     </style>
 
     <p class="pp-note">Pattern playground · hero lights · not a page of the site</p>
@@ -427,7 +420,7 @@
          empty until it scrolled into view and then build the pattern in
          front of the viewer. -->
     <section class="pp-stars" data-stars-section data-stars-id="c" aria-label="Star pattern, cursor repulsion">
-      <div class="pp-starfield" data-stars aria-hidden="true"></div>
+      <div class="rs-field" data-stars aria-hidden="true"></div>
       <img class="pp-starlogo" data-stars-logo src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" decoding="async" />
     </section>
 
@@ -463,7 +456,7 @@
     <section class="pp-stars" data-stars-section data-stars-id="d"
              data-stars-opts='{"DENSITY":520,"RED":1,"GAIN":1.7}'
              aria-label="Orange star pattern, cursor repulsion">
-      <div class="pp-starfield" data-stars aria-hidden="true"></div>
+      <div class="rs-field" data-stars aria-hidden="true"></div>
     </section>
 
     <p class="pp-note">Variant E · the hero's orange glow, built from the same lattice · watch for a ring</p>
@@ -504,7 +497,7 @@
              data-stars-mark="blob"
              data-stars-opts='{"DENSITY":560,"SIZE":6,"GAIN":2.5,"BLUR":30,"SCALE":0.5,"JITTER":0.75,"STRENGTH":3200,"SOFT":70,"RANGE":1.6}'
              aria-label="Orange glow as a lattice, cursor repulsion">
-      <div class="pp-starfield" data-stars aria-hidden="true"></div>
+      <div class="rs-field" data-stars aria-hidden="true"></div>
       <div class="pp-oglow" data-stars-disc aria-hidden="true"></div>
     </section>
 

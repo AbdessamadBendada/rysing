@@ -2,9 +2,22 @@
    A LATTICE OF MARKS THAT PARTS FOR THE CURSOR — variants C, D and E of the
    pattern playground.
 
-   NOTHING HERE IS PART OF THE SITE. It runs only on `pattern-playground.html`
-   (`chrome: none`, nothing links to it) and no page of the site loads it.
-   Read HANDOFF §44, §45 and §46 before changing any of it.
+   THIS IS NOW PART OF THE SITE, and the header above is kept because the
+   playground still runs it. §48: the client chose variant E for the
+   HOMEPAGE HERO's orange and variant C for the FOOTER LOCKUP on every page,
+   so this file ships. Read HANDOFF §44–§48 before changing any of it, and
+   remember that every edit here now lands on the homepage as well as on the
+   scratch page.
+
+   THREE THINGS EXIST ONLY BECAUSE IT SHIPPED, and none of them were needed
+   by the playground — each is commented where it is done:
+     - the blob canvas is sized to the DISC rather than to the section, so a
+       glow that is mostly off screen does not pay for the part nobody sees;
+     - the anchor's geometry is read from its LAYOUT box, because the hero's
+       disc drifts under a 28s keyframe and a transformed rect is not the
+       box the lattice wants;
+     - the pointer is measured against the CANVAS's rendered rect, which
+       inverts that drift exactly and for free.
 
    WHAT THIS IS.
    §44 and §45 are about the hero's orange GLOW — a continuous field of light,
@@ -56,6 +69,7 @@
      effect visible at all. */
   var DEFAULTS = {
     DENSITY:  340,   // target MARK count; the lattice gap is solved to hit it
+    GAP:      0,     // px. Set the spacing directly instead — see `build`
     STRENGTH: 2600,  // push, in px·px — see the force law below
     SOFT:     54,    // px. The softening radius: force peaks at STRENGTH/SOFT
     MAXPUSH:  34,    // px per 60Hz frame, a hard ceiling on the spike
@@ -67,7 +81,8 @@
     RED:      7,     // one mark in RED is brand red; 1 makes them all red
     GAIN:     1,     // brightness multiplier on every mark — see CALIBRATION
     BLUR:     0,     // px of blur on the whole field, `blob` only
-    SCALE:    0.5    // canvas resolution for `blob`; the result is blurred
+    SCALE:    0.5,   // canvas resolution for `blob`; the result is blurred
+    CLIP:     0      // trim the blob canvas to the section — READ THE NOTE
   };
 
   var reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -112,18 +127,22 @@
     (window.STARS || (window.STARS = {}))[section.getAttribute('data-stars-id') || 'x'] = K;
 
     var mark = section.getAttribute('data-stars-mark') || 'star';
-    if (mark !== 'star') field.classList.add('pp-field--' + mark);
+    if (mark !== 'star') field.classList.add('rs-field--' + mark);
 
     var marks = [];         // {el|a, ox, oy, x, y}
     var canvas = null, ctx = null, sprite = null, spriteR = 0;
     var gap = 60;
     var hole = { cx: 0, cy: 0, rx: 0, ry: 0 };
     var ring = null;        // {cx, cy, r} when the lattice fills a disc
+    var box = null;         // the canvas's box in section space, for `ring`
     var logoBox = null;
 
     /* Pointer state. `tx/ty` is where the last event said the cursor was;
        `mx/my` is the filtered position the physics actually follows. */
     var tx = 0, ty = 0, mx = 0, my = 0, has = false, primed = false;
+    /* Starts true: a field that has never been pointed at is already at rest,
+       so the first frame after `build` is the only one it needs. */
+    var settled = true;
 
     /* A fixed sequence per section, so a resize does not reshuffle the
        pattern into a different one in front of the viewer. */
@@ -232,11 +251,34 @@
         hole.cx = lr.left - sr.left + lr.width / 2;
         hole.cy = lr.top - sr.top + lr.height / 2;
       }
+      /* THE DISC IS READ FROM ITS LAYOUT BOX AND THE LOGO FROM ITS RENDERED
+         ONE, and the difference is not an inconsistency.
+
+         `getBoundingClientRect` INCLUDES TRANSFORMS. On the playground that
+         did not matter, because §47's anchor deliberately has no drift. The
+         homepage's orange does: `animation:driftA 28s` translates it by a
+         few per cent and scales it by 1.08, so a rect read half way through
+         that keyframe describes a disc that is 1.08x too big and a little
+         off centre — and the lattice would then be laid out for a glow that
+         is not the hero's, differently on every load depending on where the
+         28s cycle happened to be.
+
+         `offsetWidth` / `offsetLeft` are LAYOUT values and ignore
+         transforms, which is exactly the box the authored gradient was
+         written against. They are relative to `offsetParent`, so the two
+         rects below convert that into the section's space; `offsetParent` is
+         `.hero-light` on the homepage and the section itself on the
+         playground, and neither is transformed.
+
+         The alternative — pausing the animation, reading, restarting — is a
+         visible hitch on load and leaves the page one exception away from
+         reading a transformed box again. */
       if (disc) {
-        var dr = disc.getBoundingClientRect();
-        ring = { cx: dr.left - sr.left + dr.width / 2,
-                 cy: dr.top - sr.top + dr.height / 2,
-                 r: dr.width / 2 };
+        var op = disc.offsetParent || section;
+        var opr = op === section ? sr : op.getBoundingClientRect();
+        ring = { cx: disc.offsetLeft + (opr.left - sr.left) + disc.offsetWidth / 2,
+                 cy: disc.offsetTop + (opr.top - sr.top) + disc.offsetHeight / 2,
+                 r: disc.offsetWidth / 2 };
       }
 
       /* DENSITY COUNTS THE MARKS YOU SEE, NOT THE ONES THE LATTICE WOULD
@@ -259,15 +301,35 @@
 
          Counting has neither problem, and it is cheap: a loop over a few
          hundred points with no DOM in it, four times at the very worst. */
-      var fw = ring ? ring.r * 2 : w;
-      var fh = ring ? ring.r * 2 : h;
-      gap = Math.sqrt((fw * fh) / K.DENSITY);
-      var layout = plan(w, h);
-      for (var pass = 0; pass < 3; pass++) {
-        var count = layout.length / 3;
-        if (!count || Math.abs(count - K.DENSITY) < K.DENSITY * 0.06) break;
-        gap *= Math.sqrt(count / K.DENSITY);
-        layout = plan(w, h);
+      /* `GAP` SETS THE SPACING DIRECTLY AND OVERRIDES `DENSITY`, because a
+         constant COUNT is the wrong target when the box's area is not
+         roughly constant — and the footer's band is not. §46's section is
+         `100svh` at every width, so area and count track each other there
+         and `DENSITY` means what it says. The footer band is the page gutter
+         wide and the lockup's own height tall: 58,000px² at 390 against
+         593,000 at 1440, a factor of ten. Holding the count across that
+         solves the gap down to 14px at 390, and a 4px mark at 14px spacing
+         is not a pattern, it is dither — it reads as sensor noise over the
+         wordmark.
+
+         The mark is `gap * SIZE`, so fixing the gap fixes the mark's size in
+         px, which is what "the same pattern at every width" actually means.
+         The count then falls out of the area, which is the right way round:
+         fewer marks on a phone, more on a desktop, all the same size. */
+      if (K.GAP) {
+        gap = K.GAP;
+        var layout = plan(w, h);
+      } else {
+        var fw = ring ? ring.r * 2 : w;
+        var fh = ring ? ring.r * 2 : h;
+        gap = Math.sqrt((fw * fh) / K.DENSITY);
+        var layout = plan(w, h);
+        for (var pass = 0; pass < 3; pass++) {
+          var count = layout.length / 3;
+          if (!count || Math.abs(count - K.DENSITY) < K.DENSITY * 0.06) break;
+          gap *= Math.sqrt(count / K.DENSITY);
+          layout = plan(w, h);
+        }
       }
 
       /* OVERLAPPING SOFT MARKS DO NOT ADD, THEY COMPOSITE, and getting that
@@ -319,14 +381,84 @@
         var SCALE = K.SCALE;
         if (!canvas) {
           canvas = document.createElement('canvas');
-          canvas.className = 'pp-blobs';
+          canvas.className = 'rs-blobs';
           ctx = canvas.getContext('2d');
         }
-        canvas.width = Math.round(w * SCALE);
-        canvas.height = Math.round(h * SCALE);
-        canvas.style.width = w + 'px';
-        canvas.style.height = h + 'px';
-        ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
+        /* THE CANVAS IS THE DISC'S BOX, NOT THE SECTION'S, and on the
+           homepage that is most of the cost of this effect.
+
+           §47 sized it to the section because the playground's disc is
+           centred in a section barely bigger than it is, so the two were
+           nearly the same box. The hero's orange is `right:-14vw` and
+           `top:-24vh` — anchored off two edges of a full-viewport section —
+           so a section-sized canvas is several times the area of the light
+           in it, and every frame clears all of it.
+
+           Sized to the disc instead: the box is the ring plus one blob
+           width, which is what the lattice can actually reach. `profile`
+           returns zero at `0.74 * r * √2 = 1.046r`, so points sit a little
+           outside the ring itself, and each carries half a blob beyond that.
+
+           THE PHYSICS STAYS IN SECTION SPACE. Only the context translate and
+           the element's offset change, so the hole, the pointer and the
+           lattice are all still in one coordinate system — §45's mirrored
+           field was a second coordinate system nobody wrote down. */
+        var pad = size;
+        var bx = ring.cx - ring.r - pad, by = ring.cy - ring.r - pad;
+        var bw = (ring.r + pad) * 2, bh = (ring.r + pad) * 2;
+
+        /* `CLIP` TRIMS THE CANVAS TO THE SECTION, AND IT IS OFF BY DEFAULT
+           BECAUSE §29 AND §33 SAY SO. Those two rules are that a glow must
+           not be cut at its section's edge, and nearly every shape on this
+           site is written to overhang deliberately — the hero's blue reaches
+           158px down into the showreel on purpose. A clamp here is exactly
+           the cut they forbid, so it cannot be the default and it cannot be
+           inferred.
+
+           The homepage's orange is the one case where both overhangs are
+           ALREADY invisible, which is why it opts in. Horizontally,
+           `.hero-light` is `overflow-x:clip` and the disc is `right:-14vw`,
+           so the browser is cutting that side whatever this canvas does.
+           Vertically the disc is `top:-24vh` on a section that starts at the
+           top of the document, so the overhang is above the page and can
+           never be scrolled to. At 1440x900 that is 37% of the box holding
+           light nobody can see.
+
+           DO NOT SET THIS ON A SECTION IN THE MIDDLE OF THE PAGE. The light
+           would be cut flat at the section boundary, which is the single
+           defect the per-section backdrops were abolished to fix. */
+        /* THE CLAMP IS PADDED BY THE BLUR, AND LEAVING THAT OUT MANUFACTURES
+           THE VERY CUT §29 IS ABOUT.
+
+           `BLUR` is a `filter:blur()` on the field, one layer up, so the
+           browser clips this canvas to its box and THEN blurs it. Clamped
+           flush to the section, the blur at the cut line has nothing beyond
+           it to sample and pulls in transparency — fading the top 30-odd px
+           of the hero's orange to nothing, 30px INSIDE the viewport, where
+           the authored gradient simply carried on upward off screen.
+
+           A hard cut exactly at the viewport edge is invisible (§4). A
+           blurred one is not. So the clamp keeps 2.5 blur radii of light
+           beyond the edge — past a 30px CSS blur's useful support, which is
+           about 3σ or 45px — and the browser throws that away for free.
+           Most of the saving survives: at 1440x900 the box is still 68% of
+           the unclamped one. */
+        if (K.CLIP) {
+          var m = K.BLUR * 2.5;
+          var cx1 = Math.min(bx + bw, w + m), cy1 = Math.min(by + bh, h + m);
+          bx = Math.max(bx, -m); by = Math.max(by, -m);
+          bw = cx1 - bx; bh = cy1 - by;
+        }
+        box = { x: bx, y: by, w: bw, h: bh };
+        if (!(bw > 0 && bh > 0)) return;
+
+        canvas.width = Math.round(box.w * SCALE);
+        canvas.height = Math.round(box.h * SCALE);
+        canvas.style.width = box.w + 'px';
+        canvas.style.height = box.h + 'px';
+        canvas.style.left = box.x + 'px';
+        canvas.style.top = box.y + 'px';
+        ctx.setTransform(SCALE, 0, 0, SCALE, -box.x * SCALE, -box.y * SCALE);
 
         /* The sprite is the blob's own gradient, rendered once. Rebuilding
            it per frame is the obvious shape of this loop and is also how it
@@ -371,7 +503,7 @@
         var x = layout[i], y = layout[i + 1], a = layout[i + 2];
 
         var el = document.createElement('i');
-        el.className = 'pp-star';
+        el.className = 'rs-star';
         var inner = document.createElement('b');
 
         /* Scale, rotation, colour and the twinkle live on the INNER element
@@ -437,8 +569,21 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
       var d = spriteR * 2;
+      /* A BLOB WHOLLY OUTSIDE THE CANVAS STILL COSTS A `drawImage`, and on
+         the homepage a large minority of them are: the hero's orange hangs
+         off the top and right of the viewport, and the canvas is clipped to
+         `.hero-light` horizontally. The clip is free; the fill is not.
+
+         Culled against the canvas box in section space, with a blob's
+         radius of slack so nothing pops at the edge. On the playground's
+         centred disc this rejects nothing and costs one compare per mark. */
+      var x0 = box ? box.x - spriteR : -Infinity;
+      var y0 = box ? box.y - spriteR : -Infinity;
+      var x1 = box ? box.x + box.w + spriteR : Infinity;
+      var y1 = box ? box.y + box.h + spriteR : Infinity;
       for (var i = 0; i < marks.length; i++) {
         var p = marks[i];
+        if (p.x < x0 || p.x > x1 || p.y < y0 || p.y > y1) continue;
         ctx.globalAlpha = p.a;
         ctx.drawImage(sprite, p.x - spriteR, p.y - spriteR, d, d);
       }
@@ -447,7 +592,23 @@
 
     function step(dt) {
       if (!visible) return;
+
+      /* A FIELD AT REST COSTS NOTHING, and on a phone that is the whole cost.
+         Without this the hero repaints several hundred blobs sixty times a
+         second to produce an identical picture — forever on a touch device,
+         where `pointermove` only fires while a finger is down and the lattice
+         is therefore ALWAYS at rest. `visible` above saves the section
+         nobody is looking at; this saves the one they are.
+
+         `settled` is cleared by the pointer handler and set again only once
+         every mark is home to within a twentieth of a pixel, which is well
+         inside a rounded `translate3d` and far inside a blob at a third
+         resolution. The spring is geometric, so the tail is long and
+         checking a threshold is the only way to end it. */
+      if (settled) return;
+
       var k = dt * 60;
+      var moved = false;
 
       /* THE POINTER RUNS THROUGH A FILTER, which is §45's "smoothness is not
          a tuning problem" finding and the single most load-bearing line in
@@ -486,7 +647,10 @@
         if (ad > limit) {
           p.x = p.ox + (ax / ad) * limit;
           p.y = p.oy + (ay / ad) * limit;
+          ad = limit;
         }
+        if (ad > 0.05) moved = true;
+        else if (ad) { p.x = p.ox; p.y = p.oy; }
 
         /* `transform`, not the individual `translate` property: §45 closed
            with a Safari failure that was never diagnosed, and this is a free
@@ -498,6 +662,13 @@
       }
 
       if (canvas) paint();
+
+      /* One last frame is drawn AFTER everything has snapped home, which is
+         why this is set at the end rather than skipping the paint above: the
+         final frame is the one that puts the last few marks back on their
+         lattice positions exactly. Stopping a frame earlier leaves the field
+         a twentieth of a pixel off and, on the canvas, never repaints it. */
+      if (!has && !moved) settled = true;
     }
 
     /* ---- Wiring --------------------------------------------------------
@@ -507,16 +678,45 @@
        twice in §44. The field stays `pointer-events:none` and the section is
        what listens. */
     function point(e) {
-      var r = section.getBoundingClientRect();
-      tx = e.clientX - r.left;
-      ty = e.clientY - r.top;
+      /* THE POINTER IS MEASURED AGAINST THE CANVAS WHEN THERE IS ONE, AND
+         THAT IS WHAT MAKES THE DRIFT FREE.
+
+         The homepage's orange keeps its 28s `driftA` keyframe — ambient
+         motion is half of what the client asked for (§44) — and the simplest
+         way to keep it was to leave the animation on the element that
+         replaces the disc. So the canvas as a whole is translated by a few
+         per cent and scaled by 1.08, while the physics inside it runs in
+         plain section space.
+
+         Left alone, those two disagree: the gap would open a few tens of px
+         away from the cursor, drifting over the cycle. Reading the pointer
+         through the canvas's RENDERED rect inverts the transform exactly,
+         whatever it is, with no knowledge of the keyframe here and no
+         `getComputedStyle` in the loop — and the rect read replaces the one
+         this handler was already doing.
+
+         The ratio is not always 1: `cr.width` is the drifting, scaled width
+         and `box.w` the laid-out one. Dividing by it is what undoes the
+         scale; dropping that term is a bug that only shows up at the rim. */
+      var r, tx0 = 0, ty0 = 0, sx = 1, sy = 1;
+      if (canvas && box) {
+        r = canvas.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        tx0 = box.x; ty0 = box.y;
+        sx = box.w / r.width; sy = box.h / r.height;
+      } else {
+        r = section.getBoundingClientRect();
+      }
+      tx = tx0 + (e.clientX - r.left) * sx;
+      ty = ty0 + (e.clientY - r.top) * sy;
       if (!primed) { mx = tx; my = ty; primed = true; }   // no swoop on entry
       has = true;
+      settled = false;
     }
 
     section.addEventListener('pointermove', point, { passive: true });
     section.addEventListener('pointerenter', point, { passive: true });
-    section.addEventListener('pointerleave', function () { has = false; }, { passive: true });
+    section.addEventListener('pointerleave', function () { has = false; settled = false; }, { passive: true });
 
     /* Rebuild on resize only when a dimension actually changed. A
        `ResizeObserver` on a section whose height is `100svh` fires on every

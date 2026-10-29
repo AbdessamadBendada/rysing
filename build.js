@@ -114,7 +114,16 @@ function fill(template, values, file) {
   return out;
 }
 
-const VERSIONS = { cssv: assetVersion('shared.css'), jsv: assetVersion('shared.js') };
+/* `starsv` is `pattern-stars.js`, which the layout loads on every page from
+   §48 onward — the footer lockup's star field is in the shared footer, so the
+   script is shared chrome too. It needs its own hash for the same reason
+   shared.js does: a cached copy against new markup is a page that half
+   works. */
+const VERSIONS = {
+  cssv: assetVersion('shared.css'),
+  jsv: assetVersion('shared.js'),
+  starsv: assetVersion('pattern-stars.js'),
+};
 
 const layout = read(path.join(srcDir, '_layout.html'));
 const header = read(path.join(srcDir, '_header.html'));

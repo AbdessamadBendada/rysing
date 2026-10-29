@@ -25,7 +25,7 @@
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
 
-  <link rel="stylesheet" href="shared.css?v=ce48d233" />
+  <link rel="stylesheet" href="shared.css?v=bfb4e460" />
 </head>
 <body>
   <a class="skip-link" href="#process-top">Skip to content</a>
@@ -149,10 +149,52 @@
     <div class="footer-meta label">
       <span>© 2026 Rysing, Vienna, Austria. All rights reserved.</span>
     </div>
-    <a href="index.html#top" aria-label="Rysing, back to top"><img class="footer-mark" src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" loading="lazy" decoding="async" /></a>
+    <!-- THE SIGN-OFF LOCKUP, RINGED BY MARKS THAT GET OUT OF THE CURSOR'S WAY
+         — §48, variant C of the playground, on every page because this footer
+         is shared chrome.
+
+         The field is built by `pattern-stars.js` and is not written out here.
+         The clear space around the wordmark is read from the lockup's RENDERED
+         box rather than derived a second time (§33).
+
+         `GAP` RATHER THAN `DENSITY`, WHICH IS THE OPPOSITE OF THE PLAYGROUND.
+         §46's section is a constant `100svh`, so a target count there means a
+         constant mark size too. This band's area varies by a factor of ten
+         between 390 and 1440, and holding the count across that shrinks the
+         mark to 4px on a phone — dither over the wordmark rather than a
+         pattern. Fixing the gap fixes the mark's size and lets the count fall
+         out of the area, which is the right way round. The script's `build`
+         has the argument in full.
+
+         `loading="lazy"` HAD TO GO. The script cannot lay the field out until
+         the image has a box, and the lockup is the last thing on the longest
+         page — so a lazy load meant the hole was measured against a 0x0 box, or
+         the pattern built itself in front of a viewer who had just scrolled to
+         it. `decoding="async"` stays; the script waits on `load` either way.
+
+         THE SECTION IS THE THING THAT LISTENS, which is why the band wraps the
+         lockup rather than the field being a sibling of it: `.rs-field` is
+         `pointer-events:none` and a listener on it receives nothing at all
+         while throwing no error (§44's sixth finding, which broke twice). -->
+    <div class="footer-lockup" data-stars-section data-stars-id="footer"
+         data-stars-opts='{"GAP":44,"STRENGTH":2600,"SOFT":54,"RANGE":2.4}'>
+      <span class="rs-field" data-stars aria-hidden="true"></span>
+      <a href="index.html#top" aria-label="Rysing, back to top"><img class="footer-mark" data-stars-logo src="rysing-assets/rysing-logo-lockup-light.webp" alt="Rysing" width="1377" height="292" decoding="async" /></a>
+    </div>
   </footer>
 
   <script src="shared.js?v=59df1949" defer></script>
+  <!-- THE LATTICE THAT PARTS FOR THE CURSOR — §48. On every page because the
+       footer's lockup carries it and the footer is shared chrome; on the
+       homepage it also drives the hero's orange.
+
+       `defer`, like shared.js: it does nothing until the DOM is parsed, every
+       element it touches is a geometry anchor that renders correctly without
+       it, and a page that never runs it is the page that shipped before. It
+       is listed for `chrome: none` pages too — the playground declares it in
+       `pagescripts` and would otherwise load it twice, so that declaration
+       comes out there. -->
+  <script src="pattern-stars.js?v=4a840640" defer></script>
 
 </body>
 </html>

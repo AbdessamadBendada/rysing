@@ -295,12 +295,13 @@ Unresolved: see §6.
 | `src/_testimonials.html` | The whole `#proof` section — heading, badges, **the six quotes**, controls, CTA. Included by the homepage, about **and the service page** via `{{> testimonials}}` (§27). **The only place this copy is written** (§7). Carries `data-treel-view`, which is how the script finds a rail's viewport now that there is more than one (§7, §15). |
 | `src/_marquee.html` | The thirteen client logos and their measured `--f` fractions. Included by the homepage's `#recognition` and the about page (§22). **It carries no comment on purpose** — an HTML comment here ships into both pages and breaks the byte-identical guarantee the extraction was checked against. |
 | `shared.css`, `shared.js` | The stylesheet and script, extracted from the old inline blocks. Shared by every page. **The glow rules are the fragile part — §25, and now §29 and §33 for how their boxes must be sized.** The colour tokens are the brand book's own values (§28). |
-| `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css` and `shared.js` — see §12, this is load bearing. |
+| `build.js` | `node build.js`. Zero dependencies. Also stamps the `?v=` content hash onto `shared.css`, `shared.js` and `pattern-stars.js` — see §12, this is load bearing. |
 | `index.html`, `contact.html`, `about.html`, `process.html`, `communication-strategy.html` | **Generated — do not edit.** Committed so the site can be served as flat files. `index.html` was `premium-direction.html`. |
 | `rysing brand assets/Branding-Guidelines.pdf` | **The client's 18-page brand book, and the first written source this project has had.** §3.0 settles the palette (§28). Not the same file as `Guide 3.pdf` / `Source Files/Guide.pdf`, which are one flattened page. The directory is gitignored, so this is not in the repo. |
-| `src/pattern-playground.html` | **A scratch page, not part of the site.** `chrome: none`, no nav points at it. **Five sections now: A** is the shipped hero as a control, **B** is the shader warp, **C** is the lockup in a star lattice, **D** is that lattice in brand red, **E** is the hero's glow rebuilt out of movable parts. **§44, §45, §46, §47.** |
+| `src/pattern-playground.html` | **A scratch page, not part of the site.** `chrome: none`, no nav points at it. **Five sections: A** is the shipped hero as a control, **B** is the shader warp, **C** is the lockup in a star lattice, **D** is that lattice in brand red, **E** is the hero's glow rebuilt out of movable parts. **C and E are what §48 shipped, and E is still the calibration rig for the hero's glow — keep it motionless.** The mark and blob rules moved to `shared.css` as `.rs-*`; the `.pp-*` hero copies stay local. **§44, §45, §46, §47, §48.** |
 | `pattern-shark.js` | **Variant B** — the hero's gradient restated in a shader and warped away from the cursor. The knobs are the `K` block at the top and are live on `window.SHARK`. **Broken in Safari (§45).** Gated on visibility since §46: it was eating 100ms a frame in sections it is not visible in. |
-| `pattern-stars.js` | **Variants C, D and E** — a lattice of marks that parts for the cursor, after the client's CodePen. Drives every `[data-stars-section]` on the page from one implementation, which is what makes D and E comparable. Knobs are per section on `window.STARS.c` / `.d` / `.e`; geometry ones need `.rebuild()`. **§46, §47.** |
+| `pattern-stars.js` | **PART OF THE SITE SINCE §48** — loaded by `_layout.html` on every page. A lattice of marks that parts for the cursor, after the client's CodePen. Drives every `[data-stars-section]` from one implementation: the homepage hero's orange, the footer lockup on every page, and the playground's C, D and E. Knobs are per section on `window.STARS.<id>`; geometry ones need `.rebuild()`. **§46, §47, §48.** |
+| `tools/` | **The measurement harness, and read §48 before trusting any frame time in this document.** `measure-work.js` sums real renderer work from the tracing categories — the metric §45–§47 used is quantised to the vsync interval and flaps between two values on an unchanged page. `measure-fidelity.js` sweeps the glow against its own CSS gradient; `verify.js` is the acceptance run over every page. |
 | `pattern-fluid.js` | Configuration for the fluid simulation — the knobs. Retune here, never in the vendored file. §44. |
 | `vendor-webgl-fluid.js` | **Vendored and modified**: Pavel Dobryakov's WebGL-Fluid-Simulation (MIT), with five changes marked `Rysing` and listed in its header. Re-download and re-apply them if upstream moves; do not hand-edit it to change the look. §44. |
 | `playground/new-direction.html` | Previous direction. Kept as the copy baseline and for comparison. Do not edit. |
@@ -5258,3 +5259,218 @@ STARS.d.GAIN = 1.7      // brand red on black reads brown below about 1.5 (§25)
 ### Open
 
 The client has not seen either. **Still no Safari in the harness** (§45, §46).
+
+---
+
+## 48. The lattice ships: the hero's orange, and the footer lockup on every page
+
+**This is the first section here that changed the site.** §44 to §47 all end
+with "nothing in this section is part of the site"; this one does not. The
+client picked two of the playground's variants and asked for both:
+
+1. **Variant E** — the hero's orange rebuilt out of movable parts — replaces
+   `.hero-light::before` on the homepage.
+2. **Variant C** — the brand mark as a lattice that parts for the cursor —
+   now rings **the footer lockup on every page**.
+
+Her constraint on the first was *"without losing the page's speed"*, and E is
+the variant §47 closed by calling "an experiment that has answered its
+question, not a candidate", at 50ms a frame at 1440. It ships at **8.4ms of
+renderer work** instead. How that happened is most of this section.
+
+### What changed, as files
+
+| File | What |
+| --- | --- |
+| `pattern-stars.js` | **No longer a scratch script.** Loaded by `_layout.html` on every page. Four additions, all for the site: the disc-sized canvas, the layout-box anchor, the pointer read through the canvas rect, and `settled`. |
+| `shared.css` | `.hero-light::before` is gone; the orange is `.hero-disc--orange`, a real element. New shared block for `.rs-field` / `.rs-star` / `.rs-blobs`, moved out of the playground. New `.footer-lockup` band. |
+| `src/_footer.html` | The lockup is wrapped in the band and carries `data-stars-logo`. `loading="lazy"` removed — see below. |
+| `src/_layout.html`, `build.js` | The script is shared chrome now, with its own `?v=` hash (`starsv`). |
+| `src/index.html` | The hero is a `[data-stars-section]`. |
+| `tools/` | The measurement harness. **New, and the reason the numbers here can be trusted.** |
+
+### THE METRIC §45, §46 AND §47 USED DOES NOT MEASURE ANYTHING
+
+Read this before quoting any frame time in this document.
+
+Those three sections report "median frame time" from the median gap between
+`requestAnimationFrame` timestamps. **That number is quantised to the vsync
+interval** — it can only ever come out at 16.7, 33.3, 50.0 or 66.7, which is
+exactly what their tables contain — and in this harness it flaps between two
+of those values on an unchanged page. Measured during this cycle: the
+**committed** homepage, untouched, reported 16.7 at 1440 and 33.2 at 1920 in
+one run, and the reverse in the next. The "page floor" with the effect
+removed entirely measured 33.3ms.
+
+So §47's table does not say E was three times slower than C. It says E was
+"not fast" and C was "fast", and nothing finer. **Do not treat those tables as
+timings and do not compare anything new against them.**
+
+Frame rate is no better here: this harness is a software-rendered headless
+Chromium that **cannot serve 60fps on the homepage with the effect removed**
+— the floor measures 38-41fps. Frame rate measures the harness.
+
+**What `tools/measure-work.js` does instead** is take the DevTools tracing
+categories and sum the actual durations of script, style, layout, paint,
+raster and composite over a fixed sample, divided by frames. Microsecond
+durations of real work, independent of whether the compositor presented
+anything. It degrades smoothly, it is reproducible to a few per cent, and the
+budget is legible: a 60fps frame is 16.7ms, so total work has to sit well
+under that. **The floor is 1.2ms.** Every number below is on that metric.
+
+### THE COST MODEL, AND WHY §47 TUNED THE WRONG KNOB
+
+The blob field's cost is fill, and fill works out as:
+
+```
+cost  ∝  DENSITY × (SIZE × gap × SCALE)²        and  gap² ∝ area / DENSITY
+      ∝  area × SIZE² × SCALE²
+```
+
+**`DENSITY` cancels.** Raising the mark count does not cost fill at all — it
+buys a smoother cloud for the price of more `drawImage` calls. `SIZE` and
+`SCALE` are each quadratic.
+
+§47 chose `SIZE 6 / DENSITY 560 / SCALE 0.5` and recorded `DENSITY` as the
+expensive knob ("520 is not a look, it is a unit mismatch"), which is the
+opposite of true for the blob field. Measured, with the best `GAIN` found for
+each by screenshot difference:
+
+| | SIZE | SCALE | DENSITY | ms @1440 | mean delta |
+| --- | --- | --- | --- | --- | --- |
+| §47's values | 6 | 0.5 | 560 | 30.8 | 2.06 |
+| shipped | **3.5** | **0.34** | **1000** | **9.8** | **1.17** |
+
+**The smaller blob at the higher count is three times cheaper AND measurably
+more faithful to the authored gradient.** Not a trade — §47's blob was simply
+bigger than it needed to be, and a big soft blob smears the gradient's own
+falloff. `GAIN` stayed at 2.5, which is §47's flat-bottomed optimum and came
+out best at every point of the grid.
+
+`tools/measure-fidelity.js` sweeps the grid; `tools/measure-work.js` times the
+survivors. Use both, in that order, and sweep `GAIN` first — §47's warning
+that a too-dark orange cloud looks exactly like an orange cloud is the one
+thing in that section this cycle confirmed rather than overturned.
+
+### Four things the site needed that the playground did not
+
+**1. The canvas is the disc's box, not the section's.** The playground's disc
+is centred in a section barely bigger than it. The hero's orange is
+`right:-14vw`, `top:-24vh` on a full-viewport section, so a section-sized
+canvas was several times the area of the light in it and cleared all of it
+every frame. This alone took 1440 from 50ms to 33ms before any tuning.
+
+**2. `CLIP:1`, which §29 and §33 forbid in general.** It trims the canvas to
+the section. Every other shape on this site overhangs deliberately — the
+hero's blue reaches 158px into the showreel on purpose — so this is off by
+default and must stay off by default. The hero's orange is the one case where
+both overhangs are *already* invisible: `.hero-light` is `overflow-x:clip` on
+one axis, and the hero starts at the top of the document on the other. 37% of
+the box was holding light nobody could ever see.
+
+**THE CLAMP IS PADDED BY 2.5 BLUR RADII AND THAT IS NOT SLACK.** `BLUR` is a
+`filter` on the field, so the browser clips the canvas and *then* blurs it.
+Clamped flush, the blur has nothing beyond the cut to sample and pulls in
+transparency — fading the top of the orange to nothing 30px *inside* the
+viewport, which is precisely §29's defect, manufactured by the optimisation
+meant to be free. `.hero .rs-field` drops `overflow:hidden` for the same
+reason; it is the other half of one bug.
+
+**3. The anchor is read from its LAYOUT box.** `getBoundingClientRect`
+includes transforms. The playground's anchor deliberately has no drift; the
+hero's orange has `driftA`, which scales it by 1.08 — so a rect read partway
+through that keyframe describes a disc that is not the hero's, differently on
+every load depending on where the 28s cycle happened to be. `offsetWidth` and
+`offsetLeft` are layout values and ignore transforms.
+
+**4. The pointer is read through the canvas's rendered rect, and that is what
+makes the drift free.** The glow keeps its 28s `driftA` — ambient motion is
+half of what the client asked for in §44 — by leaving the keyframe on the
+element that replaced the disc. The physics inside runs in plain section
+space, so the two would disagree and the gap would open a few tens of px away
+from the cursor. Reading the pointer through the canvas's own rect inverts
+the transform exactly, whatever it is, with no knowledge of the keyframe and
+no `getComputedStyle` in the loop. **Dividing by `rect.width / box.width` is
+the part that undoes the scale; dropping it is a bug that only shows at the
+rim.**
+
+### A FIELD AT REST NOW COSTS NOTHING, WHICH IS THE WHOLE COST ON A PHONE
+
+`settled` skips the entire step and paint once every mark is home to within
+a twentieth of a pixel, and is cleared by the pointer handler. Without it the
+hero repainted several hundred blobs sixty times a second to produce an
+identical picture — **forever on a touch device**, where `pointermove` only
+fires while a finger is down and the lattice is therefore always at rest.
+
+Measured: **zero `drawImage` calls in two seconds with no cursor**, at 390 and
+at 1440. `visible` (§46) saves the section nobody is looking at; this saves
+the one they are.
+
+### `GAP` RATHER THAN `DENSITY` FOR THE FOOTER
+
+§46's section is `100svh` at every width, so area and count track each other
+and a target count means a constant mark size. **The footer band does not
+work that way**: it is 58,000px² at 390 against 593,000 at 1440, a factor of
+ten. Holding the count across that solved the gap down to 14px at 390, and a
+4px mark at 14px spacing is not a pattern — it read as sensor noise over the
+wordmark, which is what the first build shipped and the screenshot caught.
+
+`GAP` sets the spacing directly and lets the count fall out of the area:
+same-sized marks everywhere, 31 of them at 390 and 172 at 1440.
+
+**The band's padding is a correctness bound, not rhythm.** The hole's vertical
+half-height is `logoH/2 + 1.35 gaps` ≈ 96px at 390, so with less padding than
+that the band is entirely inside the hole and **the field comes out empty** —
+a blank strip, not an obvious bug. 120px top and 60px bottom clear it
+everywhere. `loading="lazy"` came off the lockup for a related reason: the
+hole is measured from the image's box, and a lazy image at the bottom of the
+longest page has no box when the script runs.
+
+### Numbers
+
+Renderer work per frame under continuous pointer motion. Budget 16.7; floor
+1.2.
+
+| | 390 | 768 | 1440 | 1920 |
+| --- | --- | --- | --- | --- |
+| hero orange (E) | 4.2 | 5.0 | 8.4 | 9.2 |
+| footer lockup (C) | 2.0 | 2.3 | 4.1 | 6.1 |
+
+Fidelity of the hero's glow against its own authored CSS gradient, by
+screenshot difference: **mean delta 1.17, worst 6, 0% of pixels over 10.**
+§47's canvas build measured 3.9 and §45's shader 1.24, so this is the closest
+the orange has been to itself since the experiments started.
+
+Checked on every page at 390 and 1440: the field builds, no star lands on the
+artwork, no new horizontal scroll, no console errors. The three pages that
+*do* overflow horizontally — `process` at 390, `communication-strategy` and
+`case-gerd-bommer` at both — **overflow identically on the committed build**.
+Pre-existing, flagged in §27, untouched here.
+
+### The fallback, which is the same arrangement as §45
+
+`.hero-disc--orange` and the footer lockup are the geometry anchors **and**
+the fallback. The section only hides the authored shape once the field is
+built, so every early return leaves the page exactly as it shipped. Verified
+by blocking `pattern-stars.js` outright: the orange renders at full opacity
+and the lockup is untouched at its full 1325px measure.
+
+### The donut is still there, and the client should be told
+
+§47 measured it and shipping it does not repeal it: parking the cursor in the
+middle of the glow clears the centre and brightens the rim, because the parts
+moved out of the middle have to go somewhere. It reads as material getting
+out of the way rather than as a hole punched in a cloud — the gap is lumpy
+and soft, which is the difference §44's mask failed on — but it is the same
+geometry §44 named and the client has never seen it.
+
+### Open
+
+- **The client has not seen any of it.** Not E, not C, not in place.
+- **Still no Safari in the harness** (§45, §46, §47). The hero now runs a 2D
+  canvas rather than §45's WebGL2, which is a far smaller surface for Safari
+  to disagree about, but that is an argument and not a test.
+- The playground is unchanged and still works — C at 343 marks, D at 504, E
+  on its canvas, no errors. It is still the calibration rig for the hero's
+  glow, which is why the drift is scoped to `.hero` in `shared.css` and must
+  stay scoped: §47's measuring note needs the anchor still.

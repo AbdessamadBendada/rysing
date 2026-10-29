@@ -25,7 +25,7 @@
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Kinfolk-Regular.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="rysing-assets/Aileron-Regular.woff2" crossorigin />
 
-  <link rel="stylesheet" href="shared.css?v=ce48d233" />
+  <link rel="stylesheet" href="shared.css?v=bfb4e460" />
 </head>
 <body>
 
@@ -89,6 +89,17 @@
 
 
   <script src="shared.js?v=59df1949" defer></script>
+  <!-- THE LATTICE THAT PARTS FOR THE CURSOR — §48. On every page because the
+       footer's lockup carries it and the footer is shared chrome; on the
+       homepage it also drives the hero's orange.
+
+       `defer`, like shared.js: it does nothing until the DOM is parsed, every
+       element it touches is a geometry anchor that renders correctly without
+       it, and a page that never runs it is the page that shipped before. It
+       is listed for `chrome: none` pages too — the playground declares it in
+       `pagescripts` and would otherwise load it twice, so that declaration
+       comes out there. -->
+  <script src="pattern-stars.js?v=4a840640" defer></script>
 
 </body>
 </html>

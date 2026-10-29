@@ -37,6 +37,17 @@
 {{footer}}
 
   <script src="shared.js?v={{jsv}}" defer></script>
+  <!-- THE LATTICE THAT PARTS FOR THE CURSOR — §48. On every page because the
+       footer's lockup carries it and the footer is shared chrome; on the
+       homepage it also drives the hero's orange.
+
+       `defer`, like shared.js: it does nothing until the DOM is parsed, every
+       element it touches is a geometry anchor that renders correctly without
+       it, and a page that never runs it is the page that shipped before. It
+       is listed for `chrome: none` pages too — the playground declares it in
+       `pagescripts` and would otherwise load it twice, so that declaration
+       comes out there. -->
+  <script src="pattern-stars.js?v={{starsv}}" defer></script>
 {{pagescripts}}
 </body>
 </html>

@@ -4,8 +4,39 @@
   home:
   skip: #reel
 -->
-    <section class="hero">
-      <span class="hero-light" aria-hidden="true"></span>
+    <!-- THE ORANGE PARTS FOR THE CURSOR — §48, variant E of the playground.
+         The light is the same light: the lattice is built from the disc
+         below's own box and calibrated against its own gradient, so what
+         changes is that it is made of movable parts.
+
+         `data-stars-disc` is THE GEOMETRY ANCHOR AND THE FALLBACK, BOTH, and
+         it is a real element rather than `.hero-light::before` for exactly
+         that reason (`shared.css` says why at `.hero-disc`). No canvas, no 2D
+         context, or reduced motion, and the hero is the gradient that shipped.
+
+         `CLIP:1` IS SAFE HERE AND NOWHERE ELSE ON THE PAGE. It trims the
+         canvas to the section, which §29 and §33 forbid in general — but this
+         disc's overhang is already invisible on both axes: `.hero-light` is
+         `overflow-x:clip` and the hero starts at the top of the document.
+         `pattern-stars.js` spells the argument out at the `CLIP` branch.
+
+         THE KNOBS ARE MEASURED AND ARE NOT TASTE. §47 shipped SIZE 6 /
+         DENSITY 560 / SCALE 0.5; those are not the values here because the
+         cost model says the fill is `area x SIZE^2 x SCALE^2` — DENSITY
+         CANCELS OUT. So a smaller blob at a higher count is most of a 3x
+         saving (30.8ms of renderer work a frame to 9.8 at 1440) and measures
+         MORE faithful against the authored gradient, not less: mean delta
+         1.17 against 2.06. Sweep with `tools/measure-fidelity.js` and `tools/measure-work.js` before
+         changing any of them, and sweep GAIN first — §47's first build was
+         out by a factor of 2.4 on brightness and looked fine. -->
+
+    <section class="hero" data-stars-section data-stars-id="hero"
+             data-stars-mark="blob"
+             data-stars-opts='{"DENSITY":1000,"SIZE":3.5,"GAIN":2.5,"BLUR":30,"SCALE":0.34,"JITTER":0.75,"STRENGTH":3200,"SOFT":70,"RANGE":1.6,"CLIP":1}'>
+      <span class="hero-light" aria-hidden="true">
+        <i class="hero-disc hero-disc--orange" data-stars-disc></i>
+        <span class="rs-field" data-stars></span>
+      </span>
       <p class="hero-eyebrow label">Branding &amp; visibility studio for courageous brands</p>
       <h1 class="hero-title display">
         <span class="alt">Rise into</span> visibility, authority <span class="keep"><span class="alt">and</span> <em>impact</em></span>

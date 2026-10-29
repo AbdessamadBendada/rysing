@@ -400,16 +400,49 @@ body::after {
    where the disc has shrunk, which is where it was broken. Verified
    unchanged to 0px at 1440 and 1920, and the light back inside the hero's
    lower-left corner at 360 and 390. */
-.hero-light::before,.hero-light::after {
-  content:""; position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
+/* THE ORANGE IS A REAL ELEMENT AND THE BLUE IS STILL A PSEUDO, which looks
+   like an inconsistency and is the whole §48 change.
+
+   The orange now parts for the cursor (`pattern-stars.js`, variant E of the
+   playground — HANDOFF §47, §48). The script needs the disc to be three
+   things at once: the lattice's GEOMETRY ANCHOR, so the glow it builds is
+   this gradient's box and not a second statement of the same clamps (§33);
+   the FALLBACK, left on the page untouched if the script never runs or the
+   canvas never gets a context; and something it can hide once it is
+   actually running. A pseudo-element can be none of them — it has no node to
+   measure, no node to carry `data-stars-disc`, and `.hero-light::before`
+   cannot be read by `getBoundingClientRect`.
+
+   So `::before` is gone and `.hero-disc--orange` carries exactly what it
+   carried, declaration for declaration, including the drift. The blue is
+   untouched and stays a pseudo: nothing is pointed at it, and converting it
+   too would be a change with no reason behind it.
+
+   The authored stops are ALSO restated in `pattern-stars.js`'s `profile()`,
+   because neither a shader nor a per-mark alpha can sample a CSS gradient.
+   That is the one duplicated geometry in this effect and it is duplicated
+   because there is no way not to: CHANGE THE STOPS HERE AND CHANGE THEM
+   THERE, then re-run the fidelity measurement in §48. */
+/* `content` is NOT in the shared declaration. A string `content` on a real
+   element is invalid rather than inherited-harmless, and the one browser
+   that ever decides to honour it would blank the node. The pseudo declares
+   its own. */
+.hero-light::after { content:""; }
+.hero-light::after,.hero-disc {
+  position:absolute; aspect-ratio:1; border-radius:50%; filter:blur(30px);
   width:var(--d);
 }
-.hero-light::before {
+.hero-disc--orange {
   --d:min(72vw,1020px);
   top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
   background:radial-gradient(circle at 50% 50%,rgba(240,66,34,.95),rgba(240,66,34,.5) 38%,rgba(240,66,34,.08) 62%,transparent 74%);
   animation:driftA 28s var(--ease) infinite alternate;
 }
+/* Hidden only once the field is built and painted, which is §45's
+   arrangement: every early return in the script leaves the authored gradient
+   on the page. The canvas inherits the same `driftA`, so the ambient motion
+   the client asked for survives the swap (`.rs-blobs` below). */
+.hero.is-stars .hero-disc--orange { opacity:0; }
 .hero-light::after {
   --d:min(62vw,860px);
   bottom:calc(-1 * min(30vh, var(--d) * .314)); left:-18vw;
@@ -418,6 +451,101 @@ body::after {
 }
 @keyframes driftA { to { transform:translate3d(-3%,4%,0) scale(1.08); } }
 @keyframes driftB { to { transform:translate3d(4%,-3%,0) scale(1.07); } }
+
+/* ===========================================================================
+   THE LATTICE THAT PARTS FOR THE CURSOR — §48
+   ---------------------------------------------------------------------------
+   Two things on the site run `pattern-stars.js`: the homepage hero's ORANGE,
+   rebuilt as a field of soft blobs on a canvas (`.rs-blobs`, variant E of the
+   playground), and the FOOTER LOCKUP on every page, ringed by brand marks
+   that get out of the cursor's way (`.rs-star`, variant C). Both are the same
+   physics driving different marks — HANDOFF §46, §47, §48.
+
+   These rules are here rather than in the playground page because they are
+   now shared by three documents. The playground's own `.pp-*` hero copies
+   stay where they are: those exist so that experimenting on the hero's SHAPES
+   cannot reach the homepage, and that reason has not changed.
+
+   THE FIELD LAYER IS ALWAYS `pointer-events:none` AND THE LISTENER IS ALWAYS
+   ON THE SECTION. §44's sixth finding: a listener bound to a shape layer here
+   receives nothing at all and throws no error while doing it. It broke twice.
+   =========================================================================== */
+.rs-field { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+/* THE HERO'S FIELD MUST NOT CLIP, and this is the same argument as the
+   padding on the script's `CLIP` clamp — the other half of it.
+
+   `overflow:hidden` on a field carrying `filter:blur(30px)` clips first and
+   blurs second, so the orange would be faded to nothing along the hero's own
+   top edge: a soft cut 30px inside the viewport, where the authored gradient
+   ran on upward off screen. The canvas is already trimmed to the section plus
+   a blur's margin by the script, and `.hero-light` still clips the
+   horizontal, so there is nothing left for this to clip but the margin that
+   exists to be sampled.
+
+   `z-index` goes too: `.hero-light` is already `z-index:-1`, and a stacking
+   context here would lift the canvas over the headline. */
+.hero .rs-field { overflow:visible; z-index:auto; }
+
+/* The outer box carries ONLY the per-frame translate. Scale, rotation and the
+   twinkle are on the inner `<b>`, so the thing written a few hundred times a
+   frame is one short transform and nothing else needs rebuilding with it.
+
+   NO `will-change`. It reads as the obvious optimisation for an element whose
+   transform changes every frame and at this scale it is the opposite: it
+   forces a permanent composited layer per mark. Measured at 1440x900, taking
+   it off moved the playground's variant C from 33.3ms a frame to 16.7. The
+   browser promotes a transforming element on its own and un-promotes it when
+   it stops. */
+.rs-star { position:absolute; }
+.rs-star > b {
+  display:block; width:100%; height:100%;
+  background:rgba(249,249,249,.9);
+  -webkit-mask:var(--mark) center/contain no-repeat;
+          mask:var(--mark) center/contain no-repeat;
+  opacity:var(--o);
+  animation-name:rsTwinkle; animation-iteration-count:infinite;
+  animation-timing-function:var(--ease); animation-direction:alternate;
+}
+/* Red is SCARCE here, roughly one mark in seven. §11's rule about rationing
+   the red applies to a pattern more than to anything else, because a pattern
+   repeats whatever it is given. */
+.rs-star > b.is-red { background:var(--red); }
+@keyframes rsTwinkle { to { opacity:calc(var(--o) * .42); } }
+
+/* THE BLOB FIELD IS ONE CANVAS, NOT HUNDREDS OF ELEMENTS, and that is the
+   most expensive thing §47 learned. Built as DOM first — several hundred
+   overlapping soft layers six gaps wide — it cost 183ms a frame against
+   16.7 for star marks, and halving everything only got it to 67ms. The DOM is
+   not the wrong tool by a constant there, it is the wrong tool.
+
+   `left`/`top`/`width`/`height` are all written by the script: the canvas is
+   sized to the DISC rather than to the section, so the hero's orange does not
+   pay for the 37% of itself that hangs off the top and right of the viewport.
+
+   ON THE HERO IT CARRIES THE HERO'S OWN DRIFT. The glow it replaces animated
+   under `driftA`, ambient motion is half of what the client asked for (§44),
+   and the keyframe is percentages of the element's own box — which is now
+   this canvas, laid out as the disc's box. So the same keyframe is the same
+   motion. The script reads the pointer through this element's rendered rect,
+   which is what keeps the gap under the cursor while the whole field drifts;
+   see `point()` for why that is exact rather than approximate.
+
+   THE DRIFT IS SCOPED TO `.hero` AND MUST STAY SCOPED. The playground's
+   variant E is the calibration rig for this glow — §47 measures it against
+   the authored gradient by screenshot difference — and §47's measuring note
+   says to pause the drift before taking any before/after pair. A drift
+   inherited there would quietly invalidate the one measurement that says
+   this is still the hero's light. */
+.rs-blobs { position:absolute; left:0; top:0; }
+.hero .rs-blobs { animation:driftA 28s var(--ease) infinite alternate; }
+/* NO CSS BLUR HERE. `BLUR` is applied by the script to the FIELD, one layer
+   up, so it blurs the composed cloud rather than each sprite. */
+/* The script does not start its loop at all under reduced motion, so the
+   lattice is laid out and left still; these two are the decorative layers on
+   top of that. */
+@media (prefers-reduced-motion:reduce) {
+  .rs-star > b,.hero .rs-blobs { animation:none; }
+}
 
 .hero-eyebrow { margin:0 0 auto; text-align:right; }
 
@@ -1579,7 +1707,35 @@ body::after {
 /* The wordmark runs the full measure here — it is the sign-off, and the
    artwork is the only place the logo face appears. It is the last thing on
    the page, below the copyright line, so its room is above it now. */
-.footer-mark { display:block; width:100%; height:auto; margin-top:72px; }
+.footer-mark { display:block; width:100%; height:auto; }
+/* THE BAND THE STARS LIVE IN — §48, variant C of the playground.
+   `position:relative` and nothing else beyond its own room, which is §27's
+   contract for a section hosting a shape: no `isolation`, no `overflow`, no
+   opaque background. The field inside it paints nothing of its own — every
+   mark is a small box well inside the band — so there is no gradient here for
+   §29 or §33 to cut, which is why this one needs no overhang.
+
+   THE PADDING IS WHAT MAKES THE STARS READ AS "AROUND" THE LOCKUP, and it is
+   not spacing. The lockup runs the full measure, so the clear space the script
+   keeps for it — an ellipse of `logoW/2 + 1.05 gaps` by `logoH/2 + 1.35 gaps`
+   — is nearly as wide as the band. That leaves marks only where the ellipse
+   has pulled in: a sweep above and below, crowding in around the two ends of
+   the wordmark where the curve runs closest to it.
+
+   THE LOWER CLAMPS ARE A CORRECTNESS BOUND, NOT RHYTHM. The hole's vertical
+   half-height is `logoH/2 + 1.35 gaps`, which at the footer's 44px gap is
+   about 96px at 390 — so with less padding than that the band is ENTIRELY
+   inside the hole and the field comes out empty. That is a blank strip
+   rather than an obvious bug, and nothing else would catch it. 120px top and
+   60px bottom clear it at every width with room to spare.
+
+   The old `margin-top:72px` on the lockup is this element's top padding now;
+   the mark is flush inside the band so the hole the script measures is the
+   artwork's box and nothing else. */
+.footer-lockup {
+  position:relative;
+  padding:clamp(120px,10vw,160px) 0 clamp(60px,5vw,90px);
+}
 .footer-grid {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px;
   padding-top:32px; border-top:1px solid rgba(249,249,249,.28);
