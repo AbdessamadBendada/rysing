@@ -21,7 +21,11 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
     await page.goto(URL);
     await page.waitForTimeout(600);
 
-    for (let open = 0; open < 4; open++) {
+    /* Row count is read from the page, not assumed. It was hard-coded to 4
+       and a fifth stage was added without the fifth open state ever being
+       checked. */
+    const rowCount = await page.evaluate(() => document.querySelectorAll('.system-item').length);
+    for (let open = 0; open < rowCount; open++) {
       await page.evaluate(i => {
         document.querySelectorAll('.system-item').forEach((el, n) => {
           el.classList.toggle('is-open', n === i);

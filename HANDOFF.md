@@ -5871,3 +5871,43 @@ Range rect is taller than it, and canvas ink ignores the clip.
 Measured: cut lands **1px** off the rule at every width, removing 62 / 86 /
 101px at 1024 / 1440 / 1920; clearance 44 / 60 / 74px; no cut below 820; no
 overflow; no console errors; 28 states clean.
+
+---
+
+## 52. A fifth stage, and stage 04 renamed again
+
+All client-instructed, all in `src/index.html`.
+
+**Stage 04 is now "Podcasting and Video Casting."** Its wording is hers
+verbatim. This row has now been renamed twice — it was "Lead Gen & Sales"
+before §26-era work made it "Thought Leadership". **Thought Leadership was
+not dropped**: it is the first pillar in that stage's own tag list now, on
+her instruction, so the claim survives at a lower level.
+
+**Stage 05 is "Event Branding" and its copy is placeholder.** She said the
+copy follows later. The stage name is hers; **the "for" line, the stage
+outcome and all eight pillars are written to the shape of the other four
+stages and are not approved by anyone.** They are marked `TODO(copy)` in the
+source and listed under §6 as blocking.
+
+This matters more than a normal placeholder because of §38: two `[__]%`
+placeholders reached a finished service page and render at display size. The
+same risk applies here — the "for" line and the outcome are set large on a
+live page, and nothing about them *looks* provisional.
+
+### THE HEADING HAD TO MOVE AND THAT IS A COPY CHANGE
+
+`#system`'s heading read **"We can grow your brand on four levels"**. With a
+fifth row it is simply wrong, so it now reads **five levels**. Flagged to her
+rather than done quietly — under the standing "keep the copy as it is" rule
+this is the sort of edit that otherwise needs its own instruction, and it is
+the one string in this cycle that was not dictated. It was the only
+occurrence on the site.
+
+### The row checker was counting to four
+
+`tools/check-system-rows.js` iterated `open < 4`. A fifth stage went in and
+**the fifth open state would never have been checked** — on a section whose
+whole geometry depends on which row is open. It reads the row count off the
+page now. 35 states, all clean: cut 1px off the rule at every width, no
+overflow, no console errors.
