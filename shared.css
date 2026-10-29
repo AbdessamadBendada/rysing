@@ -757,16 +757,16 @@ body::after {
   position:relative; border-bottom:1px solid var(--line);
   display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
   gap:clamp(20px,4vw,70px);
-  /* A SHUT row hangs from its bottom rule: numeral and name share that
-     baseline, which is what lets the numeral run up across the hairline
-     above without pushing the name around. An OPEN row goes back to the
-     top, because its detail — not its rule — is the thing being read. */
   align-items:end;
-  /* Bottom padding is cut right back on a shut row so the numeral sits on
-     its rule rather than floating above it — that tightness is the whole
-     look. An open row takes the full padding back, because its tags would
-     otherwise sit on the hairline. */
-  padding:clamp(30px,3.2vw,56px) 0 clamp(12px,1.3vw,22px);
+  /* Top padding is deliberately generous and is NOT decoration — it is the
+     landing room for the overhang of the numeral in the row above. Cut it
+     and the two glyphs meet. See the arithmetic at `.system-num`.
+
+     NO BOTTOM PADDING ON THE ROW. The numeral has to reach the rule to hang
+     past it, so the gap the name needs is carried by `.system-body` instead
+     — otherwise one value has to be both the name's breathing room and the
+     numeral's overhang, and they pull opposite ways. */
+  padding:clamp(48px,6.2vw,112px) 0 0;
   /* The whole row toggles, numeral included — see the click handler. */
   cursor:pointer;
 }
@@ -812,7 +812,32 @@ body::after {
      she was actually using it was a 35% bump and read as nothing. Measure
      the proportion, then check it at the width in use, not at the cap. */
   font-size:clamp(118px,21vw,356px); line-height:.72; letter-spacing:-.04em;
-  margin-top:-.12em; margin-bottom:-.06em;
+
+  /* THE OVERHANG, which is the thing the client asked for twice. The numeral
+     crosses its own bottom hairline and hangs into the row below.
+
+     It only works DOWNWARD, and that is forced, not chosen. An upward bleed
+     puts the glyph into the space occupied by the bottom of the numeral
+     ABOVE it — tried at -.26em and every consecutive pair overlapped by
+     43px. Downward, the overhang lands in the next row's top padding, which
+     is empty.
+
+     IT IS A TRANSFORM OFF THE RULE, NOT A NEGATIVE MARGIN OFF THE ROW, and
+     that is the second thing that had to be got right. A margin makes the
+     overhang depend on how tall the row happens to be, and row 03's name
+     wraps to three lines: that row grew past its numeral and stopped
+     overhanging at all. Measured at 2px at 1024 and 5px at 1440 — a bleed
+     on three rows and not the fourth, which is worse than none.
+
+     Bottom-anchored plus `translateY` instead, the overhang is a constant
+     .22em off the rule whatever the row does, and the clearance to the next
+     numeral is (row height - glyph height), which the row's own top padding
+     guarantees. CHANGING THE TRANSFORM CHANGES HOW FAR IT HANGS; cutting
+     `padding-top` on the row is what makes the glyphs touch. Re-run
+     `tools/check-system-rows.js` after either — it fails both on a negative
+     clearance and on an overhang that has gone missing. */
+  align-self:end;
+  margin:0; transform:translateY(.22em);
 }
 /* A shut row carries its name at display size — it is the headline of that
    stage. Opening it demotes the name to a label so the detail underneath
@@ -823,12 +848,17 @@ body::after {
   text-transform:uppercase; letter-spacing:-.025em;
   transition:font-size .45s var(--ease),letter-spacing .45s var(--ease);
 }
-.system-item.is-open { align-items:start; padding-bottom:clamp(30px,3.2vw,56px); }
-/* The open row's numeral is top-anchored, so its negative top margin would
-   pull it up out of the blue band and leave the crown of the glyph sitting
-   on black above the row. Nothing to crop against there — it reads as a
-   clipping fault, which is the same trap §44's note records. */
-.system-item.is-open .system-num { margin-top:0; }
+/* The name's clearance from the rule now lives here rather than on the row,
+   so the numeral can reach the rule. */
+.system-body { padding-bottom:clamp(12px,1.3vw,22px); }
+.system-item.is-open { align-items:start; }
+.system-item.is-open .system-body { padding-bottom:clamp(30px,3.2vw,56px); }
+/* The open row does NOT overhang. Its ground is the full-bleed blue of §42,
+   so a glyph hanging past the row's bottom leaves its tail sitting on the
+   black below the band — nothing to crop against, and it reads as a
+   clipping fault rather than a crop, which is the trap §44's note records.
+   The overhang is a black-on-black gesture; the blue row is a panel. */
+.system-item.is-open .system-num { align-self:start; transform:none; }
 .system-item.is-open .system-name { font-size:clamp(21px,2.3vw,34px); letter-spacing:-.012em; }
 .system-symbol {
   position:relative; flex:none; width:38px; height:38px; margin-top:6px;
@@ -924,7 +954,9 @@ body::after {
   /* No bottom pull here. Beside the name it buys tightness against the row
      rule; above the name it eats the gap instead — measured at 0px clear at
      620 and 768, where the name was touching the numeral's descender line. */
-  .system-num { font-size:clamp(96px,27vw,170px); margin-top:-.14em; margin-bottom:0; }
+  /* No overhang stacked: the numeral sits above its own name, so hanging it
+     down crosses into the name rather than into empty rule. */
+  .system-num { font-size:clamp(96px,27vw,170px); align-self:start; transform:none; margin:-.14em 0 0; }
 }
 @media (prefers-reduced-motion:reduce) {
   .system-panel { transition:none; }

@@ -5761,3 +5761,57 @@ After: 97 / 105 / 167 / 170 / 215 / 302 / 356px at 360 / 390 / 620 / 768 /
 1024 / 1440 / 1920, all matching the authored clamps. Tightest numeral
 clearance 9px at 1024, name clearance 10px at 620/768, no overflow, no
 console errors.
+
+### 51b. The overhang, which is what she was actually asking for
+
+Two rounds of "where is the change?" and "you just made them bigger" were
+both the same miss: §51 **measured the reference and concluded it does not
+overlap**, which is true of the reference and is not what the client wants.
+Asked directly, she picked *"numerals should overlap across the row lines"*
+out of four candidates. Bigger type was never the ask.
+
+**It hangs DOWNWARD, and that is forced.** Upward puts the glyph into the
+space held by the bottom of the numeral above it — §51 measured 43px of
+overlap on every pair. Downward, it lands in the next row's top padding,
+which is empty. That padding is now `clamp(48px,6.2vw,112px)` and **is not
+decoration**: it is the landing room, and cutting it is what makes two
+numerals touch.
+
+### A NEGATIVE MARGIN COULD NOT DO IT, AND THE WAY IT FAILED IS THE POINT
+
+First build hung the numeral with `margin-bottom:-.25em` off a top-anchored
+box. **That makes the overhang a function of how tall the row happens to
+be** — and row 03's name wraps to three lines, so that row grew past its own
+numeral and stopped overhanging. Measured **2px at 1024 and 5px at 1440**
+against 45–63px on the other three: a bleed on three rows and not the
+fourth, which looks like a bug rather than a style.
+
+What ships is bottom-anchored plus `transform:translateY(.22em)`, measured
+off the rule rather than off the row. The overhang is then **constant — 52 /
+72 / 86px at 1024 / 1440 / 1920** whatever the name does, and clearance to
+the next numeral is `row height - glyph height`, which the top padding
+guarantees.
+
+The row also gives up its bottom padding to `.system-body`. One value cannot
+be both the name's breathing room and the numeral's reach to the rule; they
+pull opposite ways.
+
+**The open row does not overhang** (`align-self:start; transform:none`). Its
+ground is §42's full-bleed blue, so a tail hanging past the row sits on the
+black below the band — nothing to crop against, which is §44's clipping-fault
+trap. The overhang is a black-on-black gesture; the blue row is a panel.
+**Stacked below 820 it is off too**, where the numeral sits above its own
+name and would hang into it.
+
+### The check needed a second assertion, and it earned it immediately
+
+Clearance being positive **only proves the glyphs do not touch** — it is
+equally satisfied by no bleed at all, which is the state the client rejected
+twice. `tools/check-system-rows.js` now also asserts the crossing itself:
+every shut numeral must hang at least 8px past its own rule above 820, and
+must not hang at all below it. **That assertion is what caught row 03**;
+nothing visible at 1440 said it was wrong.
+
+Final, all 28 states clean: overhang 52/72/86px, tightest numeral clearance
+**18px at 1024**, name clearance 10px stacked, no overflow, no console
+errors.

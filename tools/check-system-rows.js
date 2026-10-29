@@ -54,6 +54,16 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
             left: box.left, right: box.right,
           };
         });
+        /* THE OVERHANG ITSELF. Clearance being positive only proves the
+           glyphs do not touch — it is equally happy with no bleed at all,
+           which is the state the client rejected twice. Assert the crossing
+           as well: a shut row's numeral must hang PAST its own bottom rule. */
+        const items = [...document.querySelectorAll('.system-item')];
+        let cross = Infinity;
+        items.forEach((el, i) => {
+          if (el.classList.contains('is-open')) return;
+          cross = Math.min(cross, ink[i].bottom - el.getBoundingClientRect().bottom);
+        });
         let worst = Infinity;
         for (let i = 1; i < ink.length; i++) worst = Math.min(worst, ink[i].top - ink[i - 1].bottom);
         const names = [...document.querySelectorAll('.system-name')].map(n => n.getBoundingClientRect());
@@ -73,6 +83,7 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
         const size = parseFloat(getComputedStyle(els[0]).fontSize);
         return {
           size: Math.round(size),
+          cross: Math.round(cross),
           gap: Math.round(worst),
           nameGap: nameGap === Infinity ? null : Math.round(nameGap),
           overflow: Math.round(document.documentElement.scrollWidth - document.documentElement.clientWidth),
@@ -86,10 +97,13 @@ const URL = 'file:///Users/mac/Documents/Current%20Projects/Rysing/index.html';
         ? Math.min(170, Math.max(96, width * 0.27))
         : Math.min(356, Math.max(118, width * 0.21));
       const sizeBad = Math.abs(r.size - expected) > 2;
-      const fail = sizeBad || r.gap < 0 || r.overflow > 0 || (r.nameGap !== null && r.nameGap < 0) || errors.length;
+      /* Below 820 the numeral sits above its name and must NOT overhang. */
+      const wantCross = width > 820;
+      const crossBad = wantCross ? r.cross < 8 : r.cross > 0;
+      const fail = sizeBad || crossBad || r.gap < 0 || r.overflow > 0 || (r.nameGap !== null && r.nameGap < 0) || errors.length;
       if (fail) bad++;
       if (errors.length) console.log(`console @${width}:`, [...new Set(errors)].join(' | '));
-      rows.push({ width, open: open + 1, 'num px': r.size, 'want px': Math.round(expected), 'num gap': r.gap, 'name gap': r.nameGap, 'overflow px': r.overflow, errors: errors.length, ok: fail ? 'FAIL' : '' });
+      rows.push({ width, open: open + 1, 'num px': r.size, 'want px': Math.round(expected), 'over rule': r.cross, 'num gap': r.gap, 'name gap': r.nameGap, 'overflow px': r.overflow, errors: errors.length, ok: fail ? 'FAIL' : '' });
     }
     await page.close();
   }
