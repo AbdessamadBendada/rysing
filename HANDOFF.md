@@ -5416,12 +5416,13 @@ ten. Holding the count across that solved the gap down to 14px at 390, and a
 wordmark, which is what the first build shipped and the screenshot caught.
 
 `GAP` sets the spacing directly and lets the count fall out of the area:
-same-sized marks everywhere, 31 of them at 390 and 172 at 1440.
+same-sized marks everywhere, 48 of them at 390 and 264 at 1440 (§49's sizes;
+the first build was 31 and 172 at the full measure).
 
 **The band's padding is a correctness bound, not rhythm.** The hole's vertical
-half-height is `logoH/2 + 1.35 gaps` ≈ 96px at 390, so with less padding than
+half-height is `logoH/2 + 1.35 gaps` ≈ 86px at 390, so with less padding than
 that the band is entirely inside the hole and **the field comes out empty** —
-a blank strip, not an obvious bug. 120px top and 60px bottom clear it
+a blank strip, not an obvious bug. §49's 150px top and 96px bottom clear it
 everywhere. `loading="lazy"` came off the lockup for a related reason: the
 hole is measured from the image's box, and a lazy image at the bottom of the
 longest page has no box when the script runs.
@@ -5474,3 +5475,38 @@ geometry §44 named and the client has never seen it.
   on its canvas, no errors. It is still the calibration rig for the hero's
   glow, which is why the drift is scoped to `.hero` in `shared.css` and must
   stay scoped: §47's measuring note needs the anchor still.
+
+---
+
+## 49. The footer lockup comes down to the playground's size
+
+A small change with one thing in it worth keeping. The client asked for the
+footer's lockup to be **the size it is in the playground**, with more room
+above and below.
+
+**Both lockups are now 75% of the footer measure, and that is the same number
+in both files rather than two numbers that agree today.** §46 sized
+`.pp-starlogo` as a percentage of its section's content box precisely because
+that section carries the same `var(--gutter)` padding as the footer — so a
+percentage there *is* a percentage of the footer's lockup, at every width,
+with nothing to keep in step. The footer was the reference and is now the
+match. **Change one and change the other**, or §46's section stops describing
+what ships. Neither may become a `vw` value; §46 says why.
+
+### The field closes around the wordmark now, which is the actual reason
+
+At the full measure the clear ellipse was nearly as wide as the band, so the
+marks could only go above and below — a stripe across the footer rather than
+a field around a mark. At 75% the ellipse clears the band's sides too and the
+pattern closes around the ends of the wordmark, which is what §46's
+composition looks like and what the client was pointing at.
+
+The count rises with the room: **48 marks at 390 and 264 at 1440**, against 31
+and 172 before. Padding is `clamp(150px,12vw,200px)` over
+`clamp(96px,7.5vw,135px)`; the floors are the empty-field bound from §48 and
+should not go below about 100px without rechecking the count at 390.
+
+Re-measured after the change — footer work per frame 2.3 / 3.3 / 6.0 / 10.4ms
+across 390/768/1440/1920 against the 16.7 budget, no mark on the artwork at
+any width, no new overflow, no console errors on any page. The hero is
+untouched.

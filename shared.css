@@ -1704,10 +1704,28 @@ body::after {
 @media (prefers-reduced-motion:reduce) {
   .footer-light::before,.footer-light::after,.belong-glow { animation:none; }
 }
-/* The wordmark runs the full measure here — it is the sign-off, and the
-   artwork is the only place the logo face appears. It is the last thing on
-   the page, below the copyright line, so its room is above it now. */
-.footer-mark { display:block; width:100%; height:auto; }
+/* THREE QUARTERS OF THE MEASURE, WHICH IS THE PLAYGROUND'S SIZE (§46, §49).
+   It ran the full measure from the start — the sign-off, and the only place
+   the logo face appears — and came down one step when the star field arrived
+   around it, so that the marks have somewhere to be at the ENDS of the
+   wordmark and not only above and below it.
+
+   75% IS NOW THE SAME NUMBER IN BOTH PLACES AND THAT IS NOT A COINCIDENCE.
+   `.pp-starlogo` is 75% of the playground section's content box, which
+   carries the same `var(--gutter)` padding as this footer — §46 chose the
+   percentage precisely so the two lockups track each other at every width
+   with no number to keep in step. The footer was the reference then and
+   matches it now. Change one and change the other, or §46's rig stops
+   describing what ships.
+
+   DO NOT REWRITE THIS AS A VW VALUE. 75vw is a different size at every
+   width, and it stops tracking the moment `--gutter`'s clamp is touched.
+
+   The anchor has to be a block for the centring to have anything to work
+   with: it wraps the image and is inline by default, so `margin:auto` on the
+   image alone would centre it inside a box already shrunk to fit it. */
+.footer-lockup > a { display:block; }
+.footer-mark { display:block; width:75%; height:auto; margin-inline:auto; }
 /* THE BAND THE STARS LIVE IN — §48, variant C of the playground.
    `position:relative` and nothing else beyond its own room, which is §27's
    contract for a section hosting a shape: no `isolation`, no `overflow`, no
@@ -1716,25 +1734,27 @@ body::after {
    §29 or §33 to cut, which is why this one needs no overhang.
 
    THE PADDING IS WHAT MAKES THE STARS READ AS "AROUND" THE LOCKUP, and it is
-   not spacing. The lockup runs the full measure, so the clear space the script
-   keeps for it — an ellipse of `logoW/2 + 1.05 gaps` by `logoH/2 + 1.35 gaps`
-   — is nearly as wide as the band. That leaves marks only where the ellipse
-   has pulled in: a sweep above and below, crowding in around the two ends of
-   the wordmark where the curve runs closest to it.
+   not spacing. The script keeps an ellipse of `logoW/2 + 1.05 gaps` by
+   `logoH/2 + 1.35 gaps` clear for the artwork, and the marks live in
+   whatever the band has that the ellipse does not. At the full measure that
+   was a sweep above and below and nothing at the ends; at 75% (§49) the
+   ellipse clears the band's sides as well, so the field closes around the
+   wordmark instead of banding across it.
 
    THE LOWER CLAMPS ARE A CORRECTNESS BOUND, NOT RHYTHM. The hole's vertical
    half-height is `logoH/2 + 1.35 gaps`, which at the footer's 44px gap is
-   about 96px at 390 — so with less padding than that the band is ENTIRELY
+   about 86px at 390 — so with less padding than that the band is ENTIRELY
    inside the hole and the field comes out empty. That is a blank strip
-   rather than an obvious bug, and nothing else would catch it. 120px top and
-   60px bottom clear it at every width with room to spare.
+   rather than an obvious bug, and nothing else would catch it. The 150/96
+   floors clear it at every width with room to spare; do not take either
+   below about 100px without rechecking the count at 390.
 
    The old `margin-top:72px` on the lockup is this element's top padding now;
    the mark is flush inside the band so the hole the script measures is the
    artwork's box and nothing else. */
 .footer-lockup {
   position:relative;
-  padding:clamp(120px,10vw,160px) 0 clamp(60px,5vw,90px);
+  padding:clamp(150px,12vw,200px) 0 clamp(96px,7.5vw,135px);
 }
 .footer-grid {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px;
