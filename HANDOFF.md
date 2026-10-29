@@ -5627,3 +5627,103 @@ console errors, fallback intact.
 
 Unchanged from §48 and §49: **the client has not seen any of it**, and there
 is **still no Safari in the harness**.
+
+---
+
+## 51. The service numerals come up to the client's reference
+
+She sent a reference for the `#system` rows on the homepage — four numbered
+stages, numerals far larger than ours and sitting hard on their row rules —
+and asked for the numerals to match it. Two instructions came with it:
+**full bleed**, and **not thinner**. The weight is still Aileron Light; the
+reference is lighter than that and was deliberately not followed.
+
+Only `index.html` carries `.system-item`, so nothing else on the site moves.
+
+### "FULL BLEED" AND "OVERLAPPING" ARE NOT THE SAME THING, AND THE FIRST PASS ASSUMED THEY WERE
+
+Built first at `clamp(104px,15.5vw,268px)` with `margin-top:-.26em`, which
+is a real bleed: the glyph runs up over the hairline into the row above.
+It broke immediately, and the reason is structural rather than a tuning
+miss.
+
+**The numerals are bottom-anchored, so an upward bleed has nowhere empty to
+go.** A shut row hangs from its bottom rule — that is what puts the numeral
+and its name on one baseline. So the space above any numeral is occupied by
+the *bottom* of the numeral in the row above. At -.26em every consecutive
+pair overlapped by 43px, and 03/04 collided outright because 03's row is
+tall (a three-line name) and its numeral therefore sits low.
+
+Then the reference was measured rather than described, and **it does not
+overlap either**. Its rows are ~230px with ~185px numerals: contained,
+bottom-aligned, baseline tight on the rule. The bleed is an impression
+produced by tightness, not by overflow. What ships is that:
+
+| | before | after |
+| --- | --- | --- |
+| size | `clamp(86px,11.5vw,186px)` | `clamp(104px,15.5vw,268px)` |
+| line-height | .84 | .72 |
+| margins | none | `-.12em` top, `-.06em` bottom |
+| shut row | top-aligned, `56px` bottom pad | **bottom-aligned**, `22px` bottom pad |
+
+**Do not raise the top margin past about -.12em.** It is a measured limit,
+not taste — above it the glyphs touch.
+
+The negative margins are what keep the row from simply growing to contain a
+larger numeral. Remove them and every row gets ~60px taller and the tension
+goes; the row stops cropping and backs off instead.
+
+### TWO THINGS THE OPEN ROW NEEDED BACK
+
+An open row is top-aligned and takes its full bottom padding again, both
+for the same reason: it is being read, not scanned. `align-items:end` on an
+open row drops the numeral to the bottom of a tall row, and the cut-back
+bottom padding sits its tags on the hairline.
+
+**The open row's numeral also drops the negative top margin.** Top-anchored,
+that margin pulls the crown of the glyph up out of the blue band of §42 and
+onto the black above, where there is nothing to crop against — it reads as
+a clipping fault rather than a crop, which is the same trap §44's note
+records about the didone.
+
+Z-order was checked and needs nothing: `.system-item` is `position:relative`
+with no `z-index`, so it opens no stacking context, and the numeral's
+`z-index:1` outranks the neighbouring row's `z-index:0` blue fill in the
+root context.
+
+### THE STACKED LAYOUT WANTS THE OPPOSITE BOTTOM MARGIN
+
+Below 820 the numeral sits *above* its name instead of beside it. The
+`-.06em` bottom pull then stops buying tightness against the rule and eats
+the gap to the name instead — **measured at 0px clear at 620 and 768**, the
+name touching the numeral's descender line. It is zeroed in that media
+query, and the top crop is cut to -.14em.
+
+### `tools/check-system-rows.js`
+
+Every width × every open row: numeral-to-numeral clearance, numeral-to-name
+clearance in the stacked layout, horizontal overflow, console errors. 28
+states. **It found the 620/768 collision, which looking at 1440 and 390 did
+not.**
+
+**Neither obvious way of measuring a glyph is the glyph**, and both were
+wrong in opposite directions:
+
+- the **element box** is the line-height, `.72em` — *shorter* than the ink
+- a **Range rect** is the font's em box, ~1.17em — *taller* than it
+
+The Range version of this check reported a 98px overlap at 1920 on a layout
+with a visible 31px gap. It walks back to the baseline through the
+half-leading and takes `actualBoundingBoxAscent/Descent` from canvas for the
+digits actually set.
+
+It also filters four console errors that are **not** from this work: over
+`file://` every woff2 is blocked on CORS, on every page, always.
+
+Tightest clearances after the change — numeral-to-numeral **19px** at 1024,
+name-to-numeral **10px** at 620/768, zero overflow at every width, no
+console errors.
+
+### Open
+
+The client has not seen it. Nothing else on the site changed.

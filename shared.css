@@ -756,8 +756,17 @@ body::after {
 .system-item {
   position:relative; border-bottom:1px solid var(--line);
   display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
-  gap:clamp(20px,4vw,70px); align-items:start;
-  padding:clamp(30px,3.2vw,56px) 0;
+  gap:clamp(20px,4vw,70px);
+  /* A SHUT row hangs from its bottom rule: numeral and name share that
+     baseline, which is what lets the numeral run up across the hairline
+     above without pushing the name around. An OPEN row goes back to the
+     top, because its detail — not its rule — is the thing being read. */
+  align-items:end;
+  /* Bottom padding is cut right back on a shut row so the numeral sits on
+     its rule rather than floating above it — that tightness is the whole
+     look. An open row takes the full padding back, because its tags would
+     otherwise sit on the hairline. */
+  padding:clamp(30px,3.2vw,56px) 0 clamp(12px,1.3vw,22px);
   /* The whole row toggles, numeral included — see the click handler. */
   cursor:pointer;
 }
@@ -772,9 +781,30 @@ body::after {
 .system-num {
   display:block;
   font-family:"Aileron","Helvetica Neue",Helvetica,Arial,sans-serif; font-weight:300;
-  /* Was 260px, which made these the largest type anywhere — larger than the
-     hero. They should own their section, not the page. */
-  font-size:clamp(86px,11.5vw,186px); line-height:.84; letter-spacing:-.04em;
+  /* Client reference: the numeral is larger than the row that holds it and
+     runs up over the hairline into the row above. Two pieces make that work
+     and both are needed:
+
+     1. The SIZE is set past what the old padding allowed. 186px fitted
+        comfortably inside the row, which is why the numerals read as a
+        column of labels rather than the subject of the section.
+     2. The BOX is shorter than the glyph, by negative margins. They take
+        the overflow out of the grid's height calculation, so the row does
+        not grow to contain the numeral — the glyph runs to the hairline
+        instead of the row backing off to clear it. Remove them and every
+        row gets ~60px taller and the tension goes.
+
+     MEASURED LIMIT, do not raise the top margin past about -.12em. The
+     numerals are bottom-anchored, so an upward bleed runs into the BOTTOM
+     of the numeral in the row above, not into empty space. At -.26em the
+     glyphs overlapped by 43px on every pair of rows and 03/04 collided
+     outright. The reference does not overlap either: its numerals are
+     contained and simply sit tight on their rule.
+
+     Weight stays Light on instruction: the reference is thinner than this
+     and the client does not want it thinner. */
+  font-size:clamp(104px,15.5vw,268px); line-height:.72; letter-spacing:-.04em;
+  margin-top:-.12em; margin-bottom:-.06em;
 }
 /* A shut row carries its name at display size — it is the headline of that
    stage. Opening it demotes the name to a label so the detail underneath
@@ -785,6 +815,12 @@ body::after {
   text-transform:uppercase; letter-spacing:-.025em;
   transition:font-size .45s var(--ease),letter-spacing .45s var(--ease);
 }
+.system-item.is-open { align-items:start; padding-bottom:clamp(30px,3.2vw,56px); }
+/* The open row's numeral is top-anchored, so its negative top margin would
+   pull it up out of the blue band and leave the crown of the glyph sitting
+   on black above the row. Nothing to crop against there — it reads as a
+   clipping fault, which is the same trap §44's note records. */
+.system-item.is-open .system-num { margin-top:0; }
 .system-item.is-open .system-name { font-size:clamp(21px,2.3vw,34px); letter-spacing:-.012em; }
 .system-symbol {
   position:relative; flex:none; width:38px; height:38px; margin-top:6px;
@@ -872,8 +908,15 @@ body::after {
   font-size:10px; font-weight:600; letter-spacing:.11em; text-transform:uppercase;
 }
 @media (max-width:820px) {
-  .system-item { grid-template-columns:1fr; gap:14px; }
-  .system-num { font-size:clamp(84px,24vw,150px); }
+  /* Stacked, the numeral sits ABOVE its name rather than beside it, so an
+     upward bleed would run into the row above with nothing alongside it to
+     read against. The overflow is cut back to a crop at the top rule only
+     and the row goes back to top alignment. */
+  .system-item { grid-template-columns:1fr; gap:14px; align-items:start; }
+  /* No bottom pull here. Beside the name it buys tightness against the row
+     rule; above the name it eats the gap instead — measured at 0px clear at
+     620 and 768, where the name was touching the numeral's descender line. */
+  .system-num { font-size:clamp(96px,27vw,170px); margin-top:-.14em; margin-bottom:0; }
 }
 @media (prefers-reduced-motion:reduce) {
   .system-panel { transition:none; }
