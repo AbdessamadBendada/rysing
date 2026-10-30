@@ -459,7 +459,7 @@ body::after {
   top:calc(-1 * min(24vh, var(--d) * .212)); right:-14vw;
   background:radial-gradient(circle at 50% 50%,rgba(240,66,34,1),rgba(240,66,34,.98) 18%,rgba(240,66,34,.62) 40%,rgba(240,66,34,.12) 64%,transparent 76%);
   animation:driftA 28s var(--ease) infinite alternate,
-            heroBreathe 13s var(--ease) infinite;
+            heroBreathe 8s var(--ease) infinite;
 }
 /* Hidden only once the field is built and painted, which is §45's
    arrangement: every early return in the script leaves the authored gradient
@@ -512,13 +512,25 @@ body::after {
      .93  6 levels   33%   <- shipped
      .90  8 levels   40%
 
-   .93 is a sixth of a level per second. It is chosen over .95 only because
-   the last two rounds of this work shipped changes the client could not
-   see; past .90 it starts to read as a pulse rather than a breath.
+   RATE MATTERS MORE THAN SWING, which is the part that was got wrong first
+   time. A slow luminance change is noticed by how fast it moves, not by how
+   far it eventually travels, so the period is half of the setting. .93 over
+   13s shipped at 0.92 levels per second and the client still could not tell
+   it was moving. .88 over 8s is 2.25 — about two and a half times the rate
+   for one and a half times the swing.
+
+   THE TROUGH IS THE CONSTRAINT, NOT THE PEAK. §50 found that this glow at
+   85% of its brightness gets reported as "a dull orange, not her brand
+   orange". That was a STATIC 85%, and this returns to 100% every four
+   seconds, but it is why the dim stops at 12% rather than buying
+   visibility with a deeper trough: deepening it walks straight into a
+   complaint this project has already had twice.
+
+   Raise the RATE before the amplitude if it is still not enough.
 
    BOTH THE CANVAS AND THE FALLBACK DISC CARRY IT, so the hero breathes
    identically whether or not the lattice built. */
-@keyframes heroBreathe { 0%,100% { opacity:1; } 50% { opacity:var(--breathe,.93); } }
+@keyframes heroBreathe { 0%,100% { opacity:1; } 50% { opacity:var(--breathe,.88); } }
 
 /* ===========================================================================
    THE LATTICE THAT PARTS FOR THE CURSOR — §48
@@ -622,7 +634,7 @@ body::after {
    regression. §50's numbers came from another session and are not a
    baseline you can diff against — measure the same page both ways instead,
    which costs one minute. */
-.hero .rs-field { animation:heroBreathe 13s var(--ease) infinite; }
+.hero .rs-field { animation:heroBreathe 8s var(--ease) infinite; }
 /* NO CSS BLUR HERE. `BLUR` is applied by the script to the FIELD, one layer
    up, so it blurs the composed cloud rather than each sprite. */
 /* The script does not start its loop at all under reduced motion, so the

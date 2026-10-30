@@ -6010,3 +6010,48 @@ to today, and also fails if the breath is not running at all.
 The client has not seen it. If it still reads as static, `--breathe` is the
 dial and .90 is the measured next step; past that it is a pulse, not a
 breath.
+
+### 53a. Still invisible, and rate was the reason
+
+*"You can't tell it's moving."* §53 shipped `.93` over 13s, which measures
+**0.92 levels per second**.
+
+**A slow luminance change is noticed by its RATE, not its total swing.** §53
+swept amplitude and held the period fixed at 13s, which left half the
+setting untouched and the wrong half tuned. Shipped now: **`.88` over 8s —
+9 levels across 41% of the hero at 2.25 levels/second**, two and a half
+times the rate for one and a half times the swing.
+
+| | swing | field moving | levels/sec |
+| --- | --- | --- | --- |
+| §53, `.93` / 13s | 6 | 33% | 0.92 |
+| **`.88` / 8s — shipped** | **9** | **41%** | **2.25** |
+| `.86` / 7s | 10 | 44% | 2.86 |
+| `.82` / 7s | 13 | 46% | 3.71 |
+
+**THE TROUGH IS THE CONSTRAINT, NOT THE PEAK.** §50 found this glow at 85%
+brightness gets reported as *"a dull orange, not her brand orange"*. That
+was a static 85% and this returns to 100% every four seconds, but it is why
+the dim stops at 12% rather than buying visibility with a deeper trough.
+**Raise the rate before the amplitude.**
+
+### THE PROBE WAS SEEKING THE WRONG ELEMENT, WHICH IS THE FOURTH TIME
+
+The breath moved from the canvas to `.rs-field` inside §53 and
+`tools/probe-drift.js` kept seeking `.rs-blobs`. The breath therefore ran
+free through both shots, and a sweep from `.93` to `.78` reported a flat
+4-10 levels when `.78` should dim a 250 core by 55. It now seeks every layer
+that could carry it.
+
+That is four measurement failures in two sections, all identical in shape:
+**the probe measured something other than the thing being tuned.** The
+check that catches it every time is a monotonicity read — if a sweep is not
+ordered, the probe is broken, not the effect.
+
+### The cost question, settled by repetition
+
+`tools/ab-breathe.js` run four times, breath on minus breath off, in ms:
+**+5.4, -0.02, -1.1** at 1440 and **-0.01, -0.53, +2.2** at 1920. The sign
+flips at random and the mean is zero. **The breath is free; this harness is
+worth ±5ms on any single reading**, which is the number to remember before
+reading anything into one run of `verify.js`.

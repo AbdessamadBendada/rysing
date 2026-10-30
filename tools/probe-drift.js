@@ -26,19 +26,32 @@
 const { chromium } = require('playwright');
 const path = require('path');
 const ROOT = '/Users/mac/Documents/Current Projects/Rysing';
-const SWEEP = ['1', '.97', '.95', '.93', '.90'];
-const PERIOD = 13;
+const SWEEP = process.env.SWEEP ? ['.93', '.90', '.88', '.86', '.82'] : ['as shipped'];
+/* PERIOD MATTERS AS MUCH AS AMPLITUDE. A slow luminance change is noticed
+   by its RATE, not its total swing — the same 6 levels spread over 6.5s or
+   over 3s are a different effect, and the second one is the one you can
+   see. Both are swept. */
+const PERIODS = process.env.SWEEP ? [13, 9, 8, 7] : [8];
+
+/* EVERY LAYER THAT COULD CARRY THE BREATH. It has already moved once, from
+   the canvas to the field, and the probe kept seeking the canvas — the
+   breath then ran free through both shots and a sweep from .93 to .78
+   reported a flat 4-10 levels when .78 should dim a 250 core by 55. That is
+   the fourth measurement in §53 to fail by probing the wrong thing. */
+const SEEK = '.hero-disc--orange, .hero .rs-blobs, .hero .rs-field';
 
 async function shot(page, phaseMs) {
-  await page.evaluate((ms) => {
-    document.querySelectorAll('.hero-disc--orange,.hero .rs-blobs').forEach(el => {
+  await page.evaluate(([ms, SEEK]) => {
+    document.querySelectorAll(SEEK).forEach(el => {
       el.getAnimations().forEach(a => {
         a.pause();
         /* driftA is held at 0 so only the breath moves between shots. */
-        a.currentTime = a.animationName === 'heroBreathe' ? ms : 0;
+        /* 1e9 means "the trough", whatever the authored duration is. */
+        const dur = a.effect.getTiming().duration;
+        a.currentTime = a.animationName === 'heroBreathe' ? (ms >= 1e9 ? dur / 2 : ms) : 0;
       });
     });
-  }, phaseMs);
+  }, [phaseMs, SEEK]);
   await page.waitForTimeout(120);
   return (await (await page.$('.hero')).screenshot()).toString('base64');
 }
@@ -69,12 +82,15 @@ async function diff(page, a, b) {
 
   const rows = [];
   for (const br of SWEEP) {
-    await page.evaluate(v => document.documentElement.style.setProperty('--breathe', v), br);
+    if (br !== 'as shipped') await page.evaluate(v => document.documentElement.style.setProperty('--breathe', v), br);
     const peak = await shot(page, 0);
-    const trough = await shot(page, PERIOD / 2 * 1000);
+    const trough = await shot(page, 1e9);   // half-cycle, see shot()
     const d = await diff(page, peak, trough);
-    rows.push({ breathe: br, 'peak to trough': '', ...d,
-                'levels per 2s': +(d.worst / (PERIOD / 2) * 2).toFixed(1) });
+    for (const per of PERIODS) {
+      rows.push({ breathe: br, period: per + 's', 'levels peak-trough': d.worst,
+                  'field moving %': d['px over 2 levels %'],
+                  'levels per second': +(d.worst / (per / 2)).toFixed(2) });
+    }
   }
   console.table(rows);
   console.log('\nbreathe 1 = no luminance breath, drift alone (the shipped state before §53).');
